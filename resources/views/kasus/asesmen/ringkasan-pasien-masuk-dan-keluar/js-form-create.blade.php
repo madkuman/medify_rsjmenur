@@ -1,0 +1,25 @@
+
+	$(`:text[name="dirawat_yang_ke"]`).val("");
+	$(`:text[name="ruang"]`).val("{{$kasus->lokasi->lokasi->nama}}");
+	$(`:text[name="pindah_ruang_ke"]`).val("");
+	$(`:text[name="kelas"]`).val("{{$kasus->kelas->nama}}");
+	$(`:text[name="pindah_kelas_ke"]`).val("");
+	$(`:radio[name="pengirim_rujukan"]`).prop("checked", false);
+	$(`:text[name="nama_pengirim_rujukan"]`).val("");
+	$(`:radio[name="kasus_visum"]`).prop("checked", false);
+	$(`:text[name="dpjp"]`).val("{{$kasus->dpjp->user->name}}");
+	$(`:text[name="case_manager"]`).val("");
+	$(`:text[name="lama_dirawat"]`).val("{{$kasus->ranap_los}} hari");
+	$(`:text[name="diagnosa_masuk"]`).val("({{$kasus->diagnosisUtama->icd10->code_icd}}) - {{$kasus->diagnosisUtama->icd10->long_desc}}");
+	$(`textarea[name="diagnosa_masuk_tambahan"]`).val("{{$diagnosaAll}}");
+	$(`:text[name="diagnosa_keluar"]`).val("({{$kasus->diagnosisUtama->icd10->code_icd}}) - {{$kasus->diagnosisUtama->icd10->long_desc}}");
+	$(`textarea[name="diagnosa_keluar_tambahan"]`).val("{{$diagnosaAll}}");
+	$(`textarea[name="tindakan_yang_dilakukan"]`).val("{{$tindakanAll}}");
+	$(`:radio[name="keadaan_keluar"]`).prop("checked", false);
+	$(`:text[name="rujuk_ke"]`).val("");
+	$(`:radio[name="cara_keluar"]`).prop("checked", false);
+	$(`:checkbox[name="alergi_tidak_ada_alergi"]`).prop("checked", false);
+	$(`:checkbox[name="alergi_obat_obatan"]`).prop("checked", false);
+	$(`:checkbox[name="alergi_makanan"]`).prop("checked", false);
+	$(`:checkbox[name="alergi_lainnya"]`).prop("checked", false);
+	$(`textarea[name="keterangan_alergi"]`).val("1.\n2.\n3.\n4.\n5.");

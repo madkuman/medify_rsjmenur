@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Http\Controllers\Kepegawaian\MasterDepartemen;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class ViewController extends Controller
+{
+
+    public function index()
+	{
+		$data['departemen'] = app("App\Http\Controllers\Kepegawaian\MasterDepartemen\ReadController")->getAllDepartemen();
+		return view('kepegawaian.master.departemen.index', $data);
+	}
+	
+
+	public function edit($id)
+	{
+		$kualifikasi = app("App\Http\Controllers\Kepegawaian\MasterJabatanIntern\ReadController")->getData()->find($id);
+		return response()->json($kualifikasi);
+	}
+}

@@ -1,0 +1,30 @@
+      
+      var item = $bakat_minat_anak[$this.data("index")];
+      var tanggal_tes = item.tanggal_tes ? formatDate(item.tanggal_tes) : "-";
+      var nomor = item.nomor ? item.nomor : "-";
+      var tujuan_tes = item.tujuan_tes ? item.tujuan_tes : "-";
+      var penalaran_kongkrit = item.penalaran_kongkrit ? item.penalaran_kongkrit : "-";
+      var penalaran_abstrak = item.penalaran_abstrak ? item.penalaran_abstrak : "-";
+      var pemahaman_verbal = item.pemahaman_verbal ? item.pemahaman_verbal : "-";
+      var kemampuan_numerik = item.kemampuan_numerik ? item.kemampuan_numerik : "-";
+      var daya_analisis_sintesa = item.daya_analisis_sintesa ? item.daya_analisis_sintesa : "-";
+      var daya_bayang_ruang = item.daya_bayang_ruang ? item.daya_bayang_ruang : "-";
+      var konsentrasi_daya_ingat = item.konsentrasi_daya_ingat ? item.konsentrasi_daya_ingat : "-";
+      var kemampuan_skolastik = item.kemampuan_skolastik ? item.kemampuan_skolastik : "-";
+      var kematangan_emosi = item.kematangan_emosi ? item.kematangan_emosi : "-";
+      var kemasakan_sosial = item.kemasakan_sosial ? item.kemasakan_sosial : "-";
+      var kemampuan_adaptasi = item.kemampuan_adaptasi ? item.kemampuan_adaptasi : "-";
+      var motivasi_berprestasi = item.motivasi_berprestasi ? item.motivasi_berprestasi : "-";
+      var kecepatan_kerja = item.kecepatan_kerja ? item.kecepatan_kerja : "-";
+      var ketelitian = item.ketelitian ? item.ketelitian : "-";
+      var ketekunan_keuletan = item.ketekunan_keuletan ? item.ketekunan_keuletan : "-";
+      var daya_tahan_terhadap_stress = item.daya_tahan_terhadap_stress ? item.daya_tahan_terhadap_stress : "-";
+      var deskripsi = item.deskripsi ? nl2br(item.deskripsi) : "-";
+      var kemampuan_intelegensi = item.kemampuan_intelegensi ? item.kemampuan_intelegensi : "-";
+      var kategori = item.kategori ? item.kategori : "-";
+      var dokter = item.dokter_pemeriksa ? item.dokter_pemeriksa.name : "-";
+      var overall = item.overall ? item.overall : "-";
+      var saran_pemilihan_penjurusan = item.saran_pemilihan_penjurusan ? nl2br(item.saran_pemilihan_penjurusan) : "-";
+      var minat = item.minat ? JSON.parse(item.minat) : "-";
+
+      var hasil = `@include("kasus.psikologi.bakat-minat-anak.hasil")`;

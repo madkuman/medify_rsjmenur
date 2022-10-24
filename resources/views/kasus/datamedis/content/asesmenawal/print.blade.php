@@ -1,0 +1,13 @@
+@if($jenis == 'Gawat Darurat')
+@include('kasus.datamedis.content.asesmenawal.print.print-gawat-darurat')
+@elseif($jenis == 'Rawat Jalan')
+@include('kasus.datamedis.content.asesmenawal.print.print-rawat-jalan')
+@elseif($jenis == 'Rawat Inap')
+@include('kasus.datamedis.content.asesmenawal.print.print-rawat-inap')
+@elseif($jenis == 'Gawat Darurat Dokter')
+@include('kasus.datamedis.content.asesmenawal.print.print-dokter-gawat-darurat')
+@elseif($jenis == 'Rawat Jalan Dokter')
+@include('kasus.datamedis.content.asesmenawal.print.print-dokter-rawat-jalan')
+@elseif($jenis == 'Rawat Inap Dokter')
+@include('kasus.datamedis.content.asesmenawal.print.print-dokter-rawat-inap')
+@endif

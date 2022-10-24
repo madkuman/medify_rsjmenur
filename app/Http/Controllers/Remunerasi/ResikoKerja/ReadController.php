@@ -1,0 +1,90 @@
+<?php
+
+namespace App\Http\Controllers\Remunerasi\ResikoKerja;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\Kepegawaian\Pegawai;
+use App\Models\Kepegawaian\MasterResikoKerja;
+use App\Models\Remunerasi\ResikoKerja;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
+use DB;
+
+
+class ReadController extends Controller
+{
+
+    // DATATABLES
+    function index(Request $request){
+
+        $limit = $request->length;
+        $start = $request->start;
+        $total_filter = ResikoKerja::count();
+        $total_record = $total_filter;
+        $cari   = $request->input('search.value');
+        $periode = substr($request->bulan,3);
+        $columns = array(
+            0 => 'name',
+            1 => 'nrp'
+        );
+        $resiko_kerja = ResikoKerja::query();
+
+        // filter by periode 
+        if(!empty($periode)){
+            $resiko_kerja = $resiko_kerja->where('bulan', 'like', "%{$periode}%");
+            $total_filter = count(with(clone $resiko_kerja)->get());
+            $total_record = $total_filter;
+        }
+
+        // filter by name or nip 
+        if(!empty($cari)){
+            $cari = preg_replace("/[^[:alnum:][:space:]]/u", ' ', $cari);
+            $pegawai_ids = Pegawai::search($cari)->take(50)->get()->pluck('id')->toArray();
+            if(!empty($pegawai_ids)) {
+                $pegawai_ids_implode = implode(',', $pegawai_ids);
+                $resiko_kerja = $resiko_kerja->whereIn('pegawai_id', $pegawai_ids)->orderByRaw("FIELD(pegawai_id, $pegawai_ids_implode)");
+            }
+            $total_filter = count(with(clone $resiko_kerja)->get());
+            $total_record = $total_filter;    
+
+        }
+        $resiko_kerja = $resiko_kerja->with('pegawai')->offset($start)->limit($limit)->get();
+
+        $data = [];
+        $no = $start+1;
+        foreach ($resiko_kerja as $row) {
+            $bulan = date_create('01-'.$row->bulan); 
+
+            $value['nomer']     = '<th class="font-w600">'.$no++.'</th>';
+            $value['pegawai']   = '<td class="font-w600"> Nama:  '.$row->pegawai->name.'<br> 
+                                        NRP:  '.$row->pegawai->nrp.'</td>';
+            $value['bulan']     = '<td class="font-w600">'.date_format($bulan,"M-Y").'</td>';
+            $value['index']     = '<td class="font-w600">'.$row->index.'</td>';
+            $value['action']    = '<td class="">
+                        <a onclick="editResiko(this)" data-id="'.$row->id.'" data-bulan="'.date_format($bulan,"M-Y").'" data-nama="'.$row->pegawai->name.'" data-nrp="'.$row->pegawai->nrp.'" data-resiko="'.$row->index.'" class="btn btn-sm btn-outline-info mr-5 mb-5 btn-keuangan"><i class="fa fa-pencil"></i></a></td>';
+
+            $data[] = $value;
+        }
+
+        return response()->json(array(
+            "draw"              => intval($request->draw),
+            "recordsTotal"      => intval($total_record),
+            "recordsFiltered"   => intval($total_filter),
+            "data"              => $data
+        ));
+    }
+
+    public function single($pegawai_id,$bulan_tahun)
+    {
+        $resiko_kerja = ResikoKerja::where('pegawai_id',$pegawai_id)->where('bulan',$bulan_tahun)->first();
+        return $resiko_kerja;
+    }
+
+    public function getByTanggal($tanggal)
+    {
+        $resiko_kerja = ResikoKerja::where('bulan',$tanggal)->get();
+        return $resiko_kerja;
+    }
+
+}

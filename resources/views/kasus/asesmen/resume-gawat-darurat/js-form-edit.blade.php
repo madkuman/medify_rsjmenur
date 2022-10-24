@@ -1,0 +1,20 @@
+
+	$(`:radio[name="pulang"][value="${item.pulang}"]`).prop("checked", true);
+	$(`:text[name="kontrol_ulang_tanggal"]`).val(formatDate(item.kontrol_ulang_tanggal));
+	$(`:text[name="kontrol_ulang_di"]`).val(item.kontrol_ulang_di);
+	$(`:radio[name="pulang_atas_permintaan_keluarga"][value="${item.pulang_atas_permintaan_keluarga}"]`).prop("checked", true);
+	$(`:radio[name="observasi"][value="${item.observasi}"]`).prop("checked", true);
+	$(`:text[name="pulang_jam"]`).val(item.pulang_jam);
+	$(`:radio[name="mrs"][value="${item.mrs}"]`).prop("checked", true);
+	$(`:checkbox[name="alasan_menolak_mrs_masalah_biaya"]`).prop("checked", item.alasan_menolak_mrs_masalah_biaya != null);
+	$(`:checkbox[name="alasan_menolak_mrs_masalah_lokasi_rumah"]`).prop("checked", item.alasan_menolak_mrs_masalah_lokasi_rumah != null);
+	$(`:checkbox[name="alasan_menolak_mrs_masalah_kondisi_pasien"]`).prop("checked", item.alasan_menolak_mrs_masalah_kondisi_pasien != null);
+	$(`:text[name="alasan_lainnya"]`).val(item.alasan_lainnya);
+	$(`:text[name="dirawat_di_ruang"]`).val(item.dirawat_di_ruang);
+	$(`:radio[name="dirujuk"][value="${item.dirujuk}"]`).prop("checked", true);
+	$(`:checkbox[name="alasan_dirujuk_tempat_penuh"]`).prop("checked", item.alasan_dirujuk_tempat_penuh != null);
+	$(`:checkbox[name="alasan_dirujuk_perlu_fasilitas_lebih"]`).prop("checked", item.alasan_dirujuk_perlu_fasilitas_lebih != null);
+	$(`:checkbox[name="alasan_dirujuk_permintaan_pasien_dan_keluarga"]`).prop("checked", item.alasan_dirujuk_permintaan_pasien_dan_keluarga != null);
+	$(`:text[name="alasan_lain"]`).val(item.alasan_lain);
+	$(`:text[name="alergi"]`).val(item.alergi);
+	$(`:text[name="risiko"]`).val(item.risiko);

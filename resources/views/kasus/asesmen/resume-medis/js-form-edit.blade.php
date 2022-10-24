@@ -1,0 +1,21 @@
+
+	$(`:text[name="alasan_datang_indikasi_dirawat"]`).val(item.alasan_datang_indikasi_dirawat);
+	$(`:text[name="diagnosa_masuk"]`).val(item.diagnosa_masuk);
+	$(`:text[name="diagnosa_utama"]`).val(item.diagnosa_utama);
+	$(`textarea[name="diagnosa_tambahan"]`).val(item.diagnosa_tambahan);
+	$(`textarea[name="pemeriksaan_fisik"]`).val(item.pemeriksaan_fisik);
+	$(`:text[name="tindakan_prosedur_utama"]`).val(item.tindakan_prosedur_utama);
+	$(`textarea[name="tindakan_prosedur_lain"]`).val(item.tindakan_prosedur_lain);
+	$(`textarea[name="terapi_pengobatan_selama_di_rs"]`).val(item.terapi_pengobatan_selama_di_rs);
+	$(`textarea[name="terapi_pengobatan_setelah_pulang"]`).val(item.terapi_pengobatan_setelah_pulang);
+	$(`textarea[name="instruksi_tindak_lanjut_follow_up"]`).val(item.instruksi_tindak_lanjut_follow_up);
+	$(`:radio[name="lanjutan_pengobatan"][value="${item.lanjutan_pengobatan}"]`).prop("checked", true);
+	$(`:text[name="lanjutan_pengobatan_di"]`).val(item.lanjutan_pengobatan_di);
+	$(`:radio[name="keadaan_keluar"][value="${item.keadaan_keluar}"]`).prop("checked", true);
+	$(`:text[name="rujuk_ke"]`).val(item.rujuk_ke);
+	$(`:radio[name="cara_keluar"][value="${item.cara_keluar}"]`).prop("checked", true);
+	$(`:checkbox[name="alergi_tidak_ada_alergi"]`).prop("checked", item.alergi_tidak_ada_alergi != null);
+	$(`:checkbox[name="alergi_obat_obatan"]`).prop("checked", item.alergi_obat_obatan != null);
+	$(`:checkbox[name="alergi_makanan"]`).prop("checked", item.alergi_makanan != null);
+	$(`:checkbox[name="alergi_lainnya"]`).prop("checked", item.alergi_lainnya != null);
+	$(`textarea[name="keterangan_alergi"]`).val(item.keterangan_alergi);

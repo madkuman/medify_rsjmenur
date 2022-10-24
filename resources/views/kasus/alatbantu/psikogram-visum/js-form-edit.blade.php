@@ -1,0 +1,20 @@
+
+	$(`:text[name="tanggal_pemeriksaan"]`).val(formatDate(item.tanggal_pemeriksaan));
+	$(`:text[name="tujuan_pemeriksaan"]`).val(item.tujuan_pemeriksaan);
+	$(`:text[name="rujukan_dari"]`).val(item.rujukan_dari);
+	$(`:radio[name="intelegensi_umum"][value="${item.intelegensi_umum}"]`).prop("checked", true);
+	$(`:radio[name="daya_nalar"][value="${item.daya_nalar}"]`).prop("checked", true);
+	$(`:radio[name="daya_analisa_sintesa"][value="${item.daya_analisa_sintesa}"]`).prop("checked", true);
+	$(`:radio[name="fleksibilitas_berpikir"][value="${item.fleksibilitas_berpikir}"]`).prop("checked", true);
+	$(`:radio[name="kemampuan_berkomunikasi"][value="${item.kemampuan_berkomunikasi}"]`).prop("checked", true);
+	$(`:radio[name="kemampuan_pengambilan_keputusan"][value="${item.kemampuan_pengambilan_keputusan}"]`).prop("checked", true);
+	$(`:radio[name="kreativitas"][value="${item.kreativitas}"]`).prop("checked", true);
+	$(`:radio[name="potensi_kerja"][value="${item.potensi_kerja}"]`).prop("checked", true);
+	$(`:radio[name="perencanaan_kerja"][value="${item.perencanaan_kerja}"]`).prop("checked", true);
+	$(`:radio[name="daya_tahan_kerja"][value="${item.daya_tahan_kerja}"]`).prop("checked", true);
+	$(`:radio[name="inisiatif"][value="${item.inisiatif}"]`).prop("checked", true);
+	$(`:radio[name="motivasi_dorongan_ambisi"][value="${item.motivasi_dorongan_ambisi}"]`).prop("checked", true);
+	$(`:radio[name="komitmen_pada_tugas"][value="${item.komitmen_pada_tugas}"]`).prop("checked", true);
+	$(`:radio[name="stabilitas_emosi"][value="${item.stabilitas_emosi}"]`).prop("checked", true);
+	$(`:radio[name="kerja_sama"][value="${item.kerja_sama}"]`).prop("checked", true);
+	$(`:radio[name="kepekaan_sosial"][value="${item.kepekaan_sosial}"]`).prop("checked", true);

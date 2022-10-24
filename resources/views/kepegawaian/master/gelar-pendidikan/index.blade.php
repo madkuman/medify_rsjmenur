@@ -1,0 +1,74 @@
+@extends('kepegawaian.layouts.main')
+
+@section('title')
+Master Gelar Pendidikan
+@endsection
+
+@section('subtitle')
+Master Gelar Pendidikan
+@endsection
+
+@section('css')
+<link rel="stylesheet" href="{{asset('assets/js/plugins/datatables/dataTables.bootstrap4.min.css')}}">
+@endsection
+
+@section('content')
+
+<div class="content" style="margin-top:50px;">
+	<div class="block p-10">
+		<div class="block-header">
+			<h3 class="block-title">
+				<small><a href="#" data-toggle="modal" data-target="#modal-create-gelar" class="pull-right">
+					<i class="fa fa-plus-circle"></i> Tambah Gelar Pendidikan</a>
+				</small>
+				Daftar Gelar Pendidikan
+			</h3>
+		</div>
+		<div class="block-content">
+			<table class="table table-bordered table-striped table-vcenter js-dataTable-full" id="example">
+				<thead>
+					<tr>
+						<th class="" width="50px">No</th>
+						<th>Nama</th>
+						<th>Strata</th>
+						<th>Indek</th>
+						<th>Aksi</th>
+					</tr>
+				</thead>
+				<tbody>
+					@php $i = 1; @endphp
+					@foreach($gelar as $item)
+					<tr>
+						<td class="">{{$i}}</td>
+						<td>{{$item->nama}}</td>
+						<td>
+							{{$item->strata_pendidikan->nama}}
+							<span class="strata hide">{{$item->pendidikan_strata_id}}</span>
+						</td>
+						<td>{{$item->index}}</td>
+						<td class="">
+							<a href="javascript:void(0)" class="btn btn-sm btn-circle btn-outline-info mr-5 mb-5 btn-edit" data-id="{{$item->id}}" data-nama="{{$item->nama}}" data-index-gelar="{{$item->index}}">
+								<i class="fa fa-edit"></i></a>
+								<a href="#deletemodal" class="btn-delete btn btn-sm btn-circle btn-outline-danger mr-5 mb-5"
+								data-toggle="modal" data-id="{{$item->id}}" data-nama="{{$item->nama}}">
+								<i class="fa fa-trash"></i></a>
+							</td>
+						</tr>
+						@php $i++; @endphp	
+						@endforeach
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	@include('kepegawaian.master.gelar-pendidikan.components.modal-delete')
+	@include('kepegawaian.master.gelar-pendidikan.components.modal-create')
+	@include('kepegawaian.master.gelar-pendidikan.components.modal-edit')
+	@endsection
+
+	@section('js')
+	
+	@include('kepegawaian.master.gelar-pendidikan.components.js-index')
+
+	@endsection

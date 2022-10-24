@@ -1,0 +1,67 @@
+
+	<tr>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong>TOTAL PO</strong></th>
+		<th><strong>{{number_format($total_po,0)}}</strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+	</tr>
+	<tr>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong>TOTAL TERBAYAR</strong></th>
+		<th><strong>{{number_format($total_po_terbayar,0)}}</strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+	</tr>
+	<tr>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+		<th><strong>TOTAL SISA</strong></th>
+		<th><strong></strong></th>
+		<th><strong>{{number_format($total_po_sisa,0)}}</strong></th>
+		<th><strong></strong></th>
+		<th><strong></strong></th>
+	</tr>
+	<tr>
+		<th colspan="19"></th>
+	</tr>

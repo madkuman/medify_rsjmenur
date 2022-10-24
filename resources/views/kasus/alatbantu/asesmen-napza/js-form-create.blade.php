@@ -1,0 +1,40 @@
+
+	$(`:text[name="alergi"]`).val("");
+	$(`:text[name="risiko"]`).val("");
+	$(`:text[name="tanggal_pengkajian"]`).val("");
+	$(`:text[name="jam_pengkajian"]`).val("");
+
+	$(`:text[name="jenis_zat_yang_dipakai[]"]`)[0].value = '';
+	$(`:text[name="tanggal_sejak[]"]`)[0].value = '';
+	$(`:text[name="tanggal_sampai_dengan[]"]`)[0].value = '';
+	
+	$(`:checkbox[name="alasan_penggunaan_zat_diajak_teman"]`).prop("checked", false);
+	$(`:checkbox[name="alasan_penggunaan_zat_dipaksa_teman"]`).prop("checked", false);
+	$(`:checkbox[name="alasan_penggunaan_zat_coba_coba_keinginan_sendiri"]`).prop("checked", false);
+	$(`:checkbox[name="alasan_penggunaan_zat_pelarian_dari_masalah"]`).prop("checked", false);
+	$(`:text[name="komplikasi_medik_jiwa"]`).val("");
+	$(`:checkbox[name="kriminal_dirumah_tidak_ada_masalah"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_dirumah_mencuri"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_dirumah_mengancam"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_dirumah_menggadai"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_dirumah_mengambil_barang_dengan_paksaan"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_dirumah_menjual_barang_sendiri"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_dirumah_mengambil_barang"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_dirumah_merusak"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_diluar_rumah_tidak_ada_masalah"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_diluar_rumah_mencuri"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_diluar_rumah_merampas_barang"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_diluar_rumah_membunuh"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_diluar_rumah_merampok"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_diluar_rumah_mengancam"]`).prop("checked", false);
+	$(`:checkbox[name="kriminal_diluar_rumah_merusak"]`).prop("checked", false);
+	$(`:checkbox[name="catatan_polisi_tidak_ada"]`).prop("checked", false);
+	$(`:checkbox[name="catatan_polisi_ditahan_diproses_pengadilan"]`).prop("checked", false);
+	$(`:checkbox[name="catatan_polisi_ditahan_kemudian_langsung_dipulangkan"]`).prop("checked", false);
+	$(`:text[name="lain_lain_catatan_polisi"]`).val("");
+	$(`:checkbox[name="problem_sekolah_tidak_ada_masalah"]`).prop("checked", false);
+	$(`:checkbox[name="problem_sekolah_tidak_naik_kelas"]`).prop("checked", false);
+	$(`:checkbox[name="problem_sekolah_berhenti_sekolah"]`).prop("checked", false);
+	$(`:checkbox[name="problem_sekolah_susah_konsentrasi_belajar"]`).prop("checked", false);
+	$(`:checkbox[name="problem_sekolah_dikeluarkan_dari_sekolah"]`).prop("checked", false);
+	$(`:checkbox[name="problem_sekolah_tidak_disiplin"]`).prop("checked", false);

@@ -1,0 +1,125 @@
+<head>
+	<title>Hasil Pemeriksaan Radiologi</title>
+</head>
+
+<style type="text/css">
+.small-col {
+	width: 17%;
+}
+.big-col {
+	width: 43%;
+}
+.med-col {
+	width: 23%;
+}
+td {
+	vertical-align: top;
+}
+.title {
+	text-align: center; 
+	font-weight: bold;
+}
+.left-hr{
+	width: 50%; 
+	margin-left: 0px;
+}
+.mb-5{
+	margin-bottom: 5px;
+}
+body {
+	margin-top: -30px;
+	margin-bottom: -30px;    
+}
+.centered{
+	text-align: center;
+}
+.bot{
+	border-bottom: 2px solid black
+}
+.va-mid{
+	vertical-align: middle;
+}
+.logo{
+	position: absolute;
+	z-index: 100;
+}
+.head{
+	font-size: 42px;
+}
+</style>
+<body>
+	@php $page=1; @endphp
+	@foreach($result as $row)
+	@if ($page>1)
+	<div style="page-break-after: always;"></div>
+	@endif
+	@php $page++ @endphp
+	<table width="100%">
+		<tr>
+			<td width="100%"><img src="{{config('app.kop_lg')}}" height="50"></td>
+		</tr>
+	</table>
+
+	<p class="title">RADIOLOGI</p>
+	<hr>
+	<table style="width: 100vw; font-size: 13px;">
+		<thead>
+			<tr>
+				<td class="small-col" >Nama</td>
+				<td class="big-col" >: {{$row->transaksi->pasien->name}}</td>\
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td class="small-col" >Umur/TTL</td>
+				<td class="big-col" >: {{$row->transaksi->pasien->age}} Tahun / {{$row->transaksi->pasien->place_of_birth}}, {{date('d F Y', strtotime($row->transaksi->pasien->date_of_birth))}}</td>
+				<td class="small-col" >Register</td>
+				<td class="med-col" >: {{$row->transaksi->pasien->no_rm}} </td>          
+			</tr>
+			<tr>
+				<td class="small-col" >Alamat</td>
+				<td class="big-col" >: {{$row->transaksi->pasien->address}}</td>
+				<td class="small-col" >Rumah Sakit</td>
+				<td class="med-col" >: {{is_null($row->transaksi->nama_rs) ? config('app.name'): $row->transaksi->nama_rs}}</td>
+			</tr>
+			<tr>
+				<td class="small-col" >Pangkat</td>
+				<td class="big-col" >: {{($row->transaksi->pasien->tni_pangkat_id != 0) ? $row->transaksi->pasien->tni_pangkat->nama : '-'}}</td>
+				<td class="small-col" >Poli/ Ruang</td>
+				<td class="med-col" >: {{ $row->transaksi->asal['nama'] }}</td>
+			</tr>
+			<tr>
+				<td class="small-col" >Rol / Kesatuan</td>
+				<td class="big-col" >: {{($row->transaksi->pasien->tni_kotama_id != 0) ? $row->transaksi->pasien->tni_kotama->nama : '-'}} /
+					{{($row->transaksi->pasien->tni_satker_id != 0) ? $row->transaksi->pasien->tni_satker->nama : '-'}} 
+				</td>
+				<td class="small-col" >Tanggal Terima</td>
+				<td class="med-col" >: {{date('d F Y', strtotime($row->transaksi->created_at))}}</td>
+			</tr>
+			<tr>
+				<td class="small-col" >Dokter</td>
+				<td class="big-col" >: {{$dpjp->user->name ?? '-'}}</td>
+				<td class="small-col" >Tanggal Selesai</td>
+				<td class="med-col" >: {{date('d F Y', strtotime($row->transaksi->result_created_at))}}</td>
+			</tr>
+		</tbody>
+	</table>
+	<hr>
+	<div style=" margin-bottom: 30px; font-size: 13px;">
+		{!! nl2br($row->hasil->hasil_baca) !!}
+	</div>
+<table style="width: 100vw">
+	<tr>
+		<td style="width: 35%; text-align: center;">Dokter yang memeriksa</td>
+		<td style="width: 65%"></td>
+	</tr>
+	<tr>
+		<td colspan="2" style="color: white; font-size: 40px;">dummy</td>
+	</tr>
+	<tr>
+		<td style="width: 35%; text-align: center;">{{$row->transaksi->pemeriksa->name}}</td>
+		<td style="width: 65%"></td>
+	</tr>
+</table>
+@endforeach
+</body>

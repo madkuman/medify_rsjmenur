@@ -1,0 +1,123 @@
+<?php
+
+namespace App\Exports\Farmasi;
+
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Events\BeforeExport;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+
+class LaporanPelayananObatJknView implements FromView, WithEvents, WithColumnFormatting
+{
+
+    use Exportable;
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class    => function(AfterSheet $event) {
+                $rows = $event->sheet->getDelegate()->toArray();
+                $rows = count($rows);
+
+                $event->sheet->getColumnDimension('A')->setAutoSize(true);
+                $event->sheet->getColumnDimension('B')->setWidth(30);
+                $event->sheet->getColumnDimension('C')->setWidth(30);
+                $event->sheet->getColumnDimension('D')->setAutoSize(true);
+                $event->sheet->getColumnDimension('E')->setAutoSize(true);
+                $event->sheet->getColumnDimension('F')->setAutoSize(true);
+                $event->sheet->getColumnDimension('G')->setAutoSize(true);
+                $event->sheet->getColumnDimension('H')->setAutoSize(true);
+                $event->sheet->getColumnDimension('I')->setAutoSize(true);
+                $event->sheet->getColumnDimension('J')->setAutoSize(true);
+                $event->sheet->getColumnDimension('K')->setAutoSize(true);
+                $event->sheet->getColumnDimension('L')->setAutoSize(true);
+
+                $event->sheet->styleCells(
+                    'A1:L4',
+                    [
+                        'font' => [
+                            'bold' => true
+                        ],
+                        'alignment' => [
+                            'vertical'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                            'horizontal'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                            'wrapText'     => TRUE,
+                            'textRotation' => 0
+                        ]
+                    ]
+                );
+
+                $event->sheet->styleCells(
+                    'A5:L14',
+                    [
+                        'font' => [
+                            'bold' => true
+                        ],
+                        'alignment' => [
+                            'vertical'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                            'wrapText'     => TRUE,
+                            'textRotation' => 0
+                        ]
+                    ]
+                );
+
+                $event->sheet->styleCells(
+                    'A15:L17',
+                    [
+                        'font' => [
+                            'bold' => true
+                        ],
+                        'alignment' => [
+                            'vertical'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                            'horizontal'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                            'wrapText'     => TRUE,
+                            'textRotation' => 0
+                        ]
+                    ]
+                );
+
+                $event->sheet->styleCells(
+                    'A18:L'.$rows,
+                    [
+                        'alignment' => [
+                            'vertical'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                            'wrapText'     => TRUE,
+                            'textRotation' => 0
+                        ]
+                    ]
+                );
+
+            },
+        ];
+    }
+
+    public function columnFormats(): array
+    {
+        return [
+            'F' => '#,##0',
+            'G' => '#,##0',
+            'H' => '#,##0',
+            'I' => '#,##0',
+            'J' => '#,##0',
+            'K' => '#,##0',
+            'L' => '#,##0',
+        ];
+    }
+
+    public function __construct($data)
+    {
+        $this->data = $data;
+    }
+
+    public function view(): View
+    {
+        return view('farmasi.laporan.view.laporan-pelayanan-obat-jkn', $this->data);
+    }
+
+}

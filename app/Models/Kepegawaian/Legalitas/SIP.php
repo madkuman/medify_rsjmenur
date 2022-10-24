@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Models\Kepegawaian\Legalitas;
+
+use Illuminate\Database\Eloquent\Model;
+
+class SIP extends Model
+{
+    protected $connection = 'kepegawaian';
+    protected $table = 'legalitas_sip_pegawai';
+    
+    public function pegawai()
+    {
+        return $this->hasOne('\App\Models\Kepegawaian\Pegawai');
+    }
+}

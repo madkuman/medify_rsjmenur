@@ -1,0 +1,28 @@
+
+	$(`:radio[name="usia"][value="${item.usia}"]`).prop("checked", true);
+	$(`:radio[name="status_mental"][value="${item.status_mental}"]`).prop("checked", true);
+	$(`:radio[name="eliminasi"][value="${item.eliminasi}"]`).prop("checked", true);
+	$(`:checkbox[name="pengobatan_tanpa"]`).prop("checked", item.pengobatan_tanpa != 0);
+	$(`:checkbox[name="pengobatan_jantung"]`).prop("checked", item.pengobatan_jantung != 0);
+	$(`:checkbox[name="pengobatan_psikotoprik"]`).prop("checked", item.pengobatan_psikotoprik != 0);
+	$(`:checkbox[name="pengobatan_tambahan"]`).prop("checked", item.pengobatan_tambahan != 0);
+	$(`:checkbox[name="diagnosa_bipolar"]`).prop("checked", item.diagnosa_bipolar != 0);
+	$(`:checkbox[name="diagnosa_obat"]`).prop("checked", item.diagnosa_obat != 0);
+	$(`:checkbox[name="diagnosa_gangguan"]`).prop("checked", item.diagnosa_gangguan != 0);
+	$(`:checkbox[name="diagnosa_demensia"]`).prop("checked", item.diagnosa_demensia != 0);
+	$(`:radio[name="ambulasi"][value="${item.ambulasi}"]`).prop("checked", true);
+	$(`:radio[name="nutrisi"][value="${item.nutrisi}"]`).prop("checked", true);
+	$(`:radio[name="gangguan_pola_tidur"][value="${item.gangguan_pola_tidur}"]`).prop("checked", true);
+	$(`:radio[name="riwayat_jatuh"][value="${item.riwayat_jatuh}"]`).prop("checked", true);
+	$(`:text[name="tanggal_risiko_jatuh"]`).val(formatDate(item.tanggal_risiko_jatuh));
+	$(`:text[name="jam_risiko_jatuh"]`).val(item.jam_risiko_jatuh);
+	$(`:checkbox[name="pasien_skor_lebih_dari_90_pasang_stiker_warna_kuning"]`).prop("checked", item.pasien_skor_lebih_dari_90_pasang_stiker_warna_kuning != null);
+	$(`:checkbox[name="pasien_skor_lebih_dari_90_tempelkan_stiker_warna_kuning"]`).prop("checked", item.pasien_skor_lebih_dari_90_tempelkan_stiker_warna_kuning != null);
+	$(`:checkbox[name="pasien_skor_lebih_dari_90_pakaikan_baju_dengan_penanda"]`).prop("checked", item.pasien_skor_lebih_dari_90_pakaikan_baju_dengan_penanda != null);
+	$(`:checkbox[name="pasien_skor_lebih_dari_90_pakaikan_sprei_dengan_penanda"]`).prop("checked", item.pasien_skor_lebih_dari_90_pakaikan_sprei_dengan_penanda != null);
+	$(`:checkbox[name="pasien_skor_lebih_dari_90_motivasi_keluarga"]`).prop("checked", item.pasien_skor_lebih_dari_90_motivasi_keluarga != null);
+	$(`:checkbox[name="pasien_skor_lebih_dari_90_tempatkan_pasien_dekat_nurse_station"]`).prop("checked", item.pasien_skor_lebih_dari_90_tempatkan_pasien_dekat_nurse_station != null);
+	$(`:checkbox[name="pasien_skor_lebih_dari_90_lakukan_pemasangan_fiksasi_fisil"]`).prop("checked", item.pasien_skor_lebih_dari_90_lakukan_pemasangan_fiksasi_fisil != null);
+	$(`:checkbox[name="pasien_skor_lebih_dari_90_orientasikan_pasien"]`).prop("checked", item.pasien_skor_lebih_dari_90_orientasikan_pasien != null);
+	$(`:text[name="tanggal_pasien"]`).val(formatDate(item.tanggal_pasien));
+	$(`:text[name="jam_pasien"]`).val(item.jam_pasien);

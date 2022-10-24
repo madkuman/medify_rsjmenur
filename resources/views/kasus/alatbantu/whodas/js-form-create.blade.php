@@ -1,0 +1,22 @@
+
+	$(`:text[name="berapa_tahun_menempuh_pendidikan"]`).val("");
+	$(`:text[name="nomor_identitas_responden"]`).val("");
+	$(`:text[name="nomor_identitas_pewawancara"]`).val("");
+	$(`:text[name="titik_waktu_penilaian"]`).val("");
+	$(`:text[name="waktu_wawancara"]`).val("");
+	$(`:radio[name="situasi_hidup_saat_wawancara"]`).prop("checked", false);
+	$(`:radio[name="berdiri_untuk_jangka_waktu_yang_lama"]`).prop("checked", false);
+	$(`:radio[name="melakukan_pekerjaan_rumah"]`).prop("checked", false);
+	$(`:radio[name="mempelajari_hal_baru"]`).prop("checked", false);
+	$(`:radio[name="mengalami_kesulitan_bergabung"]`).prop("checked", false);
+	$(`:radio[name="kondisi_kesehatan_mempengaruhi_emosional"]`).prop("checked", false);
+	$(`:radio[name="berkonsentrasi_dalam_melakukan_sesuatu"]`).prop("checked", false);
+	$(`:radio[name="berjalan_dalam_jarak_yang_jauh"]`).prop("checked", false);
+	$(`:radio[name="mandi"]`).prop("checked", false);
+	$(`:radio[name="berpakaian"]`).prop("checked", false);
+	$(`:radio[name="berhubungan_dengan_orang_baru"]`).prop("checked", false);
+	$(`:radio[name="mempertahankan_pertemanan"]`).prop("checked", false);
+	$(`:radio[name="kembali_bekerja_atau_bersekolah"]`).prop("checked", false);
+	$(`:text[name="berapa_hari_anda_mengalami_kesulitan"]`).val("");
+	$(`:text[name="berapa_hari_sama_sekali_tidak_mampu_melakukan_aktifitas"]`).val("");
+	$(`:text[name="berapa_hari_anda_harus_mengurangi_aktifitas"]`).val("");

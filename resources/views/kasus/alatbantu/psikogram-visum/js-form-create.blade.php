@@ -1,0 +1,19 @@
+
+	$(`:text[name="tujuan_pemeriksaan"]`).val("");
+	$(`:text[name="rujukan_dari"]`).val("");
+	$(`:radio[name="intelegensi_umum"]`).prop("checked", false);
+	$(`:radio[name="daya_nalar"]`).prop("checked", false);
+	$(`:radio[name="daya_analisa_sintesa"]`).prop("checked", false);
+	$(`:radio[name="fleksibilitas_berpikir"]`).prop("checked", false);
+	$(`:radio[name="kemampuan_berkomunikasi"]`).prop("checked", false);
+	$(`:radio[name="kemampuan_pengambilan_keputusan"]`).prop("checked", false);
+	$(`:radio[name="kreativitas"]`).prop("checked", false);
+	$(`:radio[name="potensi_kerja"]`).prop("checked", false);
+	$(`:radio[name="perencanaan_kerja"]`).prop("checked", false);
+	$(`:radio[name="daya_tahan_kerja"]`).prop("checked", false);
+	$(`:radio[name="inisiatif"]`).prop("checked", false);
+	$(`:radio[name="motivasi_dorongan_ambisi"]`).prop("checked", false);
+	$(`:radio[name="komitmen_pada_tugas"]`).prop("checked", false);
+	$(`:radio[name="stabilitas_emosi"]`).prop("checked", false);
+	$(`:radio[name="kerja_sama"]`).prop("checked", false);
+	$(`:radio[name="kepekaan_sosial"]`).prop("checked", false);

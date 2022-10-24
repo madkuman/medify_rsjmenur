@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Exports\Eusulan;
+
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use Maatwebsite\Excel\Events\BeforeExport;
+use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Sheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+
+class LaporanUsulanFinal implements WithMultipleSheets
+{
+
+    use Exportable;
+
+    public function __construct($data)
+    {
+        $this->data = $data;
+    }
+
+    public function sheets(): array
+    {
+        $sheet = [];
+        foreach ($this->data['unit'] as $index => $unit){
+            $sheet[] = new LaporanUsulanFinalView($unit,$this->data['data'][$unit->id],$this->data['tahun']);
+        }
+        return $sheet;
+    }
+
+}

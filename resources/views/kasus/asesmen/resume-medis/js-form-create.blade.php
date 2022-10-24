@@ -1,0 +1,21 @@
+
+	$(`:text[name="alasan_datang_indikasi_dirawat"]`).val("");
+	$(`:text[name="diagnosa_masuk"]`).val("{{$kasus->diagnosisUtama->icd10->code_icd}} - {{$kasus->diagnosisUtama->icd10->long_desc}}");
+	$(`:text[name="diagnosa_utama"]`).val("{{$kasus->diagnosisUtama->icd10->code_icd}} - {{$kasus->diagnosisUtama->icd10->long_desc}}");
+	$(`textarea[name="diagnosa_tambahan"]`).val("{{$diagnosaAll}}");
+	$(`textarea[name="pemeriksaan_fisik"]`).val("");
+	$(`:text[name="tindakan_prosedur_utama"]`).val("{{$tindakanUtama}}");
+	$(`textarea[name="tindakan_prosedur_lain"]`).val("{{$tindakanAll}}");
+	$(`textarea[name="terapi_pengobatan_selama_di_rs"]`).val("{{$resepAll}}");
+	$(`textarea[name="terapi_pengobatan_setelah_pulang"]`).val("");
+	$(`textarea[name="instruksi_tindak_lanjut_follow_up"]`).val("");
+	$(`:radio[name="lanjutan_pengobatan"]`).prop("checked", false);
+	$(`:text[name="lanjutan_pengobatan_di"]`).val("");
+	$(`:radio[name="keadaan_keluar"]`).prop("checked", false);
+	$(`:text[name="rujuk_ke"]`).val("");
+	$(`:radio[name="cara_keluar"]`).prop("checked", false);
+	$(`:checkbox[name="alergi_tidak_ada_alergi"]`).prop("checked", false);
+	$(`:checkbox[name="alergi_obat_obatan"]`).prop("checked", false);
+	$(`:checkbox[name="alergi_makanan"]`).prop("checked", false);
+	$(`:checkbox[name="alergi_lainnya"]`).prop("checked", false);
+	$(`textarea[name="keterangan_alergi"]`).val("1.\n2.\n3.\n4.\n5.");

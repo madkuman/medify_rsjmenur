@@ -1,0 +1,438 @@
+body{
+	overflow-y:scroll;
+}
+
+nav a
+{
+	color:#fff;
+	padding:0px 20px;
+	font-weight: 500;
+}
+nav a:active
+{
+	color:#fff;
+}
+
+nav a i
+{
+	color:#33337f;
+}
+
+nav li a:hover
+{
+	background-color: #5b5be5!important;
+	border-radius: 5px;
+	color: white;
+}
+nav .navbar-right li:hover 
+{
+	background-color: transparent;
+}
+
+nav .navbar-right a:hover 
+{
+	color:white;
+}
+
+nav li a span.badge
+{
+	position: absolute;
+	top: -5px;
+	right:-5px;
+	color: red;
+	background-color: white;
+	border: none;
+}
+
+nav li a:hover span.badge
+{
+	color: red;
+	background-color: #eee;
+	border: none;
+}
+
+
+
+.navbar .navbar-nav > li > a
+{
+	padding: 5px 5px;
+	margin: 15px 10px;
+}
+
+.navbar .navbar-brand
+{
+	padding:14px 15px;
+}
+
+
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover
+{
+	background: none;
+	color:#fff;
+}
+
+.nav img
+{
+	margin-top: -5px;
+}
+
+ul.sidebar li
+{
+	margin:0px 0px;
+}
+
+ul.sidebar i
+{
+	display: inline-block;
+	border-radius: 20px;
+	padding:5px;
+	color: black;
+	width: 25px;
+}
+
+.card
+{
+	box-shadow: none;
+}
+
+.nav-stacked > li:last-child > a, .nav-text > li:first-child > a, ul.sidebar li a,
+ul.sidebar li.title
+{
+	color:#222;
+	text-transform: capitalize;
+	padding: 5px;
+	border-radius: 5px;
+	padding-left: 5px;
+	margin-bottom: 5px;
+}
+
+ul.sidebar li.title
+{
+	text-align: left;
+	font-weight: 700;
+	text-transform: uppercase;
+	padding:2px;
+	color:#555;
+}
+
+ul.sidebar li a:hover,
+ul.sidebar li:hover i,
+ul.sidebar li.active a,
+ul.sidebar li.active i
+{
+	color: #6666ff;
+}
+
+ul.sidebar li:hover .badge,
+ul.sidebar li.active .badge
+{
+	background-color:#6666ff;
+}
+
+
+
+ul.sidebar li.active i
+
+.card {
+	box-shadow: none;
+	background-color: #FFFFFF;
+	margin-bottom: 20px;
+}
+
+.card.border
+{
+
+	border-radius: 6px;
+	border:solid 1px #efefef;
+}
+
+.card-user .image
+{
+	height: 100px;
+}
+
+#main-wrapper
+{
+	background-color: #F8F4FA;
+	padding-top: 91px;
+	min-height: 100vh;
+}
+
+
+.inventory-out
+{
+	color:red;
+}
+
+.list-item .inventory-out, .list-item .inventory-in
+{
+
+	padding-top: 25%;
+}
+
+.inventory-in .fa, .inventory-out .fa
+{
+	font-size: 2em;
+	width:2.1em
+}
+
+.inventory-in
+{
+	color:#6666ff;
+}
+
+hr {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border: 0;
+	border-top: 1px solid #eee;
+}
+
+.sidebar .badge
+{
+	float: right;
+}
+
+.card .post-creator
+{
+	margin-bottom: 5px;
+}
+
+.card hr
+{
+	margin:0;
+}
+
+hr.regular
+{
+	margin:5px 0px;
+}
+
+hr.big
+{
+	margin:20px 0px ;
+}
+
+h1, .h1, h2, .h2, h3, .h3, h4, .h4
+{
+	margin:0;
+}
+
+h4
+{
+	font-weight: 700;
+	padding-top: 20px;
+}
+
+.nav-menu-list a
+{
+	color:black;
+}
+
+.nav-menu-list
+{
+	border-bottom: solid 1px #eee;
+}
+
+.nav-menu-list:last-child
+{
+	border: none;
+}
+
+.nav-menu-list.unread
+{
+	font-weight: 700;
+}
+
+.nav-menu-list a:hover, .nav-menu-list:hover
+{
+	color:#333;
+	text-decoration: underline;
+	background-color: #F8FCFA!important;
+}
+
+.col-zero
+{
+	margin:0;
+	padding:0px 0px;
+}
+
+.menu-item-1 .avatar-container
+{
+	padding-top: 5px;
+	padding: 8px;
+}
+
+a:focus
+{
+	outline: none;
+}
+body {
+	padding-right:0px !important;
+	margin-right:0px !important;
+}
+
+body.modal-open {
+	overflow-y: scroll;
+}
+
+.radio-div .item{
+	background-color:#c5e043;
+	display:inline-block;
+	width:10px;
+	height:10px
+}
+
+.form-container
+{
+	margin:15px 0px;
+}
+
+.row-margin
+{
+	margin-bottom: 10px;
+}
+
+.card .header
+{
+	padding: 10px;
+	background-color: #F8FCFA;
+	border-bottom: solid 1px #dfe2e1;
+}
+
+.separator
+{
+	padding:20px;
+}
+
+.card a .title
+{
+	color:#6666ff;
+}
+
+
+.navbar .dropdown-menu.notify-drop {
+	min-width: 330px;
+	background-color: #fff;
+}
+
+.wrapper.fullscreen
+{
+	background-position: center center;
+	background-size: cover;
+	min-height: 100vh;
+	overflow: hidden;
+	position: absolute;
+	width: 100%;
+
+}
+
+.text-white
+{
+	color:white;
+}
+
+.capitalize
+{
+	text-transform: capitalize;
+}
+
+.nav-menu-list .content.inventory-in,
+.nav-menu-list .content.inventory-out
+{
+	color: inherit;
+}
+
+
+.nav-menu-list .content.inventory-out
+{
+	border-left: 4px solid red;
+}
+.nav-menu-list .content.inventory-in
+{
+	border-left: 4px solid #6666ff;
+}
+
+
+.sidebar .account-name,
+.sidebar .account-profession
+{
+	padding-left: 2px;
+}
+.sidebar .account-profession
+{
+	font-weight: 300;
+}
+
+ul.sidebar li.account
+{
+	margin-bottom: 20px!important;
+}
+
+ul.sidebar li.title
+{
+	margin-top: 20px;
+	color: #999;
+}
+
+.alert-black
+{
+	background: #333;
+}
+
+.navbar-brand
+{
+  position: absolute;
+  width: 100%;
+  left: 0;
+  text-align: center;
+  margin:0 auto;
+}
+
+.transaction-index .nav-menu-list .content
+{
+	margin-top: 5px;
+}
+
+#main-wrapper .main-content
+{
+	padding:10px 30px;
+}
+
+.no-padding{
+	padding:0;
+}
+
+.row.margin-top
+{
+	margin-top: 10px;
+}
+
+.nav-sidebar .title {
+    color: #555;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.nav-sidebar li a {
+    padding: 2px 0px;
+    color: #000;
+}
+
+.nav-sidebar li a:hover{
+	color:#6666ff;
+}
+
+.h4, .h5, .h6, h4, h5, h6
+{
+	margin-top: 0px;
+}
+
+.text-light{
+	font-weight: 300;
+}
+
+.bg-success
+{
+	background-color: #ffd700!important;
+}

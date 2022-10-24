@@ -1,0 +1,67 @@
+DROP TABLE IF EXISTS `tbpktlama`;
+CREATE TABLE `tbpktlama` (
+  `kd_pkt` double default NULL,
+  `pkt` varchar(255) default NULL,
+  `pok_kat` double default NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+#
+# Data for table "tbpktlama"
+#
+
+/*!40000 ALTER TABLE `tbpktlama` DISABLE KEYS */;
+INSERT INTO `tbpktlama` VALUES 
+(1,'Laksamana',0),
+(2,'Jendral',0),
+(3,'Laksdya',0),
+(4,'Letjen',0),
+(5,'Laksda',0),
+(6,'Mayjen',0),
+(7,'Laksma',0),
+(8,'Brigjen',0),
+(9,'Kolonel',0),
+(10,'Letkol',0),
+(11,'Mayor',0),
+(12,'Kapten',0),
+(13,'Lettu',0),
+(14,'Letda',0),
+(15,'Peltu',0),
+(16,'Pelda',0),
+(17,'Serma',0),
+(18,'Serka',0),
+(19,'Sertu',0),
+(20,'Serda',0),
+(21,'Kopka',0),
+(22,'Koptu',0),
+(23,'Kopda',0),
+(24,'Klk',0),
+(25,'Praka',0),
+(26,'Kls',0),
+(27,'Pratu',0),
+(28,'Kld',0),
+(29,'Prada',0),
+(31,'Pembina Utama IV/d',0),
+(32,'Pembina Utama IV/c',0),
+(33,'Pembina Tk.I IV/b',0),
+(34,'Pembina IV/a',0),
+(35,'Penata Tk.I III/d',0),
+(36,'Penata III/c',0),
+(37,'Penda Tk.I III/b',0),
+(38,'Penda III/a',0),
+(39,'Pengatur Tk.I II/d',0),
+(40,'Pengatur II/c',0),
+(41,'Pengda Tk.I II/b',0),
+(42,'CPNS II/b',0),
+(43,'CPNS II/a',0),
+(44,'Juru Tk.I I/d',0),
+(45,'CPNS I/c',0),
+(46,'CPNS I/b',0),
+(47,'Jurda I/a',0),
+(48,'Pengda II/a',0),
+(49,'CPNS III/a',0),
+(50,'CPNS III/b',0),
+(51,'CPNS I/a',0),
+(52,'Jurda Tk.I I/b',0),
+(53,'Juru I/c',0),
+(54,'CPNS II/c',0),
+(55,'PHL',0);

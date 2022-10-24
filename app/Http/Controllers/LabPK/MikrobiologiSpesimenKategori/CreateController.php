@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Http\Controllers\LabPK\MikrobiologiSpesimenKategori;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\LabPK\MikrobiologiSpesimenKategori;
+use Auth;
+
+class CreateController extends Controller
+{
+	public function create($data)
+	{
+		$form = new MikrobiologiSpesimenKategori;
+		$form->nama =  $data['nama'] ?? null;
+		$form->created_by = Auth::user()->id;		
+		$form->save();
+
+		return $form;
+	}
+}

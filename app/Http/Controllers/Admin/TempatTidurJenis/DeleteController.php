@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Http\Controllers\Admin\TempatTidurJenis;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class DeleteController extends Controller
+{
+    public function delete($id)
+	{
+		$pendidikan = app('App\Http\Controllers\Admin\TempatTidurJenis\ReadController')->getById($id);
+		$pendidikan->delete();
+		return;
+	} 
+}

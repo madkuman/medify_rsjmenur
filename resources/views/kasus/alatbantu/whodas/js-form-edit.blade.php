@@ -1,0 +1,22 @@
+
+	$(`:text[name="berapa_tahun_menempuh_pendidikan"]`).val(item.berapa_tahun_menempuh_pendidikan);
+	$(`:text[name="nomor_identitas_responden"]`).val(item.nomor_identitas_responden);
+	$(`:text[name="nomor_identitas_pewawancara"]`).val(item.nomor_identitas_pewawancara);
+	$(`:text[name="titik_waktu_penilaian"]`).val(item.titik_waktu_penilaian);
+	$(`:text[name="waktu_wawancara"]`).val(formatDate(item.waktu_wawancara));
+	$(`:radio[name="situasi_hidup_saat_wawancara"][value="${item.situasi_hidup_saat_wawancara}"]`).prop("checked", true);
+	$(`:radio[name="berdiri_untuk_jangka_waktu_yang_lama"][value="${item.berdiri_untuk_jangka_waktu_yang_lama}"]`).prop("checked", true);
+	$(`:radio[name="melakukan_pekerjaan_rumah"][value="${item.melakukan_pekerjaan_rumah}"]`).prop("checked", true);
+	$(`:radio[name="mempelajari_hal_baru"][value="${item.mempelajari_hal_baru}"]`).prop("checked", true);
+	$(`:radio[name="mengalami_kesulitan_bergabung"][value="${item.mengalami_kesulitan_bergabung}"]`).prop("checked", true);
+	$(`:radio[name="kondisi_kesehatan_mempengaruhi_emosional"][value="${item.kondisi_kesehatan_mempengaruhi_emosional}"]`).prop("checked", true);
+	$(`:radio[name="berkonsentrasi_dalam_melakukan_sesuatu"][value="${item.berkonsentrasi_dalam_melakukan_sesuatu}"]`).prop("checked", true);
+	$(`:radio[name="berjalan_dalam_jarak_yang_jauh"][value="${item.berjalan_dalam_jarak_yang_jauh}"]`).prop("checked", true);
+	$(`:radio[name="mandi"][value="${item.mandi}"]`).prop("checked", true);
+	$(`:radio[name="berpakaian"][value="${item.berpakaian}"]`).prop("checked", true);
+	$(`:radio[name="berhubungan_dengan_orang_baru"][value="${item.berhubungan_dengan_orang_baru}"]`).prop("checked", true);
+	$(`:radio[name="mempertahankan_pertemanan"][value="${item.mempertahankan_pertemanan}"]`).prop("checked", true);
+	$(`:radio[name="kembali_bekerja_atau_bersekolah"][value="${item.kembali_bekerja_atau_bersekolah}"]`).prop("checked", true);
+	$(`:text[name="berapa_hari_anda_mengalami_kesulitan"]`).val(item.berapa_hari_anda_mengalami_kesulitan);
+	$(`:text[name="berapa_hari_sama_sekali_tidak_mampu_melakukan_aktifitas"]`).val(item.berapa_hari_sama_sekali_tidak_mampu_melakukan_aktifitas);
+	$(`:text[name="berapa_hari_anda_harus_mengurangi_aktifitas"]`).val(item.berapa_hari_anda_harus_mengurangi_aktifitas);

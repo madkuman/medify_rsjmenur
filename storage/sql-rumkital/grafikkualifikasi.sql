@@ -1,0 +1,63 @@
+DROP TABLE IF EXISTS `t_grafik_kualifikasi`;
+CREATE TABLE `t_grafik_kualifikasi` (
+  `Kualifikasi` varchar(30) default NULL,
+  `TNI` varchar(10) default NULL,
+  `PNS` varchar(10) default NULL,
+  `PHL` varchar(10) default NULL,
+  `Jumlah` varchar(10) default NULL,
+  `tgl` date default NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+#
+# Data for table "t_grafik_kualifikasi"
+#
+
+/*!40000 ALTER TABLE `t_grafik_kualifikasi` DISABLE KEYS */;
+INSERT INTO `t_grafik_kualifikasi` VALUES ('Dokter Spesialis','45','1','1','47','2016-02-19'),
+('Drg Spesialis','4','0','0','4','2016-02-19'),
+('Dokter Umum','2','0','0','2','2016-02-19'),
+('Dokter Gigi','6','0','0','6','2016-02-19'),
+('Apoteker','9','0','0','9','2016-02-19'),
+('Perawat','99','1','0','100','2016-02-19'),
+('Perawat Gigi','7','0','0','7','2016-02-19'),
+('Bidan','4','0','0','4','2016-02-19'),
+('Nakes','39','0','0','39','2016-02-19'),
+('Non Medis','261','0','0','261','2016-02-19'),
+('S2 Admin Pelayanan Kesehatan','1','0','0','1','2016-04-06'),
+('S1 Kes Masyarakat','4','0','0','4','2016-04-06'),
+('D3 Teknik Kesehatan Gigi','1','0','0','1','2016-04-06'),
+('D3 Rontgen','2','1','0','3','2016-04-06'),
+('D3 Radiologi','4','10','0','14','2016-04-06'),
+('D3 Gizi','3','5','4','12','2016-04-06'),
+('D3 Fisioterapi','1','12','2','15','2016-04-06'),
+('D3 Farmasi','7','5','0','12','2016-04-06'),
+('D3 Elektromedik','3','3','0','6','2016-04-06'),
+('D3 Elektro Medik','1','1','0','2','2016-04-06'),
+('D3 Analis Medis','1','0','0','1','2016-04-06'),
+('D3 Analis','2','17','10','29','2016-04-06'),
+(' SMF','5','26','1','32','2016-04-06'),
+('S2 Gizi','0','1','0','1','2016-04-06'),
+('S1 Kesh. Masyarakat','0','2','0','2','2016-04-06'),
+('S1 Gizi','0','1','0','1','2016-04-06'),
+('D4 Radiologi','0','1','0','1','2016-04-06'),
+('D4 Gizi Klinik','0','1','0','1','2016-04-06'),
+('D4 Fisioterapi','0','2','0','2','2016-04-06'),
+('D3 Terapi Wicara','0','3','0','3','2016-04-06'),
+('D3 Teknik Gigi','0','9','0','9','2016-04-06'),
+('D3 Refraksi Optisi','0','1','0','1','2016-04-06'),
+('D3 Perekam Kesehatan','0','2','0','2','2016-04-06'),
+('D3 Optik','0','2','0','2','2016-04-06'),
+('D3 Okupasi Terapi','0','2','0','2','2016-04-06'),
+('D3 Kesling','0','5','0','5','2016-04-06'),
+('D3 Kesh. Gigi','0','2','0','2','2016-04-06'),
+(' SMAK','0','7','0','7','2016-04-06'),
+(' SAA','0','1','0','1','2016-04-06'),
+('S1 Biologi','0','0','1','1','2016-04-06'),
+('S 1 Farmasi','0','0','1','1','2016-04-06'),
+('D4 Fisioterapi','0','0','1','1','2016-04-06'),
+('D3 Terapi Wicara','0','0','2','2','2016-04-06'),
+('D3 Rekam Medik','0','0','1','1','2016-04-06'),
+('D3 Ortotik Prostetik','0','0','3','3','2016-04-06'),
+('D3 Audiologi ','0','0','1','1','2016-04-06'),
+(' SMK Tata Boga','0','0','2','2','2016-04-06'),
+(' SMAK','0','0','1','1','2016-04-06');

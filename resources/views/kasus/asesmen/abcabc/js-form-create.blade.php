@@ -1,0 +1,2 @@
+
+	$(`:text[name="tes"]`).val("");

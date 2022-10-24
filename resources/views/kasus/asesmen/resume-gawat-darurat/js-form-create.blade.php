@@ -1,0 +1,20 @@
+
+	$(`:radio[name="pulang"]`).prop("checked", false);
+	$(`:text[name="kontrol_ulang_tanggal"]`).val("");
+	$(`:text[name="kontrol_ulang_di"]`).val("");
+	$(`:radio[name="pulang_atas_permintaan_keluarga"]`).prop("checked", false);
+	$(`:radio[name="observasi"]`).prop("checked", false);
+	$(`:text[name="pulang_jam"]`).val("");
+	$(`:radio[name="mrs"]`).prop("checked", false);
+	$(`:checkbox[name="alasan_menolak_mrs_masalah_biaya"]`).prop("checked", false);
+	$(`:checkbox[name="alasan_menolak_mrs_masalah_lokasi_rumah"]`).prop("checked", false);
+	$(`:checkbox[name="alasan_menolak_mrs_masalah_kondisi_pasien"]`).prop("checked", false);
+	$(`:text[name="alasan_lainnya"]`).val("");
+	$(`:text[name="dirawat_di_ruang"]`).val("");
+	$(`:radio[name="dirujuk"]`).prop("checked", false);
+	$(`:checkbox[name="alasan_dirujuk_tempat_penuh"]`).prop("checked", false);
+	$(`:checkbox[name="alasan_dirujuk_perlu_fasilitas_lebih"]`).prop("checked", false);
+	$(`:checkbox[name="alasan_dirujuk_permintaan_pasien_dan_keluarga"]`).prop("checked", false);
+	$(`:text[name="alasan_lain"]`).val("");
+	$(`:text[name="alergi"]`).val("");
+	$(`:text[name="risiko"]`).val("");

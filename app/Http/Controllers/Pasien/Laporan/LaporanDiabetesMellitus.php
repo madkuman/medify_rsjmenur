@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Http\Controllers\Pasien\Laporan;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+use App\Models\Pasien\Pasien;
+use App\Models\Kasus\Kasus;
+use App\Models\Kasus\ICD10;
+use App\Models\Kasus\Diagnosis;
+
+class LaporanDiabetesMellitus extends Controller
+{
+    public function get($start, $end)
+    {
+    	$data['start'] = $start;
+    	$data['end'] = $end;
+
+
+    	$query = ICD10::where('code_icd','like','%E08%')
+       ->orWhere('code_icd','like','%E09%')
+       ->orWhere('code_icd','like','%E10%')
+       ->orWhere('code_icd','like','%E11%')
+       ->orWhere('code_icd','like','%E12%')
+       ->orWhere('code_icd','like','%E13%')
+       ->select('id')
+       ->get();
+       $penyakit = $query->toArray();
+       $data['diabetes'] = Diagnosis::whereIn('icd_10', $penyakit)->whereHas('kasus', function($q) use($start, $end){
+        $q->from(config('app.db_name').'_kasus.kasus')->whereBetween('krs_at', [$start, $end]);
+    })->get();
+       return $data;
+   }
+}

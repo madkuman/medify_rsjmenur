@@ -1,0 +1,1 @@
+@include('layouts.components2.footer')

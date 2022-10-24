@@ -1,0 +1,900 @@
+<script type="text/javascript">
+//DECLARING FOR TRANSAKSI DETAIL USING X-EDITABLE
+
+$.fn.editable.defaults.mode = 'inline';
+$(document).ready(function() {
+    startEditable();
+
+    $.ajax({
+        type: "GET",
+        url: API_URL + "/keuangan/perusahaan/get",
+        dataType: "json",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (data) {
+            var option = [];
+            option.push({
+                id: '',
+                text: '',
+            });
+            for (i in data) {
+                option.push({
+                    id: data[i].id,
+                    text: data[i].nama+' ('+data[i].direktur+')',
+                });
+            }
+            $('#perusahaan').select2({
+                data: option
+            })
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: API_URL + "/keuangan/pjk/getforpjk",
+        dataType: "json",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (data) {
+            var option = [];
+            option.push({
+                id: '',
+                text: '',
+            });
+            for (i in data) {
+                option.push({
+                    id: data[i].id,
+                    text: data[i].no_faktur+' | '+data[i].judul,
+                });
+            }
+            $('#selectFaktur').select2({
+                data: option
+            });
+            @if(!empty($utang_id))
+            var utang_id = {{$utang_id}};
+            $('#selectFaktur').val(utang_id).change();
+            @endif
+        }
+    });
+});
+
+var rowCount = document.getElementsByClassName("existRow").length;
+
+$('#selectFaktur').on('change', function() {
+    $.ajax({
+        type: "GET",
+        url: API_URL + "/keuangan/utang/" + this.value,
+        dataType: "json",
+        success: function (data) {
+            var date_po = new Date(data.tanggal_po);
+            var date_faktur = new Date(data.tanggal_faktur);
+            // $('#tanggalpo').val(date).change();
+            $('#tanggalpo').datepicker();
+            $('#tanggalpo').datepicker('setDate', date_po);
+            $('#nopo').val(data.no_po);
+            $('#tanggalfaktur').datepicker();
+            $('#tanggalfaktur').datepicker('setDate', date_faktur);
+            $('#nofaktur').val(data.no_faktur);
+            if (data.po.no_spkktr) {
+                $('#tanggalspkktr').datepicker();
+                $('#tanggalspkktr').datepicker('setDate', new Date(data.po.tanggal_spkktr));
+                $('#nospkktr').val(data.po.no_spkktr);
+            }
+            $('#perusahaan').val(data.perusahaan_id).change();
+            $('#judul').val(data.judul);
+            $('#perusahaan').attr('disabled', true);
+            $('#judul').attr('disabled', true);
+
+            $('#transaksiTable tbody').empty();
+            $('#tambahRecord').hide();
+            $('.div-po').show();
+            $('.not-div-po').hide();
+            $('#nopo').attr('disabled', true);
+            $('#tanggalpo').attr('disabled', true);
+            $('#nofaktur').attr('disabled', true);
+            $('#tanggalfaktur').attr('disabled', true);
+            transaksiCollection.reset();
+
+            var recordCount = document.getElementsByClassName("existRow").length;
+            for (i in data.detail) {
+                recordCount++;
+                content = '<tr id="transaksiRow'+ recordCount +'">'
+                content+= '<th class="text-center" scope="row">'+ recordCount +'</th>'
+                content+= '<td class="text-view layanan-par">'
+                content+= '<input type="text" class="d-none" id="layanan'+ recordCount +'" value="'+ data.detail[i].deskripsi +'">'
+                content+= '<a href="#" class="layanan" data-type="text" data-pk="'+ recordCount +'" data-placeholder="Masukkan Deskripsi">'+ data.detail[i].deskripsi +'</a>'
+                content+= '</td>'
+                content+= '<td class="text-center keterangan-par"><input type="text" class="d-none" id="keterangan'+ recordCount +'" value="'+ data.detail[i].keterangan +'"><a href="#" class="keterangan" data-type="textarea" data-pk="'+ recordCount +'" data-placeholder="Opsional">'+ data.detail[i].keterangan +'</a></td>'
+                content+= '<td class="text-center jumlah-par"><input type="text" class="d-none" id="jumlah'+ recordCount +'" value="'+ data.detail[i].jumlah +'"><a href="#" class="jumlah" data-type="number" data-pk="'+ recordCount +'" data-placeholder="Masukkan jumlah">'+ data.detail[i].jumlah +'</a></td>'
+                content+= '<td class="text-right harga-par"><input type="text" class="d-none" id="harga'+ recordCount +'" value="'+ data.detail[i].harga +'"><a href="#" class="harga" data-type="text" data-pk="'+ recordCount +'" data-placeholder="Harga Satuan">'+ data.detail[i].harga +'</a></td>'
+                content+= '<td class="text-center diskon-par"><input type="text" class="d-none" id="diskon'+ recordCount +'" value="'+ data.detail[i].diskon +'"><a href="#" class="diskon" data-type="text" data-pk="'+ recordCount +'" data-placeholder="Diskon %">'+ data.detail[i].diskon +'</a></td>'
+                content+= '<td class="text-right  bg-warning-lighter subtotal">Rp '+ numeral(data.detail[i].subtotal).format('0,0') +'</td>'
+                content+= '</tr>'
+
+                if (recordCount == 1) {
+                    $('#transaksiTable tbody').append(content);
+                } else {
+                    $('#transaksiTable tr:last').after(content);
+                }
+                $('#transaksiRow'+recordCount).hide();
+                initEditableFromPenerimaan();
+                backboneAddTransaksiDetail(recordCount, 0, data.detail[i].deskripsi, data.detail[i].jumlah, data.detail[i].harga, data.detail[i].diskon, data.detail[i].subtotal, data.detail[i].keterangan);
+                $('#transaksiRow'+recordCount).show();
+            }
+            $('#tambahRecord').hide();
+        },
+        error: function () {
+            callSwal('error','Transaksi Gagal','Silahkan Coba Lagi',0);
+        }
+    });
+});
+
+function initEditableFromPenerimaan(){
+    $('.jumlah').editable({
+        inputclass: 'form-control',
+        defaultValue : 'Empty',
+        showbuttons : false,
+        disabled : true,
+        onblur : 'submit',
+        validate: function(value) {
+            if($.trim(value) == '') {
+                return 'This field is required';
+            }
+        },
+        success: function(response, newValue) {
+            var jumlah = newValue;
+            var harga = $(this).parent().siblings(".harga-par").children('.harga').editable('getValue').undefined;
+            var diskon = $(this).parent().siblings(".diskon-par").children('.diskon').editable('getValue').undefined;
+            var subtotal = $(this).parent().siblings(".subtotal");
+            var keterangan = $(this).parent().siblings(".keterangan-par").children('.keterangan').editable('getValue').undefined;
+            var id = $(this).data("pk")
+            updateRecord(jumlah,harga,diskon,subtotal,id,keterangan);
+        }
+    });
+
+    $('.keterangan').editable({
+        inputclass: 'form-control',
+        defaultValue : '',
+        disabled : true,
+        showbuttons : false,
+        onblur : 'submit',
+        rows : 2,
+        success: function(response, newValue) {
+            var jumlah = $(this).parent().siblings(".jumlah-par").children('.jumlah').editable('getValue').undefined;
+            var harga = $(this).parent().siblings(".harga-par").children('.harga').editable('getValue').undefined;
+            var diskon = $(this).parent().siblings(".diskon-par").children('.diskon').editable('getValue').undefined;
+            var subtotal = $(this).parent().siblings(".subtotal");
+            var keterangan = newValue;
+            var id = $(this).data("pk")
+            updateRecord(jumlah,harga,diskon,subtotal,id,keterangan);
+        }
+    });
+
+    $('.harga').editable({
+        inputclass: 'form-control',
+        defaultValue : 'Empty',
+        showbuttons : false,
+        disabled : true,
+        onblur : 'submit',
+        display: function(value) {
+            $(this).text('Rp ' + numeral(value).format('0,0'));
+        },
+        validate: function(value) {
+            if($.trim(value) == '') {
+                return 'This field is required';
+            }
+        },
+        success: function(response, newValue) {
+            var jumlah = $(this).parent().siblings(".jumlah-par").children('.jumlah').editable('getValue').undefined;
+            var harga = newValue;
+            var diskon = $(this).parent().siblings(".diskon-par").children('.diskon').editable('getValue').undefined;
+            var subtotal = $(this).parent().siblings(".subtotal");
+            var keterangan = $(this).parent().siblings(".keterangan-par").children('.keterangan').editable('getValue').undefined;
+            var id = $(this).data("pk")
+            updateRecord(jumlah,harga,diskon,subtotal,id,keterangan);
+        }
+    });
+
+    $('.diskon').editable({
+        inputclass: 'form-control',
+        defaultValue : 'Empty',
+        showbuttons : false,
+        disabled : true,
+        onblur : 'submit',
+        display: function(value) {
+            $(this).text(value + ' %');
+        },
+        validate: function(value) {
+            if($.trim(value) == '') {
+                return 'This field is required';
+            }
+        },
+        success: function(response, newValue) {
+            var jumlah =  $(this).parent().siblings(".jumlah-par").children('.jumlah').editable('getValue').undefined;
+            var kelas = $(this).parent().siblings(".kelas-par").children('.kelas').editable('getValue').undefined;
+            var diskon = newValue;
+            var harga = $(this).parent().siblings(".harga-par").children('.harga').editable('getValue').undefined;
+            var subtotal = $(this).parent().siblings(".subtotal");
+            var keterangan = $(this).parent().siblings(".keterangan-par").children('.keterangan').editable('getValue').undefined;
+            var id = $(this).data("pk")
+            updateRecord(jumlah,harga,diskon,subtotal,id,keterangan);
+        }
+    });
+
+    $('.layanan').editable({
+        inputclass: 'form-control',
+        defaultValue : '',
+        emptytext : 'Masukkan Deskripsi',
+        showbuttons : false,
+        disabled : true,
+        onblur : 'submit',
+        validate: function(value) {
+            if($.trim(value) == '') {
+                return 'This field is required';
+            }
+        },
+        success: function(response, newValue) {
+            
+            var harga = $(this).parent(".layanan-par").siblings(".harga-par").children('.harga');
+            var jumlah = $(this).parent(".layanan-par").siblings(".jumlah-par").children('.jumlah');
+            var diskon = $(this).parent(".layanan-par").siblings(".diskon-par").children('.diskon');
+            var subtotal = $(this).parent(".layanan-par").siblings(".subtotal");
+            var keterangan = $(this).parent(".layanan-par").siblings(".keterangan-par").children('.keterangan');
+            
+            harga.editable('option', 'disabled', false);
+            jumlah.editable('option', 'disabled', false);
+            diskon.editable('option', 'disabled', false);
+            keterangan.editable('option', 'disabled', false);
+
+            id = $(this).data("pk");
+            harga.editable('setValue',0);
+            jumlah.editable('setValue',1);
+            diskon.editable('setValue',0);
+            keterangan.editable('setValue','');
+
+            subtotal_number = 0;
+            subtotal_number_formatted = numeral(subtotal_number).format('0,0');
+
+            subtotal.html('Rp ' + subtotal_number_formatted);
+        }
+    });
+
+}
+
+function initEditable(){
+    $('.jumlah').editable({
+        inputclass: 'form-control',
+        defaultValue : 'Empty',
+        showbuttons : false,
+        disabled : true,
+        onblur : 'submit',
+        validate: function(value) {
+            if($.trim(value) == '') {
+                return 'This field is required';
+            }
+        },
+        success: function(response, newValue) {
+            var jumlah = newValue;
+            var harga = $(this).parent().siblings(".harga-par").children('.harga').editable('getValue').undefined;
+            var diskon = $(this).parent().siblings(".diskon-par").children('.diskon').editable('getValue').undefined;
+            var subtotal = $(this).parent().siblings(".subtotal");
+            var keterangan = $(this).parent().siblings(".keterangan-par").children('.keterangan').editable('getValue').undefined;
+            var id = $(this).data("pk")
+            updateRecord(jumlah,harga,diskon,subtotal,id,keterangan);
+        }
+    });
+
+    $('.keterangan').editable({
+        inputclass: 'form-control',
+        defaultValue : '',
+        disabled : true,
+        showbuttons : false,
+        onblur : 'submit',
+        rows : 2,
+        success: function(response, newValue) {
+            var jumlah = $(this).parent().siblings(".jumlah-par").children('.jumlah').editable('getValue').undefined;
+            var harga = $(this).parent().siblings(".harga-par").children('.harga').editable('getValue').undefined;
+            var diskon = $(this).parent().siblings(".diskon-par").children('.diskon').editable('getValue').undefined;
+            var subtotal = $(this).parent().siblings(".subtotal");
+            var keterangan = newValue;
+            var id = $(this).data("pk")
+            updateRecord(jumlah,harga,diskon,subtotal,id,keterangan);
+        }
+    });
+
+    $('.harga').editable({
+        inputclass: 'form-control',
+        defaultValue : 'Empty',
+        showbuttons : false,
+        disabled : true,
+        onblur : 'submit',
+        display: function(value) {
+            $(this).text('Rp ' + numeral(value).format('0,0'));
+        },
+        validate: function(value) {
+            if($.trim(value) == '') {
+                return 'This field is required';
+            }
+        },
+        success: function(response, newValue) {
+            var jumlah = $(this).parent().siblings(".jumlah-par").children('.jumlah').editable('getValue').undefined;
+            var harga = newValue;
+            var diskon = $(this).parent().siblings(".diskon-par").children('.diskon').editable('getValue').undefined;
+            var subtotal = $(this).parent().siblings(".subtotal");
+            var keterangan = $(this).parent().siblings(".keterangan-par").children('.keterangan').editable('getValue').undefined;
+            var id = $(this).data("pk")
+            updateRecord(jumlah,harga,diskon,subtotal,id,keterangan);
+        }
+    });
+
+    $('.diskon').editable({
+        inputclass: 'form-control',
+        defaultValue : 'Empty',
+        showbuttons : false,
+        disabled : true,
+        onblur : 'submit',
+        display: function(value) {
+            $(this).text(value + ' %');
+        },
+        validate: function(value) {
+            if($.trim(value) == '') {
+                return 'This field is required';
+            }
+        },
+        success: function(response, newValue) {
+            var jumlah =  $(this).parent().siblings(".jumlah-par").children('.jumlah').editable('getValue').undefined;
+            var kelas = $(this).parent().siblings(".kelas-par").children('.kelas').editable('getValue').undefined;
+            var diskon = newValue;
+            var harga = $(this).parent().siblings(".harga-par").children('.harga').editable('getValue').undefined;
+            var subtotal = $(this).parent().siblings(".subtotal");
+            var keterangan = $(this).parent().siblings(".keterangan-par").children('.keterangan').editable('getValue').undefined;
+            var id = $(this).data("pk")
+            updateRecord(jumlah,harga,diskon,subtotal,id,keterangan);
+        }
+    });
+
+    $('.layanan').editable({
+        inputclass: 'form-control',
+        defaultValue : '',
+        emptytext : 'Masukkan Deskripsi',
+        showbuttons : false,
+        disabled : false,
+        onblur : 'submit',
+        validate: function(value) {
+            if($.trim(value) == '') {
+                return 'This field is required';
+            }
+        },
+        success: function(response, newValue) {
+            
+            var harga = $(this).parent(".layanan-par").siblings(".harga-par").children('.harga');
+            var jumlah = $(this).parent(".layanan-par").siblings(".jumlah-par").children('.jumlah');
+            var diskon = $(this).parent(".layanan-par").siblings(".diskon-par").children('.diskon');
+            var subtotal = $(this).parent(".layanan-par").siblings(".subtotal");
+            var keterangan = $(this).parent(".layanan-par").siblings(".keterangan-par").children('.keterangan');
+            
+            harga.editable('option', 'disabled', false);
+            jumlah.editable('option', 'disabled', false);
+            diskon.editable('option', 'disabled', false);
+            keterangan.editable('option', 'disabled', false);
+
+            id = $(this).data("pk");
+            harga.editable('setValue',0);
+            jumlah.editable('setValue',1);
+            diskon.editable('setValue',0);
+            keterangan.editable('setValue','');
+
+            subtotal_number = 0;
+            subtotal_number_formatted = numeral(subtotal_number).format('0,0');
+
+            subtotal.html('Rp ' + subtotal_number_formatted);
+
+            backboneAddTransaksiDetail(id,0,newValue,1,0,'',subtotal_number);
+        }
+    });
+    
+    $('button.remove').click(function(){
+        var layanan = $(this).parent(".remove-par").siblings(".layanan-par").children('.layanan');
+        var harga = $(this).parent(".remove-par").siblings(".harga-par").children('.harga');
+        var jumlah = $(this).parent(".remove-par").siblings(".jumlah-par").children('.jumlah');
+        var diskon = $(this).parent(".remove-par").siblings(".diskon-par").children('.diskon');
+        var subtotal = $(this).parent(".remove-par").siblings(".subtotal");
+        var keterangan = $(this).parent(".remove-par").siblings(".keterangan-par").children('.keterangan');
+
+        var id = keterangan.data("pk");
+        
+        //alert("row count"+rowCount);
+        if(rowCount == 1){
+            layanan.editable('setValue', '');
+            harga.editable('setValue', 0);
+            jumlah.editable('setValue', 0);
+            diskon.editable('setValue', 0);
+            keterangan.editable('setValue', '');
+            subtotal.html("Rp 0");
+    
+            harga.editable('option', 'disabled', true);
+            jumlah.editable('option', 'disabled', true);
+            diskon.editable('option', 'disabled', true);
+            keterangan.editable('option', 'disabled', true);
+        }
+        else{
+            deleteRow('transaksiRow'+id);
+            rowCount--;
+        }
+        // orderRow();
+        var transaksidetail = transaksiCollection.findWhere({pk_id: id});
+        if(typeof transaksidetail !== "undefined") var is_delete = 1;
+        else var is_delete = 0; 
+        if(is_delete)
+        {
+            transaksiCollection.remove(transaksidetail)
+        }
+        
+
+        updateAllTotal();
+
+    });
+
+}
+
+function startEditable(){
+    $('.jumlah').editable({
+        inputclass: 'form-control',
+        defaultValue : 'Empty',
+        showbuttons : false,
+        disabled : false,
+        onblur : 'submit',
+        validate: function(value) {
+            if($.trim(value) == '') {
+                return 'This field is required';
+            }
+        },
+        success: function(response, newValue) {
+            var jumlah = newValue;
+            var harga = $(this).parent().siblings(".harga-par").children('.harga').editable('getValue').undefined;
+            var diskon = $(this).parent().siblings(".diskon-par").children('.diskon').editable('getValue').undefined;
+            var subtotal = $(this).parent().siblings(".subtotal");
+            var keterangan = $(this).parent().siblings(".keterangan-par").children('.keterangan').editable('getValue').undefined;
+            var id = $(this).data("pk")
+            updateRecord(jumlah,harga,diskon,subtotal,id,keterangan);
+        }
+    });
+
+    $('.keterangan').editable({
+        inputclass: 'form-control',
+        defaultValue : '',
+        disabled : false,
+        showbuttons : false,
+        onblur : 'submit',
+        rows : 2,
+        success: function(response, newValue) {
+            var jumlah = $(this).parent().siblings(".jumlah-par").children('.jumlah').editable('getValue').undefined;
+            var harga = $(this).parent().siblings(".harga-par").children('.harga').editable('getValue').undefined;
+            var diskon = $(this).parent().siblings(".diskon-par").children('.diskon').editable('getValue').undefined;
+            var subtotal = $(this).parent().siblings(".subtotal");
+            var keterangan = newValue;
+            var id = $(this).data("pk")
+            updateRecord(jumlah,harga,diskon,subtotal,id,keterangan);
+        }
+    });
+
+    $('.harga').editable({
+        inputclass: 'form-control',
+        defaultValue : 'Empty',
+        showbuttons : false,
+        disabled : false,
+        onblur : 'submit',
+        display: function(value) {
+            $(this).text('Rp ' + numeral(value).format('0,0'));
+        },
+        validate: function(value) {
+            if($.trim(value) == '') {
+                return 'This field is required';
+            }
+        },
+        success: function(response, newValue) {
+            var jumlah = $(this).parent().siblings(".jumlah-par").children('.jumlah').editable('getValue').undefined;
+            var harga = newValue;
+            var diskon = $(this).parent().siblings(".diskon-par").children('.diskon').editable('getValue').undefined;
+            var subtotal = $(this).parent().siblings(".subtotal");
+            var keterangan = $(this).parent().siblings(".keterangan-par").children('.keterangan').editable('getValue').undefined;
+            var id = $(this).data("pk")
+            updateRecord(jumlah,harga,diskon,subtotal,id,keterangan);
+        }
+    });
+
+    $('.diskon').editable({
+        inputclass: 'form-control',
+        defaultValue : 'Empty',
+        showbuttons : false,
+        disabled : false,
+        onblur : 'submit',
+        display: function(value) {
+            $(this).text(value + ' %');
+        },
+        validate: function(value) {
+            if($.trim(value) == '') {
+                return 'This field is required';
+            }
+        },
+        success: function(response, newValue) {
+            var jumlah =  $(this).parent().siblings(".jumlah-par").children('.jumlah').editable('getValue').undefined;
+            var kelas = $(this).parent().siblings(".kelas-par").children('.kelas').editable('getValue').undefined;
+            var diskon = newValue;
+            var harga = $(this).parent().siblings(".harga-par").children('.harga').editable('getValue').undefined;
+            var subtotal = $(this).parent().siblings(".subtotal");
+            var keterangan = $(this).parent().siblings(".keterangan-par").children('.keterangan').editable('getValue').undefined;
+            var id = $(this).data("pk")
+            updateRecord(jumlah,harga,diskon,subtotal,id,keterangan);
+        }
+    });
+
+    $('.layanan').editable({
+        inputclass: 'form-control',
+        defaultValue : '',
+        emptytext : 'Masukkan Deskripsi',
+        showbuttons : false,
+        disabled : false,
+        onblur : 'submit',
+        validate: function(value) {
+            if($.trim(value) == '') {
+                return 'This field is required';
+            }
+        },
+        success: function(response, newValue) {
+            
+            var harga = $(this).parent(".layanan-par").siblings(".harga-par").children('.harga');
+            var jumlah = $(this).parent(".layanan-par").siblings(".jumlah-par").children('.jumlah');
+            var diskon = $(this).parent(".layanan-par").siblings(".diskon-par").children('.diskon');
+            var subtotal = $(this).parent(".layanan-par").siblings(".subtotal");
+            var keterangan = $(this).parent(".layanan-par").siblings(".keterangan-par").children('.keterangan');
+            
+            harga.editable('option', 'disabled', false);
+            jumlah.editable('option', 'disabled', false);
+            diskon.editable('option', 'disabled', false);
+            keterangan.editable('option', 'disabled', false);
+
+            id = $(this).data("pk");
+            harga.editable('setValue',0);
+            jumlah.editable('setValue',1);
+            diskon.editable('setValue',0);
+            keterangan.editable('setValue','');
+
+            subtotal_number = 0;
+            subtotal_number_formatted = numeral(subtotal_number).format('0,0');
+
+            subtotal.html('Rp ' + subtotal_number_formatted);
+
+            backboneAddTransaksiDetail(id,0,newValue,1,0,'',subtotal_number);
+        }
+    });
+    
+    $('button.remove').click(function(){
+        var layanan = $(this).parent(".remove-par").siblings(".layanan-par").children('.layanan');
+        var harga = $(this).parent(".remove-par").siblings(".harga-par").children('.harga');
+        var jumlah = $(this).parent(".remove-par").siblings(".jumlah-par").children('.jumlah');
+        var diskon = $(this).parent(".remove-par").siblings(".diskon-par").children('.diskon');
+        var subtotal = $(this).parent(".remove-par").siblings(".subtotal");
+        var keterangan = $(this).parent(".remove-par").siblings(".keterangan-par").children('.keterangan');
+
+        var id = keterangan.data("pk");
+        
+        //alert("row count"+rowCount);
+        if(rowCount == 1){
+            layanan.editable('setValue', 'Total');
+            harga.editable('setValue', 0);
+            jumlah.editable('setValue', 1);
+            diskon.editable('setValue', 0);
+            keterangan.editable('setValue', '');
+            subtotal.html("Rp 0");
+        }
+        else{
+            deleteRow('transaksiRow'+id);
+            rowCount--;
+        }
+        // orderRow();
+        var transaksidetail = transaksiCollection.findWhere({pk_id: id});
+        if(typeof transaksidetail !== "undefined") var is_delete = 1;
+        else var is_delete = 0; 
+        if(is_delete)
+        {
+            transaksiCollection.remove(transaksidetail)
+        }
+        
+
+        updateAllTotal();
+
+    });
+
+    id = $('.layanan').data("pk");
+    layanan = $('.layanan').editable('setValue','Total');
+    harga = $('.harga').editable('setValue',0);
+    jumlah = $('.jumlah').editable('setValue',1);
+    diskon = $('.diskon').editable('setValue',0);
+    keterangan = $('.keterangan').editable('setValue','');
+
+    subtotal_number = 0;
+    subtotal_number_formatted = numeral(subtotal_number).format('0,0');
+
+    subtotal = $('.subtotal').html('Rp ' + subtotal_number_formatted);
+
+    backboneAddTransaksiDetail(id,0,'Total',1,0,'',subtotal_number);
+
+}
+
+function deleteRow(rowid)  
+{   
+    var row = document.getElementById(rowid);
+    row.parentNode.removeChild(row);
+}
+
+
+function updateRecord(jumlah,harga,diskon,subtotal,id,keterangan)
+{
+    if (typeof jumlah != "number") jumlah = parseInt(jumlah);
+    if (typeof harga != "number") harga = parseInt(harga);
+    if (typeof diskon != "number") diskon = parseInt(diskon);
+    subtotal_number = (harga * jumlah) - (harga*diskon/100*jumlah);
+    subtotal_number_formatted = numeral(subtotal_number).format('0,0');
+
+    subtotal.html('Rp ' + subtotal_number_formatted);
+    backboneUpdateTransaksi(jumlah,harga,diskon,subtotal_number,keterangan,id);
+}
+
+var globalJumlah = 0;
+var globalDiskon = 0;
+var globalTotal = 0;
+
+function updateAllTotal()
+{
+    // console.log(transaksiCollection);
+    var subtotals = transaksiCollection.pluck("subtotal");
+    var jumlahs = transaksiCollection.pluck("jumlah");
+    var hargas = transaksiCollection.pluck("harga");
+    var diskons = transaksiCollection.pluck("diskon");
+
+    var allJumlah = 0;
+    var allDiskon = 0;
+    var allTotal = 0;
+
+    $.each(subtotals, function( index, value ) {
+        allJumlah+= hargas[index]*jumlahs[index]
+        allDiskon+= hargas[index]*jumlahs[index]*diskons[index]/100
+    });
+
+    allTotal = allJumlah-allDiskon;
+
+    globalTotal = allTotal;
+    globalDiskon = allDiskon;
+    globalJumlah = allJumlah;
+
+    var allJumlahFormat = numeral(allJumlah).format('0,0');
+    var allDiskonFormat = numeral(allDiskon).format('0,0');
+    var allTotalFormat = numeral(allTotal).format('0,0');
+
+
+    $('#allJumlah').html('Rp '+allJumlahFormat)
+    $('#allDiskon').html('Rp '+allDiskonFormat)
+    $('#allTotal').html('Rp '+allTotalFormat)
+    // console.log(transaksiCollection);
+
+
+}
+
+//INITIATE SELECT2
+$("#kategori").select2();
+
+var TransaksiDetail = Backbone.Model.extend({
+    defaults: {
+        pk_id: "",
+        id_detail: "",
+        layanan_string: "",
+        jumlah: "",
+        harga: "",
+        diskon: "",
+        subtotal: "",
+        keterangan:""
+    },
+    idAttribute: "id"
+});
+
+var Transaksi = Backbone.Collection.extend({
+    model: TransaksiDetail,
+    sort_key: 'pk_id'
+});
+
+var transaksiCollection = new Transaksi();
+
+
+function backboneAddTransaksiDetail(id,detail_id,layanan_string,jumlah,harga,diskon,subtotal,keterangan="")
+{
+    // console.log(id,detail_id,layanan_string,jumlah,harga,diskon,subtotal)
+    if(transaksiCollection.length > 0)
+    {
+        var transaksidetail = transaksiCollection.findWhere({pk_id: id});
+        if(typeof transaksidetail !== "undefined") var is_delete = 1;
+        else var is_delete = 0; 
+        if(is_delete)
+        {
+            transaksiCollection.remove(transaksidetail)
+        }
+    }
+    var detail = new TransaksiDetail({ 
+        pk_id:id,
+        id_detail:detail_id,
+        layanan_string: layanan_string,
+        jumlah: jumlah,
+        harga: harga,
+        diskon: diskon,
+        subtotal: subtotal,
+        keterangan:keterangan
+    });
+
+    transaksiCollection.add(detail);
+
+    updateAllTotal();
+}
+
+
+function backboneUpdateTransaksi(jumlah,harga,diskon,subtotal,keterangan,id)
+{
+    var transaksidetail = transaksiCollection.findWhere({pk_id: id});
+    if(typeof transaksidetail !== "undefined") var exist = 1;
+    else var exist = 0; 
+    //console.log('exist : ' + exist);
+    //console.log('id : ' + id);
+    if(exist)
+    {
+        transaksidetail.set({
+            pk_id: id,
+            jumlah: jumlah,
+            harga: harga,
+            diskon: diskon,
+            subtotal: subtotal,
+            keterangan:keterangan
+        });
+    }
+    updateAllTotal();
+}
+
+/*BUTTON EVENT*/
+var recordCount = rowCount;
+$('#tambahRecord').click(function() {
+    recordCount++;
+    content = '<tr id="transaksiRow'+ recordCount +'">'
+    content+= '<th class="text-center" scope="row">'+ recordCount +'</th>'
+    content+= '<td class=" text-view layanan-par">'
+    content+= '<a href="#" class="layanan" data-type="text" data-pk="'+ recordCount +'" data-placeholder="Masukkan Deskripsi"></a>'
+    content+= '</td>'
+    content+= '<td class="text-center keterangan-par"><a href="#" class="keterangan" data-type="textarea" data-pk="'+ recordCount +'" data-placeholder="Opsional"></a></td>'
+    content+= '<td class="text-center jumlah-par"><a href="#" class="jumlah" data-type="text" data-pk="'+ recordCount +'" data-placeholder="Masukkan jumlah">0</a></td>'
+    content+= '<td class="text-right harga-par"><a href="#" class="harga" data-type="text" data-pk="'+ recordCount +'" data-placeholder="Harga Satuan">0</a></td>'
+    content+= '<td class="text-center diskon-par"><a href="#" class="diskon" data-type="text" data-pk="'+ recordCount +'" data-placeholder="Diskon %">0</a></td>'
+    content+= '<td class="text-right  bg-warning-lighter subtotal">Rp 0</td>'
+    content+= '<td class="text-right remove-par"><button class="btn btn-alt-danger btn-sm remove" type="button"><i class="fa fa-remove"></i></button></td>'
+    content+= '</tr>'
+
+    rowCount++;
+    
+    $('#transaksiTable tr:last').after(content);
+    $('#transaksiRow'+recordCount).hide();
+    initEditable();
+    $('#transaksiRow'+recordCount).show();
+
+    
+});
+
+function ajaxSubmit(){
+// $('#buttonSubmit').click(function() {
+    var judul = $('#judul').val();
+    var tanggalpjk = $('#tanggaltransaksi').val();
+    var tanggalspkktr = $('#tanggalspkktr').val();
+    var tanggalsprin = $('#tanggalsprin').val();
+    var tanggalpo = $('#tanggalpo').val();
+    var tanggalfaktur = $('#tanggalfaktur').val();
+    var nospkktr = $('#nospkktr').val();
+    var nosprin = $('#nosprin').val();
+    var nofaktur = $('#nofaktur').val();
+    var nopo = $('#nopo').val();
+    var idutang = $('#selectFaktur').val();
+    var perusahaan_id = $('#perusahaan').val();
+    var akun_pjk_id = $('#akunpjk').val();
+    
+    if(tanggalpjk == '')
+        callSwal('warning','Transaksi Gagal','Tanggal PJK Tidak Boleh Kosong',0);
+    else if(tanggalspkktr == '' && idutang)
+        callSwal('warning','Transaksi Gagal','Tanggal SPK/KTR Tidak Boleh Kosong',0);
+    else if(tanggalsprin == '' && !idutang)
+        callSwal('warning','Transaksi Gagal','Tanggal Sprin Tidak Boleh Kosong',0);
+    else if(tanggalfaktur == '' && idutang)
+        callSwal('warning','Transaksi Gagal','Tanggal Faktur Tidak Boleh Kosong',0);
+    else if(nospkktr == '' && idutang)
+        callSwal('warning','Transaksi Gagal','Nomor SPK/KTR Tidak Boleh Kosong',0);
+    else if(nosprin == '' && !idutang)
+        callSwal('warning','Transaksi Gagal','Nomor Sprin Tidak Boleh Kosong',0);
+    else if(nofaktur == '' && idutang)
+        callSwal('warning','Transaksi Gagal','Nomor Faktur Tidak Boleh Kosong',0);
+    else if(transaksiCollection.length < 1)
+        callSwal('warning','Transaksi Gagal','Transaksi Tidak Boleh Kosong',0);
+    else if(judul == '')
+        callSwal('warning','Transaksi Gagal','Judul Tidak Boleh Kosong',0);
+    else if(perusahaan_id == '')
+        callSwal('warning','Transaksi Gagal','Perusahaan Tidak Boleh Kosong',0);
+    else if(akun_pjk_id == '')
+        callSwal('warning','Transaksi Gagal','Akun Tidak Boleh Kosong',0);
+    else{
+        var transaksiCollectionJSON = JSON.stringify(transaksiCollection);
+        var formData = new FormData();
+        formData.append('tanggalpjk', tanggalpjk);
+        formData.append('tanggalspkktr', tanggalspkktr);
+        formData.append('tanggalsprin', tanggalsprin);
+        formData.append('tanggalfaktur', tanggalfaktur);
+        formData.append('tanggalpo', tanggalpo);
+        formData.append('nofaktur', nofaktur);
+        formData.append('nopo', nopo);
+        formData.append('idutang', idutang);
+        formData.append('nospkktr', nospkktr);
+        formData.append('nosprin', nosprin);
+        formData.append('judul', judul);
+        formData.append('perusahaan_id', perusahaan_id);
+        formData.append('akun_pjk_id', akun_pjk_id);
+        formData.append('transaksi', transaksiCollectionJSON);
+        formData.append('alltotal', globalTotal);
+        formData.append('alldiskon', globalDiskon);
+        formData.append('alljumlah', globalJumlah);
+        
+        $('#buttonSubmit').hide();
+        $('#buttonLoading').show();
+
+        // console.log(transaksiCollection);
+        // console.log(transaksiCollectionJSON);
+        // for (var pair of formData.entries()) {
+        //     console.log(pair[0]+ ', ' + pair[1]); 
+        // }
+        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        
+        // alert(kategori);
+        $.ajax({
+            type: "POST",
+            url: API_URL + "/keuangan/pjk/baru",
+            dataType: "json",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+
+            success: function (data) {
+                callSwal(data.type,data.title,data.text,data.url);
+                $('#buttonSubmit').show();
+                $('#buttonLoading').hide();
+                //$('#buttonLoading').fadeOut();
+
+            },
+            error: function () {
+                callSwal('error','Transaksi Gagal','Silahkan Coba Lagi',0);
+                $('#buttonSubmit').show();
+                $('#buttonLoading').hide();
+            }
+        });
+    }
+// });
+}
+
+Date.prototype.toShortFormat = function() {
+
+    var month_names =["January","February","March",
+                      "April","May","June",
+                      "July","August","September",
+                      "October","November","December"];
+    
+    var day = this.getDate();
+    var month_index = this.getMonth();
+    var year = this.getFullYear();
+    
+    return "" + day + " " + month_names[month_index] + " " + year;
+}
+</script>

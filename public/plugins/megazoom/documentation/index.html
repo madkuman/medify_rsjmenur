@@ -1,0 +1,495 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<head lang="en">
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title>Mega Zoom & Pan Image Viewer documentation.</title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<!-- Framework CSS -->
+	<link rel="stylesheet" href="assets/blueprint-css/screen.css" type="text/css" media="screen, projection">
+	<link rel="stylesheet" href="assets/blueprint-css/print.css" type="text/css" media="print">
+	<!--[if lt IE 8]><link rel="stylesheet" href="assets/blueprint-css/ie.css" type="text/css" media="screen, projection"><![endif]-->
+	<link rel="stylesheet" href="assets/blueprint-css/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
+	<link rel="stylesheet" href="assets/blueprint-css/fwd.css" type="text/css" >
+	<style type="text/css" media="screen">
+		p, table, hr, .box { margin-bottom:25px; }
+		.box p { margin-bottom:10px; }
+	</style>
+</head>
+
+
+<body>
+	<div class="container">
+	
+		<h3 class="center alt">&ldquo;Mega Zoom & Pan Image Viewer &rdquo; Documentation by FWDesign - v1.0</h3>
+		
+		<hr>
+		
+		<h1 class="center">&ldquo;<span class="center alt">Mega Zoom & Pan Image Viewer</span>&rdquo;</h1>
+		
+		<div class="borderTop">
+			<div class="span-6 colborder info prepend-1">
+				<p class="prepend-top">
+					<strong>
+					Created: 06/02/2017<br>
+					By:© FWD (Future Web Design)<br>
+					Email: <a href="mailto:tibi_diablo@yahoo.com">tibi_diablo@yahoo.com</a>
+					</strong>
+				</p>
+			</div><!-- end div .span-6 -->		
+	
+			<div class="span-12 last">
+				<p class="prepend-top append-0">Thank you for purchasing our script. If you have any questions that are beyond the scope of this help file, please feel free to email via our email. Thanks so much!</p>
+			</div>
+		</div><!-- end div .borderTop -->
+		
+		<hr>
+		
+		<h2 id="toc" class="alt">Table of Contents</h2>
+		<ol class="alpha">
+			<li><a href="#htmlStructure">Important notes read this before anything else.</a></li>
+			<li><a href="#preparingImages">Preparing the image.</a></li>
+			<li><a href="#instalation">How to install Mega Zoom & Pan Image Viewer into your html page.</a></li>
+			<li><a href="#config">Constructor parameters.</a></li>
+			<li><a href="#infoWindow">Setting up the info window.</a></li>
+            <li><a href="#markers">How to setup the markers/hotspots.</a></li>
+			<li><a href="#dynamic">Change image dynamically in the same page.</a></li>
+			<li><a href="#credits">Sources and Credits</a></li>
+		</ol>
+	
+		<hr>
+		
+		<h3 id="important notes"><strong>A) Important notes make sure you read this!</strong> - <a href="#toc">top</a></h3>
+		<p>Please note that the Mega Zoom & Pan Image Viewer installation and configuration is not complicated but because it has a lot of customizable settings it might seem complicated, please go through the entire documentation before trying to install it into your own page. Basically what it must be done is to copy some html code from the examples we provided and paste it into your own html page and of course replace the image with your own.</p>
+		<p>The server is character case sensitive so make sure that the Mega Zoom & Pan Image Viewer settings are identical to those from the provided examples.</p>
+		<p>Please note that on mobile the images are rasterized by the operating system.</p>
+		
+		<h3 id="preparingImages"><strong>B) Preparing the image.</strong> - <a href="#toc">top</a></h3>
+		<p>The Mega Zoom & Pan Image Viewer can handle any type of image (.png, .jpg, .jpeg). Save your image with a width or height smaller then 6000px, higher resolutions are possible but is not advised, also if a navigator small image is required just save a smaller version of the image depending on the original image size and format.</p>
+
+		<h3 id="instalation"><strong>C) How to install Mega Zoom & Pan Image Viewer into your html page.</strong> - <a href="#toc">top</a></h3>
+		<p>This is a small tutorial about how to install the Mega Zoom & Pan Image Viewer into your page. There are three types of display for this Mega Zoom & Pan Image Viewer, responsive/fixed, fullscreen and lightbox. The responsive/fixed display type allows the Mega Zoom & Pan Image Viewer to be embedded into a html page inside a div of your choosing, the Mega Zoom & Pan Image Viewer will adapt its width and height based on the div which acts as its parent, if the page is resized and the parent div is resized with css or javascript the Mega Zoom & Pan Image Viewer will adapt its size. The fullscreen display type will display the Mega Zoom & Pan Image Viewer in fullscreen mode, this means that the Mega Zoom & Pan Image Viewer will fill the available browser width and height. The lightbox display will open the Mega Zoom & Pan Image Viewer into a lightbox over the content of the page.</p>
+	
+		<h4><strong>Installing the Mega Zoom & Pan Image Viewer with a responsive or fixed display:</strong></h4>
+		<p>In the download files there are five .html files which are ending with _responsive_or_fixed.html, each of this examples have exactly the same structure, only some constructor settings, css classes, skin and image are different, you can use one of them to copy and paste the needed html code based on skin that you need, I will use the skin_round_silver_responsive_or_fixed.html the one with the world map as reference but any of the .html files which are ending with _responsive_or_fixed.html will do fine. Also what is important to note is that each .html file has associated a folder which contains the image, skin and a global css file which is used for customizing the markers/hotspots, the folder name is related to the .html file name it is self explanatory.</p>
+		
+		<ul>
+			<li>Copy and paste the skins folder and the java folder into the same folder with your .html file, inside the skin_round_silver folder there are other folders which are self explanatory, the easiest way to add images is just to replace the images that we are using, don't forget to set the image <span class="boldLi">imageWidth</span> and <span class="boldLi">imageHeight</span> options into the Mega Zoom & Pan Image Viewer constructor (<a href="#config">constructor parameters</a>), this is really important.</li>
+			<li>Open skin_round_silver_responsive_or_fixed.html with a text editor.</li>
+			<li>The javascript and css files must be imported, in the head section of your html file add the code from below.</li>
+			<pre class="brush: js; html-script: true, class-name: 'negativeLeftMarginsHTML'">
+			<link rel="stylesheet" type="text/css"  href="skins/skin_round_silver/global.css"/>
+			<script type="text/javascript" src="java/FWDMegazoom.js"></script></pre>
+			<li>You need a div into which the Mega Zoom & Pan Image Viewer will be added as a child, so create a div and set an id for it, the id is important because it is passed in the Mega Zoom & Pan Image Viewer constructor, make sure it is unique. The Mega Zoom & Pan Image Viewer is responsive so if you set a width or height of 600px to the created div the Mega Zoom & Pan Image Viewer will adapt based on that, please note that I have used inline css to set the width and height of the div but you set the div size with a css class or javascript, example in the below.</li>
+			<pre class="brush: js; html-script: true, class-name: 'negativeLeftMarginsHTML'">
+			<!-- the div which is the zoomer parent (zoomer holder) -->
+			<div id="myDiv"></div></pre>
+			<li>Next step is to copy and paste in the body of your html page the div with the id markersAndPlaylist, the id is important because it is passed in the Mega Zoom & Pan Image Viewer constructor (pleae note that this id can have any label id does not have to be "markersAndPlaylist"). This div is containing the data for the markers and info window, it is required even if you don't use any markers, if this is the case just leave it blank. Please note that the code below is minified, you can find the entire code in the html files examples.</li>
+			<pre class="brush: js; html-script: true, class-name: 'negativeLeftMarginsHTML'">
+			<!-- start viewer, display:none is added in case that js is disabled! -->
+			<div id="markersAndPlaylist" style="display:none">
+			
+				<!-- info window-->
+				<ul data-info="">
+					<!-- info window HTML content--> 
+				</ul>
+				
+				<!-- markers -->
+				<ul data-markers="">
+					<!-- markers  content --> 
+				</ul>
+				
+			</div></pre>
+			
+			<ol>
+				<li>The first ul tag, the one with the attribute data-info represents the html content for the info window, this window appears when the info button is pressed, if you don't need the info window delete this ul tag but make sure to remove the info label from the <span class="boldLi">buttons</span> option in the Mega Zoom & Pan Image Viewer constructor as well (<a href="#config">constructor parameters</a>).</li>
+				<li>The second ul tag the one with the attribute data-markers is used to setup the markers/hotspots, please read the <a href="#markers">how to setup the markers/hotspots</a> section, if you don't need markers/hotspots then delete this tag.</li>
+			</ol>
+			<li>Next step is to initialize the Mega Zoom & Pan Image Viewer with javascript, in the head section of your html page add the code from below. Please note that all parameters are described in the <a href="#config">constructor parameters</a> section</li>
+			<pre class="brush: js; html-script: true, class-name: 'negativeLeftMarginsHTML'">
+			<script type="text/javascript">
+				var megazoom;
+				
+				FWDUtils.onReady(function(){
+					megazoom =  new FWDMegazoom({
+						//----main----//
+						parentId:"myDiv",
+						markersAndInfoWindowId:"markersAndPlaylist",
+						displayType:"responsive",
+						skinPath:"skins/skin_round_silver/skin/",
+						imagePath:"skins/skin_round_silver/imageToZoom.jpg",
+						preloaderText:"Loading image...",
+						useEntireScreen:"yes",
+						addKeyboardSupport:"yes",
+						addDoubleClickSupport:"yes",
+						disableMouseWheel:"no",
+						autoScale:"yes",
+						zoomerWidth:800,
+						zoomerHeight:640,
+						imageWidth:4324,
+						imageHeight:2530,
+						zoomFactor:1.4,
+						doubleClickZoomFactor:1,
+						startZoomFactor:"default",
+						panSpeed:8,
+						zoomSpeed:.1,
+						backgroundColor:"#FFFFFF",
+						preloaderFontColor:"#585858",
+						preloaderBackgroundColor:"#FFFFFF",
+						//----lightbox-----//
+						lightBoxWidth:800,
+						lightBoxHeight:550,
+						lightBoxBackgroundOpacity:.8,
+						lightBoxBackgroundColor:"#000000",
+						//----controller----//
+						buttons:"moveLeft, moveRight, moveDown, moveUp, scrollbar, hideOrShowMarkers, hideOrShowController, info, fullscreen",
+						buttonsToolTips:"Move left, Move right, Move down, Move up, Zoom level: , Hide markers/Show markers, Hide controller/Show controller, Info, Full screen/Normal screen",
+						controllerPosition:"bottom",
+						inversePanDirection:"yes",
+						startSpaceBetweenButtons:10,
+						spaceBetweenButtons:10,
+						startSpaceForScrollBarButtons:20,
+						startSpaceForScrollBar:6,
+						hideControllerDelay:3,
+						controllerMaxWidth:900,
+						controllerBackgroundOpacity:1,
+						controllerOffsetY:0,
+						scrollBarOffsetX:0,
+						scrollBarHandlerToolTipOffsetY:4,
+						zoomInAndOutToolTipOffsetY:-4,
+						buttonsToolTipOffsetY:0,
+						hideControllerOffsetY:2,
+						buttonToolTipFontColor:"#585858",
+						//----navigator----//
+						showNavigator:"yes",
+						showNavigatorOnMobile:"yes",
+						navigatorImagePath:"skins/skin_round_silver/navigatorImage.jpg",
+						navigatorPosition:"topright",
+						navigatorOffsetX:6,
+						navigatorOffsetY:6,
+						navigatorHandlerColor:"#FF0000",
+						navigatorBorderColor:"#FFFFFF",
+						//----info window----//
+						infoWindowBackgroundOpacity:.6,
+						infoWindowBackgroundColor:"#FFFFFF",
+						infoWindowScrollBarColor:"#585858",
+						//----markers-----//
+						showMarkersInfo:"no",
+						markerToolTipOffsetY:0,
+						markerToolTipOffsetY:2,
+						//----context menu----//
+						showScriptDeveloper:"no",
+						contextMenuLabels:"Move left, Move right, Move down, Move up, Zoom in/Zoom out, Hide markers/Show markers, Hide controller/Show controller, Info, Full screen/Normal screen",
+						contextMenuBackgroundColor:"#d1cfcf",
+						contextMenuBorderColor:"#8f8d8d",
+						contextMenuSpacerColor:"#acacac",
+						contextMenuItemNormalColor:"#585858",
+						contextMenuItemSelectedColor:"#FFFFFF",
+						contextMenuItemDisabledColor:"#b7b4b4"
+					});
+				})
+			</script>
+			</pre>
+			<li>This are all the step needed to setup the Mega Zoom & Pan Image Viewer, again all this code is located in any of the five .html files which are ending with _responsive_or_fixed.html so you can copy and paste the code easily without errors. Please make sure to read the <a href="#config">constructor parameters</a> section to understand all the Mega Zoom & Pan Image Viewer properties.</li>
+        </ul>   
+		<h4><strong>Installing the Mega Zoom & Pan Image Viewer with a fullscreen display:</strong></h4>
+		<ul>
+			<li>Follow the exact same steps as in the "Intalling the Mega Zoom & Pan Image Viewer with a responsive or fixed display" section, the only difference is that there is no need to create a div as a holder for the Mega Zoom & Pan Image Viewer and in the Mega Zoom & Pan Image Viewer constructor the displayType must be set to fullscreen like this displayType:"fullscreen". Please note that there are five .html files included as reference, their labels are ending with _fullscreen.html, if you like you can just use one of this .html files and replace the images.</li>
+		</ul>
+		<h4><strong>Installing the Mega Zoom & Pan Image Viewer with a lightbox display:</strong></h4>
+		<ul>
+			<li>Follow the exact same steps as in the "Intalling the Mega Zoom & Pan Image Viewer with a responsive or fixed display" section, the only difference is that there is no need to create a div as a holder for the Mega Zoom & Pan Image Viewer and in the Mega Zoom & Pan Image Viewer constructor the displayType must be set to lightbox like this displayType:"lightbox" also the constructor is a bit different, instead of instantiating the Mega Zoom & Pan Image Viewer when the page loads it is instantiated when a button  is pressed (it does not have to be a button it can be any html element, like an image or a link). Please note that there are five .html files included as reference, their labels are ending with _lightbox.html. Please open any of the related .html files and check out the installation code.</li>
+		</ul>
+		
+		<h3 id="config"><strong>D) Constructor parameters.</strong> - <a href="#toc">top</a></h3>
+		<p>Please open any of the .html files provided with a text editor as reference.</p>
+		<p>These parameters represents the possible setting for the Mega Zoom & Pan Image Viewer they are all visible below  and described below.</p>
+		<pre class="brush: js; html-script: true, class-name: 'negativeLeftMarginsHTML'">
+			<script type="text/javascript">
+				var megazoom;
+				
+				FWDUtils.onReady(function(){
+					megazoom =  new FWDMegazoom({
+						//----main----//
+						parentId:"myDiv",
+						markersAndInfoWindowId:"markersAndPlaylist",
+						displayType:"responsive",
+						skinPath:"skins/skin_round_silver/skin/",
+						imagePath:"skins/skin_round_silver/imageToZoom.jpg",
+						preloaderText:"Loading image...",
+						useEntireScreen:"yes",
+						addKeyboardSupport:"yes",
+						addDoubleClickSupport:"yes",
+						disableMouseWheel:"no",
+						autoScale:"yes",
+						zoomerWidth:800,
+						zoomerHeight:640,
+						imageWidth:4324,
+						imageHeight:2530,
+						zoomFactor:1.4,
+						doubleClickZoomFactor:1,
+						startZoomFactor:"default",
+						panSpeed:8,
+						zoomSpeed:.1,
+						backgroundColor:"#FFFFFF",
+						preloaderFontColor:"#585858",
+						preloaderBackgroundColor:"#FFFFFF",
+						//----lightbox-----//
+						lightBoxWidth:800,
+						lightBoxHeight:550,
+						lightBoxBackgroundOpacity:.8,
+						lightBoxBackgroundColor:"#000000",
+						//----controller----//
+						buttons:"moveLeft, moveRight, moveDown, moveUp, scrollbar, hideOrShowMarkers, hideOrShowController, info, fullscreen",
+						buttonsToolTips:"Move left, Move right, Move down, Move up, Zoom level: , Hide markers/Show markers, Hide controller/Show controller, Info, Full screen/Normal screen",
+						controllerPosition:"bottom",
+						inversePanDirection:"yes",
+						startSpaceBetweenButtons:10,
+						spaceBetweenButtons:10,
+						startSpaceForScrollBarButtons:20,
+						startSpaceForScrollBar:6,
+						hideControllerDelay:3,
+						controllerMaxWidth:900,
+						controllerBackgroundOpacity:1,
+						controllerOffsetY:0,
+						scrollBarOffsetX:0,
+						scrollBarHandlerToolTipOffsetY:4,
+						zoomInAndOutToolTipOffsetY:-4,
+						buttonsToolTipOffsetY:0,
+						hideControllerOffsetY:2,
+						buttonToolTipFontColor:"#585858",
+						//----navigator----//
+						showNavigator:"yes",
+						showNavigatorOnMobile:"yes",
+						navigatorImagePath:"skins/skin_round_silver/navigatorImage.jpg",
+						navigatorPosition:"topright",
+						navigatorOffsetX:6,
+						navigatorOffsetY:6,
+						navigatorHandlerColor:"#FF0000",
+						navigatorBorderColor:"#FFFFFF",
+						//----info window----//
+						infoWindowBackgroundOpacity:.6,
+						infoWindowBackgroundColor:"#FFFFFF",
+						infoWindowScrollBarColor:"#585858",
+						//----markers-----//
+						showMarkersInfo:"no",
+						markerToolTipOffsetY:0,
+						markerToolTipOffsetY:2,
+						//----context menu----//
+						showScriptDeveloper:"no",
+						contextMenuLabels:"Move left, Move right, Move down, Move up, Zoom in/Zoom out, Hide markers/Show markers, Hide controller/Show controller, Info, Full screen/Normal screen",
+						contextMenuBackgroundColor:"#d1cfcf",
+						contextMenuBorderColor:"#8f8d8d",
+						contextMenuSpacerColor:"#acacac",
+						contextMenuItemNormalColor:"#585858",
+						contextMenuItemSelectedColor:"#FFFFFF",
+						contextMenuItemDisabledColor:"#b7b4b4"
+					});
+				})
+			</script>
+			</pre>
+		<p>//----main----//</p>
+		<ul>
+        	<li><span class="boldLi">divHolderId</span>:"myDiv" - the div id into which the Mega Zoom & Pan Image Viewer will be added, please note that this is required only if <span class="boldLi">displayType</span> is set to responsive.</li>
+			<li><span class="boldLi">markersAndInfoWindowId</span>:"markersAndPlaylist" - the id of the div element used as the playlist, skin and markers, this div will contain two ul tags used to setup the Mega Zoom & Pan Image Viewer info window and markers.</li>
+			<li><span class="boldLi">displayType</span>:"responsive" - the Mega Zoom & Pan Image Viewer display type, it can be responsive(please note that if you want it to be fixed size this option must be set to responsive as well), fullscreen or lightbox.</li>	
+			<li><span class="boldLi">skinPath</span>:"skin_round_silver/skin/" - the skin path, the folder that contains the skin graphics.</li>
+			<li><span class="boldLi">imagePath</span>:"skin_round_silver/imageToZoom.jpg" - The path of the image that you want to zoom.</li>
+			<li><span class="boldLi">preloaderText</span>:"Loading image" - the text that appears while the image is loading.</li>
+			<li><span class="boldLi">useEntireScreen</span>:"yes" - this can be yes or no, if is set to yes the image will use the entire available screen, if is set to no the image will use the entire screen width and the entire screen height minus the buttons control bar height, this option is usually set to yes.</li>
+			<li><span class="boldLi">addKeyboardSupport</span>:"yes" - this can be yes or no, add support for the arrows key to navigate the image once it is zoomed.</li>
+			<li><span class="boldLi">addDoubleClickSupport</span>:"yes" - this can be yes or no, adds double click support for zooming the image on the double click point, please note that this event is not working on older browsers like IE7 and IE8.</li>
+			<li><span class="boldLi">disableMouseWheel</span>:"no" - disable or enable the image mousewheel zoom.</li>
+			<li><span class="boldLi">autoScale</span>:"yes" - disable or enable the autoscale while the zoomer is resizing.</li>
+			<li><span class="boldLi">zoomerWidth</span>:940 - the zoomer maximum width.</li>
+			<li><span class="boldLi">zoomerheight</span>:650 - the zoomer maximum height.</li>
+			<li><span class="boldLi">imageWidth</span>:720 - the image width, this number is really important so make sure you are adding it correctly.</li>
+			<li><span class="boldLi">imageHeight</span>:720 - the image height, this number is really important so make sure you are adding it correctly.</li>
+			<li><span class="boldLi">zoomFactor</span>:2 - the zoom factor, what this number does is to limit the image zoom for example if you have a image with a width of 500px and you want it to be zoomed at a maximum of 1000px then set this number to 2, if you want it to zoom to a maximum of 1500px set this number to 3 and so on.</li>
+			<li><span class="boldLi">doubleClickZoomFactor</span>:1.2 - represents how much the image will zoom on double click, the same principle applies as with the zoom factor.</li>
+			<li><span class="boldLi">startZoomFactor</span>:1.2 - a number from 0 to n that represents the start zoom factor, this is usefoul if you want to start the Mega Zoom & Pan Image Viewer with the image zoomed, make sure that this number is not larger then the zoom factor.</li>
+			<li><span class="boldLi">panSpeed</span>:8 - a number from 1 to 100 that represents the pan speed (this number represents how many pixels the image will pan on each interval), the higher the number the faster the pan speed will be.</li>
+			<li><span class="boldLi">zoomSpeed</span>:1 -  a number from 0.1 to 1 representing the zoom speed.</li>
+			<li><span class="boldLi">backgroundColor</span>:"#222222" - the Mega Zoom & Pan Image Viewer main background color.</li>
+			<li><span class="boldLi">preloaderFontColor</span>:"#000000" - the preloader font color.</li>
+			<li><span class="boldLi">preloaderBackgroundColor</span>:"#000000" - the preloader background color.</li>
+		</ul>
+		<p>//----lightbox (this is only required if the Mega Zoom & Pan Image Viewer is used with a lightbox display type) ----//</p>
+		<ul>
+			<li><span class="boldLi">lightBoxWidth</span>:800 - the lightbox width in pixels, if the browser width is smaller then the lightBoxWidth, this option will be ignored and the lightbox width will be set to the browser current width.</li>
+			<li><span class="boldLi">lightBoxHeight</span>:550 - the lightbox height in pixels, if the browser height is smaller then the lightBoxHeight, this option will be ignored and the lightbox height will be set to the browser current height.</li>
+			<li><span class="boldLi">lightBoxBackgroundOpacity</span>:.8 - a number between 0 and 1 which represents the lightbox main background opacity.</li>
+			<li><span class="boldLi">lightBoxBackgroundColor</span>:#FFFFFF - the lightbox background color.</li>
+		</ul>
+		<p>//----controller (the buttons bar) ----//</p>
+		<ul>
+			<li><span class="boldLi">buttons:</span>"moveLeft, moveRight, moveDown, moveUp, scrollbar, hideOrShowMarkers, info, link, fullscreen" - this options represents the buttons from the buttons bar, they are separated by ",". The buttons are displayed in the order in which they are listed here so you can switch the order of the buttons by modifying the list order. If you don't need a button just remove it from the list, for example to display only the left and right buttons set this option like this: buttons:"moveLeft, moveRight". Please note that at least one button is required.</li>
+			<li><span class="boldLi">buttonsToolTips:</span>"Move left, Move right, Move down, Move up, Zoom level: , Hide markers/Show markers, Info, Custom link, Full screen/Normal screen" - this options represents the buttons bar tooltips they are separated by ",". Each tooltip is related to a button so the order of tooltips must be the same with the order of buttons from the buttons option explained above, there are some buttons which requires two tootltip states like the fullscreen button and the hide/show markers button, in this case the tooltip string is separated by "/" for example the fullscreen tooltip is formatted like this: "Full screen/Normal screen". If you don't want to use the tooltips leave this option balnk like this: buttonsToolTips:"".</li>
+			<li><span class="boldLi">inversePanDirection:</span>"yes" - this can be yes or no.</li>
+			<li><span class="boldLi">controllerPosition:</span>"bottom" - this options represents the buttons bar position, it can be top or bottom.</li>
+			<li><span class="boldLi">startSpaceBetweenButtons:</span>10 - the space in pixels between the beginning of the buttons bar and the first button and the end of the buttons bar and the last button.</li>
+			<li><span class="boldLi">spaceBetweenButtons:</span>10 - the space in pixels between buttons.</li>
+			<li><span class="boldLi">startSpaceForScrollBarButtons:</span>10 - the space in pixels between the beginning of the a normal button and the zoom in or zoom out button.</li>
+			<li><span class="boldLi">startSpaceForScrollBar:</span>10 - the space in pixels between the zoom in or zoom out button adn the zoom scrollbar.</li>
+			<li><span class="boldLi">startSpaceForScrollBar:</span>10 - the space in pixels between the zoom in or zoom out button adn the zoom scrollbar.</li>
+			<li><span class="boldLi">hideControllerDelay:</span>3 - the delay in seconds until the buttons bar will hide after a period of inactivity.</li>
+			<li><span class="boldLi">controllerMaxWidth:</span>900 - the buttons bar allowed maximum width in pixels, for example if you want the buttons bar to expand to the maximum available width set it to a high number like 3000 pixels.</li>
+			<li><span class="boldLi">controllerBackgroundOpacity:</span>1 - an integer from 0 to 1 representing the buttons bar opacity.</li>
+			<li><span class="boldLi">controllerOffsetY:</span>10 - the offset in pixels on the y axis for the buttons bar, this mean that if you want to push down or up the buttons bar you can do it by modifying this number.</li>
+			<li><span class="boldLi">scrollBarOffsetX:</span>10 -the offset in pixels on the x axis for the scrollbar and zoom buttons, this is useful if you want to push the scrollbar to the left or right a few pixels.</li>
+			<li><span class="boldLi">scrollBarHandlerToolTipOffsetY:</span>10 -the offset in pixels on the y axis for the scrollbar handler tooltips.</li>
+			<li><span class="boldLi">zoomInAndOutToolTipOffsetY:</span>10 -the offset in pixels on the y axis for the zoom buttons tooltips.</li>
+			<li><span class="boldLi">buttonsToolTipOffsetY:</span>10 -the offset in pixels on the y axis for the main buttons tooltips.</li>
+			<li><span class="boldLi">hideControllerOffsetY:</span>0 -the offset in pixels on the y axis for the show controller tooltip, this only applies when the controller is hidden.</li>
+			<li><span class="boldLi">link:</span>"http://www.google.com" - this represents the link to open when the info button is pressed.</li>
+			<li><span class="boldLi">buttonToolTipFontColor:</span>"#FFFFFF" - the tool tip text color.</li>
+		</ul>
+		
+		<p>//----navigator (the small window that appears when the Mega Zoom & Pan Image Viewer is zoomed to help panning the image) ----//</p>
+		<ul>
+			<li><span class="boldLi">showNavigator:</span>"yes" - this can be yes or no, disable or enable the navigator, if this option is set to no then the navigator images are not required.</li>
+			<li><span class="boldLi">showNavigatorOnMobile:</span>"yes" - this can be yes or no, disable or enable the navigator on mobile devices.</li>
+			<li><span class="boldLi">navigatorPosition:</span>"topright" - this can be topright, topleft, bottomright, bottomleft, represents the navigator position on screeen.</li>
+			<li><span class="boldLi">navigatorOffsetX:</span>6 - a number representing the an offset in pixels for the navigator on the x axis (think of it like margins left or right).</li>
+			<li><span class="boldLi">navigatorOffsetY:</span>6 - a number representing the an offset in pixels for the navigator on the y axis. (think of it like margins top or bottom)</li>
+			<li><span class="boldLi">navigatorHandlerColor:</span>:"#FF0000" - the navigator handler color.</li>
+			<li><span class="boldLi">navigatorBorderColor:</span>:"#FF0000" - the navigator border/stroke color.</li>
+		</ul>
+		
+		<p>//----info window----//</p>
+		<ul>
+			<li><span class="boldLi">infoWindowBackgroundOpacity:</span>".6 - a number from 0 to 1 which represents the opacity for the info window background opacity.</li>
+			<li><span class="boldLi">infoWindowBackgroundColor:</span>""#FFFFFF" - the background color for the info window.</li>
+			<li><span class="boldLi">infoWindowScrollBarColor:</span>""#FFFFFF" - the color for the info window scrollbar.</li>
+		</ul>
+		
+		<p>//----markers/hotspots----//</p>
+		<ul>
+			<li><span class="boldLi">showMarkersInfo:</span>"no"- this can be yes or no, it is a helper tool for positioning the markers/hotspots.</li>
+			<li><span class="boldLi">markerToolTipOffsetY:</span>10 - an offset in pixels on the y axis for the markers tooltips, this will push down or up the markers tooltip or tooltip window.</li>
+		</ul>
+		
+		<p>//----context menu (this appears when the right click mouse button is pressed)----//</p>
+		<ul>
+			<li><span class="boldLi">showScriptDeveloper:</span>"yes"- this can be yes or no, it will add an extra entry in the context menu with a link to our site, if this does not bother you please leave it active it will help us with our work.</li>
+			<li><span class="boldLi">contextMenuLabels:</span>"Move left, Move right, Move down, Move up, Zoom in/Zoom out, Hide markers/Show markers, Info, Custom link, Full screen/Normal screen" - this options represents the context menu items they are separated by ",". Each item is related to a main button so the order must be the same with the order of buttons from the buttons option explained above, there are some items which requires two states like the fullscreen item, in this case the string is separated by "/" for example the fullscreen item is formatted like this: "Full screen/Normal screen". If you don't want to use the context menu leave this option balnk like this: contextMenuLabels:"".</li>
+			<li><span class="boldLi">contextMenuBackgroundColor:</span>"#FFFFFF" - the context menu background color.</li>
+			<li><span class="boldLi">contextMenuBorderColor:</span>"#FFFFFF" - the context menu border color.</li>
+			<li><span class="boldLi">contextMenuSpacerColor:</span>"#FFFFFF" - the context menu spacer color, the line which separates the context menu items.</li>
+			<li><span class="boldLi">contextMenuItemNormalColor:</span>"#FFFFFF" - the color for the a context menu item on normal state.</li>
+			<li><span class="boldLi">contextMenuItemSelectedColor:</span>"#FFFFFF" - the color for the a context menu item on selected state.</li>
+			<li><span class="boldLi">contextMenuItemDisabledColor:</span>"#FFFFFF" - the color for the a context menu item on disabled state.</li>
+		</ul>
+	   
+	    <h3 id="infoWindow"><strong>E) Setting up the info window.</strong> - <a href="#toc">top</a></h3>
+		<p>To add html content to the info window replace the html content inside the ul with the attribute <span class="boldLi">data-info</span>, if there is too much text a scrollbar will appear. If you don't need the info window delete the ul tag with the attribute <span class="boldLi">data-info</span> and also inside the Mega Zoom & Pan Image Viewer constructor remove the <span class="boldLi">info</span> label from the buttons option (please read the <a href="#config">constructor parameters</a> section). Of course this window can have its html content formatted with CSS, we are using the global.css file to style this window.</p>
+	   
+        <h3 id="markers"><strong>F) How to setup the markers/hotspots.</strong> - <a href="#toc">top</a></h3>
+		<p>Open with a text editor any of the provided .html files for reference this way the code can be copied and paste</p>
+		<p>To find the markers position over the image set <span class="boldLi">showMarkersInfo:"yes"</span>, this will show a white box that is containing information about  left, top and current zoom factor, move the mouse over the image on a spot where you want to add the marker... it does not matter if the image is zoomed.</p>
+		<p>There are three type of markers/hotspots: link, tooltip and infowindow, they are explained below, they are created visually using two image icons (.jpg, .png or .gif), one for the normal state and one for the selected state when the mouse is over it, also the image size and shape can be any kind. Please note that .gif can be used but on some mobile devices the gif will not animate, only one frame will be displayed!</p>
+		<ol>
+			<li>The link marker type once is clicked or pressed a new browser window will open, the link and target can be specified.</li>
+			<li>The tooltip marker type once is rolled over with the mouse or or touched on mobile a popup window will appear, this window can contain any type of html content but be careful not to add too much text, it is useful if you want to show a small chunk of html content. Please note that the elements which this window contains can be styled with css, if you add images make sure that you add the width and height attributes, otherwise the window will not resize properly.</li>
+			<li>The infowindow marker type once is clicked or or touched a window will appear over the Mega Zoom & Pan Image Viewer, this window can contain any type and any amount of html content (this window is exactly the same as the info window which appears when the info button is pressed). Please note that the html tags that this window contains can be styled with css, if you add images make sure that you add the width and height attributes, otherwise the window will not resize properly</li>
+		</ol>
+		
+		 <h4 id="markers" class="red"><strong>Create a marker/hotspot of type link and adding it at a specific position.</strong></h4>
+		 <pre class="brush: js; html-script: true, class-name: 'negativeLeftMarginsHTML'">
+		 <li data-marker-type="link" data-reg-point="center" data-marker-normal-state-path="skins/skin_round_silver/skin/marker6.png" data-marker-selected-state-path="skins/skin_round_silver/skin/marker6-rollover.png" data-marker-left="3746" data-marker-top="386" data-marker-width="26" data-marker-height="26" data-show-after-zoom-factor="0" data-tool-tip-label="External link (url and target can be specified)" data-marker-url="http://www.google.com" data-marker-target="_blank"></li></pre>
+		
+		 <p>Above there is an image which represents a graphical representation of how a link type marker is created. The marker from the above image must be added (copy and paste) into the ul tag with the <span class="boldLi">data-markers</span> attribute, the order into which they are added does not matter. The marker data attributes are explained below:</p>
+			<ul>
+				<li><span class="boldLi">data-marker-type="link"</span> - this represents the marker type, in this case it is link.</li>
+				<li><span class="boldLi">data-reg-point="center"</span> - this represents the marker registration point (the marker zoom point), this is a bit difficult to explain but it is easy to use, if you have a marker with a round shape set this option to center,if the marker has a pointer down set it to centerbottom or if the marker has a pointer up set it to centertop.</li>
+				<li><span class="boldLi">data-marker-normal-state-path="skin_round_silver/skin/marker6.png"</span> - this represents the path for the marker normal state image, it can be a .png, .jpg or .gif format and it can have any size or shape.</li>
+				<li><span class="boldLi">data-marker-selected-state-path="skin_round_silver/skin/marker6-rollover.png"</span> - this represents the path for the marker selected state image, it can be a .png, .jpg or .gif  file and it can have any size or shape.</li>
+				<li><span class="boldLi">data-marker-left="3746"</span> - the marker left postion.</li>
+				<li><span class="boldLi">data-marker-top="386"</span> - the marker top postion.</li>
+				<li><span class="boldLi">data-marker-width="31"</span> - the marker width, make sure that this has the exact width as the normal or selected image.</li>
+				<li><span class="boldLi">data-marker-height="31"</span> - the marker height, make sure that this has the exact height as the normal or selected image.</li>
+				<li><span class="boldLi">data-show-after-zoom-factor="0"</span> - a number between 0 and the specified zoom factor, if you want to show a marker after the image is zoomed for example 60% set this number to .6, this varies based on the way you want to use this.... To always show the marker set this to 0 (zero).</li>
+				<li><span class="boldLi">data-tool-tip-label="External Link (the url and target can be specified)"</span> -  the tooltip label which appears when the marker is rolled over with the mouse.</li>
+				<li><span class="boldLi">data-marker-url="http://www.google.com"</span> -  the url of the window which will be open when the markers is pressed.</li>
+				<li><span class="boldLi">data-marker-target="_blank"</span> -  the target of the window which will be open when the markers is pressed (this can be _blank or _self).</li>
+			</ul>
+		</p>
+		
+		<p>Once all the markers are added don't forget to disable the heloper tool like this <span class="boldLi">showMarkersInfo:"no"</span>, (please read the <a href="#config">constructor parameters</a> section).</p>
+			
+		<h4 id="markers" class="red"><strong>Create a marker/hotspot of type tooltip and adding it at a specific position.</strong></h4>
+		<pre class="brush: js; html-script: true, class-name: 'negativeLeftMarginsHTML'">
+		<li data-marker-type="tooltip" data-show-content="yes" data-reg-point="centerbottom" data-marker-normal-state-path="skins/skin_round_silver/skin/marker1.png" data-marker-selected-state-path="skins/skin_round_silver/skin/marker1-rollover.png" data-marker-left="1536" data-marker-top="270" data-marker-width="28" data-marker-height="36" data-show-after-zoom-factor="0">
+			<div class="groenlandToolTipInfoDiv">
+				<div>
+					<img class="groenland1Image" src="skins/skin_round_silver/css_graphics/groenland1.png" width="83" height="124"/>
+					<p class="groenland1P">This type of tooltip windows can be added with ease, they have a responsive layout and CSS support <a class="link" href="http://www.google.com" target="_blank">external link</a>.</p>
+				</div>
+				<div>
+					<p class="groenland2P">The <span class="dark">hotspots</span> / <span class="dark">markers</span> can be of any size or shape (jpg, gif or png).</p>
+					<img class="groenland2Image" src="skins/skin_round_silver/css_graphics/groenland2.png" width="202" height="97"/>
+				</div>
+			</div>
+		</li>
+		</pre>
+		<p>Above there is an image that represents a graphical representation of how a tooltip type marker is created. The marker from the above image must be added (copy and paste) into the ul tag with the <span class="boldLi">data-markers</span> attribute, the order into which they are added does not matter. The marker data attributes are explained below:</p>
+		<ul>
+		    <li><span class="boldLi">data-marker-type="tooltip"</span> - this represents the marker type, in this case it is tooltip.</li>
+			<li><span class="boldLi">data-reg-point="center"</span> - this represents the marker registration point (the marker zoom point), this is a bit difficult to explain but it is easy to use, if you have a marker with a round shape set this option to center,if the marker has a pointer down set it to centerbottom or if the marker has a pointer up set it to centertop.</li>
+			<li><span class="boldLi">data-marker-normal-state-path="skin_round_silver/skin/marker1.png"</span> - this represents the path for the marker normal state image, it can be a .png, .jpg or .gif format and it can have any size or shape.</li>
+			<li><span class="boldLi">data-marker-selected-state-path="skin_round_silver/skin/marker1-rollover.png"</span> - this represents the path for the marker selected state image, it can be a .png, .jpg or .gif file and it can have any size or shape.</li>
+			<li><span class="boldLi">data-marker-left="3746"</span> - the marker left postion.</li>
+			<li><span class="boldLi">data-marker-top="386"</span> - the marker top postion.</li>
+			<li><span class="boldLi">data-marker-width="31"</span> - the marker width, make sure that this has the exact width as the normal or selected image.</li>
+			<li><span class="boldLi">data-marker-height="31"</span> - the marker height, make sure that this has the exact height as the normal or selected image.</li>
+			<li><span class="boldLi">data-show-after-zoom-factor="0"</span> - a number between 0 and the specified zoom factor, if you want to show a marker after the image is zoomed for example 60% set this number to .6, this varies based on the way you want to use this.... To always show the marker set this to 0 (zero).</li>
+		</ul>
+		<p>Inside this marker where the "HTML content here!" is showed, HTML content can be added, please note that this type of window supports only a small chunk o HTML content so keep this in mind, also make sure that the image elements have the width and height attribute set otherwise the window will not resize properly.</p>
+		<p>Once all the markers are added don't forget to disable the heloper tool like this <span class="boldLi">showMarkersInfo:"no"</span>, (please read the <a href="#config">constructor parameters</a> section).</p>
+		
+		<h4 id="markers" class="red"><strong>Create a marker/hotspot of type infowindow and adding to a specific image at a specific position.</strong></h4>
+		<pre class="brush: js; html-script: true, class-name: 'negativeLeftMarginsHTML'">
+		<li data-marker-type="infowindow" data-reg-point="centerbottom" data-marker-normal-state-path="skins/skin_round_silver/skin/marker2.gif" data-marker-selected-state-path="skins/skin_round_silver/skin/marker2-rollover.png" data-marker-left="3320" data-marker-top="1389" data-marker-width="28" data-marker-height="36" data-show-after-zoom-factor="0" data-tool-tip-label="Large content window (support for unlimited text)">
+				<div class="infoDiv">
+					<!-- HTML content that appears in the info window can be added here -->
+				</div>
+			</li>
+		</pre>
+		<p>Above there is an image which represents a graphical representation of how a infowindow type marker is created. The marker from the above image must be added (copy and paste) into the ul tag with the <span class="boldLi">data-markers</span> attribute, the order into which they are added does not matter. The marker data attributes are explained below:</p>
+		<ul>
+			<li><span class="boldLi">data-marker-type="infowindow"</span> - this represents the marker type, in this case it is infowindow.</li>
+			<li><span class="boldLi">data-reg-point="center"</span> - this represents the marker registration point (the marker zoom point), this is a bit difficult to explain but it is easy to use, if you have a marker with a round shape set this option to center,if the marker has a pointer down set it to centerbottom or if the marker has a pointer up set it to centertop.</li>
+			<li><span class="boldLi">data-marker-normal-state-path="skin_round_silver/skin/marker2.png"</span> - this represents the path for the marker normal state image, it can be a .png, .jpg or .gif format and it can have any size or shape.</li>
+			<li><span class="boldLi">data-marker-selected-state-path="skin_round_silver/skin/marker2-rollover.png"</span> - this represents the path for the marker selected state image, it can be a .png, .jpg or .gif file and it can have any size or shape.</li>
+			<li><span class="boldLi">data-marker-left="3746"</span> - the marker left postion.</li>
+			<li><span class="boldLi">data-marker-top="386"</span> - the marker top postion.</li>
+			<li><span class="boldLi">data-marker-width="31"</span> - the marker width, make sure that this has the exact width as the normal or selected image.</li>
+			<li><span class="boldLi">data-marker-height="31"</span> - the marker height, make sure that this has the exact height as the normal or selected image.</li>
+			<li><span class="boldLi">data-show-after-zoom-factor="0"</span> - a number between 0 and the specified zoom factor, if you want to show a marker after the image is zoomed for example 60% set this number to .6, this varies based on the way you want to use this.... To always show the marker set this to 0 (zero).</li>
+		</ul>
+		<p>Inside this marker where the "HTML content here!" is showed, HTML content can be added, please note that this type of window supports only a small chunk o HTML content so keep this in mind, also make sure that the image elements have the width and height attribute set otherwise the window will not resize properly.</p>
+		<p>Once all the markers are added don't forget to disable the heloper tool like this <span class="boldLi">showMarkersInfo:"no"</span>, (please read the <a href="#config">constructor parameters</a> section).</p>
+		
+		<h3 id="dynamic"><strong>G) Change image dynamically in the same page</strong> - <a href="#toc">top</a></h3>
+		<p>Before reading this section make sure you understand the  <a href="#instalation">How to install Mega Zoom & Pan Image Viewer into your html page</a> and  <a href="#config">Constructor parameters</a>.</p>
+		<p>This section shows how to change the Mega Zoom & Pan Image Viewer image dynamically in the same page, we have provided examples for each skin. Open with a text editor any of the .html files provided in the download files that are ending with "_thumbnails.html". In this examples we have used basic css to create thumbnails and when a thumbnail is pressed the image will change also.</p>
+		<p>I will not go into great details about the code because it is fairly simple to understand, what is important to note is that a function called "setupZoomer" is used that accept some parameters (the parameters are self explanatory, also you can add more based on your project), This function is destroying the current Mega Zoom & Pan Image Viewer instance if any and creates a new one based on the function parameters value.<p>
+		<p>The examples that we have used in the preview page can be found in the demo folder.</p>
+		
+	
+        <h3 id="credits"><strong>H) Sources and Credits</strong> - <a href="#toc">top</a></h3>
+        <p>This component was made by Tibi from FWD (FWDesign) <a href="http://www.webdesign-flash.ro">Future Web Design</a>, for more information and support contact us at <a href="mailto:youremail@yourdomain.com">tibi_diablo@yahoo.com</a></p>
+		<p>Once again, thank you so much for purchasing this item. As I said at the beginning, I'd be glad to help you if you have any questions regarding this Mega Zoom & Pan Image Viewer and I'll do my best to assist.</p> 
+		
+		<p class="append-bottom alt large"><strong>FWDesign</strong></p>
+		<p><a href="#toc">Go To Table of Contents</a></p>
+		
+		<hr class="space">
+	</div><!-- end div .container -->
+</body>
+</html>
+
+</script>
