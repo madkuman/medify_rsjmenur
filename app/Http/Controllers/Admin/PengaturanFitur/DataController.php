@@ -325,6 +325,37 @@ class DataController extends Controller
             ]
         ];
 
+        $data['satu_sehat'] = [
+            'judul' => 'SATU SEHAT',
+            'deskripsi' => 'Pengaturan Fitur SATU SEHAT',
+            'input' => [
+                'client-id' => [ #client ID
+                    'col' => 4, #optional default 4
+                    'type' => 'input', #nama file di view admin.pengaturan-fitur.components.form
+                    'judul' => 'CLIENT ID',
+                    'name' => 'client_id', #samakan dengan yang ada diconfig
+                    'deskripsi' =>  '',
+                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+                ],
+                'secret-id' => [ #secret ID
+                    'col' => 4, #optional default 4
+                    'type' => 'input', #nama file di view admin.pengaturan-fitur.components.form
+                    'judul' => 'SECRET ID',
+                    'name' => 'secret_id', #samakan dengan yang ada diconfig
+                    'deskripsi' =>  '',
+                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+                ],
+                'organization-id' => [ #organization ID
+                    'col' => 4, #optional default 4
+                    'type' => 'input', #nama file di view admin.pengaturan-fitur.components.form
+                    'judul' => 'ORGANIZATION ID',
+                    'name' => 'organization_id', #samakan dengan yang ada diconfig
+                    'deskripsi' =>  '',
+                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+            ],
+            ]
+        ];
+
         return $data;
     }
 
