@@ -39,4 +39,4 @@ DB_HOST=178.128.96.67
 DB_USER=app
 DB_PASS=basmalah128
 
-tambah_baris_baru
+tambah_baris_baru__newww
