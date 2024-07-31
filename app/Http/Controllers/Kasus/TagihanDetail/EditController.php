@@ -140,4 +140,21 @@ class EditController extends Controller
         }
         return 0;
     }
+
+    public function flagIpwl($id)
+    {
+        $data = TagihanDetail::find($id);
+        if(empty($data->flag_ipwl_at))
+        {
+            $data->flag_ipwl_at = Carbon::now();
+            $data->flag_ipwl_by = Auth::user()->id;
+        }
+        else
+        {
+            $data->flag_ipwl_at = null;
+            $data->flag_ipwl_by = Auth::user()->id;
+        }
+        $data->save();
+        return $data;
+    }
 }

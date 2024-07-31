@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Farmasi\Laporan;
 
+use App\Exports\Farmasi\KartuBarang;
 use App\Exports\Farmasi\KartuStok;
 use App\Models\Farmasi\Farmasi;
 use Illuminate\Http\Request;
@@ -23,8 +24,16 @@ use App\Exports\Farmasi\ResepObat;
 use App\Exports\Farmasi\StokOpname;
 use App\Exports\Farmasi\PengeluaranObat;
 use App\Models\Farmasi\AturanShift;
+use App\Models\Farmasi\Items;
+use App\Models\Farmasi\LogPengadaan;
+use App\Models\Farmasi\LogPenghapusan;
+use App\Models\Farmasi\LogTransaksi;
+use App\Models\Farmasi\MasterKodeBidang;
+use App\Models\Farmasi\MasterKodeRekening;
 use App\Models\Farmasi\Pengadaan;
+use App\Models\Pasien\PembayaranPerusahaanType;
 use Illuminate\Support\Arr;
+use ReflectionFunctionAbstract;
 
 class ViewController extends Controller
 {
@@ -47,6 +56,9 @@ class ViewController extends Controller
         $data['sumber_dana'] = app('App\Http\Controllers\Farmasi\SumberDana\ReadController')->getAll();
         $data['katalog'] = app('App\Http\Controllers\Farmasi\Katalog\ReadController')->getAll();
         $data['penyedia'] = json_decode(app('App\Http\Controllers\Keuangan\Perusahaan\ReadController')->get());
+        $data['asuransi_tipe'] = PembayaranPerusahaanType::get();
+        $data['master_kode_rekening'] = MasterKodeRekening::get();
+        $data['master_kode_bidang'] = MasterKodeBidang::get();
 		return view('farmasi.laporan.index', $data);
 	}
 
@@ -67,6 +79,104 @@ class ViewController extends Controller
         }else{
             return (new KartuStok($data))->download($filename.'.xlsx');
         }
+    }
+
+	public function kartuBarang(Request $request, $farmasi, $slug)
+    {
+        ini_set('max_execution_time', 300);
+        $farm = session('farmasi');
+        $filename = 'Laporan Kartu Barang';
+        $item = app('App\Http\Controllers\Farmasi\Items\ReadController')->getItemDetail($slug);
+        $data = app(\App\Http\Controllers\Farmasi\Items\ReadController::class)->getKartuStok($item,$request->input('tanggal_awal'),$request->input('tanggal_akhir'));
+        
+        # get stok awal per items
+        $list_stok_awal = $item->all_items->map(function ($item) use ($data) {
+            $selisih = collect($data['riwayat'])->where('item_id', $item->id)->sum(function ($item) {
+                return $item->jumlah_plus - $item->jumlah_min;
+            });
+            $selisih_luar = collect($data['luar_riwayat'])->where('item_id', $item->id)->sum(function ($item) {
+                return $item->jumlah_plus - $item->jumlah_min;
+            });
+            $item->stok_awal = $item->jumlah - $selisih - $selisih_luar;
+            return $item;
+        })->keyBy('id');
+        
+        # proses eager manual
+        $riwayat = collect($data['riwayat']);
+
+        $eager_transaksi = [
+            'detail_resep.resep',
+        ];
+
+        $eager_distribusi = [
+            'detail_distribusi',
+        ];
+
+        $data_items = Items::with('log_pengadaan')->whereIn('id', $riwayat->pluck('item_id'))->get()->keyBy('id');
+        $data_log_transaksi = LogTransaksi::withTrashed()->with($eager_transaksi)->whereIn('id', $riwayat->where('tabel', 'log_transaksi')->pluck('tabel_id'))->get()->keyBy('id');
+        $data_log_pengadaan = LogPengadaan::withTrashed()->whereIn('id', $riwayat->where('tabel', 'log_pengadaan')->pluck('tabel_id'))->get()->keyBy('id');
+        $data_log_penghapusan = LogPenghapusan::withTrashed()->whereIn('id', $riwayat->where('tabel', 'log_penghapusan')->pluck('tabel_id'))->get()->keyBy('id');
+        $data_log_distribusi = LogDistribusi::withTrashed()->with($eager_distribusi)->whereIn('id', $riwayat->where('tabel', 'log_distribusi')->pluck('tabel_id'))->get()->keyBy('id');
+
+        $riwayat = $riwayat->map(function ($item) use ($data_items, $data_log_transaksi, $data_log_pengadaan, $data_log_penghapusan, $data_log_distribusi) {
+            $item->is_distribusi_retur = 0;
+            if ($item->tabel == 'log_transaksi') {
+                $item->log = $data_log_transaksi[$item->tabel_id];
+                $item->log_parent_id = $item->log->resep_detail_id;
+            } else if ($item->tabel == 'log_pengadaan') {
+                $item->log = $data_log_pengadaan[$item->tabel_id];
+                $item->log_parent_id = $item->log->pengadaan_id;
+            } else if ($item->tabel == 'log_penghapusan') {
+                $item->log = $data_log_penghapusan[$item->tabel_id];
+                $item->log_parent_id = $item->log->penghapusan_id;
+            } else if ($item->tabel == 'log_distribusi') {
+                $item->log = $data_log_distribusi[$item->tabel_id];
+                $item->log_parent_id = $item->log->distribusi_id;
+                $item->is_distribusi_retur = $item->log->detail_distribusi->kategori == 'Retur' ? 1 : 0;
+            }
+            $item->items = $data_items[$item->item_id];
+            return $item;
+        });
+
+        # end proses eager manual
+
+        # proses menyatukan transaksi dengan retur
+        $group_riwayat = $riwayat->groupBy(function ($item) {
+            $id = $item->tabel_id;
+            if ($item->tabel == 'log_transaksi') {
+                $id = $item->log->detail_resep->resep->transaksi_id."-".$item->log->item_id;
+            }
+            return $item->tabel."-".$id;
+        });
+
+                
+        $riwayat = collect($group_riwayat)->map(function ($collect) {
+            $item = clone $collect->first();
+            $item->jumlah_min = $collect->sum('jumlah_min');
+            $item->jumlah_plus = $collect->sum('jumlah_plus');
+            return $item;
+        })->values();
+        # end proses menyatukan transaksi dengan retur
+
+        # proses sorting
+        $riwayat->sortBy(function ($item) {
+            return $item->created_at. "-" .$item->tabel. "-". $item->log_parent_id;
+        })->values();
+        # end proses sorting
+
+        # proses perhitungan stok awal
+        $riwayat = $riwayat->groupBy(function ($item) {
+            return $item->created_at. "-" .$item->tabel. "-". $item->log_parent_id;
+        });
+
+        # end proses sorting
+        $data['riwayat_group'] = $riwayat->toArray();
+        $data['list_stok_awal'] = $list_stok_awal;
+        $data['farm'] = $farmasi;
+        $data['farmer'] = $farm->nama;
+        $data['item'] = $item;
+        $data['is_format_detail'] = $request->format == 'mutasi_lengkap' ? 1 : 0;
+        return (new KartuBarang($data))->download($filename.'.xlsx');
     }
 
     public function kegiatanKesehatan($farmasi, Request $request)

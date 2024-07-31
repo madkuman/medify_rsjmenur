@@ -1,10 +1,33 @@
 <script type="text/javascript">
 	var data = JSON.parse({!!json_encode(str_replace("`", "'", $asesmen))!!});
 
+	$(".verifBtn").click(function(e){
+		e.preventDefault();
+		id = $(this).data("id");
+		$('#asesmenId').val(id);
+		swal({
+			title: "Verifikasi",
+			text: "Apakah anda yakin akan memverifikasi data ini?",
+			showCancelButton: true,
+			reverseButtons: true,
+			type: 'warning',
+			confirmButtonClass: "btn btn-success",
+			cancelButtonClass: "btn btn-default",
+			confirmButtonText: "Ya",
+			cancelButtonText: "Kembali",
+			closeOnConfirm: false
+		}).then(function(result) {
+			if(result.value)
+			{
+				$('#asesmenFormVerif').submit();
+			}
+		});
+	});
+
 	$(".asesmenDeleteBtn").click(function(e){
 		e.preventDefault();
 		id = $(this).data("id");
-		$('#asesmenDeleteInputId').val(id);
+		$('#asesmenId').val(id);
 		swal({
 			title: "Hapus",
 			text: "Apakah anda yakin akan menghapus data ini?",
@@ -19,6 +42,7 @@
 		}).then(function(result) {
 			if(result.value)
 			{
+            $('#asesmenDeleteInputId').val(id);
 				$('#asesmenFormDelete').submit();
 			}
 		});

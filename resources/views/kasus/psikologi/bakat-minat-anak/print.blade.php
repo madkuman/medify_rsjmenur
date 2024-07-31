@@ -436,7 +436,7 @@ Print Hasil Tes Bakat Minat Anak - {{$kasus->identitas->nama}}
         <tr>
             <td></td>
             <td align="center">
-                <p><u>{{$bakat_minat_anak->dokterPemeriksa->name ?? '.........................................'}}</u></p>
+                <p><u>{{$bakat_minat_anak->creator->name ?? '.........................................'}}</u></p>
 {{--                <p>NIP. 3050103198227361</p>--}}
             </td>
         </tr>

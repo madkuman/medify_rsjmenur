@@ -1115,4 +1115,14 @@ class PostController extends Controller
 
 		return abort(201);
 	}
+
+	public function sensusRawatInapRuangan(Request $request)
+	{
+		dispatch(new QueueArtisan('pasien:laporan-generate-sensus-rawat-inap-ruangan',[
+			'date' => $request->monthyear,
+			'ruangan' => $request->ruangan
+		]));
+
+		return abort(201);
+	}
 }

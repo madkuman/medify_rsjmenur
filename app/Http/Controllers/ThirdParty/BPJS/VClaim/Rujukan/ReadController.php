@@ -123,7 +123,7 @@ class ReadController extends Controller
         }
         if ($rujukPKM->metaData->code == 200) {
             if ($multi) {
-                foreach ($rujukPKM->response->rujukan as $rujuk) {
+                foreach (($rujukPKM->response->rujukan ?? []) as $rujuk) {
                     $rujuk->tipe_perujuk = 1;
                     array_push($rujuk_res, $rujuk);
                 }

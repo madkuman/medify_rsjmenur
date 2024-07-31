@@ -16,13 +16,35 @@
                     d.tanggal_awal = $("#tanggal_awal").val();
                     d.tanggal_akhir = $("#tanggal_akhir").val();
                     d.jenis_pembayaran = $("#jenis-pembayaran").val();
+                    d.nomor_antrian = $("#filter-nomor_antrian").val();
                     d.status = function() {
-                            if($('#status_selesai').is(":checked"))
-                            {
-                                if($('#status_menunggu').is(":checked")) return 2;
-                                else return 1;    
-                            }
-                            if($('#status_menunggu').is(":checked")) return 0;
+                        let status = [];
+                        if ($('#status_selesai').is(":checked")) {
+                            status.push(2);
+                        }
+                        if ($('#status_dikerjakan').is(":checked")) {
+                            status.push(1);
+                        }
+                        if ($('#status_menunggu').is(":checked")) {
+                            status.push(0);
+                        }
+                        return status;
+                    };
+                    d.asal_pelayanan = function() {
+                        let status = [];
+                        if ($('[name="asal_pelayanan_igd"]').is(":checked")) {
+                            status.push('igd');
+                        }
+                        if ($('[name="asal_pelayanan_rawat_inap"]').is(":checked")) {
+                            status.push('rawat-inap');
+                        }
+                        if ($('[name="asal_pelayanan_rawat_jalan"]').is(":checked")) {
+                            status.push('rawat-jalan');
+                        }
+                        if ($('[name="asal_pelayanan_lainnya"]').is(":checked")) {
+                            status.push('-1');
+                        }
+                        return status;
                     };
                     d.status_ditelaah = function() {
                             if($('#sudah_ditelaah').is(":checked")){
@@ -38,6 +60,12 @@
                             return 1;
                         }
                     }
+			d.eksekutif = function () {
+				if($('#eksekutif').is(":checked"))
+				{
+					return 1;
+				}
+			}
                     d.is_video = function () {
                         if($('#telekonsultasi').is(":checked"))
                         {

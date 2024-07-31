@@ -7,7 +7,7 @@
             <th colspan="6">LAPORAN PEMERIKSAAN LABORATORIUM</th>
         </tr>
         <tr>
-            <th colspan="6">Bulan : {{$bulan}}</th>
+            <th colspan="6">{{$keterangan_waktu}}</th>
         </tr>
         <tr>
             <td></td>

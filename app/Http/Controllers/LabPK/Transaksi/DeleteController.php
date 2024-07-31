@@ -28,7 +28,6 @@ class DeleteController extends Controller
             
             $backup_transaction = $transaction;
             $backup_detail = $transaction->detail;
-
             foreach ($transaction->detail as $detail){
                 if($detail->tagihan_detail_id){
                     app('App\Http\Controllers\Kasus\TagihanDetail\DeleteController')->deleteFromCppt(null,$detail->tagihan_detail_id);
@@ -39,7 +38,7 @@ class DeleteController extends Controller
                 app('App\Http\Controllers\Keuangan\Piutang\DeleteController')->deleteAct($transaction->piutang_id);
             }
 
-            $transaction->delete();
+            $transaction->save();
             if(config('app.lis_enable')){
                 $data = app('App\Http\Controllers\LabPK\LIS\PostController')->cancelOrder($backup_transaction, $backup_detail);
             }

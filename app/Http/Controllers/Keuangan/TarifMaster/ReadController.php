@@ -34,7 +34,11 @@ class ReadController extends Controller
 		
 		$result = [];
 		foreach($tarif as $t){
+			if($t->getTarif($kelas,$tipe) == null) continue;
 			$kategori = $t->kategori->nama;
+			$selected_tarif = $t->getTarif($kelas, $tipe);
+			$t->tarif_id = $selected_tarif->id;
+			$t->selected_tarif = $selected_tarif;
 			if(!isset($result[$kategori]['tarif'])){
 				$result[$kategori]['tarif'] = [];
 				array_push($result[$kategori]['tarif'], $t);
@@ -131,6 +135,7 @@ class ReadController extends Controller
     public function getChildrenTarifKategori($kategori_ids)
     {
     	$tarif_kategori = TarifKategori::whereIn('id',$kategori_ids)->get();
+		$tarif_kategori_ids_fix = [];
     	foreach($tarif_kategori as $item)
     	{
     		$tarif_kategori_ids_fix[] = $item->id;
@@ -140,7 +145,9 @@ class ReadController extends Controller
     			$this->getChildrenTarifKategori([$child_item->id]);
     		}
     	}
-    	$tarif_kategori_ids_fix = array_unique($tarif_kategori_ids_fix);
+		if(!empty($tarif_kategori_ids_fix)){
+			$tarif_kategori_ids_fix = array_unique($tarif_kategori_ids_fix);
+		}
     	return $tarif_kategori_ids_fix;
     }
 

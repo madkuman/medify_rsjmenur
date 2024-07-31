@@ -395,7 +395,12 @@ Print Lembar Penilaian WHODAS 2.0 - {{$kasus->identitas->nama}}
         </tr>
         <tr>
             <td></td>
-            <td align="center" height="50"></td>
+            <td align="center" height="50">
+                @if(isset($kasus->admin->user->ttd))
+                    <img src="{{ public_path($kasus->admin->user->ttd) }}" style="max-width: 90px;">
+                @else
+                @endif
+            </td>
         </tr>
         <tr>
             <td></td>

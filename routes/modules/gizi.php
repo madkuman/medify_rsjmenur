@@ -12,6 +12,7 @@ Route::group(['middleware' => ['check-module']], function(){
             Route::post('/edit', 'Gizi\Pemesanan\PostController@edit');
             Route::post('/delete', 'Gizi\Pemesanan\PostController@delete');
             Route::get('/{id}', 'Gizi\Pemesanan\ViewController@single');
+            Route::post('/rekap-permintaan/baru', 'Gizi\Pemesanan\PostController@buatRekapPermintaan');
         });
 
         Route::get('/pemesanan/rekap-diet','Gizi\Pemesanan\ViewController@rekap_diet');

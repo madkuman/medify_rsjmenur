@@ -344,6 +344,10 @@
                                 </div>
                             </div>
                             @endif
+                            <hr class="my-5">
+                            @include('farmasi.layouts.components.setting-aturan-embalase')
+                            <hr class="my-5">
+                            @include('farmasi.layouts.components.setting-tipe-racikan-bud')
                         </div>
                     </div>
                     <div class="modal-footer">

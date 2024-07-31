@@ -102,7 +102,7 @@ Medify - Gizi Pemesanan Baru
 											<div class="form-group">
 											<div class="custom-control custom-checkbox mt-5">
 												<input class="custom-control-input" type="checkbox" name="waktu_pagi"
-													   id="waktu_pagi" value="1">
+													   id="waktu_pagi" value="1" checked="checked">
 												<label class="custom-control-label" for="waktu_pagi">Makan Pagi</label>
 											</div>
 											</div>
@@ -111,7 +111,7 @@ Medify - Gizi Pemesanan Baru
 											<div class="form-group">
 											<div class="custom-control custom-checkbox mt-5">
 												<input class="custom-control-input" type="checkbox" name="waktu_siang"
-													   id="waktu_siang" value="1">
+													   id="waktu_siang" value="1" checked="checked">
 												<label class="custom-control-label" for="waktu_siang">Makan Siang</label>
 											</div>
 											</div>
@@ -120,7 +120,7 @@ Medify - Gizi Pemesanan Baru
 											<div class="form-group">
 											<div class="custom-control custom-checkbox mt-5">
 												<input class="custom-control-input" type="checkbox" name="waktu_sore"
-													   id="waktu_sore" value="1">
+													   id="waktu_sore" value="1" checked="checked">
 												<label class="custom-control-label" for="waktu_sore">Makan Sore</label>
 											</div>
 											</div>

@@ -1,0 +1,30 @@
+<div class="modal" id="modal-normal" role="dialog" aria-labelledby="modal-normal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="POST" enctype="multipart/form-data" action="{{url()->current()}}/new">
+            {{csrf_field()}}
+            <div class="modal-content">
+                <div class="block block-themed block-transparent mb-0">
+                    <div class="block-header">
+                        <h3 class="block-title">Satuan Kekuatan Baru</h3>
+                    </div>
+                    <div class="block-content">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="control-label">Nama Satuan Kekuatan</label>
+                                    <input type="text" class="form-control" name="nama" placeholder="Nama Satuan Kekuatan" autocomplete="off" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-square" data-dismiss="modal">Batalkan</button>
+                    <button type="submit" class="btn btn-primary btn-square">
+                         <i class="fa fa-save"></i> Simpan
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

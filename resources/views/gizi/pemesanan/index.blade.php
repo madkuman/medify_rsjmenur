@@ -14,6 +14,7 @@
             <div class="block-header">
                 <h6 class="block-title">
                     Daftar Pemesanan Makanan
+                    <small><a href="javascript:void(0)" class="pull-right mr-15" data-toggle="modal" data-target="#modal-rekap-permintaan"><i class="fa fa-layer-group"></i> Buat Rekap Permintaan</a></small>
                     <small><a href="{{url('gizi/pemesanan/baru')}}" class="pull-right mr-15"><i class="fa fa-plus-circle"></i> Buat Permintaan</a></small>
                     <small><a href="#" class="pull-right mr-15" id="print-label"><i class="fal fa-print"></i> Print Label Makanan</a></small>
                 </h6>
@@ -122,6 +123,11 @@
     </div>
     @include('gizi.pemesanan.components.modal-print-label')
     @include('gizi.pemesanan.components.modal-edit')
+    @include('gizi.pemesanan.components.modal-rekap-permintaan')
+    <form class="print-tiket-pemesanan" method="POST" action="{{url('gizi/pemesanan/print/label-pemesanan')}}" target="_blank">
+        {{ csrf_field() }}
+        <input type="hidden" name="pemesanan_id" id="pemesanan_id" value="">
+    </form>
 @endsection
 
 @section('js')
@@ -266,10 +272,12 @@
                     });
                 },
                 success: function (data) {
+                    console.log(data);
                     var makanan_tambahan = JSON.parse(data.makanan_tambahan_ids)
                     swal.close();
                     $("#select-jenismakanan").val(data.jenis_makanan_id).trigger('change');
                     $("#select-diet").val(data.diet_id).trigger('change');
+                    $("#select-bentukmakanan").val(data.bentuk_makanan_id).trigger('change');
                     $.each( makanan_tambahan, function( key, value ) {
                         $("#select-makanantambahan option[value=" + value + "]").attr('selected', 'selected');
                     });

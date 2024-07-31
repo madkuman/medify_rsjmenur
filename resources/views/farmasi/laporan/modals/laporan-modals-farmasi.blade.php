@@ -788,6 +788,7 @@
                     <div class="block-content">
                         @include('farmasi.laporan.modals.components.form-date-year')
                         @include('farmasi.laporan.modals.components.form-farmasi')
+                        @include('farmasi.laporan.modals.components.form-asal-pelayanan-departemen')
                         <div class="export-as" id="form-group-ks"></div>
                     </div>
                 </div>
@@ -968,6 +969,85 @@
     </div>
 </div>
 
+<div class="modal" id="modal-laporan-rekapitulasi-mutasi-barang" role="dialog" aria-labelledby="modal-normal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" action="{{ url('farmasi/'.session('farmasi')->slug.'/laporan/laporan-rekapitulasi-mutasi-barang') }}" target="_blank">
+                {{ csrf_field() }}
+                <div class="block block-themed block-transparent mb-0">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan Rekapitulasi Mutasi Barang</h3>
+                    </div>
+                    <div class="block-content">
+                        @include('farmasi.laporan.modals.components.form-date-range')
+                        <div class="form-group">
+                            <label for="penyedia">Unit Pelayanan</label>
+                            <select class="form-control js-select2" name="farmasi_ids[]" data-placeholder="Semua" multiple="multiple" style="width: 100%;">
+                                @foreach($pharmacy as $pharm)
+                                    <option value="{{$pharm->id}}">{{$pharm->nama}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="penyedia">Pilih Sumber Dana</label>
+                            <select class="form-control js-select2" name="sumber_dana_ids[]" data-placeholder="Semua" multiple="multiple" style="width: 100%;">
+                                @foreach($sumber_dana as $item)
+                                    <option value="{{$item->id}}">{{$item->nama}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="penyedia">Pilih Katalog</label>
+                            <select class="form-control js-select2" name="katalog_ids[]" data-placeholder="Semua" multiple="multiple" style="width: 100%;">
+                                @foreach($katalog as $item)
+                                    <option value="{{$item->id}}">{{$item->nama}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="penyedia">Kode Rekening</label>
+                            <select class="form-control js-select2" name="master_kode_rekening_ids[]" data-placeholder="Semua" multiple="multiple" style="width: 100%;">
+                                @foreach($master_kode_rekening as $item)
+                                    <option value="{{$item->id}}">{{$item->nama}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="penyedia">Kode Bidang</label>
+                            <select class="form-control js-select2" name="master_kode_bidang_ids[]" data-placeholder="Semua" multiple="multiple" style="width: 100%;">
+                                @foreach($master_kode_bidang as $item)
+                                    <option value="{{$item->id}}">{{$item->nama}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="penyedia">Triwulan</label>
+                                    <input type="text" class="form-control" name="triwulan">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="penyedia">Tahun Anggaran</label>
+                                    <input type="text" class="form-control" name="tahun_anggaran">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="export-as" id="form-group-ks"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-alt-secondary btn-square" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-alt-success btn-square btn-excel" id="btn-excel-ks">
+                        <i class="fa fa-file-excel-o"></i> Export Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="modal" id="modal-mutasi-stok-emergensi" role="dialog" aria-labelledby="modal-normal" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -1111,6 +1191,10 @@
                     <div class="block-content">
                         @include('farmasi.laporan.modals.components.form-farmasi')
                         <div class="export-as" id="form-group-ks"></div>
+                        @include('farmasi.laporan.modals.components.form-select-produsen')
+                        @include('farmasi.laporan.modals.components.form-select-penyedia-basic')
+                        @include('farmasi.laporan.modals.components.form-select-kategori')
+                        @include('farmasi.laporan.modals.components.form-sumber-dana-multiple')
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -1143,9 +1227,49 @@
                                 <option value="120">4 Bulan Lagi</option>
                                 <option value="150">5 Bulan Lagi</option>
                                 <option value="180">6 Bulan Lagi</option>
+                                <option value="210">7 Bulan Lagi</option>
+                                <option value="240">8 Bulan Lagi</option>
+                                <option value="270">9 Bulan Lagi</option>
+                                <option value="300">10 Bulan Lagi</option>
+                                <option value="330">11 Bulan Lagi</option>
+                                <option value="360">12 Bulan Lagi</option>
                             </select>
                         </div>
                         <div class="export-as" id="form-group-ks"></div>
+                        @include('farmasi.laporan.modals.components.form-select-produsen')
+                        @include('farmasi.laporan.modals.components.form-select-penyedia-basic')
+                        @include('farmasi.laporan.modals.components.form-select-kategori')
+                        @include('farmasi.laporan.modals.components.form-sumber-dana-multiple')
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-alt-secondary btn-square" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-alt-success btn-square btn-excel" id="btn-excel-ks">
+                        <i class="fa fa-file-excel-o"></i> Export Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="modal-laporan-penghapusan-barang" role="dialog" aria-labelledby="modal-normal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="GET" action="{{ url('farmasi/'.session('farmasi')->slug.'/laporan/laporan-penghapusan-barang') }}" target="_blank">
+                <div class="block block-themed block-transparent mb-0">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan Penghapusan Barang</h3>
+                    </div>
+                    <div class="block-content">
+                        @include('farmasi.laporan.modals.components.form-date-range')
+                        @include('farmasi.laporan.modals.components.form-farmasi')
+                        <div class="export-as" id="form-group-ks"></div>
+                        @include('farmasi.laporan.modals.components.form-select-produsen')
+                        @include('farmasi.laporan.modals.components.form-select-penyedia-basic')
+                        @include('farmasi.laporan.modals.components.form-select-kategori')
+                        @include('farmasi.laporan.modals.components.form-sumber-dana-multiple')
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -1267,11 +1391,11 @@
             <form method="GET" action="{{ url('farmasi/'.session('farmasi')->slug.'/laporan/penerimaan-barang-habis-pakai') }}" target="_blank">
                 <div class="block block-themed block-transparent mb-0">
                     <div class="block-header">
-                        <h3 class="block-title">Laporan Penerimaan Barang Habis Pakai</h3>
+                        <h3 class="block-title">Laporan Penerimaan Barang</h3>
                     </div>
                     <div class="block-content">
                         @include('farmasi.laporan.modals.components.form-date-range')
-                        @include('farmasi.laporan.modals.components.form-sumber-dana')
+                        @include('farmasi.laporan.modals.components.form-sumber-dana-ada-semua')
                         @include('farmasi.laporan.modals.components.form-katalog')
                         @include('farmasi.laporan.modals.components.form-select-penyedia')
                         @include('farmasi.laporan.modals.components.form-select-kategori')
@@ -1384,8 +1508,114 @@
                         <h3 class="block-title">Laporan BPK Sumber Dana</h3>
                     </div>
                     <div class="block-content">
-                        @include('farmasi.laporan.modals.components.form-date-year')
-                        @include('farmasi.laporan.modals.components.form-sumber-dana')
+                        @include('farmasi.laporan.modals.components.form-date-range')
+                        @include('farmasi.laporan.modals.components.form-farmasi-basic')
+                        @include('farmasi.laporan.modals.components.form-select-kategori')
+                        @include('farmasi.laporan.modals.components.form-sumber-dana-ada-semua')
+                        <div class="export-as" id="form-group-ks"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-alt-secondary btn-square" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-alt-success btn-square btn-excel" id="btn-excel-ks">
+                        <i class="fa fa-file-excel-o"></i> Export Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modal-laporan-transaksi-farmasi" role="dialog" aria-labelledby="modal-normal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="GET" action="{{ url('farmasi/'.session('farmasi')->slug.'/laporan/laporan-transaksi-farmasi') }}" target="_blank">
+                <div class="block block-themed block-transparent mb-0">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan Transaksi Farmasi</h3>
+                    </div>
+                    <div class="block-content">
+                        @include('farmasi.laporan.modals.components.form-date-range')
+                        @include('farmasi.laporan.modals.components.form-no-rm')
+                        @include('farmasi.laporan.modals.components.form-farmasi-basic')
+                        @include('farmasi.laporan.modals.components.form-asal-pelayanan-departemen')
+                        @include('farmasi.laporan.modals.components.form-jenis-resep')
+                        @include('farmasi.laporan.modals.components.form-asuransi')
+                        @include('farmasi.laporan.modals.components.form-select-kategori')
+                        <div class="form-group">
+                            <label>Format Laporan</label>
+                            <select class="form-control" name="tipe_laporan">
+                                <option value="bpjs">BPJS</option>
+                                <option value="umum">Umum</option>
+                            </select>
+                        </div>
+                        <div class="export-as" id="form-group-ks"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-alt-secondary btn-square" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-alt-success btn-square btn-excel" id="btn-excel-ks">
+                        <i class="fa fa-file-excel-o"></i> Export Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="modal-laporan-realisasi-pengadaan" role="dialog" aria-labelledby="modal-normal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="GET" action="{{ url('farmasi/'.session('farmasi')->slug.'/laporan/laporan-realisasi-pengadaan') }}" target="_blank">
+                <div class="block block-themed block-transparent mb-0">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan Realisasi Pengadaan</h3>
+                    </div>
+                    <div class="block-content">
+                        @include('farmasi.laporan.modals.components.form-date-range')
+                        @include('farmasi.laporan.modals.components.form-select-kategori')
+                        <div class="export-as" id="form-group-ks"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-alt-secondary btn-square" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-alt-success btn-square btn-excel" id="btn-excel-ks">
+                        <i class="fa fa-file-excel-o"></i> Export Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modal-laporan-berita-acara-pemeriksaan" role="dialog" aria-labelledby="modal-normal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="GET" action="{{ url('farmasi/'.session('farmasi')->slug.'/laporan/laporan-berita-acara-pemeriksaan') }}" target="_blank">
+                <div class="block block-themed block-transparent mb-0">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan Berita Acara Pemeriksaan</h3>
+                    </div>
+                    <div class="block-content">
+                        @include('farmasi.laporan.modals.components.form-date-single')
+                        @include('farmasi.laporan.modals.components.form-farmasi')
+                        @include('farmasi.laporan.modals.components.form-sumber-dana-ada-semua')
+                        @include('farmasi.laporan.modals.components.form-katalog')
+                        @include('farmasi.laporan.modals.components.form-kode-rekening')
+                        @include('farmasi.laporan.modals.components.form-kode-bidang')
+                        @include('farmasi.laporan.modals.components.form-select-kategori')
+                        <div class="form-group">
+                            <label>No Berita Acara</label>
+                            <input type="text" class="form-control" name="no_berita_acara">
+                        </div>
+                        <div class="form-group">
+                            <label>Jenis Dokumen</label>
+                            <select class="form-control" name="jenis_dokumen">
+                                <option value="berita-acara">Berita Acara</option>
+                                <option value="lampiran">Lampiran</option>
+                            </select>
+                        </div>
                         <div class="export-as" id="form-group-ks"></div>
                     </div>
                 </div>

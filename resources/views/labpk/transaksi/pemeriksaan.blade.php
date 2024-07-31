@@ -159,8 +159,8 @@ Pemeriksaan Transaksi #{{$transaksi->id}}
                             <input type="form-control" class="form-control" rows="4" cols="50" placeholder="Tambahkan Detail Golongan Darah disini" name="gol_darah" value="{{$transaksi->gol_darah ?? ''}}">
                         </div>
                         <div class="form-group col-12">
-                            <p class="h5 my-0 mb-10">DIAGNOSIS</p>                                
-                            <textarea class="form-control" rows="4" cols="50" placeholder="Tambahkan Diagnosis Di Sini" name="diagnosis">{{$transaksi->diagnosis ?? ''}}</textarea>
+                            <p class="h5 my-0 mb-10">CATATAN</p>                                
+                            <textarea class="form-control" rows="4" cols="50" placeholder="Tambahkan Catatan Di Sini" name="catatan">{{$transaksi->catatan ?? ''}}</textarea>
                         </div>
                         <hr>
                         <div class="form-group col-12">
@@ -221,6 +221,22 @@ Pemeriksaan Transaksi #{{$transaksi->id}}
                             </select>
                         </div>
 
+                        <div class="form-group col-12">
+                            <p class="h5 my-0 mb-10">Jam Diperiksa</p>    
+                            <input type="text" class="form-control time" autocomplete="off" name="jam_diperiksa" placeholder="00:00" value="{{$transaksi->jam_diperiksa ?? ''}}">
+                        </div>
+                        <div class="form-group col-12">
+                            <p class="h5 my-0 mb-10">Jam Selesai</p>    
+                            <input type="text" class="form-control time" autocomplete="off" name="jam_selesai" placeholder="00:00" value="{{$transaksi->jam_selesai ?? ''}}">
+                        </div>
+                        <div class="form-group col-12">
+                            <p class="h5 my-0 mb-10">Keterangan Spesimen</p>
+                            <textarea class="form-control" rows="4" cols="50" placeholder="Keterangan Spesimen" name="spesimen_terima_keterangan">{{$transaksi->spesimen_terima_keterangan ?? ''}}</textarea>
+                        </div>
+                        <div class="form-group col-12">
+                            <p class="h5 my-0 mb-10">Diagnosa</p>                                
+                            <textarea class="form-control" rows="4" cols="50" placeholder="Tambahkan Diagnosis Di Sini" name="diagnosis">{{$transaksi->diagnosis ?? ''}}</textarea>
+                        </div>
                         <div class="col-12">
                             <div class="pull-right">
                                 <button id="submit-all" class="btn btn-hero btn-alt-primary" type="button">Simpan Pemeriksaan</button>

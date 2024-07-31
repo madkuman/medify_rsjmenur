@@ -237,6 +237,7 @@ Route::group(['middleware' => ['check-module']], function(){
 		Route::post('/dokter/delete', 'Admin\Dokter\PostController@delete');
 		Route::post('/dokter/baru', 'Admin\Dokter\PostController@create');
 		Route::post('/dokter/baru/create', 'Admin\Dokter\CreateController@create');
+		Route::post('/dokter/import-hfis', 'Admin\Dokter\PostController@importHfis');
 
 		Route::get('/data-import', 'Admin\DataImport\ViewController@index');
 		Route::get('/data-import/create', 'Admin\DataImport\ViewController@create');

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Farmasi\LoketAntrian;
 use App\Models\Farmasi\TransaksiObat;
+use App\Models\Hospital\Lokasi;
 use App\Models\Pasien\Pasien;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Response;
@@ -61,13 +62,7 @@ class ReadController extends Controller
             $max_date = $max_date->copy()->endOfDay();
         } else $max_date = Carbon::today()->endOfDay();
 
-        $val = [];
-        if ($req->status == 2){
-            $val[] = 0;
-            $val[] = 1;
-        }
-        else if ($req->status == 1) $val[] = 1;
-        else $val[] = 0;
+        $val = explode(',', $req->status);
 
         $stat = [];
         if ($req->status_ditelaah == 2){
@@ -83,13 +78,19 @@ class ReadController extends Controller
             $cito[] =0;
             $cito[] =1;
         }
+	$eksekutif = [];
+	if($req->eksekutif == 1) $eksekutif[] = 1;
+	else{
+		$eksekutif[] = 0;
+		$eksekutif[] = 1;
+	}
         $is_video =[];
         if($req->is_video == 1)$is_video[] =1;
         else{
             $is_video[] =0;
             $is_video[] =1;
         }
-        $transaksi = TransaksiObat::with(['pasien_detail','ori_detail','final_detail','lokasi','pembayaran_detail', 'dokter'])->where('farmasi_id', $req->farmid)->whereBetween('created_at', [$min_date, $max_date])->whereIn('status', $val)->whereIn('status_ditelaah', $stat)->whereIn('cito',$cito)->whereIn('is_video',$is_video);
+        $transaksi = TransaksiObat::with(['pasien_detail','ori_detail','final_detail','lokasi','pembayaran_detail', 'dokter'])->where('farmasi_id', $req->farmid)->whereBetween('created_at', [$min_date, $max_date])->whereIn('status_ditelaah', $stat)->whereIn('cito',$cito)->whereIn('is_video',$is_video);
         if($req->jenis_pembayaran){
             $perusahaan_ids = app('App\Http\Controllers\Pasien\PasienPembayaran\ReadController')->getPerusahaanByTipe($req->jenis_pembayaran)->pluck('id');
             $pasien_pembayaran_ids = $transaksi->get()->pluck('metode_pembayaran_id');
@@ -97,20 +98,76 @@ class ReadController extends Controller
                 $pasien_pembayaran_id = PasienPembayaran::whereIn('id',$pasien_pembayaran_ids)->whereIn('perusahaan_id',$perusahaan_ids)->get()->pluck('id');
                 $transaksi = TransaksiObat::with(['pasien_detail','ori_detail','final_detail','lokasi','pembayaran_detail', 'dokter'])->where('farmasi_id', $req->farmid)
                     ->whereBetween('created_at', [$min_date, $max_date])
-                    ->whereIn('status', $val)
                     ->whereIn('status_ditelaah', $stat)
                     ->whereIn('cito',$cito)
                     ->whereIn('metode_pembayaran_id',$pasien_pembayaran_id);
             }
         }
+        if ($req->has('asal_pelayanan')) {
+            $asal_pelanyanan = explode(',', $req->asal_pelayanan);
+            # karena jika 4 masuk else saja
+            if (count($asal_pelanyanan) != 0 && count($asal_pelanyanan) != 4) {
+                $with_lainnya = false;
+                if (($key_of_lainnya = array_search('-1', $asal_pelanyanan)) !== false) {
+                    $with_lainnya = true;
+                    unset($asal_pelanyanan[$key_of_lainnya]);
+                }
+                $transaksi->where(function ($query) use ($asal_pelanyanan, $with_lainnya) {
+                    $query->whereHas('lokasi', function ($query) use ($asal_pelanyanan, $with_lainnya) {
+                        $query->select(DB::raw(1))
+                            ->from(config('app.db_name').'.lokasi')
+                            ->whereHas('departemen', function ($query) use ($asal_pelanyanan, $with_lainnya) {
+                                $query->select(DB::raw(1))
+                                    ->from(config('app.db_name').'.lokasi_departemen')
+                                    ->where(function ($query) use ($asal_pelanyanan, $with_lainnya) {
+                                        $query->whereIn('slug', $asal_pelanyanan);
+                                        if ($with_lainnya) {
+                                            $query->orWhereNotIn('slug', ['igd', 'rawat-inap', 'rawat-jalan']);
+                                        }
+                                    });
+                            });
+                    });
+                    if ($with_lainnya) {
+                        $query->orWhereNull('transaksi_obat.lokasi_id');
+                    }
+                });
+            } else {
+                if (count($asal_pelanyanan) == 0) {
+                    $transaksi->whereRaw('1 = 0');
+                }
+            }
+        }
+        $transaksi->whereIn(DB::raw('IF(transaksi_obat.status = 0, IF(transaksi_obat.dikerjakan_at is null, 0, 1),2)'), $val);
+        if (!$req->has('order')) {
+            $lokasi_ids_igd = Lokasi::where('lokasi_departemen_id','1')->get(['id'])->pluck('id')->toArray();
+            $transaksi->orderBy(DB::raw('IF(transaksi_obat.cito = 1 OR transaksi_obat.lokasi_id in ('.implode(',',$lokasi_ids_igd).'), 1, 0)'), 'DESC');
+        }
+        if (!empty($req->nomor_antrian)) {
+            $transaksi->where('transaksi_obat.nomor_antrian', 'LIKE', "%".$req->nomor_antrian."%");
+        }
         // dd($transaksi->get());
         return $transaksi;
     }
 
-    public function getSingle($slug)
+    public function getSingle($slug, $add_eager = [])
     {   
         $day = Carbon::now();
-        $transaksi = TransaksiObat::with(['pasien_detail','final_detail.resep_detail.log','lokasi','pembayaran_detail', 'dokter', 'final_detail.resep_detail.racikan.obat_detail.item_detail'])->where('slug',$slug)->first();
+        $eager = [
+            'pasien_detail',
+            'final_detail.resep_detail.log',
+            'lokasi',
+            'pembayaran_detail', 
+            'dokter', 
+            'final_detail.resep_detail.racikan.obat_detail.item_detail', 
+            'final_detail.kasus_resep_detail', 
+            'lokasi', 
+            'final_detail.resep_detail.items_detail', 
+            'final_detail.resep_detail.log.detail_item', 
+            'final_detail.resep_detail.tipe_racikan',
+            'final_detail.resep_detail.obat_detail.item_detail.kategori_item.detail_kategori'
+        ];
+        $eager = array_merge($eager, $add_eager);
+        $transaksi = TransaksiObat::with($eager)->where('slug',$slug)->first();
         //$transaksi->fyi = TransaksiObat::where('pasien_id',$transaksi->pasien_id)->whereDate('paid_at',date('Y-m-d', strtotime($transaksi->created_at)))->first();
         if(!empty($transaksi->pasien_id))
         $transaksi->fyi = TransaksiObat::with('kasus')->where('pasien_id',$transaksi->pasien_id)->whereDate('paid_at', '>=', $day->copy()->startOfDay())->first();
@@ -692,22 +749,39 @@ class ReadController extends Controller
         return $transaksi;
     }
 
-    public function getByDateNow()
+    public function getByDateNow($kode = null)
     {
         $min_date = Carbon::today()->startOfDay();
         $max_date = Carbon::today()->endOfDay();
         
-        $transaksi = TransaksiObat::whereBetween('created_at', [$min_date, $max_date])->get();
+        $transaksi = TransaksiObat::whereBetween('created_at', [$min_date, $max_date])
+        ->whereNotNull('nomor_antrian')
+        ->when(!empty($kode), function ($query) use ($kode) {
+            $query->where('jenis_antrian_kode', $kode);
+        })
+        ->get();
 
         return $transaksi;
     }
 
-    public function getDataScreen($farmasi_id, $screen_id)
+    public function getDataScreen($farmasi_id, $screen_id, $slug = null)
     {
         $screen = ScreenAntrian::find($screen_id);
         $arr_jenis_resep = json_decode($screen->jenis_resep);
         $arr_jenis_antrian = json_decode($screen->jenis_antrian);
-        $arr_perusahaan_type = JenisAntrian::whereIn('id',$arr_jenis_antrian)->orderBy('perusahaan_tipe')->pluck('perusahaan_tipe')->toArray();
+
+        $arr_perusahaan_type = JenisAntrian::with(['tipe_perusahaan'])->whereIn('id',$arr_jenis_antrian)->orderBy('perusahaan_tipe')->get();
+        $arr_tipe_by_slug = [];
+        if(!empty($slug)) {
+            foreach($arr_perusahaan_type as $arr_perusahaan_type) {
+                if($arr_perusahaan_type->tipe_perusahaan->flag_tipe == $slug) {
+                    array_push($arr_tipe_by_slug, $arr_perusahaan_type->perusahaan_tipe);
+                }
+            }
+        } else {
+            $arr_tipe_by_slug = $arr_perusahaan_type->pluck('perusahaan_tipe')->toArray();
+        }
+
         if($arr_perusahaan_type[0] == 0) $arr_perusahaan_type = PembayaranPerusahaanType::pluck('id')->toArray();
 
         $tunai_id = PembayaranPerusahaanType::where('slug','tunai')->pluck('id')->first();
@@ -726,14 +800,14 @@ class ReadController extends Controller
             ->whereNotNull('waktu_check_in')
             ->whereNotNull('nomor_antrian')
             ->whereIn('jenis_resep_antrian', $arr_jenis_resep)
-            ->when($screen_tunai == 1, function ($query) use ($arr_perusahaan_type) {
-                $query->where(function ($query2) use ($arr_perusahaan_type){
-                    $query2->whereIn('pembayaran_perusahaan.type', $arr_perusahaan_type)
+            ->when($screen_tunai == 1, function ($query) use ($arr_tipe_by_slug) {
+                $query->where(function ($query2) use ($arr_tipe_by_slug){
+                    $query2->whereIn('pembayaran_perusahaan.type', $arr_tipe_by_slug)
                         ->orWhereNull('metode_pembayaran_id');
                 });
             })
-            ->when($screen_tunai != 1, function ($query) use ($arr_perusahaan_type) {
-                $query->whereIn('pembayaran_perusahaan.type', $arr_perusahaan_type);
+            ->when($screen_tunai != 1, function ($query) use ($arr_tipe_by_slug) {
+                $query->whereIn('pembayaran_perusahaan.type', $arr_tipe_by_slug);
             })
             ->orderBy('nomor_antrian')
             // ->take(15)
@@ -875,5 +949,18 @@ class ReadController extends Controller
         }
 
         return $transaksi;
+    }
+
+    function hitungHarga(Request $request, $farmasi_slug, $transaksi_slug)
+    {
+        $transaksi = TransaksiObat::whereSlug($transaksi_slug)->first();
+        $new_request = new Request();
+        $new_request->merge([
+            'kategori_resep' => $transaksi->ori_detail->kategori_resep,
+            'obat' => $request->obat,
+            'farmasi_id' => $transaksi->farmasi_id,
+            'kasus' => $transaksi->kasus,
+        ]);
+        return app(\App\Http\Controllers\Kasus\Resep\ReadController::class)->hitungHarga($new_request, $transaksi->kasus->nomor_kasus ?? '');
     }
 }

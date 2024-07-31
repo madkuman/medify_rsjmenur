@@ -57,13 +57,21 @@
         <button type="button" class="btn-alt btn-primary min-width-125 float-right" onclick="cpptCreate()"><i class="fa fa-pencil"></i> Buat CPPT</button>
         @endif
         @if(count($cppts) <= 100)
-        <a href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/datamedis/cppt/print-all" target="_blink" class="btn-alt btn-secondary  min-width-125 float-right" ><i class="fa fa-print"></i> Cetak Rekap CPPT</a>
+            <div class="dropdown">
+                <button type="button" class="btn-alt btn-secondary min-width-125 float-right" id="print-rekap-cppt" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-print"></i> Cetak Rekap CPPT <i class="fa fa-angle-down ml-5"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="print-rekap-cppt" x-placement="bottom-end">
+                    <a href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/datamedis/cppt/print-all" target="_blink" class="dropdown-item" ><i class="fa fa-print"></i> Cetak Semua CPPT</a>
+                    <a href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/datamedis/cppt/print-sebagian" target="_blink" class="dropdown-item" ><i class="fa fa-print"></i> Cetak Sebagian</a>
+                </div>
+            </div>
         @else
             @php
-            $cppt_chunk = $cppts;
-            $cppt_chunk = array_chunk($cppt_chunk->sortBy('created_at')->pluck('id')->toArray(),100);
+                $cppt_chunk = $cppts;
+                $cppt_chunk = array_chunk($cppt_chunk->sortBy('created_at')->pluck('id')->toArray(),100);
             @endphp
-                <div class="dropdown">
+            <div class="dropdown">
                 <button type="button" class="btn-alt btn-secondary min-width-125 float-right" id="print-rekap-cppt" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-print"></i> Cetak Rekap CPPT <i class="fa fa-angle-down ml-5"></i>
                 </button>
@@ -75,8 +83,9 @@
                         <i class="fa fa-file-text mr-5"></i> {{$index*100+1}} - {{$last}}
                      </a>
                     @endforeach
+                    <a href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/datamedis/cppt/print-sebagian" target="_blink" class="dropdown-item" ><i class="fa fa-print"></i> Cetak Sebagian</a>
                 </div>
-                </div>
+            </div>
         @endif
         @endif
         <button type="button" id="cppt-histori-button" class="btn-alt btn-warning  min-width-125 float-right" ><i class="fa fa-loop"></i> Histori CPPT</button>
@@ -97,14 +106,26 @@
         </div>
         </div>
     </div>
+    @if (!empty($unread_readback)) 
+        <div class="col-md-12">
+            <div class="block block-bordered card bg-danger p-2" style="color:white; font-weight: 500">ada {{ $unread_readback }} cppt belum di readback</div>
+        </div>
+    @endif
 
     @forelse ($cppts as $cppt)
 
+    @php
+        $loop_iteration_cppt = $loop->iteration;
+    @endphp
+
     <div class="col-md-12">
         <div class="block block-bordered block-mode-hidden">
-            <div class="block-header block-header-default">
-                <h3 class="block-title">{{($cppt->jenis) ? strtoupper($cppt->jenis) : 'CPPT'}} {{ $i }}
-                    <small> 
+            <div class="block-header block-header-default"> <!-- parent btn-edit-cppt -->
+                <h3 class="block-title d-flex"><span style="white-space: nowrap;margin-right: .75rem">{{($cppt->jenis) ? strtoupper($cppt->jenis) : 'CPPT'}} {{ $i }}</span>
+                    @php
+                        $my_readback = $cppt->readbacks()->where('dokter_id', Auth::id())->first() ?? null;
+                    @endphp
+                    <small style="white-space: nowrap;margin-right: .75rem"> 
                         {{$cppt->created_at->format('d-m-Y')}} 
                         @if($cppt->creator && $cppt->creator->profesi == 1 ) @php $class_cppt = 'badge badge-primary' @endphp
                         @elseif($cppt->creator && $cppt->creator->profesi == 2 ) @php $class_cppt = 'badge badge-success' @endphp
@@ -118,9 +139,40 @@
                             -
                             {{$cppt->creator->name ?? '-'}}
                         </span> 
-                    </small> 
+                    </small>
+                    <small style="white-space: normal">
+                        @if (Auth::user()->profesi == 2 && !empty(session('my_role_'.request()->route('nomor_kasus'))))
+                            @forelse ($cppt->readbacks as $readback)
+                                @php
+                                    $user_readback = $readback->user;
+                                    $class_readback = 'badge badge-danger';
+                                    if ($readback->verified_at != null) {
+                                        $class_readback = 'badge badge-success';
+                                    } else {
+                                        $class_readback = 'badge badge-danger';
+                                    }
+                                @endphp
+                                <span class="{{ $class_readback }}">{{ $user_readback->name }} - {{ $readback->verified_at . ' Read Back' ?? 'Belum Verifikasi' }}</span>
+                            @empty
+                                <span class="badge">readback belum dibuat</span>
+                            @endforelse
+                        @endif
+                            @if (!empty($my_readback) && $my_readback->verified_at != null)
+                                <span class="badge badge-success">Readback Terverifikasi</span>
+                            @elseif(!empty($my_readback) )
+                                <span class="badge badge-danger">Readback Butuh Verifikasi</span>
+                            @endif
+                    </small>
+                        
                 </h3>
 
+                <!-- Marked Print -->
+                @php $sudah_termarked_print = empty($cppt->marked_print_at) ? false : true; @endphp
+                <div id="marked-print-cppt-{{$i}}">
+                    <button type="button" class="btn-block-option"  title=" {{$sudah_termarked_print ? 'Hapus ' : ''}} Marked Print" onclick="markedPrintCPPT( {{$cppt->id}} , {{$i}}, {{$sudah_termarked_print}} )">
+                        <i class="{{$sudah_termarked_print ? 'fa fa-flag' : 'si si-flag'}}"></i>
+                    </button>
+                </div>
 
                 @if($allow_crud == 1 && ($cppt->created_by == Auth::user()->id) && !$cppt->jenis)
                 <button type="button" class="btn-block-option" data-toggle="tooltip" data-placement="top" title="Copy CPPT" onclick="cpptCopy({{$cppt->id}})">
@@ -128,12 +180,23 @@
                 </button>
                 @endif
 
-                @if(isset($cppt->jenis))
-                @if($cppt->jenis == 'rapt')
-                <button type="button" class="btn-block-option" data-toggle="tooltip" data-placement="top" title="Print" onclick="raptPrint({{$cppt->id}})">
-                    <i class="si si-printer"></i>
-                </button>
+                @if (Auth::user()->profesi == 2 && !empty(session('my_role_'.request()->route('nomor_kasus'))) && $cppt->readbacks()->count() == 0)
+                    <button  type="button" class="btn-block-option" data-toggle="tooltip" data-placement="top" title="Readback" onclick="readback({{$cppt->id}})">
+                        <i class="far fa-file-alt"></i>
+                    </button>
                 @endif
+                @if (!empty($my_readback) && $my_readback->verified_at == null)
+                    <button  type="button" class="btn-block-option" data-toggle="tooltip" data-placement="top" title="Verifikasi Readback" onclick="verifReadback({{$my_readback->id}})">
+                        <i class="far fa-file-alt"></i>
+                    </button>
+                @endif
+
+                @if(isset($cppt->jenis))
+                    @if($cppt->jenis == 'rapt')
+                    <button type="button" class="btn-block-option" data-toggle="tooltip" data-placement="top" title="Print" onclick="raptPrint({{$cppt->id}})">
+                        <i class="si si-printer"></i>
+                    </button>
+                    @endif
                 @else
                 <button type="button" class="btn-block-option" data-toggle="tooltip" data-placement="top" title="Print" onclick="cpptPrint({{$cppt->id}})">
                     <i class="si si-printer"></i>
@@ -151,7 +214,7 @@
                 @php $slug_specialty_user = Auth::user()->specialty_detail->slug ?? '-' @endphp
 
                 @if($slug_specialty_creator == 'perawat-vokasi')
-                    @if(empty($cppt->verified_at) && $my_role && Auth::user()->profesi == 1 && !in_array(Auth::user()->specialty,[1,2])  && (Auth::user()->id != $cppt->created_by))
+                    @if(empty($cppt->verified_at) && $my_role && Auth::user()->profesi == 1 && !in_array(Auth::user()->specialty,[1,2,90])  && (Auth::user()->id != $cppt->created_by))
                         @php $need_verifikasi_dokter = 1 @endphp
                     @endif
                 @else
@@ -160,6 +223,9 @@
                         @elseif(empty($cppt->verified_at) && $my_role && Auth::user()->profesi == 1 && !in_array(Auth::user()->specialty,[1,2])  && (Auth::user()->id != $cppt->created_by))
                         @php $need_verifikasi_dokter = 1 @endphp
                     @endif
+                @endif
+                @if($slug_specialty_user == 'magister-keperawatan')
+                    @php $need_verifikasi_dokter = 1 @endphp
                 @endif
 
                 @if($need_verifikasi_dokter)
@@ -192,8 +258,8 @@
                     <i class="si si-pencil"></i>
                 </button> 
                 @else
-                <button type="button" class="btn-block-option" data-toggle="tooltip" data-placement="top" title="Edit" onclick="cpptEditModal({{$cppt->id}},{{$i}})">
-                    <i class="si si-pencil"></i>
+                <button type="button" class="btn-block-option btn-edit-cppt" data-toggle="tooltip" data-placement="top" title="Edit" onclick="cpptEditModal({{$cppt->id}},{{$i}})">
+                    <i class="si si-pencil"></i> <!-- ini buttonnya -->
                 </button>
                 @endif
 
@@ -201,7 +267,7 @@
 
 
                 <div class="block-options">
-                    <button type="button" class="btn-block-option" data-toggle="block-option" data-action="content_toggle"></button>
+                    <button type="button" class="btn-block-option btn-content-toogle" data-status="non-active" data-toggle="block-option" data-action="content_toggle"></button>
                 </div>
             </div>
             <div class="block-content soap-item" id="cppt-item-{{$i}}">
@@ -311,6 +377,35 @@
                     </small>
                 </h5>
                 <h5 class="font-w400" style="white-space: pre-line">{{$cppt->ppa }}</h5>
+                @php
+                    $files=json_decode($cppt->cppt_files); 
+                    $loop=0;  
+                @endphp
+                @if(!empty($files))
+                    <h5 class="font-w400 mb-0">
+                        <small>File Upload</small>
+                    </h5>
+                    <div class="row" id="file-upload-row">
+                        @foreach ($files as $key => $value)
+                        {{-- <a href="{{ url($value->path) }}" style="display:block;width:130px">
+                                <img src="{{URL::asset('assets/img/filetype.png')}}" align="middle" style="max-width: 100px;display: block;margin-left: auto;margin-right: auto">
+                                <p style="text-align: center">{{ $value->nama_file }}</p>
+                        </a> --}}
+
+                        @include('kasus.datamedis.content.cppt.preview-modal')
+
+                        <a href="" style="display:block;width:130px" data-toggle="modal" data-target="#preview-modal-{{ $loop_iteration_cppt }}-{{ $loop->iteration }}">
+                            <img src="{{URL::asset('assets/img/filetype.png')}}" align="middle" style="max-width: 100px;display: block;margin-left: auto;margin-right: auto">
+                            <p style="text-align: center">{{ $value->nama_file }}</p>
+                        </a>
+                            @if($allow_crud == 1 && ($cppt->created_by == Auth::user()->id))
+                            <button type="button" style="height: 50px;" class="btn-block-option " data-toggle="tooltip" data-placement="top" title="Hapus" onclick="cpptDeletefileModal({{$cppt->id}},{{$value->id}})">
+                                <i class="fa fa-trash" style="color: red;vertical-align: top"></i>
+                            </button>
+                            @endif
+                         @endforeach
+                    </div>
+                @endif
 
                 @if(!empty($cppt->review))
                 <h5 class="font-w400 mb-0">

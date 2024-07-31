@@ -87,7 +87,7 @@ class LaporanResponseTimeTahunanExcel implements FromView, WithEvents, WithColum
                 );
 
                 $event->sheet->styleCells(
-                    'A6:'.$this->last_column.$this->last_row,
+                    'A7:'.$this->last_column.$this->last_row,
                     [
                         'borders' => [
                             'allBorders' => [
@@ -115,7 +115,7 @@ class LaporanResponseTimeTahunanExcel implements FromView, WithEvents, WithColum
     {
         $this->data = $data;
         $this->last_column = excel_column(15);
-        $this->last_row = count($data['data']) + 7;
+        $this->last_row = count($data['data']) + 8;
         $this->data['last_column'] = $this->last_column;
         $this->data['last_row'] = $this->last_row;
     }

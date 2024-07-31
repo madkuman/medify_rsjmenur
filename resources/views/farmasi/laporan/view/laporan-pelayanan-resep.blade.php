@@ -10,6 +10,15 @@
             <th colspan="12">Periode : {{indonesian_date($date_start,'d F Y')}} - {{indonesian_date($date_end,'d F Y')}}</th>
         </tr>
         <tr>
+            <th colspan="12">Jenis Pasien : {{$perusahaan_pembayaran_nama}}</th>
+        </tr>
+        <tr>
+            <th colspan="12">Unit Farmasi  : {{$farmasi_nama}}</th>
+        </tr>
+        <tr>
+            <th colspan="12">Kategori  : {{$kategori_nama}}</th>
+        </tr>
+        <tr>
             <td></td>
         </tr>
     </thead>

@@ -34,4 +34,15 @@ return [
     'rs_online' => [
         'on' => $data->rs_online->on ?? null,
     ],
+    'satusehat' => [
+        'on' => $data->satusehat->on ?? 0,
+        'stage' => $data->satusehat->stage ?? "development",
+        'auth_url' => $data->satusehat->auth_url ?? "",
+        'base_url' => $data->satusehat->base_url ?? "",
+        'consent_url' => $data->satusehat->consent_url ?? "",
+        'client_id' => $data->satusehat->client_id ?? null,
+        'client_secret' => $data->satusehat->client_secret ?? null,
+        'organization_id' => $data->satusehat->organization_id ?? null,
+        'sumber_nik_user' => $data->satusehat->sumber_nik_user ?? 'kepegawaian',
+    ],
 ];

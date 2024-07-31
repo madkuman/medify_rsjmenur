@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Kasus\CPPT;
 
 use App\Jobs\QueueArtisan;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use App\Http\Controllers\Controller;
+use App\Kasus\Readback;
 use App\Models\Kasus\CPPT;
 use App\Models\Kasus\Kasus;
 use App\Models\RawatInap\Ruangan;
@@ -127,6 +129,36 @@ class PostController extends Controller
 			->deleteCppt($request);
 			$status = 1;
 			$message = 'CPPT berhasil dihapus!';
+			$title = 'Berhasil!';
+
+			DB::connection('kasus')->commit();
+			DB::connection('mysql')->commit();
+			return redirect('/kasus/'.$nomor_kasus.'/datamedis/cppt')
+			->with('active_nav','cppt')
+			->with('message', $message)
+			->with('title',$title)
+			->with('status', $status);
+
+		} catch (\Exception $e) {
+			
+			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+
+			DB::connection('kasus')->rollback();
+			DB::connection('mysql')->rollback();
+		}
+	}
+
+	public function deletefileCPPT(Request $request, $nomor_kasus)
+	{
+		DB::connection('kasus')->beginTransaction();
+		DB::connection('mysql')->beginTransaction();
+		//dd($request);
+		try
+		{
+			app('App\Http\Controllers\Kasus\CPPT\DeleteController')
+			->deletefileCppt($request);
+			$status = 1;
+			$message = 'File berhasil dihapus!';
 			$title = 'Berhasil!';
 
 			DB::connection('kasus')->commit();
@@ -271,5 +303,81 @@ class PostController extends Controller
             ->with('status', $status);
         }
 	}
+    public function readback($nomor_kasus, Request $request)
+    {
+        $kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
+        $db = DB::connection('kasus');
+        $db->beginTransaction();
 
+        try {
+            foreach ($request->dokter as $dokter_id) {
+                Readback::create([
+                    'cppt_id' => $request->cppt_id,
+                    'dokter_id' => $dokter_id,
+                    'notes' => $request->notes,
+                    'created_by' => auth()->id(),
+                ]);
+            }
+            $db->commit();
+            $status = 1;
+	        $title = 'Berhasil!';
+	        $message = 'Readback Berhasil!';
+
+			return back()
+                ->with('message', $message)
+                ->with('active_nav','cppt')
+                ->with('title',$title)
+                ->with('status', $status);
+        } catch (\Exception $e) {
+            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+            $db->rollback();
+
+            $status = -1;
+            $message = 'Readback CPPT gagal!';
+            $title = 'Gagal!';
+
+			return back()
+                ->with('message', $message)
+                ->with('active_nav','cppt')
+                ->with('title',$title)
+                ->with('status', $status);
+        }
+    }
+
+    public function verifReadback($nomor_kasus, Request $request)
+    {
+        $readback = Readback::find($request->readback_id);
+        $db = DB::connection('kasus');
+        $db->beginTransaction();
+        try {
+        $readback->update([
+            'is_read' => true,
+            'verified_at' => now(),
+            'updated_by' => auth()->id()
+        ]);
+        $db->commit();
+        $status = 1;
+        $title = 'Berhasil!';
+        $message = 'Readback Terverifikasi!';
+
+        return back()
+            ->with('message', $message)
+            ->with('active_nav','cppt')
+            ->with('title',$title)
+            ->with('status', $status);
+        } catch (\Exception $e) {
+            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+            $db->rollback();
+
+            $status = -1;
+            $message = 'Verifikasi Readback gagal!';
+            $title = 'Gagal!';
+
+			return back()
+                ->with('message', $message)
+                ->with('active_nav','cppt')
+                ->with('title',$title)
+                ->with('status', $status);
+        }
+    }
 }

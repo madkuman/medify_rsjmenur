@@ -20,11 +20,12 @@ class CreateController extends Controller
 {
   	public function create(Request $request, $farmasi)
 	{	
-		//dd($request);
 		$description = $request->input('keterangan');
 		$template = $request->input('template');
 		$items = $request->input('barang');
 		$qty = $request->input('jumlah');
+		$tgl_pengeluaran = $request->tgl_pengeluaran ?? Carbon::now()->format('d-m-Y');
+		$tgl_pengeluaran = Carbon::createFromFormat("d-m-Y",$tgl_pengeluaran);
 
 		$farm = session('farmasi');
 
@@ -36,6 +37,11 @@ class CreateController extends Controller
 			$transaction->keterangan = $description;
 			$transaction->farmasi_id = $farm->id;
 			$transaction->created_by = Auth::user()->id;
+			$transaction->penghapusan_jenis_id = $request->jenis_penghapusan_id ?? null;
+			$transaction->surat_perintah = $request->surat_perintah ?? null;
+			$transaction->tgl_pengeluaran = $tgl_pengeluaran;
+			$transaction->no_pengeluaran = $request->no_pengeluaran ?? null;
+			$transaction->penyedia_id = $request->penyedia_id ?? null;
 			$transaction->save();
 			
 			$total = 0;

@@ -237,6 +237,21 @@
             </a>
         </li>
 
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url()->current()}}/form-transfer-antar-ruangan">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Form Transfer Antar Ruangan</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Form Transfer Antar Ruangan</h5>
+                    <p class="desc">Form pemindahan pasien antar unit/departemen dalam rumah sakit.</p>
+                </div>
+            </a>
+        </li>
+
 
     </ul>
 </div>

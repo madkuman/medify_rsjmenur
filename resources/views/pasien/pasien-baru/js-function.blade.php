@@ -227,25 +227,32 @@
 
     function inputValidation(){
         var errCounter=0;
+        var check_tipe_rm = $('#pasienSubmit input[name="pasien_tipe_rm"]:checked').val();
+
         $('#pasienSubmit input, #pasienSubmit .js-select2').each(function(n,element){
             if ($(element).is(':enabled')) {
                 if(!$(element).hasClass('emptiable-dasar') && !$(element).hasClass('emptiable-kerabat')){
                     if ($(element).val()=='' || $(element).val()==null || $(element).val()=='null') {   
-                        errCounter++;
+                        if (check_tipe_rm == 1){
+                            if($(element).hasClass('rm_laborat')) {
+                                errCounter++;
+                            }
+                        }else{
+                            errCounter++;
+                        }
                     }
                 }
             }
         });
-        if ($('#pasienSubmit input[name="avatar"]').val() == '') {
+        if ($('#pasienSubmit input[name="avatar"]').val() == '' && check_tipe_rm == 0) {
             errCounter--;
         }
-        if ($('#pasienSubmit input[name="foto_identitas"]').val() == '') {
-            errCounter--;
-        }
-        if ($('#pasienSubmit input[name="kategori_pasien"]:checked').length === 0) {
-            errCounter++;
-        }
-
+        // if ($('#pasienSubmit input[name="foto_identitas"]').val() == '' && check_tipe_rm == 0) {
+        //     errCounter++;
+        // }
+        // if ($('#pasienSubmit input[name="kategori_pasien"]:checked').length === 0) {
+        //     errCounter++;
+        // }
 
         if (errCounter==0) {
             return 1;

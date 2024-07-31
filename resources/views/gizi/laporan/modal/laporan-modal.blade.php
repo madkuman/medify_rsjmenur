@@ -33,12 +33,13 @@
                     <div class="block-content">
                         @include('gizi.laporan.modal.components.form-date-single')
                         @include('gizi.laporan.modal.components.form-select-waktu-makan')
+                        @include('gizi.laporan.modal.components.form-select-file-tipe')
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-alt-secondary btn-square" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-alt-success btn-square btn-excel">
-                        <i class="fa fa-file-excel-o"></i> Export
+                        <i class="fa fa-file"></i> Export
                     </button>
                 </div>
             </form>

@@ -169,4 +169,36 @@ class ItemsTemplate extends Model
 		if($count > 0) return 1;
 		else return 0;
 	}
+
+	function bahan_aktif() {
+		return $this->hasOne(\App\Models\Farmasi\MasterBahanAktif::class, 'id', 'bahan_aktif_id')->withTrashed();
+	}
+
+	public function kode_bidang()
+	{
+		return $this->hasOne(\App\Models\Farmasi\MasterKodeBidang::class, 'id', 'kode_bidang_id')->withTrashed();
+	}
+
+	public function satuan_kekuatan() {
+		return $this->hasOne('App\Models\Farmasi\MasterSatuanKekuatan', 'id', 'satuan_kekuatan_id');
+  	}
+
+	public function rute() {
+		return $this->hasOne('App\Models\Farmasi\MasterRute', 'id', 'rute_id');
+  	}
+
+	public function kelas_terapi() {
+		return $this->hasOne('App\Models\Farmasi\Kategori', 'id', 'kelas_terapi_id');
+	}
+
+	# usage : attr_is_obat_high_alert
+	public function getAttrIsObatHighAlertAttribute()
+	{
+		foreach ($this->kategori_item as $kategori_item) {
+			if ($kategori_item->detail_kategori->nama == 'Obat High Alert') {
+				return true;
+			}
+		}
+		return false;	
+	}
 }

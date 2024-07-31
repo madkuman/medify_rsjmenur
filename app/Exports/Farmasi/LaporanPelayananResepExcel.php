@@ -30,7 +30,7 @@ class LaporanPelayananResepExcel implements FromView, WithEvents, WithColumnForm
                 $event->sheet->getColumnDimension('F')->setWidth(15);
 
                 $event->sheet->styleCells(
-                    'A1:'.$this->last_column.'4',
+                    'A1:'.$this->last_column.'6',
                     [
                         'font' => [
                             'bold' => true
@@ -67,7 +67,7 @@ class LaporanPelayananResepExcel implements FromView, WithEvents, WithColumnForm
                 );
 
                 $event->sheet->styleCells(
-                    'C4:'.$this->last_column.$this->last_row,
+                    'C8:'.$this->last_column.$this->last_row,
                     [
                         'alignment' => [
                             'vertical'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
@@ -91,7 +91,7 @@ class LaporanPelayananResepExcel implements FromView, WithEvents, WithColumnForm
                 );
 
                 $event->sheet->styleCells(
-                    'A5:'.$this->last_column.$this->last_row,
+                    'A8:'.$this->last_column.$this->last_row,
                     [
                         'borders' => [
                             'allBorders' => [
@@ -122,7 +122,7 @@ class LaporanPelayananResepExcel implements FromView, WithEvents, WithColumnForm
     {
         $this->data = $data;
         $this->last_column = excel_column(12);
-        $this->last_row = 20;
+        $this->last_row = 25;
     }
 
     public function view(): View

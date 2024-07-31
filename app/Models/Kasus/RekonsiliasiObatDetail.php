@@ -29,4 +29,8 @@ class RekonsiliasiObatDetail extends Model
 	public function rekonsiliasi_obat() {
 		return $this->hasOne('App\Models\Kasus\RekonsiliasiObat', 'id', 'rekonsiliasi_obat_id');
 	}
+
+	public function item_template() {
+		return $this->hasOne('App\Models\Farmasi\ItemsTemplate', 'id', 'obat_id');
+  	}
 }

@@ -130,4 +130,24 @@ class TransaksiObat extends Model
 		return $this->hasOne(\App\Models\Farmasi\LoketAntrian::class, 'id','loket_id');
 	}
 
+	function transaksi_obat_telaah_obat_penyiapan()
+	{
+		return $this->hasOne(\App\Models\Farmasi\TransaksiObatTelaahObat::class, 'transaksi_id', 'id')->where('slug', 'penyiapan')->latest();	
+	}
+	function transaksi_obat_telaah_obat_pengemasan()
+	{
+		return $this->hasOne(\App\Models\Farmasi\TransaksiObatTelaahObat::class, 'transaksi_id', 'id')->where('slug', 'pengemasan')->latest();	
+	}
+	function transaksi_obat_telaah_obat_penyerahan()
+	{
+		return $this->hasOne(\App\Models\Farmasi\TransaksiObatTelaahObat::class, 'transaksi_id', 'id')->where('slug', 'penyerahan')->latest();	
+	}
+	function transaksi_obat_telaah_obat_penerimaan_perawat()
+	{
+		return $this->hasOne(\App\Models\Farmasi\TransaksiObatTelaahObat::class, 'transaksi_id', 'id')->where('slug', 'penerimaan_perawat')->latest();	
+	}
+
+	function getAttrIsHarianAttribute() {
+		return $this->pembayaran_detail && $this->pembayaran_detail->perusahaan->tipe->slug == 'bpjs'  && $this->owner_detail->perharian;
+	}
 }

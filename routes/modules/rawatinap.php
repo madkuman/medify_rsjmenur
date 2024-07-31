@@ -64,6 +64,10 @@ Route::group(['middleware' => ['check-module']], function(){
 		Route::post('/transaksi/rekam-medis/konfirmasi/{id}','RawatInap\Transaksi\PostController@konfirmasiFile');
 		Route::get('dummy/ruangan/setup','RawatInap\Main\DummyController@ruangan');
 		Route::get('dummy/tempattidur/setup','RawatInap\Main\DummyController@tempattidur');
+
+		# halaman serah terima obat
+		Route::get('/transaksi/{id}/serah-terima-obat','RawatInap\Transaksi\ViewController@serahTerimaObat');
+		Route::post('/transaksi/{id}/serah-terima-obat','RawatInap\Transaksi\PostController@serahTerimaObat');
 	});
 });
 
@@ -74,6 +78,7 @@ Route::group(['prefix' => 'api/rawatinap'], function(){
 	Route::get('/tempattidur/kosong','RawatInap\TempatTidur\ReadController@apiRuanganKosong');
 	Route::get('/applicare/truncate','RawatInap\Pengaturan\Ruangan\PostController@truncateApplicare');
 	Route::get('/admin/bangsal-info/{id}', 'RawatInap\Bangsal\ReadController@APIAdminInfo');
+	Route::get('/bangsal', 'RawatInap\Bangsal\ReadController@allBangsal');
 });
 
 ?>

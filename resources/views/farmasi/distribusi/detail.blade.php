@@ -72,7 +72,7 @@ select[readonly].select2-hidden-accessible + .select2-container {
                     </button>
                     @endif
                     @elseif($distribusi->status == 0)
-                    @if($distribusi->tipe == 1 && session('farmasi')->group->my_role->admin ?? 0 == 1)
+                    @if($distribusi->tipe == 1 && (session('farmasi')->group->my_role->admin ?? 0) == 1)
                     <button type="button" class="btn btntn-alt-primary btn-square" id="btnEdit">
                         <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;Edit
                     </button>

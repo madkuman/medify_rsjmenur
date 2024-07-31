@@ -93,6 +93,12 @@ hr
 		</td>
 	</tr>
 	<tr>
+		<td>Jam Diperiksa</td>
+		<td>: {{$transaksi->jam_diperiksa ?? ''}}</td>
+		<td>Jam Selesai</td>
+		<td>: {{$transaksi->jam_selesai ?? ''}}</td>
+	</tr>
+	<tr>
 		<td>Usia</td>
 		<td>: {{$transaksi->pasien->age}} Tahun</td>
 		<td>Dokter Pengirim</td>
@@ -135,9 +141,11 @@ hr
 		<tbody>
 			<?php $current_head = null; ?>
 			@foreach($result_parameter as $index => $result)
+				@if(count($result) > 0)
 				<tr>
 					<td colspan="6" class="bold">{{$hasil[$index]->tarif->deskripsi}}</td>
 				</tr>
+				@endif
 			@foreach($result as $row)
 			@if(!empty($row->keterangan_result))
 			@if($row->keterangan_result == 'kritis')
@@ -153,7 +161,7 @@ hr
 				<td class="text-center">{{$row->satuan}}</td>
 				@if($row->form_type == 'parameter-number')
 				<td class="text-center">{{$row->referensi_min}} - {{$row->referensi_max}}</td>
-				<td class="text-center">@if(!empty($row->kritis_min) || !empty($row->kritis_max)){{$row->kritis_min}} - {{$row->kritis_max}}@endif</td>
+				<td class="text-center">{{ isset($row->kritis_min) ? "< $row->kritis_min" : "" }} dan {{ isset($row->kritis_max) ? "> $row->kritis_max" : "" }}</td>
 				@elseif($row->form_type == 'parameter-number-greatherthan')
 				<td class="text-center">{{'>'.$row->referensi_min}}</td>
 				<td class="text-center">@if(!empty($row->kritis_min)) {{'<'.$row->kritis_min}} @endif</td>
@@ -182,9 +190,11 @@ hr
 		<tbody>
 			<?php $current_head = null; ?>
 			@foreach($result_text as $index =>$result)
+				@if(count($result) > 0)
 				<tr>
 					<td colspan="2" class="bold">{{$hasil[$index]->tarif->deskripsi}}</td>
 				</tr>
+				@endif
 			@foreach($result as $row)
 			<tr>
 				<td class="text-left" style="vertical-align: top">&nbsp;{{$row->parameter}}</td>
@@ -195,6 +205,14 @@ hr
 		</tbody>
 	</table>
 	@endif
+	<p>
+		<b>Diagnosa : </b><br>
+		{{$transaksi->diagnosis ?? ''}}
+	</p>
+	<p>
+		<b>Keterangan Spesimen :</b><br>
+		{{$transaksi->spesimen_terima_keterangan ?? ''}}
+	</p>
 	<br><br><br><br>
 	<table width="100%" style="page-break-inside: avoid;">
 		<tr>

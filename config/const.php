@@ -103,6 +103,15 @@ return [
 									'2' => 'KLL dan KK',
 									'3' => 'Kecelakaan Kerja (KK)',
 								],
+	'kategori_resep' => [
+		'racikan-kapsul' => 'Racikan Kapsul',
+		'racikan-puyer'	=> 'Racikan Puyer',
+		'racikan-salep' => 'Racikan Salep',
+		'resep-obat-jadi' => 'Resep Obat Jadi',
+		'dispensing-aseptik' => 'Dispensing Aseptik',
+		'obat-sediaan-tpn' => 'Obat Sediaan TPN',
+		'sirup-kering' => 'Sirup Kering',
+	],
 ];
 
 ?>

@@ -25,7 +25,7 @@ use Carbon\Carbon;
 
 class CreateController extends Controller
 {
-	public function createKasus($judul_kasus,$pasien,$location,$transaksi_lokal_id,$kelas,$bayar_id,$nomor_sep,$id_ibu=null)
+	public function createKasus($judul_kasus,$pasien,$location,$transaksi_lokal_id,$kelas,$bayar_id,$nomor_sep,$id_ibu=null, $asal_rujukan_id=null)
 	{
 		
 		$id = 0;
@@ -33,6 +33,8 @@ class CreateController extends Controller
 		$kasus = New Kasus;
 		$kasus->judul_kasus = $judul_kasus;
 		$kasus->created_by = $id;
+
+		$kasus->asal_rujukan_id = $asal_rujukan_id ?? null;
 
 		if (!empty($pasien->id)) {
 			$kasus->pasien_id = $pasien->id;
@@ -85,6 +87,14 @@ class CreateController extends Controller
 				$request['total_plafon'] = $total_plafon;
 				$kasus=app('App\Http\Controllers\Kasus\Identitas\PostController')->editSEPKasus($request,$kasus->nomor_kasus);
 			}
+
+			# CREATE ENCOUNTER SATUSEHAT
+			if (config('medify.third-party.satusehat.on', 0)) {
+				$encounter_data = new Request([
+					'kasus_id' => $kasus->id
+				]);
+				$encounter = (new \App\Http\Controllers\ThirdParty\SatuSehat\Encounter\CreateController)->saveByKasus($encounter_data);
+			}
 		}
 		return $kasus;
 	}
@@ -105,6 +115,8 @@ class CreateController extends Controller
 		$kasus->judul_kasus = $judul_kasus;
 		$kasus->created_by = $id;
 
+		$kasus->asal_rujukan_id = $request->asal_rujukan_id ?? null;
+		
 		if (!empty($pasien->id)) {
 			$kasus->pasien_id = $pasien->id;
 		}

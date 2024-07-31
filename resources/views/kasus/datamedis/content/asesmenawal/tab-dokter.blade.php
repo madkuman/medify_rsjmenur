@@ -19,6 +19,15 @@
                     <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#modal-dokter-rawat-inap">
                         <i class="si si-note mr-5"></i> Rawat Inap
                     </a>
+                    <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#modal-dokter-gawat-darurat-non-jiwa">
+                        <i class="si si-note mr-5"></i> Gawat Darurat - Non Jiwa
+                    </a>
+                    <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#modal-dokter-rawat-jalan-non-jiwa">
+                        <i class="si si-note mr-5"></i> Rawat Jalan - Non Jiwa
+                    </a>
+                    <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#modal-dokter-rawat-inap-non-jiwa">
+                        <i class="si si-note mr-5"></i> Rawat Inap - Non Jiwa
+                    </a>
                 </div>
             </div>
             <div class="dropdown float-right">
@@ -100,7 +109,7 @@
                 Asesmen Lain lain
                 @endif
             </h5>
-            <h6>({{indonesian_date(date('d F y, H:i', strtotime($item['created_at'])))}})</h6>
+            <h6>({{indonesian_date(date('d F y, H:i', strtotime($item['created_at'])),'d F y, H:i')}})</h6>
             <div class="row" id="fungsional-{{$item['id']}}">
                 <!-- //disini ngeshow data-->
             </div>
@@ -141,6 +150,14 @@
             @php $count2++; @endphp
             @endif
             @endforeach
+
+            <!-- START Asesmen Non Jiwa -->
+            @foreach($asesmen_non_jiwa as $item)
+                @php $count2++; @endphp
+            @endforeach
+            @include('kasus.datamedis.content.asesmenawal.non-jiwa.tab-dokter')    
+            <!-- END Asesmen Non Jiwa -->
+
             @if($count2 == 0)
             <div class="col-12 text-center py-50">
                 <h4 class="font-w400 mb-5">Belum ada data Asesmen Awal</h4><br>

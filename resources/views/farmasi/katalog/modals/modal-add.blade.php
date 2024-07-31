@@ -5,14 +5,14 @@
             <div class="modal-content">
                 <div class="block block-themed block-transparent mb-0">
                     <div class="block-header">
-                        <h3 class="block-title">Katalog Baru</h3>
+                        <h3 class="block-title">Bahan Aktif Baru</h3>
                     </div>
                     <div class="block-content">
                         <div class="row">
                             <div class="col">
                                 <div class="form-group">
-                                    <label class="control-label">Nama Katalog</label>
-                                    <input type="text" class="form-control" name="nama" placeholder="Nama Katalog" autocomplete="off" required>
+                                    <label class="control-label">Nama Bahan Aktif</label>
+                                    <input type="text" class="form-control" name="nama" placeholder="Nama Bahan Aktif" autocomplete="off" required>
                                 </div>
                             </div>
                         </div>

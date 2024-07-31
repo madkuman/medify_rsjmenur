@@ -11,9 +11,10 @@ use Carbon\Carbon;
 
 class CreateController extends Controller
 {
-    public function create($req, $kasus_id){
-    	$asesmen_pendidikan_pasien_dan_keluarga = new AsesmenPendidikanPasienDanKeluarga;
-    	
+    public function create($req, $kasus_id)
+    {
+        $asesmen_pendidikan_pasien_dan_keluarga = new AsesmenPendidikanPasienDanKeluarga;
+
         $asesmen_pendidikan_pasien_dan_keluarga->agama_pasien = $req->agama_pasien;
         $asesmen_pendidikan_pasien_dan_keluarga->keyakinan_pasien_pantangan_pemeriksaan_hari_tertentu = $req->keyakinan_pasien_pantangan_pemeriksaan_hari_tertentu;
         $asesmen_pendidikan_pasien_dan_keluarga->keyakinan_pasien_pantangan_masuk_keluar_rs_hari_tertentu = $req->keyakinan_pasien_pantangan_masuk_keluar_rs_hari_tertentu;
@@ -96,7 +97,7 @@ class CreateController extends Controller
         $asesmen_pendidikan_pasien_dan_keluarga->edukasi_pasien_pemeriksaan_penunjang_lab_rontgen_dll = $req->edukasi_pasien_pemeriksaan_penunjang_lab_rontgen_dll;
         $asesmen_pendidikan_pasien_dan_keluarga->edukasi_pasien_pemeriksaan_penunjang_lab_rontgen_dll = $req->edukasi_pasien_pemeriksaan_penunjang_lab_rontgen_dll;
         $asesmen_pendidikan_pasien_dan_keluarga->masalah_keperawatan = $req->masalah_keperawatan;
-        if(!empty($req->rencana_edukasi_pasien_tanggal)){        
+        if (!empty($req->rencana_edukasi_pasien_tanggal)) {
             $asesmen_pendidikan_pasien_dan_keluarga->rencana_edukasi_pasien_tanggal = Carbon::createFromFormat("d/m/Y", $req->rencana_edukasi_pasien_tanggal);
         } else {
             $asesmen_pendidikan_pasien_dan_keluarga->rencana_edukasi_pasien_tanggal = null;
@@ -108,14 +109,43 @@ class CreateController extends Controller
         $asesmen_pendidikan_pasien_dan_keluarga->kebutuhan_edukasi_keluarga_inform_consent = $req->kebutuhan_edukasi_keluarga_inform_consent;
         $asesmen_pendidikan_pasien_dan_keluarga->kebutuhan_edukasi_keluarga_general_consent = $req->kebutuhan_edukasi_keluarga_general_consent;
         $asesmen_pendidikan_pasien_dan_keluarga->kebutuhan_edukasi_keluarga_general_consent = $req->kebutuhan_edukasi_keluarga_general_consent;
-        if(!empty($req->rencana_edukasi_keluarga_tanggal)){        
+        if (!empty($req->rencana_edukasi_keluarga_tanggal)) {
             $asesmen_pendidikan_pasien_dan_keluarga->rencana_edukasi_keluarga_tanggal = Carbon::createFromFormat("d/m/Y", $req->rencana_edukasi_keluarga_tanggal);
         } else {
             $asesmen_pendidikan_pasien_dan_keluarga->rencana_edukasi_keluarga_tanggal = null;
         }
         $asesmen_pendidikan_pasien_dan_keluarga->agama_keluarga_pasien = $req->agama_keluarga_pasien;
-    	$asesmen_pendidikan_pasien_dan_keluarga->created_by = Auth::user()->id;
-    	$asesmen_pendidikan_pasien_dan_keluarga->kasus_id = $kasus_id;
-    	$asesmen_pendidikan_pasien_dan_keluarga->save();
+
+
+        $hambatan = '';
+        for ($i = 0; $i < count($req->hambatan); $i++) {
+            $temp = explode(',', $req->hambatan[$i]);
+            foreach ($temp as $item) {
+                $hambatan .= $item;
+                $hambatan .= ', ';
+            };
+        };
+        $penerjemah = '';
+        $i = 0;
+        $temp = explode(',', $req->penerjemah[0]);
+        foreach ($temp as $item) {
+            $penerjemah .= $item;
+            $i++;
+            $penerjemah .= ', ';
+        };
+        $pembelajaran = '';
+        for ($i = 0; $i < count($req->pembelajaran); $i++) {
+            $temp = explode(',', $req->pembelajaran[$i]);
+            foreach ($temp as $item) {
+                $pembelajaran .= $item;
+                $pembelajaran .= ', ';
+            };
+            $asesmen_pendidikan_pasien_dan_keluarga->pembelajaran = $pembelajaran;
+        };
+        $asesmen_pendidikan_pasien_dan_keluarga->hambatan = $hambatan;
+        $asesmen_pendidikan_pasien_dan_keluarga->penerjemah = $penerjemah;
+        $asesmen_pendidikan_pasien_dan_keluarga->created_by = Auth::user()->id;
+        $asesmen_pendidikan_pasien_dan_keluarga->kasus_id = $kasus_id;
+        $asesmen_pendidikan_pasien_dan_keluarga->save();
     }
 }

@@ -38,8 +38,10 @@
                     @php $need_verifikasi_dokter = 1 @endphp
                 @endif
             @endif
-
-            @if($need_verifikasi_dokter)
+            @php
+                $subspecialty = Auth::user()->specialty_detail->slug ?? '';
+            @endphp
+            @if($need_verifikasi_dokter || $subspecialty == 'magister-keperawatan')
             <a href="{{url('')}}/kasus/{{$kasus->nomor_kasus}}/keperawatan/rencana-asuhan/verifikasi-dokter/{{$item->id}}" class="btn btn-sm btn-circle btn-outline-primary mr-5 mb-5 float-right" data-toggle="tooltip" data-placement="top" title="Verifikasi Dokter">
                 <i class="fa fa-check"></i>
             </a>

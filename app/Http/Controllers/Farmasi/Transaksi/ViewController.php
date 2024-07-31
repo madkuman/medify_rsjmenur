@@ -6,12 +6,15 @@ use App\Models\Farmasi\Resep;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Farmasi\AturanHarga;
+use App\Models\Farmasi\ItemJenisInteraksi;
+use App\Models\Farmasi\ItemsKategori;
 use App\Models\Farmasi\LoketAntrian;
 use App\Models\Farmasi\TipeObat;
 use App\Models\Farmasi\SatuanPenggunaan;
 use App\Models\Hospital\Lokasi;
 use App\Models\Kasus\Kasus;
 use App\Models\Farmasi\TransaksiObat;
+use App\Models\Hospital\LokasiDepartemen;
 use Carbon\Carbon;
 use DOMPDF;
 use Yajra\DataTables\DataTables;
@@ -48,14 +51,39 @@ class ViewController extends Controller
 		$data['no_rm'] = $request->no_rm;
 		$data['pasien'] = $request->pasien;
 		$data['status_selesai'] = ($request->selesai) ? $request->status_selesai : "";        
+		$data['status_dikerjakan'] = ($request->dikerjakan) ? $request->status_dikerjakan : "";
 		$data['status_menunggu'] = ($request->menunggu) ? $request->status_menunggu : "on";
 		$data['sudah_ditelaah'] = ($request->sudah_ditelaah) ? $request->sudah_ditelaah : "on";
 		$data['belum_ditelaah'] = ($request->belum_ditelaah) ? $request->belum_ditelaah : "on";
+		$data['asal_pelayanan_igd'] = ($request->asal_pelayanan_igd) ? $request->asal_pelayanan_igd : "on";
+		$data['asal_pelayanan_rawat_inap'] = ($request->asal_pelayanan_rawat_inap) ? $request->asal_pelayanan_rawat_inap : "on";
+		$data['asal_pelayanan_rawat_jalan'] = ($request->asal_pelayanan_rawat_jalan) ? $request->asal_pelayanan_rawat_jalan : "on";
+		$data['asal_pelayanan_lainnya'] = ($request->asal_pelayanan_lainnya) ? $request->asal_pelayanan_lainnya : "on";
 
 		return view('farmasi.transaksi.index', $data);
 	}
 
 	public function analisaResep($farmasi, $slug){
+		$transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug);
+		$transaksi = $transaksi->load('kasus.sep', 'final_detail.resep_detail.obat_detail.item_template.kategori_item');
+
+		$duplikasi_terapi = false; # bernilai true apabila dalam 1 resep ada obat yang memiliki kelas terapi yang sama
+		$check_duplikasi_terapi = [];
+		if (!empty($transaksi->final_detail->resep_detail)) {
+			foreach ($transaksi->final_detail->resep_detail as $detail) {
+				if (!empty($detail->obat_detail->item_template->kelas_terapi_id)) {
+					$check_duplikasi_terapi[] = $detail->obat_detail->item_template->kelas_terapi_id;
+				}
+			}
+	  	}
+
+		if (count($check_duplikasi_terapi) !== count(array_unique($check_duplikasi_terapi))) {
+			$duplikasi_terapi = true;
+		}
+		$data['has_not_alergi_obat'] = !empty($transaksi->kasus->identitas->riwayat_sakit) ? false : true;
+
+		$data['transaksi'] = $transaksi;
+		$data['duplikasi_terapi'] = $duplikasi_terapi;
 		$day = Carbon::now();
 		$data['dadas'] = $slug;
 		$data['sidebar_active'] = "transaksi";
@@ -66,6 +94,13 @@ class ViewController extends Controller
 	{
 		$slug = $request->slug;
 		$transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->bydate($request);
+
+		$lokasi_departemen_igd_id = LokasiDepartemen::where('slug', 'igd')->first()->value('id');
+		$lokasi_igd_ids = Lokasi::where('lokasi_departemen_id', $lokasi_departemen_igd_id)->get()->pluck('id')->toArray();
+		$lokasi_igd_ids_text = implode(",", $lokasi_igd_ids);
+
+		$transaksi = $transaksi->orderByRaw('CASE WHEN cito = 1 THEN 3 WHEN lokasi_id IN ('. $lokasi_igd_ids_text .') THEN 2 WHEN eksekutif = 1 THEN 1 END DESC')
+		->orderBy('created_at', 'ASC');
 
 		try {
             return DataTables::of($transaksi)
@@ -85,6 +120,9 @@ class ViewController extends Controller
                 if($transaksi->cito == 1){
                     $content.='<br><span class="p-2 badge badge-danger" style="display: inline-block">Cito</span>';
                 }
+		if($transaksi->eksekutif == 1){
+			$content.='<br><span class="p-2 badge badge-warning" style="display: inline-block">Eksekutif</span>';
+		}
                 if($transaksi->is_video == 1){
                     $content.='<br><span class="p-2 badge badge-warning" style="display: inline-block">Telekonsultasi</span>';
                 }
@@ -125,7 +163,7 @@ class ViewController extends Controller
 				return $content;
             })
             ->addColumn('action', function($transaksi) use ($slug){
-				$param_print = '\''.$transaksi->slug.'\','.$transaksi->id.','.$transaksi->ori_detail->nomor_resep.",'".($transaksi->dokter_nama ?? '')."',".($transaksi->dokter_id ?? '').','.($transaksi->dokter ? '\'exist\'' : '');
+				$param_print = '\''.$transaksi->slug.'\','.$transaksi->id.','.($transaksi->ori_detail->nomor_resep ?? '').",'".($transaksi->dokter_nama ?? '')."',".($transaksi->dokter_id ?? '').','.($transaksi->dokter ? '\'exist\'' : '');
                 $content = '<button type="button" class="btn btn-alt-primary btn-square dropdown-toggle" id="page-header-options-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="fa fa-cog" aria-hidden="true"></i>&nbsp;&nbsp;Menu
 							</button>
@@ -294,7 +332,13 @@ class ViewController extends Controller
 	public function single(Request $request, $farmasi, $slug)
 	{
 		$farm = session('farmasi');
-		$transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug);
+		$add_eager = [
+			'final_detail.resep_detail.tipe_racikan',
+			'final_detail.resep_detail.detail_copy',
+			'final_detail.resep_detail.detail_copy.resep_detail',
+			'final_detail.resep_detail.detail_copy.resep_detail.transaksi',
+		];
+		$transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug, $add_eager);
 	    $this->checkToAbort($transaksi);
 		$tipe = app('App\Http\Controllers\Farmasi\TipeObat\ReadController')->getAll();
 		$aturan = app('App\Http\Controllers\Farmasi\AturanObat\ReadController')->getAll();
@@ -334,6 +378,8 @@ class ViewController extends Controller
 		
 		if($transaksi->status) return view('farmasi.transaksi.detail', $data);
 		if($transaksi->pembayaran_detail && $transaksi->pembayaran_detail->perusahaan->tipe->slug == 'bpjs'  && $farm->perharian) {
+			# bypass always ke transaksi detail karena edit 7 23 hari udah di detail
+			return view('farmasi.transaksi.detail', $data);
 			$flag = 0;
 			foreach ($transaksi->final_detail->resep_detail as $detail)	if($detail->jumlah != $detail->hari7 + $detail->hari23 + $detail->dukunganrs) $flag++;
 			if(!$flag) return view('farmasi.transaksi.detail', $data);
@@ -588,13 +634,14 @@ class ViewController extends Controller
 		return $pdf->stream('nota.pdf');
 	}
 
-	public function printResep(Request $request, $farmasi, $slug)
+	public function printResep(Request $request, $farmasi, $slug, $param_download = [])
 	{
 		$farm = session('farmasi');
 		$transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingleOnly($slug);
 		app('App\Http\Controllers\Farmasi\Transaksi\EditController')->printed($transaksi);
 
-		if(!empty($request['dokter-jenis'])){
+        $sip_dokter = null;
+		if(!is_null($request['dokter-jenis'])){
 			$dokter_jenis = $request['dokter-jenis'];
 			$dokter_rsal = $request['dokter-rsal'];
 			$dokter_luar = $request['dokter-luar'];
@@ -602,6 +649,7 @@ class ViewController extends Controller
 				$transaksi->dokter_id = $dokter_rsal;
 				$dokter = app('App\Http\Controllers\Users\ReadController')->getSingle($dokter_rsal);
 				$transaksi->dokter_nama = $dokter->name;
+                $sip_dokter = $dokter->sip;
 				$dokter_ttd = $dokter->ttd;
 			}
 			else{
@@ -616,14 +664,13 @@ class ViewController extends Controller
 			$dokter_ttd = null;
 		}
 
-
 		$data['transaksi'] = $transaksi;
 		$detail = array();
 		$data['jumlah_generik'] = 0;
 		$data['jumlah_racikan'] = 0;
 		$baris = 0;
 		$page = 1;
-		$max_row_per_page = 30;
+		$max_row_per_page = 24;
 		$max_character_per_row = 34;
 		$count_obat = 0;
 		foreach ($transaksi->final_detail->resep_detail as $index => $row) {
@@ -674,27 +721,51 @@ class ViewController extends Controller
 			$detail[$page][$count_obat]['aturan'] = explode("\n", $row->aturan);
 			$detail[$page][$count_obat]['tipe'] = $row->tipe;
 			$detail[$page][$count_obat]['racikan'] = $row->racikan;
+			$detail[$page][$count_obat]['jumlah'] = $row->jumlah;
+
+			# kategori obat
+			$item_template_id = $row->obat_detail->item_template_id ?? '';
+			if (!empty($item_template_id)) {
+				$item_kategori = ItemsKategori::with('detail_kategori')->where('item_template_id', $item_template_id)->first();
+				$detail[$page][$count_obat]['kategori_slug'] = $item_kategori->detail_kategori->slug ?? '';
+			}
+
 			$count_obat++;
 		}
 		
 		$data['detail'] = $detail;
-		$data['farmasi'] = $farm;
+		$data['farmasi'] = $farm ?? $farmasi;
 		$data['dokter'] = $transaksi->dokter_nama;
+		$data['sip_dokter'] = $sip_dokter;
 		$data['dokter_ttd'] = $dokter_ttd;
 		$data['nomor_resep'] = $request->input('nomor_resep');
 		\Blade::setEchoFormat('nl2br(e(%s))');
 		$customPaper = array(0,0,403,585);
-
+			(isset($transaksi->final_detail->is_kemo) && $transaksi->final_detail->is_kemo);
 		if(isset($transaksi->final_detail->is_kemo) && $transaksi->final_detail->is_kemo){
 			$pdf = DOMPDF::loadView('farmasi.laporan.laporan-obat-kanker', $data)->setPaper('a4', 'landscape');
+			if (($param_download['is_download'] ?? null) != null) {
+				$filename = $param_download['filename'] ?? 'Print_Resep_'.$transaksi->id.'.pdf';
+				if (file_exists($param_download['path'] . $filename)) 
+					unlink($param_download['path'] . $filename);
+				$pdf->save($param_download['path'] . $filename);
+				return $filename;
+			}
 	   		return $pdf->stream('print-kemo.pdf');
    		}else{
 			$pdf = DOMPDF::loadView('farmasi.transaksi.print-resep.index',$data)->setPaper($customPaper);
+			if (($param_download['is_download'] ?? null) != null) {
+				$filename = $param_download['filename'] ?? 'Print_Resep_'.$transaksi->id.'.pdf';
+				if (file_exists($param_download['path'] . $filename)) 
+					unlink($param_download['path'] . $filename);
+				$pdf->save($param_download['path'] . $filename);
+				return $filename;
+			}
 			return $pdf->stream('nota.pdf');
 		}
 	}
 
-	public function printResepFormatDokter(Request $request, $farmasi, $slug)
+	public function printResepFormatDokter(Request $request, $farmasi, $slug, $param_download = [])
 	{
 		$farm = session('farmasi');
 		$transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingleOnly($slug);
@@ -761,6 +832,26 @@ class ViewController extends Controller
 		$customPaper = array(0,0,453,604);
 		$pdf = DOMPDF::loadView('farmasi.transaksi.cetak-analisa',$data)->setPaper($customPaper);
 		// $pdf = DOMPDF::loadView('farmasi.transaksi.cetak-analisa',$data)->setPaper('a7');
+		return $pdf->stream('cetak-analisa.pdf');
+	}
+
+	public function formulirPermintaanDispensingAseptik($farmasi, $slug)
+	{
+		$farm = session('farmasi');
+		$transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug);
+		$data['transaksi'] = $transaksi;
+		$data['farmasi'] = $farm;
+		$pdf = DOMPDF::loadView('farmasi.transaksi.printout.formulir-permintaan-dispensing-aseptik',$data);
+		return $pdf->stream('cetak-analisa.pdf');
+	}
+
+	public function formulirPermintaanTpn($farmasi, $slug)
+	{
+		$farm = session('farmasi');
+		$transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug);
+		$data['transaksi'] = $transaksi;
+		$data['farmasi'] = $farm;
+		$pdf = DOMPDF::loadView('farmasi.transaksi.printout.formulir-permintaan-tpn',$data);
 		return $pdf->stream('cetak-analisa.pdf');
 	}
 

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Farmasi\ItemTemplate;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Farmasi\ItemsKategori;
 use App\Models\Farmasi\ItemsTemplate;
+use App\Models\Farmasi\Kategori;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
@@ -33,7 +35,7 @@ class ReadController extends Controller
     {
         return ItemsTemplate::find($id);
     }
-    
+
     public function getByIds($ids, $eager = [])
     {
         if(is_numeric($ids)) $ids = [$ids];
@@ -124,5 +126,13 @@ class ReadController extends Controller
 
         $data = DB::connection('farmasi')->select($query);
         return $data;
+    }
+
+    public function getItemKategori($slug)
+    {
+        $kategori = Kategori::where('slug',$slug)->pluck('id')->toArray();
+        $items_kategori = ItemsKategori::whereIn('kategori_id',$kategori)->pluck('item_template_id')->toArray();
+        $item_template = ItemsTemplate::whereIn('id',$items_kategori)->get();
+        return $item_template;
     }
 }

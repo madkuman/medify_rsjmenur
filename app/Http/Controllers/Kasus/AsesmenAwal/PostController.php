@@ -9,6 +9,8 @@ use App\Models\Kasus\AsesmenAwal;
 use App\Models\Kasus\AsesmenAwal2;
 use App\Models\Kasus\AsesmenAwal3;
 use App\Models\Kasus\Kasus;
+use App\Models\Kasus\RekonsiliasiObat;
+use App\Models\Kasus\RekonsiliasiObatDetail;
 use App\Models\RawatInap\Ruangan;
 use App\Models\RawatInap\RuanganVisite;
 use App\User;
@@ -53,11 +55,23 @@ class PostController extends Controller
                 else
                     $asesmen->$value = null;
             }
+
+            $is_array = [
+                'icd_10_1',
+                'icd_10_2',
+                'icd_10_3',
+                'obat_nama',
+                'dosis',
+                'jumlah',
+                'rute',
+                'aturan_pakai',
+            ];
+
             foreach ($asesmen2->getTableColumns() as $value) {
                 if($value == 'id' || $value == 'created_at' || 
                     $value == 'updated_at' || $value == 'deleted_at') continue;
             	if(isset($input[$value])){
-            	    if($value == 'icd_10_1' || $value == 'icd_10_2' || $value == 'icd_10_3'){
+            	    if(in_array($value, $is_array)){
             	        $input[$value] = implode('; ',$input[$value]);
                     }
             		$asesmen2->$value = $input[$value];
@@ -114,35 +128,26 @@ class PostController extends Controller
                     {
                         $visite = $this->getVisite($ruangan->id,1);
                     }
-                    if(empty($visite))
-                    {
-                        DB::connection('kasus')->rollback();
-                        $status = -1;
-                        $message = 'Asesmen awal gagal dibuat! Harga Visite Belum dimasukkan';
-                        $title = 'Gagal!';
 
-                        return redirect('/kasus/'.$nomorKasus.'/datamedis/asesmenawal')
-                            ->with('message', $message)
-                            ->with('active_nav','AsesmenAwal')
-                            ->with('title',$title)
-                            ->with('status', $status);
-                    }
-                    else $unit_price = $visite->tarif->harga;
+                    if(!empty($visite) && !empty($visite->tarif)){
+                        $unit_price = $visite->tarif->harga;
 
-                    $data['tarif_id'] = $visite->tarif_id;
-                    $data['tarif_tipe_id'] = 1;
-                    $data['tarif_kelas'] = $kasus->kelas->id;
-                    $data['kasus_id'] = $kasus->id;
-                    $data['desc'] = $visite->tarif->master->deskripsi.' - '.Auth::user()->name;
-                    $data['unit_price'] = $unit_price;
-                    $data['qty'] = 1;
-                    $data['lokasi'] = $kasus->lokasi->lokasi->id;
-                    $data['daftar_harga_id'] = 0;
-                    $data['sep_id'] = $kasus->sep_id;
-                    $data['departemen_id'] = 3;
-                    $createDetail = app('App\Http\Controllers\Kasus\TagihanDetail\CreateController')->create($data);
-                    $asesmen2->tagihan_detail_id = $createDetail->id;
-                    $asesmen2->save();
+                        $data['tarif_id'] = $visite->tarif_id;
+                        $data['tarif_tipe_id'] = 1;
+                        $data['tarif_kelas'] = $kasus->kelas->id;
+                        $data['kasus_id'] = $kasus->id;
+                        $data['desc'] = $visite->tarif->master->deskripsi.' - '.Auth::user()->name;
+                        $data['unit_price'] = $unit_price;
+                        $data['qty'] = 1;
+                        $data['lokasi'] = $kasus->lokasi->lokasi->id;
+                        $data['daftar_harga_id'] = 0;
+                        $data['sep_id'] = $kasus->sep_id;
+                        $data['departemen_id'] = 3;
+                        $createDetail = app('App\Http\Controllers\Kasus\TagihanDetail\CreateController')->create($data);
+                        $asesmen2->tagihan_detail_id = $createDetail->id;
+                        $asesmen2->save();
+
+                    }  
                 }
 
                 if($kasus->lokasi->lokasi->departemen->id == 2 && Auth::user()->profesi == 1 && $kasus->pembayaran->perusahaan->nama != 'Tunai' && $request->jenis == 'Rawat Jalan Dokter')
@@ -182,6 +187,10 @@ class PostController extends Controller
             $log = app('App\Http\Controllers\Kasus\Log\CreateController')
             ->create($kasus->id,'create','AsesmenAwal',$asesmen->id,$kasus->id);
 
+            $rekonsiliasi_obat_id = $this->rekonsiliasiObat($request, $kasus);
+            $asesmen2->rekonsiliasi_obat_id = $rekonsiliasi_obat_id;
+            $asesmen2->save();
+
             DB::connection('kasus')->commit();
             return redirect('/kasus/'.$nomorKasus.'/datamedis/asesmenawal')
             ->with('message', $message)
@@ -201,6 +210,59 @@ class PostController extends Controller
             ->with('active_nav','AsesmenAwal')
             ->with('title',$title)
             ->with('status', $status);
+        }
+    }
+
+    private function rekonsiliasiObat($request, $kasus)
+    {
+        # ref: Controllers\Kasus\Farmasi\Rekonsiliasi\PostController.php > post
+
+        try {
+			if (empty($request->id_rekonsiliasi_obat)) {
+				$rekon = new RekonsiliasiObat;
+				$rekon->kasus_id = $kasus->id;
+				$rekon->created_by = Auth::user()->id;
+				$message = 'Rekonsiliasi Obat Berhasil Dibuat';
+			} else {
+                $rekon = RekonsiliasiObat::find($request->id);
+				$rekon->updated_by = Auth::user()->id;
+				$message = 'Rekonsiliasi Obat Berhasil Di Update';
+            };
+
+            $rekon->jenis = "awal";
+			$rekon->save();
+
+            foreach($request->obat_nama ?? [] as $index => $obat_nama)
+			{
+				$detail = new RekonsiliasiObatDetail();
+				$detail->rekonsiliasi_obat_id = $rekon->id;
+				$detail->tanggal = now();
+				$detail->obat_nama = $request->obat_nama[$index];
+				$detail->dosis = $request->dosis[$index];
+				$detail->jumlah = $request->jumlah[$index];
+				$detail->rute = $request->rute[$index];
+				$detail->aturan_pakai = $request->aturan_pakai[$index];
+				$detail->created_by = Auth::user()->id;
+				$detail->save();
+			}
+
+            $status = 1;
+			$title = 'Berhasil!';
+
+            return $rekon->id;
+
+        } catch (\Exception $e) {
+            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+			DB::connection('kasus')->rollback();
+
+			$status = -1;
+			$message = 'Transaksi gagal ! Terjadi Kesalahan Server';
+			$title = 'Gagal!';
+
+			return back()
+			->with('message', $message)
+			->with('title',$title)
+			->with('status', $status);
         }
     }
 

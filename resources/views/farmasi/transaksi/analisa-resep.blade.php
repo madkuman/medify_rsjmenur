@@ -143,14 +143,20 @@ Farmasi Transaksi
                                         <div class="col-5">
                                             <label>1. SEP</label>
                                         </div>
+                                        @php
+                                            $has_sep = false;
+                                            if (!empty($transaksi->kasus->sep)) {
+                                                $has_sep = true;
+                                            }
+                                        @endphp
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="tgl-resep">
-                                                <input type="radio" class="css-control-input analisa_resep_sep_1" name="analisa_resep_sep" value="1" checked=""> <span style="font-size: 13px" class="css-control-indicator"></span> Ada
+                                                <input type="radio" class="css-control-input analisa_resep_sep_1" name="analisa_resep_sep" value="1" @if(!empty($has_sep)) checked @else @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Ada
                                             </label>
                                         </div>
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="tgl-resep">
-                                                <input type="radio" class="css-control-input analisa_resep_sep_0" name="analisa_resep_sep" value="0"> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak Ada
+                                                <input type="radio" class="css-control-input analisa_resep_sep_0" name="analisa_resep_sep" value="0" @if(!empty($has_sep)) @else checked @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak Ada
                                             </label>
                                         </div>
                                     </div>
@@ -188,14 +194,20 @@ Farmasi Transaksi
                                         <div class="col-5">
                                             <label>4. Paraf Dokter</label>
                                         </div>
+                                        @php
+                                            $has_ttd = false;
+                                            if (!empty($transaksi->dokter->ttd)) {
+                                                $has_ttd = true;
+                                            }
+                                        @endphp
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="umur-bb">
-                                                <input type="radio" class="css-control-input analisa_resep_paraf_dokter_1" name="analisa_resep_paraf_dokter" value="1" checked=""> <span style="font-size: 13px" class="css-control-indicator"></span> Ada
+                                                <input type="radio" class="css-control-input analisa_resep_paraf_dokter_1" name="analisa_resep_paraf_dokter" value="1" @if(!empty($has_ttd)) checked @else @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Ada
                                             </label>
                                         </div>
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="umur-bb">
-                                                <input type="radio" class="css-control-input analisa_resep_paraf_dokter_0" name="analisa_resep_paraf_dokter" value="0"> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak Ada
+                                                <input type="radio" class="css-control-input analisa_resep_paraf_dokter_0" name="analisa_resep_paraf_dokter" value="0" @if(!empty($has_ttd)) @else checked @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak Ada
                                             </label>
                                         </div>
                                     </div>
@@ -220,14 +232,37 @@ Farmasi Transaksi
                                         <div class="col-5">
                                             <label>6. Jumlah Obat</label>
                                         </div>
+                                        @php
+                                            $tepat = false;
+                                            $dosis_maksimal = 0;
+                                            $kekuatan_dosis_yang_diresepkan = 0;
+                                            $jumlah_pemberian = 0;
+                                            if (!empty($transaksi->final_detail->resep_detail)) {
+                                                foreach ($transaksi->final_detail->resep_detail as $detail) {
+                                                    if (!empty($detail->obat_detail->item_template)) {
+                                                        $dosis_maksimal += $detail->obat_detail->item_template->dosis_maksimal ?? 0;
+                                                    }
+                                                    $kekuatan_dosis_yang_diresepkan += $detaik->dosis ?? 0;
+                                                    $jumlah_pemberian += $detaik->jumlah ?? 0;
+                                                }
+                                            }
+
+                                            $temp_dosis_yang_diresepkan = $kekuatan_dosis_yang_diresepkan * $jumlah_pemberian;
+                                            if (($dosis_maksimal != 0) && ($temp_dosis_yang_diresepkan != 0)) {
+                                                $dosis = $dosis_maksimal / $temp_dosis_yang_diresepkan;
+                                                if ($dosis < $dosis_maksimal) {
+                                                    $tepat = true;
+                                                }
+                                            }
+                                        @endphp
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="tepat-bentuk">
-                                                <input type="radio" class="css-control-input analisa_resep_jumlah_obat_1" name="analisa_resep_jumlah_obat" value="1" checked=""> <span style="font-size: 13px" class="css-control-indicator"></span> Tepat
+                                                <input type="radio" class="css-control-input analisa_resep_jumlah_obat_1" name="analisa_resep_jumlah_obat" value="1" @if(!empty($tepat)) checked @else @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Tepat
                                             </label>
                                         </div>
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="tepat-bentuk">
-                                                <input type="radio" class="css-control-input analisa_resep_jumlah_obat_0" name="analisa_resep_jumlah_obat" value="0"> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak Tepat
+                                                <input type="radio" class="css-control-input analisa_resep_jumlah_obat_0" name="analisa_resep_jumlah_obat" value="0" @if(!empty($tepat)) @else checked @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak Tepat
                                             </label>
                                         </div>
                                     </div>
@@ -252,14 +287,25 @@ Farmasi Transaksi
                                         <div class="col-5">
                                             <label>8. Tepat Indikasi</label>
                                         </div>
+                                        @php
+                                            $tepat_indikasi = false;
+                                            if (!empty($transaksi->final_detail->resep_detail)) {
+                                                foreach ($transaksi->final_detail->resep_detail as $detail) {
+                                                    if (!empty($detail->obat_detail->item_template->indikasi)) {
+                                                        $tepat_indikasi = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        @endphp
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="tepat-dosis">
-                                                <input type="radio" class="css-control-input analisa_resep_tepat_indikasi_1" name="analisa_resep_tepat_indikasi" value="1" checked=""> <span style="font-size: 13px" class="css-control-indicator"></span> Iya
+                                                <input type="radio" class="css-control-input analisa_resep_tepat_indikasi_1" name="analisa_resep_tepat_indikasi" value="1" @if(!empty($tepat_indikasi)) checked @else @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Iya
                                             </label>
                                         </div>
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="tepat-dosis">
-                                                <input type="radio" class="css-control-input analisa_resep_tepat_indikasi_0" name="analisa_resep_tepat_indikasi" value="0"> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak
+                                                <input type="radio" class="css-control-input analisa_resep_tepat_indikasi_0" name="analisa_resep_tepat_indikasi" value="0" @if(!empty($tepat_indikasi)) @else checked @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak
                                             </label>
                                         </div>
                                     </div>
@@ -282,14 +328,25 @@ Farmasi Transaksi
                                         <div class="col-5">
                                             <label>10. Tepat Rute</label>
                                         </div>
+                                        @php
+                                            $tepat_rute = false;
+                                            if (!empty($transaksi->final_detail->resep_detail)) {
+                                                foreach ($transaksi->final_detail->resep_detail as $detail) {
+                                                    if (!empty($detail->obat_detail->item_template->rute_id)) {
+                                                        $tepat_rute = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        @endphp
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="eso-potensil">
-                                                <input type="radio" class="css-control-input analisa_resep_tepat_rute_1" name="analisa_resep_tepat_rute" value="1"  checked=""> <span style="font-size: 13px" class="css-control-indicator"></span> Iya
+                                                <input type="radio" class="css-control-input analisa_resep_tepat_rute_1" name="analisa_resep_tepat_rute" value="1" @if(!empty($tepat_rute)) checked @else @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Iya
                                             </label>
                                         </div>
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="eso-potensil">
-                                                <input type="radio" class="css-control-input analisa_resep_tepat_rute_0" name="analisa_resep_tepat_rute" value="0"> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak
+                                                <input type="radio" class="css-control-input analisa_resep_tepat_rute_0" name="analisa_resep_tepat_rute" value="0" @if(!empty($tepat_rute)) @else checked @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak
                                             </label>
                                         </div>
                                     </div>
@@ -297,14 +354,25 @@ Farmasi Transaksi
                                         <div class="col-5">
                                             <label>11. Tepat Waktu</label>
                                         </div>
+                                        @php
+                                            $tepat_waktu = false;
+                                            if (!empty($transaksi->final_detail->resep_detail)) {
+                                                foreach ($transaksi->final_detail->resep_detail as $detail) {
+                                                    if (!empty($detail->obat_detail->item_template->waktu_dosage_max_1) && !empty($detail->obat_detail->item_template->waktu_dosage_max_2)) {
+                                                        $tepat_waktu = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        @endphp
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="interaksi-potensial">
-                                                <input type="radio" class="css-control-input analisa_resep_tepat_waktu_1" name="analisa_resep_tepat_waktu" value="1" checked=""> <span style="font-size: 13px" class="css-control-indicator"></span> Iya
+                                                <input type="radio" class="css-control-input analisa_resep_tepat_waktu_1" name="analisa_resep_tepat_waktu" value="1" @if(!empty($tepat_waktu)) checked @else @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Iya
                                             </label>
                                         </div>
                                         <div class="col-3">
                                             <label class="css-control css-control-sm  css-control-primary css-radio" id="css-control-sm interaksi-potensial">
-                                                <input type="radio" class="css-control-input analisa_resep_tepat_waktu_0" name="analisa_resep_tepat_waktu" value="0"> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak
+                                                <input type="radio" class="css-control-input analisa_resep_tepat_waktu_0" name="analisa_resep_tepat_waktu" value="0" @if(!empty($tepat_waktu)) @else checked @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak
                                             </label>
                                         </div>
                                     </div>
@@ -314,12 +382,12 @@ Farmasi Transaksi
                                         </div>
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="duplikasi-obat">
-                                                <input type="radio" class="css-control-input analisa_resep_duplikasi_terapi_1" name="analisa_resep_duplikasi_terapi" value="1"  checked=""> <span style="font-size: 13px" class="css-control-indicator"></span> Iya
+                                                <input type="radio" class="css-control-input analisa_resep_duplikasi_terapi_1" name="analisa_resep_duplikasi_terapi" value="1"  @if(!empty($duplikasi_terapi)) @else checked @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Iya
                                             </label>
                                         </div>
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="duplikasi-obat">
-                                                <input type="radio" class="css-control-input analisa_resep_duplikasi_terapi_0" name="analisa_resep_duplikasi_terapi" value="0"> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak
+                                                <input type="radio" class="css-control-input analisa_resep_duplikasi_terapi_0" name="analisa_resep_duplikasi_terapi" value="0" @if(!empty($duplikasi_terapi)) checked @else @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak
                                             </label>
                                         </div>
                                     </div>
@@ -329,12 +397,12 @@ Farmasi Transaksi
                                         </div>
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="tlp-dokter">
-                                                <input type="radio" class="css-control-input analisa_resep_alergi_obat_1" name="analisa_resep_alergi_obat" value="1" checked="" > <span style="font-size: 13px" class="css-control-indicator"></span> Ya
+                                                <input type="radio" class="css-control-input analisa_resep_alergi_obat_1" name="analisa_resep_alergi_obat" value="1" @if(!empty($has_not_alergi_obat)) checked @else @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Ya
                                             </label>
                                         </div>
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="tlp-dokter">
-                                                <input type="radio" class="css-control-input analisa_resep_alergi_obat_0" name="analisa_resep_alergi_obat" value="0"> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak
+                                                <input type="radio" class="css-control-input analisa_resep_alergi_obat_0" name="analisa_resep_alergi_obat" value="0" @if(!empty($has_not_alergi_obat)) @else checked @endif> <span style="font-size: 13px" class="css-control-indicator"></span> Tidak
                                             </label>
                                         </div>
                                     </div>
@@ -344,7 +412,7 @@ Farmasi Transaksi
                                         </div>
                                         <div class="col-3">
                                             <label class="css-control css-control-sm css-control-primary css-radio" id="analisa_resep_interaksi_obat">
-                                                <input type="radio" class="css-control-input analisa_resep_interaksi_obat_1" name="analisa_resep_interaksi_obat" value="1" checked=""> <span style="font-size: 13px" class="css-control-indicator"></span> Ya
+                                                <input type="radio" class="css-control-input analisa_resep_interaksi_obat_1" name="analisa_resep_interaksi_obat" value="1" checked> <span style="font-size: 13px" class="css-control-indicator"></span> Ya
                                             </label>
                                         </div>
                                         <div class="col-3">

@@ -1308,3 +1308,16 @@ table.dataTable th
 {
 	justify-content: left;
 }
+
+.select2-warning-item {
+	background-color:#fae9e8;
+	margin:-6px;
+	padding:6px;
+	border-bottom:3px solid white;
+	color: #000 !important;
+}
+
+.select2-warning-item:hover {
+	color: #000 !important;
+	background-color:#f5b4b0;
+}

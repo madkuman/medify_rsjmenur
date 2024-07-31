@@ -3,7 +3,7 @@
         <div class="form-group">                        
             <label class="" for="example-daterange1">Pilih Bulan</label>
             <div class="">
-            <input type="text" class="form-control js-datepicker-month" name="date" data-autoclose="true" data-today-highlight="true" data-date-format="yyyy-mm" required placeholder="yyyy-mm" value="{{$current_month}}">
+            <input type="text" class="form-control datepicker-month" name="date" data-autoclose="true" data-today-highlight="true" data-date-format="yyyy-mm" required placeholder="yyyy-mm" value="{{$current_month}}">
             </div>
         </div>
         <div class="form-group">

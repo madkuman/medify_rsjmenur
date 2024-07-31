@@ -383,6 +383,7 @@ class PostController extends Controller
 
     public function tambahPemeriksaan($slug,Request $request)
     {
+        dd($request->all());
         $transaksi = Transaksi::where('slug', $slug)->first();
         $services = $request->tambah_pemeriksaan;
         try {

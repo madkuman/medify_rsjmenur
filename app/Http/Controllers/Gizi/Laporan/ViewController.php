@@ -12,6 +12,7 @@ use App\Exports\Gizi\LaporanDietPasienBulanan;
 use App\Exports\Gizi\LaporanPenyerapanPorsiMakanan;
 use App\Exports\Gizi\LaporanMakananUtama;
 use App\Exports\Gizi\LaporanMakananTambahan;
+use MPDF;
 
 class ViewController extends Controller
 {
@@ -32,7 +33,14 @@ class ViewController extends Controller
     public function laporanSuratPemesananMakanan(Request $request)
     {
         $data = app('App\Http\Controllers\Gizi\Laporan\LaporanController\LaporanSuratPemesananMakananController')->get($request);
-        return (new LaporanSuratPemesananMakanan($data))->download('laporan_surat_pemesanan_makanan.xlsx');
+        if($request->file =='excel')
+            return (new LaporanSuratPemesananMakanan($data))->download('laporan_surat_pemesanan_makanan.xlsx');
+        else
+        {
+            $pdf = MPDF::loadView('gizi.laporan.view.laporan-surat-pemesanan-makanan-pdf', $data, [], ['format' => 'A4-L']);
+            return $pdf->stream('Surat Pemesanan Makanan.pdf');
+        }
+
     }
 
     public function laporanDietPasienBulanan(Request $request)

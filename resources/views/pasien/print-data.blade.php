@@ -51,7 +51,7 @@ Print Identitas - {{$identitas->name}}
                 <table width="100%" cellpadding="5">
                     <tr>
                         <td width="15%" align="left">
-                            <img src="{{ asset('assets/img/logo/jer_basuki_mawa_beya.png') }}" height="50">
+                            <img src="{{ public_path('assets/img/logo/jer_basuki_mawa_beya.png') }}" height="50">
                         </td>
                         <td width="63%" align="center">
                             <p style="font-size: 10px;">PEMERINTAH PROVINSI JAWA TIMUR <br>
@@ -61,7 +61,7 @@ Print Identitas - {{$identitas->name}}
                             </p>
                         </td>
                         <td width="17%" align="left">
-                            <img src="{{ asset('assets/img/logo/rsj_menur_logo.png') }}" height="50">
+                            <img src="{{ public_path('assets/img/logo/rsj_menur_logo.png') }}" height="50">
                         </td>
                     </tr> 
                 </table>
@@ -70,7 +70,7 @@ Print Identitas - {{$identitas->name}}
         </td>
         <td width="25%" align="center">
             @if(!is_null($identitas->photo_ori) && $identitas->photo_ori != 'assets/img/placeholder.jpg')
-            <img src="{{ asset($identitas->photo_ori) }}" width="140" height="140" class="ml-20">
+            <img src="{{ public_path($identitas->photo_ori ?? '') }}" width="140" height="140" class="ml-20">
             @else
             <div style="width: 50%; padding-left: 20px; padding-right: 20px; padding-top: 60px; padding-bottom: 60px; margin-left: 20px; border: 1px solid #000;">
                 FOTO PASIEN
@@ -210,12 +210,14 @@ Print Identitas - {{$identitas->name}}
         <td width="30%">
             <p> Surabaya, {{indonesian_date(strtotime(\Carbon\Carbon::now()),'d F Y')}}</p>
             <p style="margin-bottom: 10px">Petugas Admisi</p>
-            @if(!is_null($user->ttd))
-                <img src="{{ asset($user->ttd) }}" width="50" height="30" class="ml-20">
+            @if(!is_null($user))
+                @if (!is_null($user->ttd))
+                <img src="{{ public_path($user->ttd) }}" width="50" height="30" class="ml-20">
+                @endif
             @else
                 <p style="margin-bottom: 20px">&nbsp;</p>
             @endif
-            <p> (<b>{{$user->name}}</b>)</p>
+            <p> (<b>{{$user->name ?? '-'}}</b>)</p>
         </td>
     </tr>
 </table>

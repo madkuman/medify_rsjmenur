@@ -6,10 +6,42 @@
     $('.obatLoading').hide();   
     var currentSelectedItem;   
     var currentSelectedItemName;
+    const FITUR_INFO_PEMBERIAN_OBAT = `{{ config('medify.kasus.info_pemberian_obat.on') }}`
+    const FITUR_TTD_VERIFIKATOR_PEMBERIAN_OBAT = `{{ config('medify.kasus.ttd_verifikator_pemberian_obat.on') }}`
+    const FITUR_VERIFIKATOR_PEMBERIAN_OBAT = `{{ config('medify.kasus.verifikator_pemberian_obat.on') }}`
 
     $(".input-rute").select2({
         dropdownParent: $("#modalFormObat")
     });
+
+    function catatanPengobatanPasien(cpo_id){
+        const badge = $("#obat-badged");
+        badge.empty();
+        var newElements = '';
+        $.ajax({
+            url: `/api/kasus/farmasi/pengobatan-pasien/by-id?id=${cpo_id}`,
+            type: 'GET',
+            success: (res)=>{
+                console.log('loaded medicine attribute');
+                var date = new Date(res.created_at);
+                var format_date = `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`
+                newElements += `<span class="badge badge-pill badge-primary">nama obat : ${res.nama_obat}</span>`;
+                newElements += `<span class="badge badge-pill ml-1 badge-primary">signa : ${res.aturan_pemakaian ?? '-'}</span>`;
+                newElements += `<span class="badge badge-pill ml-1 badge-primary">tanggal resep : ${format_date}</span>`;
+                newElements += `<span class="badge badge-pill ml-1 badge-primary">jumlah resep : ${res.jumlah_obat != 0 ? res.jumlah_obat : ''}</span>`;
+                newElements += `<span class="badge badge-pill ml-1 badge-primary">jumlah terkonsumsi : ${res.consumed}</span>`;
+                newElements += `<span class="badge badge-pill ml-1 badge-primary">sisa : ${res.jumlah_obat != 0 ? res.sisa : ''}</span>`;
+                badge.append(newElements);
+                $('#loading-obat').hide();
+            },
+            error:(xhr, status, error)=>{
+                console.log('loaded error');
+                newElements += `<span class="badge badge-pill ml-1 badge-danger">ERROR</span>`;
+                badge.append(newElements);
+                $('#loading-obat').hide();
+            }
+        })
+    }
 
     function searchResep(search_url,suggestions,suggest, term)
     {   
@@ -39,8 +71,8 @@
     $('.obat-autocomplete').autoComplete({
         minChars: 3,
         source: function(term, suggest){
-            term = term.toLowerCase();
-            var search_url = API_URL+"/farmasi/item/get"
+            term = term;
+            var search_url = API_URL+"/{{ session('farmasi')->attr_kategori_farmasi ?? 'farmasi' }}/item/get"
             var suggestions    = [];
             $('.obatLoading').show();
             clearTimeout(typingTimer2); 
@@ -61,65 +93,165 @@
              $(this).parent().parent().find('.obat-id').val(currentSelectedItem)
     })
 
-    $('.isiPemberianBtn').click(function()
+    $(document).on('click', '.isiPemberianObatBtn', function()
     {
-        var id = $(this).data("id")
-        var method = $(this).data("method")
-        var obat_nama = $(this).data("nama")
+        $('#error-nama-pemberian-obat').addClass('d-none');
+        $('#error-verifikator-pemberian-obat').addClass('d-none');
 
-        $('#modalFormPemberianObat .input-id').val(id)
+        var method = $(this).data("method")
+
         if(method == 'create')
         {   
             $('#modalFormPemberianObat .deleteBtnPemberian').hide();
-            var default_tanggal = "{{Carbon\Carbon::now()->format('d-m-Y')}}"
+            var default_tanggal = moment().format('YYYY-MM-DD');
             var default_jam = "{{Carbon\Carbon::now()->format('H:i')}}"
-            var date_start = moment(new Date()).subtract(30,'days').format('DD-MM-YYYY');
-            var date_end = moment(new Date()).add(30,'days').format('DD-MM-YYYY');
 
             var obat_px_id = $(this).data("obat-px-id")
+            $('#modalFormPemberianObat .input-select-obat').prop('disabled', false).val('').trigger('change');
             $('#modalFormPemberianObat .input-id').val("")
-            $('#modalFormPemberianObat .input-obat-px-id').val(obat_px_id)
+            $('#modalFormPemberianObat .input-method').val(method)
             $('#modalFormPemberianObat .input-tanggal').val(default_tanggal)
-            $('#modalFormPemberianObat .input-tanggal').attr('min',date_start);
-            $('#modalFormPemberianObat .input-tanggal').attr('max',date_end);
             $('#modalFormPemberianObat .input-jam').val(default_jam)
             $('#modalFormPemberianObat .input-status').val("sukses")
             $('#modalFormPemberianObat .input-evaluasi').val("")
-            $('#modalFormPemberianObat .input-obat-nama').val(obat_nama)
             $('#modalFormPemberianObat .deleteBtnPemberian').data('id',"");
+
+            if(FITUR_VERIFIKATOR_PEMBERIAN_OBAT != undefined && FITUR_VERIFIKATOR_PEMBERIAN_OBAT == 1){
+                $('#modalFormPemberianObat .input-verifikator-name-1').val(null);
+                $('#modalFormPemberianObat .input-verifikator-name-2').val(null);
+            }
+
+            if(FITUR_TTD_VERIFIKATOR_PEMBERIAN_OBAT != undefined && FITUR_TTD_VERIFIKATOR_PEMBERIAN_OBAT == 1){
+                $('#btn-edit-ttd-1, #btn-edit-ttd-2, #img-signature-1, #img-signature-2, #btn-back-ttd-1, #btn-back-ttd-2').addClass('d-none');
+                $('#signature-1, #signature-2').removeClass('d-none');
+            }
+            $('#modalFormPemberianObat').modal('show')
         }
         else
         {
-            $('#modalFormPemberianObat .deleteBtnPemberian').show();
-            $('#riwayatModal').modal('hide')
-            var content = $(this).data("content")
-            var pemberian_at = moment(content.pemberian_at)
-            var tanggal = pemberian_at.format('DD-MM-YYYY');
-            var jam = pemberian_at.format('HH:mm');
-            console.log(pemberian_at)
-            var date_start = pemberian_at.subtract(30, 'days').format('DD-MM-YYYY');
-            var date_end = pemberian_at.add(60, 'days').format('DD-MM-YYYY');
-
-
-            $('#modalFormPemberianObat .input-id').val(id)
-            $('#modalFormPemberianObat .input-obat-px-id').val(content.catatan_pengobatan_pasien_id)
-            $('#modalFormPemberianObat .input-tanggal').val(tanggal)
-            $('#modalFormPemberianObat .input-tanggal').attr('min',date_start);
-            $('#modalFormPemberianObat .input-tanggal').attr('max',date_end);
-            $('#modalFormPemberianObat .input-jumlah').val(content.jumlah)
-            $('#modalFormPemberianObat .input-jam').val(jam)
-            $('#modalFormPemberianObat .input-status').val(content.status)
-            $('#modalFormPemberianObat .input-evaluasi').val(content.evaluasi)
-            $('#modalFormPemberianObat .input-verified-by').val(content.verified_by).trigger('change');
-            $('#modalFormPemberianObat .input-verified-by-2').val(content.verified_by_2).trigger('change');
-            $('#modalFormPemberianObat .input-evaluasi').val(content.evaluasi)
-            $('#modalFormPemberianObat .input-obat-nama').val(obat_nama)
-            $('#modalFormPemberianObat .deleteBtnPemberian').data('id',id);
+            var id = $(this).data("id")
+            content = getCatatanPengobatanPasienDetailData(id,"edit");
         }
 
-        $('#modalFormPemberianObat').modal('show')
 
     });
+
+    $(document).on('click', '.isiPemberianObatBtnSingle', function()
+    {
+        var method = $(this).data("method")
+        if(method == 'create')
+        {   
+            $('#modalFormPemberianObatSingle .deleteBtnPemberian').hide();
+            var default_tanggal = moment().format('YYYY-MM-DD');
+            var default_jam = "{{Carbon\Carbon::now()->format('H:i')}}"
+            var obat_px_id = $(this).data("obat-px-id")
+            $('#modalFormPemberianObatSingle .input-select-obat').prop('disabled', false).val('').trigger('change');
+            $('#modalFormPemberianObatSingle .input-id').val("")
+            $('#modalFormPemberianObatSingle .input-method').val(method)
+            $('#modalFormPemberianObatSingle .input-tanggal').val(default_tanggal)
+            $('#modalFormPemberianObatSingle .input-jam').val(default_jam)
+            $('#modalFormPemberianObatSingle .input-status').val("sukses")
+            $('#modalFormPemberianObatSingle .input-evaluasi').val("")
+            $('#modalFormPemberianObatSingle .deleteBtnPemberian').data('id',"");
+            $('#modalFormPemberianObatSingle').modal('show')
+        }
+        else
+        {
+            var id = $(this).data("id")
+            content = getCatatanPengobatanPasienDetailData(id,"edit");
+        }
+    });
+
+    function getCatatanPengobatanPasienDetailData(id,method)
+    {
+        $.ajax({
+            url: BASE_URL + 'api/kasus/farmasi/pengobatan-pasien/get-detail',
+            type: 'GET',
+            data: {
+                id : id
+            },
+            dataType: 'json',
+            success: function(response) {
+
+                if(method == 'edit') editPemberianObat(response)
+                else return response;
+
+            },
+            error: function() {
+            },
+        });
+    }
+
+
+    function editPemberianObat(data)
+    {
+        $('#modalFormPemberianObat .deleteBtnPemberian').show();
+        $('#riwayatModal').modal('hide')
+        var pemberian_at = moment(data.pemberian_at)
+        var tanggal = pemberian_at.format('YYYY-MM-DD');
+        var jam = pemberian_at.format('HH:mm');
+
+        $('#modalFormPemberianObat .input-select-obat').val(data.catatan_pengobatan_pasien_id).trigger('change').select2({ disabled:'readonly' })
+        $('#modalFormPemberianObat .input-id').val(data.id)
+        $('#modalFormPemberianObat .input-method').val("edit")
+        $('#modalFormPemberianObat .input-tanggal').val(tanggal)
+        $('#modalFormPemberianObat .input-jam').val(jam)
+        $('#modalFormPemberianObat .input-status').val(data.status)
+        $('#modalFormPemberianObat .input-evaluasi').val(data.evaluasi)
+        $('#modalFormPemberianObat .input-verified-by').val(data.verified_by).trigger('change');
+        
+        if(FITUR_VERIFIKATOR_PEMBERIAN_OBAT != undefined && FITUR_VERIFIKATOR_PEMBERIAN_OBAT == 1){
+            $('#modalFormPemberianObat .input-verifikator-name-1').val(data.verifikator_name_1);
+            $('#modalFormPemberianObat .input-verifikator-name-2').val(data.verifikator_name_2);
+        }else{
+            $('#modalFormPemberianObat .input-verified-by-2').val(data.verified_by_2).trigger('change');
+            $('#modalFormPemberianObat .input-verified').val(data.verified_by).trigger('change');
+        }
+        
+        if(FITUR_TTD_VERIFIKATOR_PEMBERIAN_OBAT != undefined && FITUR_TTD_VERIFIKATOR_PEMBERIAN_OBAT == 1){
+            $('#signature-1, #signature-2, #btn-back-ttd-1, #btn-back-ttd-2').addClass('d-none');
+            $('#img-signature-1').removeClass('d-none').attr('src', data.path_ttd_verif_1);
+            $('#img-signature-2').removeClass('d-none').attr('src', data.path_ttd_verif_2);
+            $('#btn-edit-ttd-1, #btn-edit-ttd-2 ').removeClass('d-none');
+            $('#tmp_path_signature_1').val(data.path_ttd_verif_1);
+            $('#tmp_path_signature_2').val(data.path_ttd_verif_2);
+
+            $('#btn-edit-ttd-1').click(function(){
+                $('#signature-1, #btn-back-ttd-1').removeClass('d-none');
+                $('#img-signature-1, #btn-edit-ttd-1').addClass('d-none');
+                $('#tmp_path_signature_1').val(null);
+            });
+
+            $('#btn-edit-ttd-2').click(function(){
+                $('#signature-2, #btn-back-ttd-2').removeClass('d-none');
+                $('#img-signature-2, #btn-edit-ttd-2').addClass('d-none');
+                $('#tmp_path_signature_2').val(null);
+                
+            });
+
+            $('#btn-back-ttd-1').click(function(){
+                $('#signature-1, #btn-back-ttd-1').addClass('d-none');
+                $('#img-signature-1').removeClass('d-none').attr('src', data.path_ttd_verif_1);
+                $('#btn-edit-ttd-1').removeClass('d-none');
+                $('#tmp_path_signature_1').val(data.path_ttd_verif_1);
+            });
+
+            $('#btn-back-ttd-2').click(function(){
+                $('#signature-2, #btn-back-ttd-2').addClass('d-none');
+                $('#img-signature-2').removeClass('d-none').attr('src', data.path_ttd_verif_2);
+                $('#btn-edit-ttd-2').removeClass('d-none');
+                $('#tmp_path_signature_2').val(data.path_ttd_verif_2);
+            });
+
+        }
+        if(FITUR_INFO_PEMBERIAN_OBAT != undefined && FITUR_INFO_PEMBERIAN_OBAT == 1) {
+            $('#modalFormPemberianObat .input-created-by').val(data.creator ? data.creator.name : '-');
+            $('#modalFormPemberianObat .input-updated-by').val(data.updater ? data.updater.name : '-');
+        }
+        $('#modalFormPemberianObat .deleteBtnPemberian').data('id',data.id);
+        $('#modalFormPemberianObat').modal('show')
+    }
+
 
     $('.deleteBtnPemberian').click(function()
     {
@@ -157,7 +289,9 @@
             $('#modalFormObat .input-rute').val("")
             $('#modalFormObat .input-keterangan').val("")
             $('#modalFormObat .input-aturan').val("")
-            $('#modalFormObat .input-obat-id').val("")
+            $('#modalFormObat .input-pemberian-segera').prop('checked',false);
+            $('#modalFormObat .input-pemberian-lambat').prop('checked',false);
+            $('#modalFormObat .input-pemberian-bebas').prop('checked',false);
         }
         else
         {
@@ -175,57 +309,13 @@
                 $('#modalFormObat .input-rute').append(newOption);
                 $('#modalFormObat .input-rute').val(content.rute).trigger('change');
             }
+	
+            $('#modalFormObat .input-pemberian-segera').prop('checked', content.cb_segera_diberikan != null);
+            $('#modalFormObat .input-pemberian-lambat').prop('checked', content.cb_terlambat_diberikan != null)
+            $('#modalFormObat .input-pemberian-bebas').prop('checked', content.cb_pemberian_bebas != null)
         }
 
         $('#modalFormObat').modal('show')
 
     });
-
-    $('#submit-pemberian').click(function()
-    {
-        $('#warning-tanggal-pemberian').addClass('d-none');
-        $('#warning-jam-pemberian').addClass('d-none');
-        $('#warning-jumlah-pemberian').addClass('d-none');
-        var tanggal = $('#modalFormPemberianObat .input-tanggal').val();
-        var min = $('#modalFormPemberianObat .input-tanggal').attr('min').split('-');
-        var max = $('#modalFormPemberianObat .input-tanggal').attr('max').split('-');
-        var jam = $('#modalFormPemberianObat .input-jam').val();
-        var jumlah = $('#modalFormPemberianObat .input-jumlah').val();
-        var valid = 0;
-        if(!jumlah){
-            $('#warning-jumlah-pemberian').removeClass('d-none');
-            valid++;
-        }
-        if(tanggal){
-            tanggal = tanggal.split('-');
-            tanggal = tanggal[2]+''+tanggal[1]+''+tanggal[0];
-            min = min[2]+''+min[1]+''+min[0];
-            max = max[2]+''+max[1]+''+max[0];
-            console.log(tanggal,min,max,tanggal>=min,tanggal<=max)
-            if(tanggal >= min && tanggal <= max);
-                else{
-                $('#warning-tanggal-pemberian').removeClass('d-none');
-                valid++;
-            }
-        }else{
-            $('#warning-tanggal-pemberian').removeClass('d-none');
-            valid++;
-        }
-        if(jam){
-            jam = jam.split(':');
-            if(jam[0] <= 23 && jam[1] <=59 && jam[0].length == 2 && jam[1].length == 2);
-                else {
-                $('#warning-jam-pemberian').removeClass('d-none');
-                valid++;
-            }
-        }else{
-            $('#warning-jam-pemberian').removeClass('d-none');
-            valid++;
-        }
-
-        if(valid == 0){
-            $('#form-pemberian').submit();
-        }
-    });
-
 </script>

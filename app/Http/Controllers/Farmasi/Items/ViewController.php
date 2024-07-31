@@ -5,7 +5,19 @@ namespace App\Http\Controllers\Farmasi\Items;
 use App\Exports\Farmasi\BarangLowStock;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Farmasi\ItemJenisInteraksi;
+use App\Models\Farmasi\ItemsTemplate;
+use App\Models\Farmasi\Kategori;
+use App\Models\Farmasi\MasterBahanAktif;
+use App\Models\Farmasi\MasterJenisInteraksi;
+use App\Models\Farmasi\MasterKodeBidang;
+use App\Models\Farmasi\MasterKodeRekening;
+use App\Models\Farmasi\MasterRakObat;
+use App\Models\Farmasi\MasterRute;
+use App\Models\Farmasi\MasterSatuanKekuatan;
+use App\Models\Farmasi\RetriksiBpjsDataLab;
 use App\Models\Hospital\Lokasi;
+use App\Models\LabPK\Form;
 use Carbon\Carbon;
 use DOMPDF;
 use Yajra\DataTables\DataTables;
@@ -21,6 +33,24 @@ class ViewController extends Controller
 		$farm = session('farmasi');
         $kategori = app('App\Http\Controllers\Farmasi\Kategori\ReadController')->getAll();
         $satuan = app('App\Http\Controllers\Farmasi\TipeObat\ReadController')->getAll();
+
+        $rute = MasterRute::latest()->get();
+        $bahan_aktif = MasterBahanAktif::latest()->get();
+        $satuan_kekuatan = MasterSatuanKekuatan::latest()->get();
+        $rak_obat = MasterRakObat::latest()->get();
+        $jenis_interaksi = MasterJenisInteraksi::latest()->get();
+        $kategori = Kategori::latest()->get();
+        $form_lab_pk = Form::latest()->get();
+        $item_template = ItemsTemplate::latest()->get();
+
+        $data['rute'] = $rute;
+        $data['bahan_aktif'] = $bahan_aktif;
+        $data['satuan_kekuatan'] = $satuan_kekuatan;
+        $data['rak_obat'] = $rak_obat;
+        $data['jenis_interaksi'] = $jenis_interaksi;
+        $data['kategori'] = $kategori;
+        $data['form_lab_pk'] = $form_lab_pk;
+        $data['item_template'] = $item_template;
 
         $data['lokasi'] = Lokasi::all();
         $data['sidebar_active'] = "item";
@@ -338,7 +368,35 @@ class ViewController extends Controller
         $data['lokasi'] = Lokasi::all();
         $data['date_range_start_month_default'] = Carbon::now()->subDays(7);
         $data['date_range_end_month_default'] = Carbon::now();;
-        // dd($item);
+        
+        $data['rute'] = MasterRute::latest()->get();
+        $data['bahan_aktif'] = MasterBahanAktif::latest()->get();
+        $data['satuan_kekuatan'] = MasterSatuanKekuatan::latest()->get();
+        $data['rak_obat'] = MasterRakObat::latest()->get();
+        $data['jenis_interaksi'] = MasterJenisInteraksi::latest()->get();
+        $data['kategori'] = Kategori::latest()->get();
+        $data['form_lab_pk'] = Form::latest()->get();
+        $data['item_template'] = ItemsTemplate::latest()->get();
+        $data['master_kode_rekening'] = MasterKodeRekening::get();
+        $data['master_kode_bidang'] = MasterKodeBidang::get();
+
+        $data['retriksi_bpjs_data_lab_ids'] = RetriksiBpjsDataLab::where('item_template_id', $item->item_template->id)->pluck('form_id')->toArray();
+        $data['item_jenis_interaksi_kelas_terapi'] = ItemJenisInteraksi::where('item_template_id', $item->item_template->id)->where('tipe', 'kelas-terapi')->get();
+        $data['item_jenis_interaksi_obat'] = ItemJenisInteraksi::where('item_template_id', $item->item_template->id)->where('tipe', 'kelas-obat')->get();
+        
+        $data['rute_id'] = $item->item_template->rute_id ?? '';
+        $data['bahan_aktif_id'] = $item->item_template->bahan_aktif_id ?? '';
+        $data['kekuatan_sediaan'] = $item->item_template->kekuatan_sediaan ?? '';
+        $data['satuan_kekuatan_id'] = $item->item_template->satuan_kekuatan_id ?? '';
+        $data['kelas_terapi_id'] = $item->item_template->kelas_terapi_id ?? '';
+        $data['is_kelas_terapi'] = $item->item_template->is_kelas_terapi ?? '';
+        $data['kelas_terapi_fornas_id'] = $item->item_template->kelas_terapi_fornas_id ?? '';
+        $data['is_kelas_terapi_fornas'] = $item->item_template->is_kelas_terapi_fornas ?? '';
+        $data['rak_obat_id'] = $item->item_template->rak_obat_id ?? '';
+        $data['is_formularium_rs'] = $item->item_template->is_formularium_rs ?? '';
+        $data['is_fornas'] = $item->item_template->is_fornas ?? '';
+        $data['retriksi_bpjs_jumlah'] = $item->item_template->retriksi_bpjs_jumlah ?? '';
+
 
 		return view('farmasi.item.detail', $data);	
 	}
@@ -384,5 +442,13 @@ class ViewController extends Controller
         $filename = "Barang Low Stok - ".$farm->nama;
         
         return (new BarangLowStock($data))->download($filename.'.xlsx');
+    }
+    
+    public function masterDataIndex($farmasi, Request $request)
+    {
+        $farm = session('farmasi');
+        $data['sidebar_active'] = "";
+        
+        return view('farmasi.item.master-data-index', $data);  
     }
 }

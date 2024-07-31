@@ -55,9 +55,11 @@
             },
             success: function (data) {
                 var makanan_tambahan = JSON.parse(data.makanan_tambahan_ids)
+                console.log(data);
                 swal.close();
                 $("#select-jenismakanan").val(data.jenis_makanan_id).trigger('change');
                 $("#select-diet").val(data.diet_id).trigger('change');
+                $("#select-bentukmakanan").val(data.bentuk_makanan_id).trigger('change');
                 $.each( makanan_tambahan, function( key, value ) {
                     $("#select-makanantambahan option[value=" + value + "]").attr('selected', 'selected');
                 });

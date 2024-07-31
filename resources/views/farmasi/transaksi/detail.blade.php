@@ -24,7 +24,22 @@ Farmasi Detail Transaksi
     }
     .editable-click {
         border-bottom: dashed 1px #0088cc;
-    }    
+    }
+    .border-table {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    .table-responsive .table.table-sticky-header {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table-responsive .table.table-sticky-header thead {
+        position: sticky;
+        background: #fff;
+        top: 0;
+        z-index: 1001;
+    }
 </style>
 @endsection
 
@@ -98,12 +113,42 @@ Farmasi Detail Transaksi
                             <i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Cetak Kwitansi
                         </a>
                         @endif
-                        <a href="{{url('farmasi/'.session('farmasi')->slug.'/label-obat/print/'.$transaksi->slug)}}" class="dropdown-item" target="_blank">
+                        {{-- <a href="{{url('farmasi/'.session('farmasi')->slug.'/label-obat/print/'.$transaksi->slug)}}" class="dropdown-item" target="_blank">
                             <i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Cetak Label Obat
+                        </a> --}}
+                        <!-- label obat baru -->
+                        @if (!empty($transaksi->final_detail->kasus_resep_detail->kategori_resep) && ($transaksi->final_detail->kasus_resep_detail->kategori_resep == 'dispensing_aseptik'))
+                        <a href="{{url('farmasi/'.session('farmasi')->slug.'/label-obat/print-dispensing-aseptik/'.$transaksi->slug)}}" class="dropdown-item" target="_blank">
+                            <i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Cetak Label Obat Dispensing Aseptik
                         </a>
+                        @elseif (!empty($transaksi->final_detail->kasus_resep_detail->kategori_resep) && ($transaksi->final_detail->kasus_resep_detail->kategori_resep == 'tpn'))
+                        <a href="{{url('farmasi/'.session('farmasi')->slug.'/label-obat/print-tpn/'.$transaksi->slug)}}" class="dropdown-item" target="_blank">
+                            <i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Cetak Label Obat TPN
+                        </a>
+                        @else
+                        <a href="{{url('farmasi/'.session('farmasi')->slug.'/label-obat/print-rawat-jalan/'.$transaksi->slug)}}" class="dropdown-item" target="_blank">
+                            <i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Cetak Label Obat Rawat Jalan
+                        </a>
+                        <a data-url="{{url('farmasi/'.session('farmasi')->slug.'/label-obat/print-oddd-rawat-inap/'.$transaksi->slug)}}" class="btn-print-udd-odd dropdown-item" style="cursor: pointer;" target="_blank">
+                            <i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Cetak Label Obat Rawat Inap
+                        </a>
+                        @endif
+                        <!-- end label obat baru -->
                         <a class="dropdown-item" href="{{url('farmasi/'.session('farmasi')->slug.'/transaksi/cetak-analisa/'.$transaksi->slug)}}" target="_blank">
                             <i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Cetak Pengkajian Resep
                         </a>
+                        @if (!empty($transaksi->final_detail->konfirmasi_permintaan_at))
+                            @if ($transaksi->final_detail->kategori_resep ?? '' == 'dispensing_aseptik')
+                                <a class="dropdown-item" href="{{url('farmasi/'.session('farmasi')->slug.'/transaksi/formulir-permintaan-dispensing-aseptik/'.$transaksi->slug)}}" target="_blank">
+                                    <i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Formulir Permintaan Dispensing Aseptik
+                                </a>    
+                            @endif
+                            @if ($transaksi->final_detail->kategori_resep ?? '' == 'tpn')
+                                <a class="dropdown-item" href="{{url('farmasi/'.session('farmasi')->slug.'/transaksi/formulir-permintaan-tpn/'.$transaksi->slug)}}" target="_blank">
+                                    <i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Formulir Permintaan Sediaan TPN
+                                </a>    
+                            @endif
+                        @endif
                         @if(!$transaksi->transaksi_asal_id)
                         <a class="dropdown-item" id="btn-print-resep" style="cursor: pointer;" target="_blank">
                             <i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Cetak Resep
@@ -296,6 +341,20 @@ Farmasi Detail Transaksi
                                                             {{$transaksi->dokter_nama}}
                                                         </td>
                                                     </tr>
+                                                    <tr>
+                                                        <td>Dilayani oleh</td>
+                                                        <td>:</td>
+                                                        <td>
+                                                            {{ $transaksi->final_detail->konfirmasi_permintaan_user->name ?? '-' }}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Iter Resep</td>
+                                                        <td>:</td>
+                                                        <td>
+                                                            {{ $transaksi->final_detail->resep_iter ?? '-' }}
+                                                        </td>
+                                                    </tr>
                                                 </table>
                                             </div>
                                         </div>
@@ -331,530 +390,30 @@ Farmasi Detail Transaksi
             @endforeach
         </div>
 
+        <hr class="my-5">
 
-        <form method="POST" action="{{url('farmasi/'.session('farmasi')->slug.'/transaksi/payment')}}" id="form-payment">
-            {{csrf_field()}}
-            <hr class="my-5">
-
-            <div class="block-header bordered">
-                <h3 class="block-title">Resep {{$transaksi->final_detail->nomor_resep}}
-                    @if($transaksi->is_racikan)<small class="badge badge-primary text-white">Racikan</small>@endif
-                    @if($transaksi->is_fornas)<small class="badge badge-primary text-white">Fornas</small>@endif
-                    @if($transaksi->is_formularium_rs)<small class="badge badge-primary text-white">Formularium RS</small>@endif
-                </h3>
-            </div>
-
-            <div class="autoscroll-x">
-                <table class="table table-vcenter">
-                    <thead>
-                        <tr>
-                            <th style="min-width: 50px;">No.</th>
-                            <th style="min-width: 280px;">Barang</th>
-                            <th style="min-width: 100px;">Jumlah</th>
-                            <th style="min-width: 80px;">Aturan</th>
-                            @if(!empty($transaksi->dikerjakan_at)) <th style="min-width: 100px;">Kadaluarsa</th> @endif
-                            <th style="min-width: 100px;" class="text-right">Harga.Jual</th>
-                            @if(empty($transaksi->dikerjakan_at)) <th style="min-width: 150px;" class="text-center">Laba</th> @endif
-                            <th style="min-width: 100px;" class="text-right">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php $i=0; $total=0; $flag=0; $retur=0; $total_harga_7=0;@endphp
-                        @if(empty($transaksi->dikerjakan_at))
-                        @foreach($transaksi->final_detail->resep_detail as $detail)
-                        @if($detail->tipe)
-                        <tr>
-                            @php $laba=0; $laba_default=0; $is_laba_set = false; $harga_racikan=0; $stok_racikan=0; $jumlah_racikan=0; $r=0@endphp
-                            <td>{{++$i}}</td>
-                            <td>
-                                <div>
-                                    <div style="white-space: pre-line">{{$detail->nama_obat}}</div>
-                                    @if($detail->resep_detail->is_kemo)
-                                    Infus: {{$detail->obat_detail->item_detail->nama}} (vol : {{$detail->volume_infus}})
-                                    @if($detail->obat_detail->stok < $detail->jumlah)
-                                    @php $stok_racikan++ @endphp
-                                    @endif
-                                    Vol pelarut: {{$detail->volume_pelarut}}
-                                    Dosis: {{$detail->dosis}}
-                                    Cara Pemberian: {{$detail->satuan_penggunaan}} {{$detail->lama_pemberian}}
-                                    Nama Dagang: {{$detail->dagang}}
-                                    Nama Pabrik: {{$detail->pabrik}}
-                                    Batch: {{$detail->batch}}
-                                    ED: {{$detail->exp_date}}
-                                    Penyimpanan: {{$detail->kondisi}} {{$detail->penyimpanan}}
-                                    Stabilitas:{{$detail->stabilitas_time}} {{$detail->stabilitas_date}}
-                                    @endif
-                                    @if($transaksi->pembayaran_detail && $transaksi->pembayaran_detail->perusahaan->tipe->slug == 'bpjs' && $farmasi->perharian )
-                                </div>
-                                (7 Hari : {{$detail->hari7}}, 23 Hari : {{$detail->hari23}}, Dukungan RS : {{$detail->dukunganrs ? $detail->dukunganrs : "-"}})
-                                @endif
-                                <hr class="py-0 my-0">
-                                <div>
-                                    @forelse($detail->racikan as $kan)
-                                    <div>{{$kan->obat_detail->item_detail->nama}} : {{$kan->jumlah}} @if($kan->obat_detail->stok < $kan->jumlah) (Stok Kurang) @endif</div>
-                                    @php $harga_racikan += $kan->obat_detail->item_detail->harga * $kan->jumlah @endphp
-                                    @if($kan->obat_detail->stok < $kan->jumlah)
-                                    @php $stok_racikan++ @endphp
-                                    @endif
-                                    <span id="jumlah-{{$i}}-{{$r}}" style="display: none">{{$kan->jumlah}}</span>
-                                    <span id="harga-beli-{{$i}}-{{$r}}"  style="display: none">{{$kan->obat_detail->item_detail->harga}}</span>
-                                    @php
-                                    $r++; 
-                                    $total_harga_7+= ($detail->hari7 * $kan->obat_detail->item_detail->harga);
-                                    @endphp
-                                    @empty - @php $flag++ @endphp
-                                    @endforelse
-                                </div>
-                            </td>
-                            @foreach(session('farmasi')->aturan_harga as $atur)
-                            @if($detail->jumlah == 0)
-                            @php    $laba=0; break; @endphp
-                            @elseif($transaksi->pembayaran_detail && $harga_racikan/$detail->jumlah >= $atur->harga_min
-                            && $harga_racikan/$detail->jumlah <= $atur->harga_max
-                            && $transaksi->pembayaran_detail->perusahaan->type == $atur->perusahaan_tipe_id) 
-                            @php 
-                            $is_laba_set=true;
-                            $laba=$atur->laba; break;
-                            @endphp
-                            @endif
-                            @if($harga_racikan/$detail->jumlah >= $atur->harga_min
-                            && $harga_racikan/$detail->jumlah <= $atur->harga_max
-                            && 0 == $atur->perusahaan_tipe_id)
-                            @php $laba_default=$atur->laba;@endphp
-                            @endif
-                            @endforeach
-                            @if(!$is_laba_set)
-                            @php $laba = $laba_default; @endphp
-                            @endif
-                            <td>
-                                {{$detail->jumlah}} {{ $detail->satuan ? $detail->satuan : "-" }}
-                                @if(!empty($detail->jumlah_diambil))
-                                <br>
-                                <b>Jumlah Awal: {{$detail->jumlah_awal}} {{ $detail->satuan ?? "" }}</b>
-                                <br>
-                                <b>Telah Diambil: {{$detail->jumlah_diambil}} {{ $detail->satuan ?? "" }}</b>
-                                @endif
-                                @if($stok_racikan)
-                                <br> (Stok Kurang)
-                                @php $flag++ @endphp
-                                @endif
-                                <h5 id="racik-{{$i}}" hidden>{{$r}}</h5>
-                                <h5 id="jumlah-{{$i}}" hidden>{{$detail->jumlah}}</h5>
-                                <h5 id="jumlah-asal-{{$i}}" hidden>{{$detail->detail_asal->jumlah}}</h5>
-                            </td>
-                            <td style="white-space: pre">{{$detail->aturan}} {{$detail->satuan_penggunaan}}</td>
-                            <td class="text-right" id="harga-{{$i}}">
-
-                            </td>
-                            <td class="text-center">
-                                <input type="number" class="form-control input-diskon d-none" id="diskon-{{$i}}" name="laba[]" value="{{$laba}}" placeholder="Diskon" onchange="changeTotal()">
-                                <a href="javascript:void(0)" class="no-border editable editable-click">{{$laba}} %</a>
-                            </td>
-                            <td class="text-right" id="subtotal-{{$i}}">
-
-                            </td>
-                        </tr>
-                        @elseif(is_null($detail->obat_detail))
-                        <tr>
-                            @php $flag++ @endphp
-                            <td>{{++$i}}</td>
-                            <td>{{$detail->nama_obat}} <br> (Obat Tidak Tersedia di Farmasi Ini)</td>
-                            <td>
-                                {{$detail->jumlah}} {{$detail->satuan}}
-                            </td>
-                            <td style="white-space: pre">{{$detail->aturan}} {{$detail->satuan_penggunaan}}</td>
-                            <td class="text-right">Rp.-</td>
-                            <td class="text-right">0%</td>
-                            <td class="text-right">Rp.-</td>
-                        </tr>
-                        @else
-                        <tr>
-                            @php $laba=0; $laba_default=0; $is_laba_set = false; @endphp
-                            @foreach(session('farmasi')->aturan_harga as $atur)
-                            @if($transaksi->pembayaran_detail &&$detail->obat_detail->item_detail->harga >= $atur->harga_min 
-                            && $detail->obat_detail->item_detail->harga <= $atur->harga_max
-                            && $transaksi->pembayaran_detail->perusahaan->type == $atur->perusahaan_tipe_id) 
-                            @php 
-                            $is_laba_set=true;
-                            $laba=$atur->laba; break;
-                            @endphp
-                            @endif
-                            @if($detail->obat_detail->item_detail->harga >= $atur->harga_min 
-                            && $detail->obat_detail->item_detail->harga <= $atur->harga_max
-                            && 0 == $atur->perusahaan_tipe_id) 
-                            ) 
-                            @php $laba_default=$atur->laba;@endphp
-                            @endif
-                            @endforeach
-                            @if(!$is_laba_set)
-                            @php $laba = $laba_default; @endphp
-                            @endif
-                            <td>{{++$i}}</td>
-                            <td>
-                                {{$detail->nama_obat}}
-                                @if($transaksi->pembayaran_detail && $transaksi->pembayaran_detail->perusahaan->tipe->slug == 'bpjs' && $farmasi->perharian)
-                                <br>(7 Hari : {{$detail->hari7}}, 23 Hari : {{$detail->hari23}}, Dukungan RS : {{$detail->dukunganrs ? $detail->dukunganrs : "-"}})
-                                @endif
-                            </td>
-                            <td>
-                                {{$detail->jumlah}} {{ $detail->satuan ?? "" }}
-                                @if(!empty($detail->jumlah_diambil))
-                                <br>
-                                <b>Jumlah Awal: {{$detail->jumlah_awal}} {{ $detail->satuan ?? "" }}</b>
-                                <br>
-                                <b>Telah Diambil: {{$detail->jumlah_diambil}} {{ $detail->satuan ?? "" }}</b>
-                                @endif
-                                @if($detail->obat_detail->stok < $detail->jumlah) 
-                                <br> (Stok Kurang) 
-                                @php $flag++ @endphp 
-                                @endif
-                                <h5 id="jumlah-{{$i}}" hidden>{{$detail->jumlah}}</h5>
-                                <h5 id="harga-beli-{{$i}}" hidden>{{$detail->obat_detail->item_detail->harga}}</h5>
-                            </td>
-                            <td style="white-space: pre">{{$detail->aturan}} {{$detail->satuan_penggunaan}}</td>
-                            <td class="text-right" id="harga-{{$i}}">
-                                Rp. {{number_format($detail->obat_detail->item_detail->harga * (100 + $laba)/100)}}
-                            </td>
-                            @php 
-                            $subtotal = 0; 
-                            $subtotal = $detail->obat_detail->item_detail->harga * (100 + $laba)/100 * $detail->jumlah;
-                            @endphp
-                            <td class="text-center">
-                                {{-- <input type="number" class="editable editable-click" id="diskon-{{$i}}" value="0" onchange="changeSubtotal({{$i}})"> --}}
-                                <input type="number" class="form-control input-diskon d-none" id="diskon-{{$i}}" name="laba[]" value="{{$laba}}" placeholder="Diskon" onchange="changeTotal()">
-                                <a href="javascript:void(0)" class="no-border editable editable-click">{{$laba}} %</a>
-                            </td>
-                            <td class="text-right" id="subtotal-{{$i}}">
-                                Rp. {{number_format($detail->obat_detail->item_detail->harga * (100 + $laba)/100 * $detail->jumlah)}}
-                            </td>
-                            @php 
-                            $total += $subtotal;
-                            if($detail->hari7)
-                            $total_harga_7 += ($detail->hari7 * $detail->obat_detail->item_detail->harga * (100 + $laba)/100);
-                            @endphp
-                        </tr>
-                        @endif
-                        @endforeach
-                        @elseif(!empty($transaksi->dikerjakan_at))
-                        @foreach($transaksi->final_detail->resep_detail as $detail)
-                        @if($detail->tipe)
-                        @php $laba=0; $laba_default = 0; @endphp
-                        @php $laba = empty($detail->laba) ? 0 : $detail->laba; @endphp
-                        <tr>
-                            <td>{{++$i}}</td>
-                            <td>
-                                {{$detail->nama_obat}}
-                                @forelse($detail->racikan as $kan)
-                                <li>{{$kan->obat_detail->item_detail->nama}} : {{$kan->jumlah}} </li>
-                                @empty
-                                @endforelse
-                                @if($detail->hari7) 
-                                <br>(7 Hari : {{$detail->hari7}}, 23 Hari : {{$detail->hari23 ? $detail->hari23 : "-"}}, Dukungan RS : {{$detail->dukunganrs ? $detail->dukunganrs : "-"}})
-                                @endif
-                            </td>
-                            <td>
-                                {{$detail->jumlah}} {{$detail->satuan}}
-                            </td>
-                            <td style="white-space: pre">{{$detail->aturan}} {{$detail->satuan_penggunaan}}</td>
-                            <td>-</td>
-                            <td class="text-right">
-                                Rp. {{number_format($detail->harga)}}
-                            </td>
-                            @php $subtotal = 0; $subtotal = $detail->subtotal @endphp
-                            <td class="text-right">
-                                Rp. {{number_format($detail->subtotal)}}
-                            </td>
-                            @php 
-                            $total += $subtotal;
-                            if($detail->hari7)
-                            $total_harga_7 += ($detail->hari7 * $detail->harga);
-                            @endphp
-                        </tr>
-                        @else
-                        @php $laba=0; @endphp
-                        @php $laba = empty($detail->laba) ? 0 : $detail->laba; @endphp
-                        <tr>
-                            <td>{{++$i}}</td>
-                            <td>
-                                {{$detail->nama_obat}}
-                                @if($transaksi->pembayaran_detail && $transaksi->pembayaran_detail->perusahaan->tipe->slug == 'bpjs' && $farmasi->perharian )
-                                <br>(7 Hari : {{$detail->hari7}}, 23 Hari : {{$detail->hari23 ? $detail->hari23 : "-"}}, Dukungan RS : {{$detail->dukunganrs ? $detail->dukunganrs : "-"}})
-                                @endif
-                            </td>
-                            <td>
-                                @php $ctr = 0 @endphp
-                                @foreach($detail->log as $row)
-                                @if($ctr) <br> @endif
-                                {{$row->jumlah - $row->jumlah_retur}} {{$detail->satuan}}
-                                @php $ctr++ @endphp
-                                @endforeach
-                            </td>
-                            <td style="white-space: pre">{{$detail->aturan}}</td>
-                            <td>
-                                @php $ctr = 0 @endphp
-                                @foreach($detail->log as $row)
-                                @if(!is_null($row->jumlah_retur)) @php $retur++ @endphp @endif
-                                @if($ctr) <br> @endif
-                                {{ date('d F Y', strtotime($row->detail_item->kadaluarsa)) }}
-                                @php $ctr++ @endphp
-                                @endforeach
-                            </td>
-                            <td class="text-right">
-                                Rp. {{number_format($detail->harga)}}
-                            </td>
-                            @php $subtotal = 0; @endphp
-                            <td class="text-right">
-                                @php $ctr = 0 @endphp
-                                @foreach($detail->log as $row)
-                                @if($ctr) <br> @endif
-                                @php $subtotal = 0; $subtotal = $detail->subtotal @endphp
-                                Rp. {{number_format(($row->jumlah - $row->jumlah_retur) * $detail->harga)}}
-                                @php $ctr++ @endphp
-                                @endforeach
-                            </td>
-                            @php
-                            $total += $subtotal;
-                            if($detail->hari7)
-                            $total_harga_7 += ($detail->hari7 * $detail->harga);
-                            @endphp
-                        </tr>
-                        @endif
-                        @endforeach
-                        @endif
-                        <tr>
-                            {{-- @if($transaksi->status == 1) <td></td> @endif --}}
-                            <td colspan="6" class="text-right font-w600">SUBTOTAL :</td>
-                            <td class="text-right" id="subtotal-harga">Rp. {{number_format($transaksi->total_biaya_obat - $transaksi->embalase + $transaksi->total_retur)}}</td>
-                        </tr>
-                        <tr>
-                            {{-- @if($transaksi->status == 1) <td></td> @endif --}}
-                            <td colspan="6" class="text-right font-w600">EMBALASE :</td>
-                            <td class="text-right">
-                                @if(empty($transaksi->dikerjakan_at))
-                                <input type="number" value="{{$transaksi->embalase or 0}}" class="form-control input-embalase d-none" id="embalase" name="embalase" placeholder="Embalase" onchange="changeTotal()">
-                                <a href="javascript:void(0)" class="no-border editable editable-embalase-click">Rp {{$transaksi->embalase}}</a>
-                                @else
-                                Rp. {{number_format($transaksi->embalase)}}
-                                @endif
-                            </td>
-                        </tr>
-                        @if(!empty($transaksi->status_retur))
-                        <tr>
-                            <td colspan="6" class="text-right font-w600">TOTAL RETUR:</td>
-                            <td class="text-right">Rp. {{$transaksi->total_retur ? number_format($transaksi->total_retur) : '-'}}</td>
-                        </tr>
-                        @endif
-                        <tr>
-                            {{-- @if($transaksi->status == 1) <td></td> @endif --}}
-                            <td colspan="6" class="text-right font-w600">TOTAL BIAYA :</td>
-                            <td class="text-right" id="total-harga">Rp. {{number_format($transaksi->total_biaya_obat)}}</td>
-                        </tr>
-{{--                        <tr>--}}
-{{--                            --}}{{-- @if($transaksi->status == 1) <td></td> @endif --}}
-{{--                            <td colspan="6" class="text-right font-w600">TOTAL PEMBAYARAN PASIEN :</td>--}}
-{{--                            <td class="text-right">Rp. {{$transaksi->total_bayar ? number_format($transaksi->total_bayar) : "-"}}</td>--}}
-{{--                        </tr>--}}
-{{--                        <tr>--}}
-{{--                            --}}{{-- @if($transaksi->status == 1) <td></td> @endif --}}
-{{--                            <td colspan="6" class="text-right font-w600">KEMBALI :</td>--}}
-{{--                            <td class="text-right">Rp. {{$transaksi->kembalian ? number_format($transaksi->kembalian) : "-"}}</td>--}}
-{{--                        </tr>--}}
-                        @if($transaksi->pembayaran_detail && $transaksi->pembayaran_detail->perusahaan->tipe->slug == 'bpjs' && $farmasi->perharian)
-                        <tr>
-                            {{-- @if($transaksi->status == 1) <td></td> @endif --}}
-                            <td colspan="6" class="text-right font-w600">Total 7 HARI:</td>
-                            <td class="text-right" id="subtotal-harga">Rp. {{number_format($total_harga_7)}}</td>
-                        </tr>
-                        @endif
-                        @if(!empty($transaksi->dikerjakan_at))
-                        <tr>
-                            {{-- @if($transaksi->status == 1) <td></td> @endif --}}
-                            <td colspan="6" class="text-right font-w600">TUJUAN PEMBAYARAN :</td>
-                            <td class="text-right">
-                                @if($transaksi->status_kasir == 1) KASIR
-                                @elseif(!empty($transaksi->final_detail->resep_detail[0]->kasus_tagihan_detail_id)) KASUS
-                                @else FARMASI
-                                @endif
-                            </td>
-                        </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-            @include('farmasi.transaksi.modals.modal-normal')
-
-            @if(!empty($transaksi->dikerjakan_at))
-            <img src="{{asset('assets/img/paid_stamp.png')}}" width="170" style="position: relative; top: -170px; left: 20px;">
-            @endif
-            @if(!empty($transaksi->dikerjakan_at))
-            <div class="row">
-                <div class="col-12">
-                    <div class="block">
-                        <div class="block-content">
-                            @php $lima_benar_done = 0 @endphp
-                            @if(!empty($transaksi->lima_benar_at)) @php $lima_benar_done = 1 @endphp @endif
-                            <div class="mb-10">
-                                <span class="h5 mr-10">5 Benar</span>
-                                <button type="button" class="btn btn-secondary" id="btn-edit-5-benar" @if(!$lima_benar_done && Auth::user()->id != $transaksi->lima_benar_created_by) style="display: none" @endif>Edit</button>
-                                @if($lima_benar_done)
-                                <span>
-                                    {{$transaksi->lima_benar_creator->name}}, {{$transaksi->lima_benar_at->format('d F Y, H :i')}}
-                                </span>
-                                @endif
-                                <hr>
-                            </div>
-                            @if($lima_benar_done)
-                            <div class="row" id="lima-benar-display">
-                                <div class="col-12">
-                                    @if($transaksi->lima_benar_pasien == 1) <i class="fa fa-check"></i>@else <i class="fa fa-remove"></i> @endif Pasien<br>
-                                    @if($transaksi->lima_benar_obat == 1) <i class="fa fa-check"></i>@else <i class="fa fa-remove"></i> @endif Obat<br>
-                                    @if($transaksi->lima_benar_dosis == 1) <i class="fa fa-check"></i>@else <i class="fa fa-remove"></i> @endif Dosis<br>
-                                    @if($transaksi->lima_benar_aturan == 1) <i class="fa fa-check"></i>@else <i class="fa fa-remove"></i> @endif Aturan Makan<br>
-                                    @if($transaksi->lima_benar_waktu == 1) <i class="fa fa-check"></i>@else <i class="fa fa-remove"></i> @endif Waktu Pemberian Obat<br>
-                                </div>
-                            </div>
-                            @endif
-
-                            <div class="row" id="lima-benar-form" @if($lima_benar_done) style="display: none" @endif>
-                                <div class="col-12">
-                                    <label class="css-control css-control-primary css-checkbox">
-                                        <input type="checkbox" class="css-control-input benar_pasien_yes" name="benar_pasien" value="yes" 
-                                        @if($lima_benar_done) disabled 
-                                        @if($transaksi->lima_benar_pasien == 1) checked="" @endif 
-                                        @else
-                                        checked
-                                        @endif
-                                        >
-                                        <span class="css-control-indicator"></span> Pasien
-                                    </label>
-                                </div>
-                                <div class="col-12">
-                                    <label class="css-control css-control-primary css-checkbox">
-                                        <input type="checkbox" class="css-control-input benar_dosis_yes" name="benar_dosis" value="yes" 
-                                        @if($lima_benar_done) disabled 
-                                        @if($transaksi->lima_benar_dosis == 1) checked="" @endif 
-                                        @else
-                                        checked
-                                        @endif
-                                        >
-                                        <span class="css-control-indicator"></span> Dosis
-                                    </label>
-                                </div>
-                                <div class="col-12">
-                                    <label class="css-control css-control-primary css-checkbox">
-                                        <input type="checkbox" class="css-control-input benar_wpo_yes" name="benar_wpo" value="yes" 
-                                        @if($lima_benar_done) disabled 
-                                        @if($transaksi->lima_benar_waktu == 1) checked="" @endif 
-                                        @else
-                                        checked
-                                        @endif
-                                        >
-                                        <span class="css-control-indicator"></span> Waktu Pemberian Obat
-                                    </label>
-                                </div>
-                                <div class="col-12">
-                                    <label class="css-control css-control-primary css-checkbox">
-                                        <input type="checkbox" class="css-control-input benar_obat_yes" name="benar_obat" value="yes" 
-                                        @if($lima_benar_done) disabled 
-                                        @if($transaksi->lima_benar_obat == 1) checked="" @endif 
-                                        @else
-                                        checked
-                                        @endif
-                                        >
-                                        <span class="css-control-indicator"></span> Obat
-                                    </label>
-                                </div>
-                                <div class="col-12">
-                                    <label class="css-control css-control-primary css-checkbox">
-                                        <input type="checkbox" class="css-control-input benar_am_yes" name="benar_am" value="yes" 
-                                        @if($lima_benar_done) disabled 
-                                        @if($transaksi->lima_benar_aturan == 1) checked="" @endif 
-                                        @else
-                                        checked
-                                        @endif
-                                        >
-                                        <span class="css-control-indicator"></span> Aturan Minum
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-2 pt-10">
-                                    <button type="button" class="btn btn-secondary" id="btn-edit-cancel-5-benar" @if(!$lima_benar_done) style="display: none" @endif style="display: none">Batal</button>
-                                    <button type="button" class="btn btn-primary" id="btn-submit-5-benar" @if($lima_benar_done) style="display: none" @endif >Simpan</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            @if($transaksi->status_kasir == 1)
-            @if(empty($transaksi->dikerjakan_at))
-            <div class="alert alert-success" role="alert" id="notif-kasir">
-                <p>Tagihan berhasil dikirim ke Kasir.</p>
-                <button type="button" class="btn btn-danger" id="btnBatalKirimKasir">Batalkan Transaksi Kasir</button>
-            </div>
-            @endif
-            @else
-            @if (empty($transaksi->dikerjakan_at) && count($transaksi->copy_resep) == 0)
-            <div class="row" id="tujuan-pembayaran">
-                <div class="col-12">
-                    <div class="block">
-                        <div class="block-content">
-                            <div class="form-group" id="tujuan-bayar">
-                                <label for="tipe_layanan">Tujuan Pembayaran</label>
-                                <br>
-                                <label class="css-control css-control-primary css-radio">
-                                    <input type="radio" class="css-control-input" name="kirim_tagihan" id="tagihanKasir" value="0" required="" >
-                                    <span class="css-control-indicator"></span>Kasir
-                                </label>
-                                @if(!empty($kasus))
-                                <label class="css-control css-control-primary css-radio">
-                                    <input type="radio" class="css-control-input" name="kirim_tagihan" id="tagihanKasus" value="1" required="">
-                                    <span class="css-control-indicator"></span>Kasus
-                                </label>
-                                @endif
-                                <label class="css-control css-control-primary css-radio">
-                                    <input type="radio" class="css-control-input" name="kirim_tagihan" id="tagihanFarmasi" value="2" required="">
-                                    <span class="css-control-indicator"></span>Farmasi
-                                </label>
-                            </div>
-                            @if($transaksi->status_kasir == 0)
-                            <div class="row">
-                                <div class="col-2 pt-10">
-                                    <button type="button" class="btn btn-primary" id="btn-kirim-kasir" >Kirim ke Tagihan</button>
-                                </div>
-                            </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endif
-            @endif
-            
-
-           
-            @if(empty($transaksi->dikerjakan_at) && count($transaksi->copy_resep) == 0)
-            <div class="mt-30 ">
-                <div class="form-group row">
-                    <div class="col-12">
-                        <button type="button" class="btn btn-primary btn-square float-right" id="btnConfirm">
-                            Konfirmasi Pesanan
-                        </button>
-                    </div>
-                    @if($fyi) 
-                    <div class="col-12">
-                        <div class="bg-warning float-right">*Pasien ini telah melakukan transaksi hari ini</div>
-                    </div>
-                    @endif
-                </div>
-            </div>
-            @endif
+        <div class="block-header bordered">
+            <h3 class="block-title">Resep {{$transaksi->final_detail->nomor_resep}}
+                @if($transaksi->is_racikan)<small class="badge badge-primary text-white">Racikan</small>@endif
+                @if($transaksi->is_fornas)<small class="badge badge-primary text-white">Fornas</small>@endif
+                @if($transaksi->is_formularium_rs)<small class="badge badge-primary text-white">Formularium RS</small>@endif
+            </h3>
+            <h4 class="block-title float-right" style="flex: none">No. Antrian : {{ $transaksi->nomor_antrian }}</h4>
         </div>
+        @php
+            global $flag;
+        @endphp
+        @include('farmasi.transaksi.components.detail-konfirmasi-permintaan')
+        @if (!empty($transaksi->final_detail->konfirmasi_permintaan_at))
+            @include('farmasi.transaksi.components.detail-konfirmasi-pemesanan')
+        @endif
+        <hr>
+        @if (!(isset($transaksi->copy_resep) && is_countable($transaksi->copy_resep) && count($transaksi->copy_resep) != 0))
+            @include('farmasi.transaksi.components.telaah-obat-container')
+        @endif
+        @include('farmasi.transaksi.components.add-ttd-pasien')
     </div>
-</form>
+</div>
 
     @foreach($transaksi->retur as $index => $resep)
     <div class="block">
@@ -936,6 +495,7 @@ Farmasi Detail Transaksi
 @include('farmasi.transaksi.modals.modal-print-resep')
 @include('farmasi.transaksi.modals.modal-resep')
 @include('farmasi.transaksi.modals.modal-panggil-antrian')
+@include('farmasi.transaksi.modals.modal-print-label-obat-udd-dan-oddd')
 
 <div class="modal" id="modal-retur" role="dialog" aria-labelledby="modal-normal" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -1043,8 +603,9 @@ Farmasi Detail Transaksi
 @section('js')
 
 @include('farmasi.transaksi.modals.components.dokter-js')
-
+@include('farmasi.transaksi.components.js-kategori-resep')
 @include('farmasi.js-features.histori-resep.js')
+@include('farmasi.transaksi.components.js-ttd')
 
 
 <script type="text/javascript">
@@ -1053,7 +614,7 @@ Farmasi Detail Transaksi
         $('#modal-alih').modal('show');
     });
     var flag = "{{$flag}}";
-    var idx = "{{$i}}";
+    var idx = "{{ $transaksi->final_detail->resep_detail->count() }}";
     var status = "{{$transaksi->status}}";
     var kasus = "{{is_null($transaksi->kasus_id)}}";
     var bulat = "{{!is_null(session('farmasi')->pembulatan)}}";
@@ -1125,6 +686,10 @@ Farmasi Detail Transaksi
         $('#modal-print-resep-{{$transaksi->id}}').modal('show');
     });
 
+    $('.btn-print-udd-odd').on('click', function(){
+        $('#modal-print-label-obat-udd-oddd').modal('show');
+    });
+
     $('#btn-print-resep-format-dokter').on('click', function(){
         $('#modal-print-resep-format-dokter').modal('show');
     });
@@ -1169,7 +734,7 @@ Farmasi Detail Transaksi
     $('.editable-click').on('click', function(e){
         e.preventDefault();
         var $this = $(this);
-        var inputDiskon = $this.parent('td').find('input.input-diskon');
+        var inputDiskon = $this.parent('td').find('input');
 
         setTimeout(function(){
             inputDiskon.focus();
@@ -1224,6 +789,7 @@ Farmasi Detail Transaksi
         function changeTotal() {
             total = 0;
             ran = $('#status_pembayaran').is(":checked");
+            let total_embalase = 0;
             for(i=1; i<=idx; i++)
             {
                 if($('#racik-'+i).length)
@@ -1261,6 +827,9 @@ Farmasi Detail Transaksi
                     $('#harga-'+i).text(formatMoney(harga_jual));
                     subtotal = harga_jual * jumlah;
                 }
+                let embalase = parseFloat($('#embalase-'+i).val()) || 0;
+                total_embalase += embalase;
+                subtotal += embalase;
                 subtotal = Math.ceil(subtotal)
                 $('#harga-'+i).text(formatMoney(harga_jual));
                 $('#subtotal-'+i).text(formatMoney(subtotal));
@@ -1270,19 +839,8 @@ Farmasi Detail Transaksi
             var final_subtotal = total;
             if(!ran && bulat) total = Math.ceil(total/1000)*1000;
 
-            var embalase_before = parseInt($('#embalase').val());
-            console.log(embalase_before)
-            embalase_before = Math.ceil(embalase_before/1000)*1000;
-            if(embalase_before > 1000) embalase_before = embalase_before - 1000;
-            if(embalase_before < 1000) embalase_before = embalase_before;
-            console.log(embalase_before)   
-
-            total += embalase_before
-
-            var embalase = total - final_subtotal;
-            $('#embalase').val(embalase)
-            $('.editable-embalase-click').text(formatMoney(embalase));
-            $('#total-harga').text(formatMoney(total));
+            $('#total-embalase').text(formatMoney(total_embalase));
+            $('#subtotal-obat-harga').text(formatMoney(total - total_embalase));
             $('#total-bayar').text(formatMoney(total));
             $('#total').val(total);
         }
@@ -1312,6 +870,7 @@ Farmasi Detail Transaksi
                 var txtDiskon = $this.parent('td').find('.editable');
                 var satuan = $this.parent('td').find('.satuan').val();
                 if(satuan == undefined) satuan = '%';
+                if ($this.hasClass('input-embalase')) satuan = '';
 
                 if ($.isNumeric(valDiskon)) {
                     valDiskon = $this.val();
@@ -1651,6 +1210,329 @@ Farmasi Detail Transaksi
             dataType: "json"
         });
     });
+
+    // js modal-print-labal-obat-udd-dan-oddd
+    $(document).ready(function() {
+        $(".aturan-per-jam-1").each(function(){
+            if ($(this).parent().css('display') != 'none') {
+                $("#aturan-per-jam-1").removeAttr('hidden');
+                return false;
+            } 
+        });
+        $(".aturan-per-jam-2").each(function(){
+            if ($(this).parent().css('display') != 'none') {
+                $("#aturan-per-jam-2").removeAttr('hidden');
+                return false;
+            } 
+        });
+        $(".aturan-per-jam-3").each(function(){
+            if ($(this).parent().css('display') != 'none') {
+                $("#aturan-per-jam-3").removeAttr('hidden');
+                return false;
+            } 
+        });
+        $(".aturan-per-jam-4").each(function(){
+            if ($(this).parent().css('display') != 'none') {
+                $("#aturan-per-jam-4").removeAttr('hidden');
+                return false;
+            } 
+        });
+        $(".aturan-per-jam-5").each(function(){
+            if ($(this).parent().css('display') != 'none') {
+                $("#aturan-per-jam-5").removeAttr('hidden');
+                return false;
+            } 
+        });
+    });
+
+    $(document).on("click","#btn-print-udd",function() {
+
+        let items_rows = [];
+
+        $(".tr-resep-detail").each(function(){
+            let obat_ids = [];
+            let aturan = [];
+
+            let obat_id_1;
+            let aturan_1
+            
+            let obat_id_2
+            let aturan_2 
+
+            let obat_id_3
+            let aturan_3
+
+            let obat_id_4
+            let aturan_4
+
+            let obat_id_5
+            let aturan_5
+
+            let el_td_1 = $(this).find(".aturan-per-jam-1");
+            if (el_td_1.is(":checked")) {
+                obat_id_1 = $(this).find(".aturan-per-jam-1").data("obat-resep-detail-id");
+                aturan_1 = $(this).find(".aturan-per-jam-1").val();
+            }
+
+            let el_td_2 = $(this).find(".aturan-per-jam-2");
+            if (el_td_2.is(":checked")) {
+                obat_id_2 = $(this).find(".aturan-per-jam-2").data("obat-resep-detail-id");
+                aturan_2 = $(this).find(".aturan-per-jam-2").val();
+            }
+
+            let el_td_3 = $(this).find(".aturan-per-jam-3");
+            if (el_td_3.is(":checked")) {
+                obat_id_3 = $(this).find(".aturan-per-jam-3").data("obat-resep-detail-id");
+                aturan_3 = $(this).find(".aturan-per-jam-3").val();
+            }
+
+            let el_td_4 = $(this).find(".aturan-per-jam-4");
+            if (el_td_4.is(":checked")) {
+                obat_id_4 = $(this).find(".aturan-per-jam-4").data("obat-resep-detail-id");
+                aturan_4 = $(this).find(".aturan-per-jam-4").val();
+            }
+
+            let el_td_5 = $(this).find(".aturan-per-jam-5");
+            if (el_td_5.is(":checked")) {
+                obat_id_5 = $(this).find(".aturan-per-jam-5").data("obat-resep-detail-id");
+                aturan_5 = $(this).find(".aturan-per-jam-5").val();
+            }
+
+            if (obat_id_1) {
+                obat_ids.push(obat_id_1);
+            }
+            if (obat_id_2) {
+                obat_ids.push(obat_id_2);
+            }
+            if (obat_id_3) {
+                obat_ids.push(obat_id_3);
+            }
+            if (obat_id_4) {
+                obat_ids.push(obat_id_4);
+            }
+            if (obat_id_5) {
+                obat_ids.push(obat_id_5);
+            }
+
+            if (aturan_1) {
+                aturan.push(aturan_1);
+            }
+            if (aturan_2) {
+                aturan.push(aturan_2);
+            }
+            if (aturan_3) {
+                aturan.push(aturan_3);
+            }
+            if (aturan_4) {
+                aturan.push(aturan_4);
+            }
+            if (aturan_5) {
+                aturan.push(aturan_5);
+            }
+
+            let unique_obat_ids = [...new Set(obat_ids)];
+            let unique_jam_aturan_pakai = [...new Set(aturan)];
+            items_rows.push(`[${unique_obat_ids},${unique_jam_aturan_pakai}]`);
+        });
+
+        $("#items-rows").val(items_rows);
+        $("#label-type").val('udd');
+
+        // $('form#form-cetak-label-rawat-inap').submit(); // ini diubah menjadi di bawah
+
+        const item_row = $("#items-rows").val();
+        const label_type = $("#label-type").val();
+        const id_label_udd_oddd = $("#id-label-udd-oddd").val();
+        const farmasi_slug_label_udd_oddd = $("#farmasi-slug-label-udd-oddd").val();
+
+        let current_url = "{{url('farmasi/'.session('farmasi')->slug.'/label-obat/print-udd-oddd-rawat-inap/'.$transaksi->slug)}}";
+        let full_url = current_url + `?id=${id_label_udd_oddd}&farmasi=${farmasi_slug_label_udd_oddd}&label_type=${label_type}&items_rows=` + encodeURIComponent(items_rows);
+        window.open(full_url, '_blank');
+    });
+
+
+    $(document).on("click","#btn-print-oddd",function() {
+        let items_rows = [];
+
+        $(".tr-resep-detail").each(function(){
+            let obat_ids = [];
+            let aturan = [];
+
+            let obat_id_1;
+            let aturan_1
+            
+            let obat_id_2
+            let aturan_2 
+
+            let obat_id_3
+            let aturan_3
+
+            let obat_id_4
+            let aturan_4
+
+            let obat_id_5
+            let aturan_5
+
+            let el_td_1 = $(this).find(".aturan-per-jam-1");
+            if (el_td_1.is(":checked")) {
+                obat_id_1 = $(this).find(".aturan-per-jam-1").data("obat-resep-detail-id");
+                aturan_1 = $(this).find(".aturan-per-jam-1").val();
+            }
+
+            let el_td_2 = $(this).find(".aturan-per-jam-2");
+            if (el_td_2.is(":checked")) {
+                obat_id_2 = $(this).find(".aturan-per-jam-2").data("obat-resep-detail-id");
+                aturan_2 = $(this).find(".aturan-per-jam-2").val();
+            }
+
+            let el_td_3 = $(this).find(".aturan-per-jam-3");
+            if (el_td_3.is(":checked")) {
+                obat_id_3 = $(this).find(".aturan-per-jam-3").data("obat-resep-detail-id");
+                aturan_3 = $(this).find(".aturan-per-jam-3").val();
+            }
+
+            let el_td_4 = $(this).find(".aturan-per-jam-4");
+            if (el_td_4.is(":checked")) {
+                obat_id_4 = $(this).find(".aturan-per-jam-4").data("obat-resep-detail-id");
+                aturan_4 = $(this).find(".aturan-per-jam-4").val();
+            }
+
+            let el_td_5 = $(this).find(".aturan-per-jam-5");
+            if (el_td_5.is(":checked")) {
+                obat_id_5 = $(this).find(".aturan-per-jam-5").data("obat-resep-detail-id");
+                aturan_5 = $(this).find(".aturan-per-jam-5").val();
+            }
+
+            if (obat_id_1) {
+                obat_ids.push(obat_id_1);
+            }
+            if (obat_id_2) {
+                obat_ids.push(obat_id_2);
+            }
+            if (obat_id_3) {
+                obat_ids.push(obat_id_3);
+            }
+            if (obat_id_4) {
+                obat_ids.push(obat_id_4);
+            }
+            if (obat_id_5) {
+                obat_ids.push(obat_id_5);
+            }
+
+            if (aturan_1) {
+                aturan.push(aturan_1);
+            }
+            if (aturan_2) {
+                aturan.push(aturan_2);
+            }
+            if (aturan_3) {
+                aturan.push(aturan_3);
+            }
+            if (aturan_4) {
+                aturan.push(aturan_4);
+            }
+            if (aturan_5) {
+                aturan.push(aturan_5);
+            }
+           
+            let unique_obat_ids = [...new Set(obat_ids)];
+            let unique_jam_aturan_pakai = [...new Set(aturan)];
+            items_rows.push(`[${unique_obat_ids},${unique_jam_aturan_pakai}]`);
+        });
+
+        console.log(items_rows);
+
+        $("#items-rows").val(items_rows);
+        $("#label-type").val('oddd');
+
+        // $('form#form-cetak-label-rawat-inap').submit(); // ini diubah menjadi di bawah
+
+        const item_row = $("#items-rows").val();
+        const label_type = $("#label-type").val();
+        const id_label_udd_oddd = $("#id-label-udd-oddd").val();
+        const farmasi_slug_label_udd_oddd = $("#farmasi-slug-label-udd-oddd").val();
+
+        let current_url = "{{url('farmasi/'.session('farmasi')->slug.'/label-obat/print-udd-oddd-rawat-inap/'.$transaksi->slug)}}";
+        let full_url = current_url + `?id=${id_label_udd_oddd}&farmasi=${farmasi_slug_label_udd_oddd}&label_type=${label_type}&items_rows=` + encodeURIComponent(items_rows);
+        window.open(full_url, '_blank');
+    });
+
+    $(document).on("click","#aturan-per-jam-1",function() {
+        $(".aturan-per-jam-1:checkbox").each(function(){
+            if ($(this).is(":checked")) {
+                $(this).attr("checked", false);
+            } else{
+                $(this).attr("checked", true);
+            }
+        })
+    });
+
+    $(document).on("click","#aturan-per-jam-2",function() {
+        $(".aturan-per-jam-2:checkbox").each(function(){
+            if ($(this).is(":checked")) {
+                $(this).attr("checked", false);
+            } else{
+                $(this).attr("checked", true);
+            }
+        })
+    });
+
+    $(document).on("click","#aturan-per-jam-3",function() {
+        $(".aturan-per-jam-3:checkbox").each(function(){
+            if ($(this).is(":checked")) {
+                $(this).attr("checked", false);
+            } else{
+                $(this).attr("checked", true);
+            }
+        })
+    });
+
+    $(document).on("click","#aturan-per-jam-4",function() {
+        $(".aturan-per-jam-4:checkbox").each(function(){
+            if ($(this).is(":checked")) {
+                $(this).attr("checked", false);
+            } else{
+                $(this).attr("checked", true);
+            }
+        })
+    });
+
+    $(document).on("click","#aturan-per-jam-5",function() {
+        $(".aturan-per-jam-5:checkbox").each(function(){
+            if ($(this).is(":checked")) {
+                $(this).attr("checked", false);
+            } else{
+                $(this).attr("checked", true);
+            }
+        })
+    });
+    // end js modal-print-labal-obat-udd-dan-oddd
+
+    $("#btn-submit-tindak-lanjut").on('click', function(e) {
+        const tindakLanjut =  $('#tindak-lanjut').val();
+        $.ajax({
+            url: "{{url('farmasi/'.session('farmasi')->slug.'/transaksi/tindak-lanjut')}}",
+            type: "post",
+            dataType: 'json',
+            data: {
+                "_token": "{{ csrf_token() }}",
+                "id": "{{$transaksi->id}}",
+                "tindak_lanjut": tindakLanjut,
+            },
+            success: function (response) {
+                if(response.status == 1){
+                    callSwal(response.type,response.title,response.message,response.url);
+                    $('#tindak-lanjut').val(response.tindak_lanjut);
+                } else {
+                    callSwal(response.type,response.title,response.message,response.url);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                callSwal('error','Error','Terjadi kesalahan silahkan coba lagi',0);
+            }
+        });
+    });
+
    </script>
 
 

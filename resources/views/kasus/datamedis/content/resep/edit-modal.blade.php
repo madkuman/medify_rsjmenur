@@ -1,5 +1,5 @@
 <div class="modal fade" id="resepModalEdit" role="dialog" aria-labelledby="modal-fromright" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-fromright modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-fromright modal-full" role="document">
         <div class="modal-content">
             <div class="block block-themed block-transparent mb-0">
                 <div class="block-header">
@@ -13,6 +13,7 @@
                 <div class="block-content">
                     <form class="main-form-container" action="{{url('kasus')}}/{{ $nomor_kasus }}/datamedis/resep/edit" id="form_edit_resep" method="post">
                         <input type="hidden" id="resepEditId" name="id">
+                        <input type="hidden" name="kategori_resep" value="">
                         <input type="hidden" name="pasien" value="{{$kasus->pasien_id}}">
                         <input type="hidden" name="metode_pembayaran" value="{{$kasus->pasien_pembayaran_id}}">
                         <input type="hidden" name="kasus_id" value="{{$kasus->id}}">
@@ -32,9 +33,30 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="">Iter Resep</label>
+                                    <input type="number" name="resep_iter" class="form-control">
+                                </div>
+                            </div>
                         </div>
 
-                        @include('kasus.datamedis.content.resep.components.form', ['extra_id' => "-edit"])
+                        @if (config('app.fitur_kasus_resep_kategori'))
+                            <div id="container-kategori-resep-default">
+                                @include('kasus.datamedis.content.resep.components.form-kategori-resep-default')
+                            </div>
+                            <div id="container-kategori-resep-tpn" style="display: none">
+                                @include('kasus.datamedis.content.resep.components.form-kategori-resep-tpn')
+                            </div>
+                            <div id="container-kategori-resep-dispensing_aseptik" style="display: none">
+                                @include('kasus.datamedis.content.resep.components.form-kategori-resep-dispensing_aseptik')
+                            </div>
+                            <hr>
+                            @include('kasus.datamedis.content.resep.components.summary-harga')
+                        @else
+                            @include('kasus.datamedis.content.resep.components.form', ['extra_id' => "-edit"])
+                        @endif
+
                         <div class="form-group row">
                             <div class="col-12 text-center">
                                 <label class="css-control css-control-primary css-checkbox div-override-checkbox">

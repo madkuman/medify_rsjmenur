@@ -49,3 +49,4 @@
 	border-right: 1px solid white
 }
 </style>
+@yield('css')

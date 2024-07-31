@@ -63,6 +63,11 @@
                     d.farmid = "{{session('farmasi')->id}}";
                     d.tanggal_awal = $('#tanggal_awal').val();
                     d.tanggal_akhir = $('#tanggal_akhir').val();
+                    d.penyedia_id = $('#filter_penyedia_id').val();
+                    d.penghapusan_jenis_id = $('#filter_jenis_penghapusan_id').val();
+                    d.surat_perintah = $('#filter_surat_perintah').val();
+                    d.no_pengeluaran = $('#filter_no_pengeluaran').val();
+                    d.keterangan = $('#filter_keterangan').val();
                 }
             },
             language: {
@@ -71,6 +76,10 @@
             columns: [
                 { data: 'rownum', name: 'rownum', orderable: false, searchable: false, class: 'text-center'},
                 { data: 'tanggal', name: 'tanggal'},
+                { data: 'jenis', name: 'jenis'},
+                { data: 'penyedia', name: 'penyedia'},
+                { data: 'no_pengeluaran', name: 'no_pengeluaran'},
+                { data: 'surat_perintah', name: 'surat_perintah'},
                 { data: 'keterangan', name: 'keterangan'},
                 { data: 'detail', name: 'detail', orderable: false, searchable: false, class: 'text-center'},
             ],

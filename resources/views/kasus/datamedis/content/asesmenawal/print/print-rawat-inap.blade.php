@@ -342,7 +342,7 @@
 			<td colspan="2" class="align-top border-bottom"><b>STATUS SOSIAL</b></td>
 		</tr>
 		<tr>
-			<td class="align-top border-bottom">Yang menemani pasien di rs</td>
+			<td class="align-top border-bottom">Status Sosial</td>
 			<td class="align-top border-bottom">: {{$asesmen['yang_menemani_pasien_di_rs'] ?? '-'}}</td>
 		</tr>
 	</table>
@@ -356,7 +356,7 @@
 			<td colspan="2" class="align-top border-bottom"><b>SPIRITUAL</b></td>
 		</tr>
 		<tr>
-			<td class="align-top border-bottom">Saat ini apakah pasien membutuhkan pelayanan rohani?</td>
+			<td class="align-top border-bottom">Spiritual</td>
 			<td class="align-top border-bottom">: {{$asesmen['kebutuhan_pelayanan_rohani_pasien'] ?? '-'}}</td>
 		</tr>
 	</table>
@@ -370,7 +370,7 @@
 			<td colspan="2" class="align-top border-bottom"><b>STATUS EKONOMI</b></td>
 		</tr>
 		<tr>
-			<td class="align-top border-bottom">Penanggung jawab biaya perawatan pasien</td>
+			<td class="align-top border-bottom">Status Ekonomi</td>
 			<td class="align-top border-bottom">: {{$asesmen['penanggung_jawab_biaya_perawatan_pasien'] ?? '-'}}</td>
 		</tr>
 	</table>
@@ -740,7 +740,7 @@
 			<td width="70%"></td>
 		</tr>
 		<tr class="submenu">
-			<td colspan="2" class="align-top border-bottom"><b>ASESMEN AWAL RESIKO JATUH (SKALA EDMONSON)</b></td>
+			<td colspan="2" class="align-top border-bottom"><b>SKRINING RISIKO JATUH</b></td>
 		</tr>
 		<tr>
 			<td class="align-top border-bottom">Tanggal</td>
@@ -1026,7 +1026,7 @@
 			<td width="70%"></td>
 		</tr>
 		<tr class="submenu">
-			<td colspan="2" class="align-top border-bottom"><b>SKRINING GIZI AWAL</b></td>
+			<td colspan="2" class="align-top border-bottom"><b>RISIKO NUTRITIONAL</b></td>
 		</tr>
 		<tr>
 			<td class="align-top border-bottom">Gizi 6 bulan terakhir BB turun</td>
@@ -1088,7 +1088,7 @@
 			<td colspan="2" class="align-top border-bottom"><b>KEPERAWATAN</b></td>
 		</tr>
 		<tr>
-			<td class="align-top border-bottom">Masalah keperawatan</td>
+			<td class="align-top border-bottom">Kebutuhan Edukasi</td>
 			<td class="align-top border-bottom">: {!! nl2br($asesmen['masalah_keperawatan'] ?? '-') !!}</td>
 		</tr>
 	</table>
@@ -1271,7 +1271,8 @@
 			<td width="40%" class="centered">PERAWAT</td>
 		</tr>
 		<tr>
-			<td colspan="2"><br><br><br><br></td>
+			<td></td>
+			<td class="centered"><img src="{{$asesmen['creator']['ttd']}}" style="max-width: 90px"></td>
 		</tr>
 		<tr>
 			<td></td>

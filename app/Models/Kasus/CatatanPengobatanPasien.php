@@ -13,7 +13,12 @@ class CatatanPengobatanPasien extends Model
     use SoftDeletes;
 	protected $connection = 'kasus';
 	protected $table = 'catatan_pengobatan_pasien';
+    protected $appends = ['consumed'];
 
+    public function getConsumedAttribute()
+    {
+         return $this->details()->count();
+    }
 
     public function creator() {
         return $this->hasOne('App\User', 'id', 'created_by');
@@ -36,5 +41,10 @@ class CatatanPengobatanPasien extends Model
 
     public function details() {
         return $this->hasMany('App\Models\Kasus\CatatanPengobatanPasienDetail', 'catatan_pengobatan_pasien_id', 'id')->orderBy('pemberian_at','asc');
+    }
+
+    public function farmasi_resep_detail()
+    {
+        return $this->hasMany(\App\Models\Farmasi\ResepDetail::class, 'kasus_catatan_pengobatan_pasien_id', 'id');
     }
 }

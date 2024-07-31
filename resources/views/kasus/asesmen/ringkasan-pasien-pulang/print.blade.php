@@ -58,7 +58,7 @@
 				<table>
 					<tr>
 						<td width="20%" style="text-align: right;">
-							<img src="{{url('')}}/assets/img/pemprov-jatim.png" height="55">
+							<img src="{{ public_path('assets/img/pemprov-jatim.png') }}" height="55">
 						</td>
 						<td width="60%" style="text-align: center; font-size: 12px;">
 							<b>
@@ -70,7 +70,7 @@
 							</br>
 						</td>
 						<td width="20%" style="text-align: left;">
-							<img src="{{url('')}}/assets/img/menur.png" height="55">
+							<img src="{{ public_path('assets/img/menur.png') }}" height="55">
 						</td>
 					</tr>
 				</table>
@@ -413,11 +413,17 @@
 						<td class="centered">Dokter Penanggung Jawab Pelayanan</td>
 					</tr>
 					<tr>
-						<td colspan="2"><br><br><br></td>
+						<td colspan="2"></td>
 					</tr>
 					<tr>
 						<td></td>
-						<td class="centered">{{$kasus->dpjp->user->name}}</td>
+						{{-- <td class="centered"><img src="{{url('')}}/{{$kasus->dpjp->user->ttd}}" style="max-width: 90px"></td> --}}
+						<td class="centered"><img src="{{ !empty($item->creator) ? public_path($item->creator->ttd ?? '') : '' }}" style="max-width: 90px"></td>
+					</tr>
+					<tr>
+						<td></td>
+						{{--<td class="centered">{{$kasus->dpjp->user->name}}</td>--}}
+						<td class="centered">{{$item->creator->name}}</td>
 					</tr>
 					<tr>
 						<td colspan="2"><br></td>

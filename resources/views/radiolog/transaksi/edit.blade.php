@@ -273,12 +273,16 @@ Radiologi
                             </div>
                         </div>
                         @include('radiolog.transaksi.content.tambahan-pemeriksaan')
-                        <p class="h6 my-0 mb-10">KETERANGAN</p>
-                        <div class="form-group row">
-                            <div class="col-sm-12 col-lg-5">
+                        <div class="form-group row mt-100 mb-50">
+                            <div class="col-sm-6">
+                                <p class="h6 my-0 mb-10">KETERANGAN</p>
                                 <textarea class="form-control" rows="4" cols="50" placeholder="Tambahkan Keterangan Di Sini" name="info">{{$transaksi->info}}</textarea>
                             </div>
+                            <div class="col-6">
+                                @include('radiolog.transaksi.content.bmhp')
+                            </div>
                         </div>
+                        
                     </form>
                     <div class="pull-right">
                         <button id="submit-all" class="btn btn-hero btn-alt-primary" type="button">Simpan Perubahan</button>

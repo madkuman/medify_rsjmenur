@@ -653,7 +653,7 @@ class ReadController extends Controller
 
     public function listRujukan()
     {
-        $data=AsalRujukan::all();
+        $data=AsalRujukan::groupBy('nama')->get();
         return $data;
     }
 

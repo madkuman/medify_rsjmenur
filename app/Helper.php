@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Farmasi\TipeObat;
+use App\Models\Farmasi\TipeRacikan;
+use App\Models\Pasien\PembayaranPerusahaanType;
 use Carbon\Carbon;
 
 /**
@@ -14,12 +17,12 @@ function isJson($string)
 }
 
 
-function formatCurrency($number)
+function formatCurrency($number, $currency = "Rp ")
 {
     if($number - (int)$number >0){
-        return "Rp.".number_format($number, 2, ',', '.');
+        return $currency.number_format($number, 2, ',', '.');
     }else{
-        return "Rp.".number_format($number, 0, ',', '.');
+        return $currency.number_format($number, 0, ',', '.');
     }
 }
 
@@ -83,6 +86,18 @@ function phparray_to_mysql($array)
     return $res.")";
 }
 
+function getTipeRacikan($is_racikan_default = false) {
+    $tipe_racikan = session('temp_data_tipe_racikan', null);
+    if ($tipe_racikan == null) {
+        $tipe_racikan = TipeRacikan::get();
+        session()->put('temp_data_tipe_racikan', $tipe_racikan);
+    }
+    if ($is_racikan_default !== false) {
+        $tipe_racikan->where('is_racikan_default', $is_racikan_default);
+    }
+    return $tipe_racikan;
+}
+
 function excel_column($num) {
     $numeric = ($num - 1) % 26;
     $letter = chr(65 + $numeric);
@@ -134,6 +149,11 @@ function tanggalMerah($value)
     return $response;
 }
 
+function getTunaiPerusahaanTipe()
+{
+    return PembayaranPerusahaanType::where('slug', 'tunai')->first()->id ?? null;
+}
+
 function removeSpecialChar($string) {
     $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
 
@@ -169,3 +189,29 @@ function pre(...$array)
     print_r($array);
     echo "</pre>";
 }
+
+function globalGetTipeObat()
+{
+    return TipeObat::select('id', 'nama')->get();
+}
+
+
+function getTanggalIndonesiaHari($number)
+{
+    $data = ["Senin","Selasa",'Rabu','Kamis','Jumat','Sabtu','Minggu'];
+    return $data[$number];
+}
+
+function getTanggalIndonesiaBulan($number)
+{
+    $data = ['Januari','Februari','Maret','April','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    return $data[$number];
+}
+
+function getTerbilang($nominal)
+{
+    $terbilang = app('App\Http\Controllers\Functions\SpellMoney')->spellMoney($nominal);
+    return $terbilang;
+}
+
+

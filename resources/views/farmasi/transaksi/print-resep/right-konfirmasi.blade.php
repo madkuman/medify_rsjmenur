@@ -19,7 +19,7 @@
                 @endif
             </td>
         </tr>
-        <tr><td colspan="2">{{$transaksi->deskripsi}}</td></tr>
+        <tr><td colspan="2" style="font-size: 5pt">{{substr($transaksi->tindak_lanjut, 0, 120)}}</td></tr>
         <tr>
             <td></td>
             <td style="text-align: right">Acc Dokter</td>
@@ -28,7 +28,7 @@
             <td></td>
             <td style="text-align: right">
                 @if(!empty($dokter_ttd))
-                    <img src="{{{url('')}}}/{{$dokter_ttd}}" height="20px" style="text-align: right">
+                    <img src="{{ public_path($dokter_ttd) }}" height="20px" style="text-align: right">
                 @else
                     <div style="height: 10px; text-align: right"></div>
                 @endif

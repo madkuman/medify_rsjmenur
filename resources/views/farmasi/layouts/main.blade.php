@@ -19,6 +19,7 @@
             padding-left: 0 !important;
         }
     </style>
+    @yield('css')
 </head>
 <body>
     {{-- @include('layouts.components2.svg') --}}

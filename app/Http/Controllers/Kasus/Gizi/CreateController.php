@@ -13,6 +13,7 @@ use App\Models\Hospital\TransaksiMasukDetail;
 use App\Models\RawatInap\Transaksi;
 use App\Models\Nutrition\Order;
 use App\Http\Controllers\Controller;
+use App\Models\Hospital\Lokasi;
 use DB;
 use Bugsnag;
 
@@ -89,5 +90,31 @@ class CreateController extends Controller
             ->with('message', $message)
             ->with('title',$title)
             ->with('status', $status);
+    }
+
+    public function permintaan($request)
+    {
+        $kasus = $request->kasus;
+        $waktu_makan = $request->waktu_makan ?? [];
+        $lokasi_id_selected = $request->lokasi_id ?? null;
+        $lokasi = Lokasi::find($lokasi_id_selected);
+        $last_batch_kasus = GiziPermintaan::where('kasus_id', $kasus->id)->max('batch') ?? 0;
+        $update_old_order = GiziPermintaan::where('kasus_id', $kasus->id)->update(['status' => 0]);
+        ++$last_batch_kasus;
+
+        foreach ($waktu_makan as $id => $value) {
+            $order = new GiziPermintaan();
+            $order->waktu_makan_id = $id;
+            $order->kasus_id = $kasus->id;
+            $order->diet_id = $request->diet;
+            $order->bentuk_makanan_id = $request->bentuk_makanan;
+            $order->lokasi_id = $lokasi_id_selected;
+            $order->bangsal_id = $lokasi->ruangan->bangsal_id ?? null;
+            $order->batch = $last_batch_kasus;
+            $order->status = 1;
+            $order->catatan = $request->catatan ?? null;
+            $order->created_by = auth()->user()->id;
+            $order->save();
+        }
     }
 }

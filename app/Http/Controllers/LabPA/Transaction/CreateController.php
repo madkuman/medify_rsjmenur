@@ -85,10 +85,12 @@ class CreateController extends Controller
                 }
             }
 
+            $lokasi_labpa = \App\Models\Hospital\Lokasi::where('slug', 'lab-pa')->first();
+
             if ($new_transaction->kirim_kasir == 1) {
                 $detail = [];
                 foreach ($new_transaction->detail as $item){
-                    $detail_transaksi=$this->saveTagihanData($new_transaction, $item,$req->input('asal_ruang') ?? '');
+                    $detail_transaksi=$this->saveTagihanData($new_transaction, $item, $lokasi_labpa->id ?? "");
                     array_push($detail,$detail_transaksi);
                 }
                 $piutang=app('App\Http\Controllers\LabPA\Transaction\PostController')->kirimKasir($new_transaction, $detail);
@@ -98,7 +100,7 @@ class CreateController extends Controller
             }
             elseif($status != 1) {
                 foreach ($new_transaction->detail as $item) {
-                    $detail_transaksi = $this->saveTagihanData($new_transaction, $item, $kasus->lokasi->lokasi_id);
+                    $detail_transaksi = $this->saveTagihanData($new_transaction, $item, $lokasi_labpa->id ?? "");
                     $saveToTagihan = app('App\Http\Controllers\Kasus\TagihanDetail\CreateController')->create($detail_transaksi);
                     $item->tagihan_detail_id = $saveToTagihan->id;
                     $item->save();

@@ -289,6 +289,8 @@ class PostController extends Controller
             $perawat_url = Auth::user()->profesi == 2 ? '/datamedis/asesmenawal' : '';
             $transaksi_id = $request->input('transaksi_id');
 
+            $asal_rujukan_id = null;
+
             $transaksi = Transaksi::with('rujukan')->where('id',$transaksi_id)->first();
             $judul_kasus = 'Rawat Jalan #'.$transaksi_id;
             $pasien = Pasien::find($transaksi->pasien_id);
@@ -297,6 +299,7 @@ class PostController extends Controller
 
             if ($transaksi->asal_rujukan!=0) {
                 $pasien->asal_rujukan = $transaksi->rujukan->nama ?? '-';
+                $asal_rujukan_id = $transaksi->asal_rujukan ?? '';
             }
             else $pasien->asal_rujukan = "-";
 
@@ -309,7 +312,7 @@ class PostController extends Controller
             if(empty($transaksi->kasus_id))
             {
                 $kasus = app('App\Http\Controllers\Kasus\Kasus\CreateController')
-                ->createKasus($judul_kasus,$pasien,$lokasi,$transaksi->id,$kelas,$transaksi->pasien_pembayaran_id,$transaksi->nomor_sep);
+                ->createKasus($judul_kasus,$pasien,$lokasi,$transaksi->id,$kelas,$transaksi->pasien_pembayaran_id,$transaksi->nomor_sep,null,$asal_rujukan_id);
 
                 $kasus->tipe_rj = 1;
                 $kasus->save();
@@ -323,7 +326,7 @@ class PostController extends Controller
 
                 // add retribusi if retribusi_list is not null
                 if (!empty($transaksi->retribusi_list)) {
-                    $retribusi_kasus = app('App\Http\Controllers\Kasus\TagihanDetail\CreateController')->addRetribusi($transaksi->retribusi_list, $transaksi->kasus_id);
+                    $retribusi_kasus = app('App\Http\Controllers\Kasus\TagihanDetail\CreateController')->addRetribusi($transaksi->retribusi_list, $transaksi->kasus_id, $transaksi->is_online);
 
                     if (!empty($retribusi_kasus)) {
                         $transaksi->retribusi_list = NULL;

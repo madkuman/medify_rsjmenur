@@ -41,6 +41,10 @@ class EditController extends Controller
             $transaction->verified_by = $req['verified_by'] ?? Auth::user()->id;
             $transaction->gol_darah = $req['gol_darah'];
             $transaction->diagnosis = $req['diagnosis'];
+            $transaction->catatan = $req['catatan'];
+            $transaction->jam_diperiksa = $req['jam_diperiksa'];
+            $transaction->jam_selesai = $req['jam_selesai'];
+            $transaction->spesimen_terima_keterangan = $req['spesimen_terima_keterangan'];
             $transaction->infeksi_mdr = $req['infeksi_mdr'];
             $transaction->infeksi_karbapenemase = $req['infeksi_karbapenemase'];
             $transaction->infeksi_esbl = $req['infeksi_esbl'];

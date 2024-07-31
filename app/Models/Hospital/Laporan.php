@@ -13,4 +13,9 @@ class Laporan extends Model
 	use SoftDeletes;
 	protected $connection = 'mysql';
 	protected $table = 'laporan';
+
+	function zipper()
+	{
+		return $this->hasOne(\App\Models\Hospital\Zipper::class, 'id', 'zipper_id');	
+	}
 }

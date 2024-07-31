@@ -1,6 +1,6 @@
 <div class="modal" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-xl">
-		<div class="modal-content" >
+		<div class="modal-content">
 			<form action="{{url()->current()}}/create" method="POST">
 				{{csrf_field()}}
 				<div class="block block-themed block-transparent mb-0">

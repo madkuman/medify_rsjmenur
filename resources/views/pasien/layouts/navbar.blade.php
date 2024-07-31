@@ -33,7 +33,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#"><i class="fa fa-calendar"></i> Antrian Pasien</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{url('pasien/antrian-pasien')}}">Mesin Antrian</a>
+                               <a class="dropdown-item" href="{{url('pasien/antrian-pasien')}}">Mesin Antrian</a>
                                 <a class="dropdown-item" href="{{url('pasien/pengaturan-loket')}}">Pengaturan Loket</a>
                                 <a class="dropdown-item" href="{{url('pasien/konfirmasi-antrian')}}">Konfirmasi Antrian</a>
                             </div>

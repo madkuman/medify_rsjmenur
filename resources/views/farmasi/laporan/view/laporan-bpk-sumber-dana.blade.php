@@ -4,16 +4,16 @@
         <td></td>
     </tr>
     <tr>
-        <th colspan="{{$count_column}}">LAPORAN {{$sumber_dana->nama}}</th>
+        <th colspan="{{$count_column}}">LAPORAN BPK SUMBER DANA</th>
     </tr>
     <tr>
         <th colspan="{{$count_column}}">TAHUN : {{$tahun}}</th>
     </tr>
     <tr>
-        <th colspan="{{$count_column}}"></th>
+        <th colspan="{{$count_column}}">SUMBER DANA : {{$sumber_dana_nama}}</th>
     </tr>
     <tr>
-        <th colspan="{{$count_column}}"></th>
+        <th colspan="{{$count_column}}">KATEGORI : {{$kategori_names}}</th>
     </tr>
     <tr>
         <td></td>
@@ -24,7 +24,7 @@
         <th rowspan="2">NO</th>
         <th rowspan="2">NAMA BARANG</th>
         <th rowspan="2">STOK AWAL</th>
-        <th colspan="5">DANA {{$sumber_dana->nama}}</th>
+        <th colspan="5">DANA {{$sumber_dana_nama}}</th>
         <th rowspan="2">SISA STOK</th>
         <th rowspan="2">HARGA</th>
         <th rowspan="2">TOTAL HARGA</th>

@@ -8,10 +8,44 @@
                         <h3 class="block-title">Penghapusan Baru</h3>
                     </div>
                     <div class="block-content">
-                        <div class="row">
-                            <div class="col-md-12">
+
+                        <div class="row mb-5">
+                            <div class="col-md-6">
+                                <label>JENIS PENGHAPUSAN</label>
+                                <select class="form-control js-select2" name="jenis_penghapusan_id" style="width: 100%;">
+                                    @foreach($penghapusan_jenis as $item)
+                                    <option value="{{$item->id}}">{{$item->nama}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label>SURAT PERINTAH</label>
+                                <input type="text" class="form-control" name="surat_perintah">
+                            </div>
+                        </div>
+                        <div class="row mb-5">
+                            <div class="col-md-6">
+                                <label>TANGGAL PENGELUARAN</label>
+                                <input type="text" class="js-datepicker form-control tanggal-datepicker" data-date-format='dd-mm-yyyy' name="tgl_pengeluaran" placeholder="Masukkan Tanggal Penerimaan" autocomplete="off" value="{{Carbon\Carbon::now()->format('d-m-Y')}}">
+                            </div>
+                            <div class="col-md-6">
+                                <label>NO PENGELUARAN</label>
+                                <input type="text" class="form-control" name="no_pengeluaran">
+                            </div>
+                        </div>
+                        <div class="row mb-5">
+                            <div class="col-md-6">
+                                <label>PENYEDIA</label>
+                                <select class="form-control js-select2" name="penyedia_id" style="width: 100%;">
+                                    <option value="">-</option>
+                                    @foreach($supplier as $supp)
+                                    <option value="{{$supp->id}}">{{$supp->nama}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="penyedia">Keterangan <small>(Opsional)</small></label>
+                                    <label for="penyedia">KETERANGAN <small>(Opsional)</small></label>
                                     <input type="text" class="form-control" name="keterangan" placeholder="Berikan Informasi Lebih">
                                 </div>
                             </div>
@@ -74,7 +108,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-square" id="close" data-dismiss="modal">Batalkan</button>
                     <button type="submit" class="btn btn-primary btn-square">
-                         <i class="fa fa-save"></i> Simpan
+                        <i class="fa fa-save"></i> Simpan
                     </button>
                 </div>
             </div>

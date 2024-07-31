@@ -15,7 +15,7 @@ class ImageUploader extends Controller
     	{
             $ext_document = ['pdf','csv','xml','xls','xlsx'];
             $ext_image = ["jpg", "png", "jpeg", "bmp", "svg", "webp"];
-            $ext_video = ["mp4", "webm", "3gp"];
+            $ext_video = ["mp4", "webm", "3gp", "mkv", "m4v","avi","wmv","qt"];
             // if ttd get only directory
             if($type =='ttd'){
                 $data = $this->getPathTtd('png');
@@ -71,7 +71,9 @@ class ImageUploader extends Controller
                     $ext_new = $ext_new[count($ext_new)-1];
                     $ext = $ext_new;
                     $data = $this->getPathDataImport($ext,$file_type,$file);
-                }
+                }elseif($type =='cppt'){
+                    $data = $this->getPathCppt($ext);
+                } 
             }
 
             if ($type == 'ttd') {
@@ -89,8 +91,16 @@ class ImageUploader extends Controller
                 }
 
                 File::move(storage_path('app').'/'.$uploaded_file, public_path().'/'.rtrim($data['public_path'], '/').'/'.$data['name']);
-            }
-            else {
+            }elseif(in_array($ext, $ext_video)){
+                $uploaded_file = $file->store($data['path']);
+                Storage::setVisibility($uploaded_file, 'public');
+
+                if (!file_exists($data['public_path']) && !is_dir($data['public_path'])) {
+                    mkdir($data['public_path'], 0777, true);
+                }
+
+                File::move(storage_path('app').'/'.$uploaded_file, public_path().'/'.rtrim($data['public_path'], '/').'/'.$data['name']);
+            }else {
                 #di store dulu di storage
                 $uploaded_file = $file->store($data['path']);
                 #di public in biar bisa diakses
@@ -186,6 +196,20 @@ class ImageUploader extends Controller
             $data['name']= $data['name_original'].'.'.$ext;
             $data['path'] = 'public/users';
             $data['public_path'] = 'uploads/users/';
+            $data['name_thumbnail'] = $data['name_original'].'_300x300.'.$ext;
+            $data['size'] = 300;
+            $data['folder_thumbnail'] = '300x300';
+            return $data;
+        }
+
+        private function getPathCppt($ext)
+        {
+            $dateTime = date('dmYHis');
+
+            $data['name_original'] = 'MedifyUser-'.$dateTime.'-'.str_random(10);
+            $data['name']= $data['name_original'].'.'.$ext;
+            $data['path'] = 'public/cppt';
+            $data['public_path'] = 'uploads/cppt/';
             $data['name_thumbnail'] = $data['name_original'].'_300x300.'.$ext;
             $data['size'] = 300;
             $data['folder_thumbnail'] = '300x300';

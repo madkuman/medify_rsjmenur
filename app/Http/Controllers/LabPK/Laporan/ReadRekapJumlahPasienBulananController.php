@@ -33,7 +33,7 @@ class ReadRekapJumlahPasienBulananController extends Controller
 			{
 				$transaksi = TransaksiDetail::where('status', 'done')
 				->whereHas('transaksi', function($q) use($start,$end,$pt){
-					$q->whereDate('result_created_at', '>=', $start)->whereDate('result_created_at', '<=', $end)
+					$q->whereDate('verified_at', '>=', $start)->whereDate('verified_at', '<=', $end)
 					->whereHas('pembayaran', function ($q2) use ($pt){
 						$q2->from(config('app.db_name').'_patients.pasien_pembayaran')
 						->where('perusahaan_id',$pt->id);

@@ -18,6 +18,10 @@ class EditController extends Controller
 		$obat->rute = $data->rute;
 		$obat->keterangan = $data->keterangan;
 		$obat->updated_by = Auth::user()->id;
+		$obat->cb_segera_diberikan 	  = $data->cb_segera_diberikan ?? null;
+		$obat->cb_terlambat_diberikan = $data->cb_terlambat_diberikan ?? null;
+		$obat->cb_pemberian_bebas     = $data->cb_pemberian_bebas ?? null;
+
 		$obat->save();
 
 		return $obat;

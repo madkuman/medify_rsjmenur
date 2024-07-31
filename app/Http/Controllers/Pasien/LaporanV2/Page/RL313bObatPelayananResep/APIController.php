@@ -36,7 +36,7 @@ class APIController extends Controller
         $end = Carbon::parse($request->dateend)->endOfDay()->toDateTimeString();
 
         $kategori_generik = app(\App\Http\Controllers\Farmasi\Kategori\ReadController::class)->getSingle('generik')->id;
-        $kategori_formularium = app(\App\Http\Controllers\Farmasi\Kategori\ReadController::class)->getSingle('formularium-rs')->id;
+        $kategori_formularium = app(\App\Http\Controllers\Farmasi\Kategori\ReadController::class)->getSingle('fornas')->id;
         $item_template_ids_generik = app(\App\Http\Controllers\Farmasi\Kategori\ReadController::class)->getItemTemplateIdByItemKategori($kategori_generik);
         $item_template_ids_non_generik_formularium = app(\App\Http\Controllers\Farmasi\ItemTemplate\ReadController::class)->getNonGenerikFormularium($kategori_generik, $kategori_formularium);
         $item_template_ids_non_generik_non_formularium = app(\App\Http\Controllers\Farmasi\ItemTemplate\ReadController::class)->getNonGenerikNonFormularium($kategori_generik, $kategori_formularium);
@@ -52,7 +52,7 @@ class APIController extends Controller
         if ($request_ke == 0) {
             $content = 1;
         } else if ($request_ke == 1) {
-            $content = 'Obat Generik (Formularium+Non Formularium)';
+            $content = 'Obat Generik (Fornas + Non Fornas)';
         } else if ($request_ke == 2) {
             $generik_rajal = "
     		SELECT SUM(jumlah.value) AS generik_rajal FROM (
@@ -146,7 +146,7 @@ class APIController extends Controller
         } else if ($request_ke == 5) {
             $content = 2;
         } else if ($request_ke == 6) {
-            $content = 'Obat Non Generik Formularium';
+            $content = 'Obat Non Generik Fornas';
         } else if ($request_ke == 7) {
             $non_generik_formalium_rajal = "
             SELECT SUM(jumlah.value) AS non_generik_formalium_rajal FROM (
@@ -240,7 +240,7 @@ class APIController extends Controller
         } else if ($request_ke == 10) {
             $content = 3;
         } else if ($request_ke == 11) {
-            $content = 'Obat Non Generik Non Formularium';
+            $content = 'Obat Non Generik Non Fornas';
         } else if ($request_ke == 12) {
             $non_generik_non_formalium_rajal = "
             SELECT SUM(jumlah.value) AS non_generik_non_formalium_rajal FROM (

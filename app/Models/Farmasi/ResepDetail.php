@@ -35,6 +35,11 @@ class ResepDetail extends Model
 		return $this->hasOne('App\Models\Farmasi\ResepDetail','id', 'detail_asal_id');
 	}
 
+	public function detail_copy()
+	{
+		return $this->hasMany('App\Models\Farmasi\ResepDetail','detail_asal_id', 'id');
+	}
+
 	public function resep()
 	{
 		return $this->hasOne('App\Models\Farmasi\Resep','id', 'resep_id');
@@ -78,5 +83,22 @@ class ResepDetail extends Model
 
 		$nama_obat = $this->obat_detail->item_detail->nama ?? $this->getOriginal('nama_obat');
 		return $nama_obat;
+	}
+
+	function tipe_racikan()
+	{
+		return $this->hasOne(\App\Models\Farmasi\TipeRacikan::class, 'id', 'tipe_racikan_id')->withTrashed();
+	}
+
+	# usage : attr_info_copy_resep
+	function getAttrInfoCopyResepAttribute()
+	{
+		$resep_copy_only_only_final = $this->detail_copy->filter(function ($item) {
+			return $item->resep_id == $item->resep_detail->transaksi->resep_final;
+		});
+		return (object) [
+			'jumlah_diambil' => $resep_copy_only_only_final->where('resep_detail.transaksi.dikerjakan_at', '!=', null)->sum('jumlah'),
+			'jumlah_dilayani' => $resep_copy_only_only_final->where('resep_detail.transaksi.dikerjakan_at', '=', null)->sum('jumlah'),
+		];
 	}
 }

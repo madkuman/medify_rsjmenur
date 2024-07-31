@@ -10,4 +10,13 @@
             element.prepend(`<i class="fas fa-sync fa-spin active-button-loader">`);
         }
     }
+
+    var number_format_formatter = new Intl.NumberFormat('id-ID', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+    });
+
+    $(document).ready(function () {
+        $('[data-tooltip="tooltip"]').tooltip();
+    });
 </script>

@@ -57,7 +57,7 @@
 							<i class="fa fa-check"></i>
 						</button>
 						@else
-						@if($slug_specialty_user == 'perawat-ners')
+						@if($slug_specialty_user == 'perawat-ners' || $slug_specialty_user == 'magister-keperawatan')
 						<a href="{{url()->current()}}/verifikasi/{{$item->id}}" class="btn btn-primary btn-sm" type="button"  data-toggle="tooltip" data-placement="top" title="Verifikasi"> 
 							<i class="fa fa-check"></i> Verifikasi
 						</a >

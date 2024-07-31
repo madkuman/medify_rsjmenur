@@ -53,7 +53,13 @@ $('#btn-kirim-kasir').on('click',function(){
                 "jumlah": "{{$transaksi->total_biaya_obat}}",
                 "slug": "{{session('farmasi')->slug}}",
                 "asal_pelayanan": "{{$transaksi->lokasi->nama}}",
-                "embalase" : $("#embalase").val(),
+                "embalase" : ()=>{
+                    var embalase=[];
+                    $(".input-embalase").each(function () {
+                       embalase.push($(this).val() ?? 0);
+                    });
+                    return embalase;
+                },
                 "laba" : ()=>{
                     var laba=[];
                     $(".input-diskon").each(function () {

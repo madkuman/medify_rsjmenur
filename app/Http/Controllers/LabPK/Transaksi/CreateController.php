@@ -81,6 +81,8 @@ class CreateController extends Controller
                 $new_transaction->inspected_at = $req['tanggal_periksa'];
                 $new_transaction->inspected_at_by = Auth::user()->id;
                 $new_transaction->inspected_at_created_at = Carbon::now();
+            } else {
+                $new_transaction->inspected_at = Carbon::now();
             }
             
             $new_transaction->created_by = !empty($req->dokter) ? $req->dokter : Auth::user()->id;
@@ -129,10 +131,12 @@ class CreateController extends Controller
                 $new_transaction->save();
             }
 
+            $lokasi_labpk = \App\Models\Hospital\Lokasi::where('slug', 'lab-pk')->first();
+
             if ($new_transaction->kirim_kasir == 1) {
                 $detail = [];
                 foreach ($new_transaction->detail as $item){
-                    $detail_transaksi=$this->saveTagihanData($new_transaction, $item,$req->input('asal_ruang') ?? '');
+                    $detail_transaksi=$this->saveTagihanData($new_transaction, $item, $lokasi_labpk->id ?? "");
                     array_push($detail,$detail_transaksi);
                 }
                 $piutang = app('App\Http\Controllers\LabPK\Transaksi\PostController')->kirimKasir($new_transaction, $detail);
@@ -141,7 +145,7 @@ class CreateController extends Controller
                 $new_transaction->save();
             } elseif($status != 1) {
                 foreach ($new_transaction->detail as $item) {
-                    $detail_transaksi=$this->saveTagihanData($new_transaction, $item,$kasus->lokasi->lokasi_id);
+                    $detail_transaksi=$this->saveTagihanData($new_transaction, $item, $lokasi_labpk->id ?? "");
                     $saveToTagihan = app('App\Http\Controllers\Kasus\TagihanDetail\CreateController')->create($detail_transaksi);
                     $item->tagihan_detail_id = $saveToTagihan->id;
                     $item->save();
@@ -248,6 +252,10 @@ class CreateController extends Controller
             DB::connection('keuangan')->beginTransaction();
             DB::connection('lab_pk')->beginTransaction();
 
+            $transaction->catatan = $req['catatan'];
+            $transaction->jam_diperiksa = $req['jam_diperiksa'];
+            $transaction->jam_selesai = $req['jam_selesai'];
+            $transaction->spesimen_terima_keterangan = $req['spesimen_terima_keterangan'];
             $transaction->status = 1;
             $transaction->diagnosis = $req['diagnosis'];
             $transaction->result_created_at = Carbon::now();
@@ -315,7 +323,8 @@ class CreateController extends Controller
                 $result = [];
 
                 foreach($tarif->labpk_form_tarif as $form_tarif){
-                    $form_type = $form_tarif->form->type;
+                    $form_type = $form_tarif->form->type ?? null;
+                    if ($form_type == null) continue;
                     $form = $form_tarif->form;
                     $keterangan_result_temp = 'normal';
                     if($form_type == 'parameter-number' || $form_type == 'parameter-text' || $form_tarif->form->type == 'parameter-number-greatherthan' || $form_tarif->form->type == 'parameter-number-lessthan')

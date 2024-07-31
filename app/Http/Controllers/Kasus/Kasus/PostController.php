@@ -80,13 +80,10 @@ class PostController extends Controller
             //     $verifikasi_coder = VerifikasiKoder::with('icd10', 'icd10_bpjs', 'icd9', 'icd9_bpjs')->where('kasus_id', $kasus->id)->get();
             $this->checkToAbort($kasus);
             //KLAIM BARU
-            if ($kasus->claim_sent) {
-                $res = app('App\Http\Controllers\INACBG\PostController')->reedit($kasus);
-            }
-            $res = app('App\Http\Controllers\INACBG\PostController')->deleteClaim($kasus);
-            $res = app('App\Http\Controllers\INACBG\PostController')->newClaim($kasus);
-
-            if ($res && $res->metadata->code != self::$success && $res->metadata->code != "400") {
+            $res_new_claim = app('App\Http\Controllers\INACBG\PostController')->newClaim($kasus);
+            // dd('newClaim', $res_new_claim);
+            #butuh 400 karena awalnya emang dupliasi SEP
+            if(isset($res_new_claim->metadata->code) && $res_new_claim->metadata->code != self::$success && $res_new_claim->metadata->code != "400"){
                 return json_encode([
                     'status' => 500,
                     'message' => "Gagal menghubungkan ke INACBG"

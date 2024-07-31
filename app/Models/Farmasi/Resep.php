@@ -38,7 +38,7 @@ class Resep extends Model
 	
 	public function resep_detail()
 	{
-		return $this->hasMany('App\Models\Farmasi\ResepDetail','resep_id', 'id')->orderBy('tipe','asc');
+		return $this->hasMany('App\Models\Farmasi\ResepDetail','resep_id', 'id')->orderBy('id','asc');
 	}
 
 	public function kasus_resep_detail()
@@ -55,5 +55,9 @@ class Resep extends Model
 	public function as_final()
 	{
 		return $this->hasOne('App\Models\Farmasi\TransaksiObat','resep_final', 'id');
+	}
+	function konfirmasi_permintaan_user()
+	{
+		return $this->hasOne(\App\User::class, 'id', 'konfirmasi_permintaan_by');	
 	}
 }

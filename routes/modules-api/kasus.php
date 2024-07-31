@@ -26,4 +26,12 @@ Route::group(['prefix' => 'api/kasus/{nomor_kasus}'], function() {
 	Route::post('api/kasus/pengaturan/resume/create', 'Kasus\Resume\PostController@create');
 	Route::post('api/kasus/pengaturan/resume/edit', 'Kasus\Resume\PostController@edit');
 
+	Route::get('api/kasus/farmasi/pengobatan-pasien/get-content-1day', 'Kasus\Farmasi\CatatanPengobatanPasien\APIController@getContent1Day');
+	Route::get('api/kasus/farmasi/pengobatan-pasien/get-content-days', 'Kasus\Farmasi\CatatanPengobatanPasien\APIController@getContentDays');
+
+
+	Route::get('api/kasus/farmasi/pengobatan-pasien/get-detail', 'Kasus\Farmasi\CatatanPengobatanPasien\APIController@getCatatanPengobatanPasienDetailData');
+	Route::get('api/kasus/farmasi/pengobatan-pasien/get-per-obat
+	', 'Kasus\Farmasi\CatatanPengobatanPasien\APIController@getCatatanPengobatanPasienPerObat');
+	Route::get('api/kasus/farmasi/pengobatan-pasien/by-id', 'Kasus\Farmasi\CatatanPengobatanPasien\APIController@getCatatanPengobatanPasienById');
 ?>

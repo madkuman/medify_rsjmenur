@@ -155,6 +155,7 @@ Pengaturan - Edit ruangan {{$ruangan->nama}}
                                     <label>Dokter Umum</label>
                                     <select class="js-select2 form-control" name="tarif_dokter[]" style="width: 100%;"required>
                                         <option value="" selected="" disabled="">Pilih Tarif</option>
+                                        <option value="0">Tanpa Tarif</option>
                                         @foreach($tarif_visite as $item)
                                             <option value="{{$item->id}}" @if(!empty($tarif_visite_ruangan[0]))
                                             @php $tarif_visite_id = $tarif_visite_ruangan[0]->tarif->master->id ?? '-' @endphp
@@ -166,6 +167,7 @@ Pengaturan - Edit ruangan {{$ruangan->nama}}
                                     <label>Dokter Spesialis</label>
                                     <select class="js-select2 form-control" name="tarif_dokter[]" style="width: 100%;"required>
                                         <option value="" selected="" disabled="">Pilih Tarif</option>
+                                        <option value="0">Tanpa Tarif</option>
                                         @foreach($tarif_visite as $item)
                                             <option value="{{$item->id}}" @if(!empty($tarif_visite_ruangan[1])) 
                                             @php $tarif_visite_id = $tarif_visite_ruangan[1]->tarif->master->id ?? '-' @endphp
@@ -178,6 +180,7 @@ Pengaturan - Edit ruangan {{$ruangan->nama}}
                                     <label>Dokter Subspesialis</label>
                                     <select class="js-select2 form-control" name="tarif_dokter[]" style="width: 100%;"required>
                                         <option value="" selected="" disabled="">Pilih Tarif</option>
+                                        <option value="0">Tanpa Tarif</option>
                                         @foreach($tarif_visite as $item)
                                             <option value="{{$item->id}}" @if(!empty($tarif_visite_ruangan[2])) 
                                             @php $tarif_visite_id = $tarif_visite_ruangan[2]->tarif->master->id ?? '-' @endphp

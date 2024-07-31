@@ -256,8 +256,8 @@ class ViewController extends Controller
                         }
                         else 
                         {
-                            $barang[$i]['nama'] = $draft->detail_draft->nama;
-                            $barang[$i]['satuan'] = $draft->detail_draft->satuan;
+                            $barang[$i]['nama'] = $draft->detail_draft->nama ?? '';
+                            $barang[$i]['satuan'] = $draft->detail_draft->satuan ?? '';
                         } 
                     }
                     else

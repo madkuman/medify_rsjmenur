@@ -47,6 +47,7 @@ class ViewController extends Controller
         $data['diet'] = app('App\Http\Controllers\Gizi\Pemesanan\ReadController')->getDiet();
         $data['jenis_makanan_utama'] = JenisMakanan::where('utama',JenisMakanan::UTAMA)->get();
         $data['jenis_makanan_tambahan'] = JenisMakanan::where('utama',JenisMakanan::TAMBAHAN)->get();
+        $data['fitur_pemilihan_data_makan_gizi'] = 0;
         return view('gizi.pemesanan.index',$data);
     }
 

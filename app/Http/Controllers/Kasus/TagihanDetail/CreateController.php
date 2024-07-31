@@ -20,6 +20,7 @@ class CreateController extends Controller
 	{
 		DB::connection('kasus')->beginTransaction();
 		DB::connection('mysql')->beginTransaction();
+		DB::connection('keuangan')->beginTransaction();
 		try
 		{
 			$lokasi = Lokasi::where('id',$data['lokasi'])->first();
@@ -92,6 +93,7 @@ class CreateController extends Controller
 
 			DB::connection('kasus')->commit();
 			DB::connection('mysql')->commit();
+			DB::connection('keuangan')->commit();
 			return $detail;
 
 		} catch (\Exception $e) {
@@ -100,20 +102,21 @@ class CreateController extends Controller
 
 			DB::connection('kasus')->rollback();
 			DB::connection('mysql')->rollback();
+			DB::connection('keuangan')->rollback();
 
 		}
 	}
 
-    public function addRetribusi($data_retribusi, $kasus_id)
+    public function addRetribusi($data_retribusi, $kasus_id, $is_online = null)
     {
         $kasus = Kasus::find($kasus_id);
         $tarif_ids = explode(',', $data_retribusi);
         $tagihan_id = NULL;
-
+		$user_id    = ($is_online == 1)? 1 : NULL;
         foreach($tarif_ids as $id){
             $tarif = Tarif::find($id);
             $retribusi = $this->reshapeTagihanKasus($tagihan_id,$tarif,$kasus);
-            $createDetail = $this->create($retribusi);
+            $createDetail = $this->create($retribusi, $user_id);
             $tagihan_id = $createDetail->kasus_tagihan_id;
         }
 

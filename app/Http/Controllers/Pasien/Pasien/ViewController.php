@@ -19,6 +19,8 @@ use App\Models\Pasien\Pasien;
 use App\Models\Hospital\Profesi;
 use App\Models\Hospital\Lokasi;
 use App\Models\Hospital\Kelas;
+use App\Models\Kasus\AlatBantu;
+use App\Models\Kasus\Kasus;
 use App\Models\RawatJalan\AntrianLevel;
 use Carbon\Carbon;
 use DataTables;
@@ -37,8 +39,17 @@ class ViewController extends Controller
     public function profile($id, Request $request)
     {
         $data = app('App\Http\Controllers\Pasien\Pasien\ReadController')->profile($id, $request->dokter, $request->lokasi);
+        $last_kasus = Kasus::where('pasien_id', $id)->orderby('id', 'desc')->first();
+        $query = AlatBantu::with(["creator"]);
+        if (!empty($last_kasus)) {
+            $query->where("kasus_id",$last_kasus->id);
+        }else {
+            $query->whereRaw('JSON_EXTRACT(alat_bantu.val, "$.pasien_id") = "'.$id.'"');
+        }
+        $general_consent = $query->where("type", 'general-consent')->orderBy("id","asc")->get();
         $this->checkToAbort($data['identitas']);
         $data['id']=$id;
+        $data['general_consent'] = $general_consent;
         return view('pasien.profile',$data);
     }
 
@@ -114,7 +125,8 @@ class ViewController extends Controller
     public function baruDaftar($id, Request $request, $id_antrian = null)
     {
         // * handler autoselect rajal shift
-        
+ini_set('memory_limit', '2046M');
+//        if(\Auth::user()->id == 3) dd('aa');
         
         $data = app('App\Http\Controllers\Pasien\Pasien\ReadController')->profile($id);
         $poli = app('App\Http\Controllers\RawatJalan\Transaksi\ReadController')->getPoli();
@@ -131,7 +143,7 @@ class ViewController extends Controller
         $data['kelas_medical_checkup'] = Kelas::where('medical_checkup',1)->get();
         $data['tarif_admin'] = app('App\Http\Controllers\Keuangan\TarifMaster\ReadController')->getRetribusiPendaftaran($id);
         $data['pasien'] = Pasien::find($id);
-        $data['rujukan'] = app('App\Http\Controllers\Pasien\Pasien\ReadController')->listRujukan();
+//        $data['rujukan'] = app('App\Http\Controllers\Pasien\Pasien\ReadController')->listRujukan();
         $data['sep'] = json_decode(app('App\Http\Controllers\BPJS\SEP\ReadController')->getByNomorPasien($id));
         $data['my_rujuk_poli'] = app('App\Http\Controllers\Pasien\Pasien\ReadController')->myRujukPoli($id);
         $data['sirs_pelayanan']        = app(\App\Http\Controllers\Admin\SirsKegiatanPelayananKhusus\ReadController::class)->getAll();
@@ -153,6 +165,11 @@ class ViewController extends Controller
             $data['mesin_antrian'] = null;
             $data['dokter_id'] = null;
         }
+
+        $request_readmisi = new Request(['pasien_id' => $id]);
+        $data['readmisi'] = (new \App\Http\Controllers\RawatInap\Transaksi\ReadController())
+            ->cekPotensiBPJSReadmisi($request_readmisi);
+
         return view('pasien.pendaftaran.baru',$data);
     }
 
@@ -179,7 +196,7 @@ class ViewController extends Controller
         return view('pasien.pendaftaran.baru-inap',$data);
     }
 
-    public function printprofile($id)
+    public function printprofile($id, $param_download = [])
     {
 
         $data = app('App\Http\Controllers\Pasien\Pasien\ReadController')->printprofile($id);
@@ -187,6 +204,13 @@ class ViewController extends Controller
         $pdf = DOMPDF::loadView('pasien.print-data', $data, [])->setPaper('a4', 'portrait');
         $pasien = $data;
         $filename = $pasien['identitas']->name.'-profil.pdf';
+        if (($param_download['is_download'] ?? null) != null) {
+            $filename = $param_download['filename'] ?? 'Print_Profil_'.$pasien['identitas']->id.'.pdf';
+            if (file_exists($param_download['path'] . $filename)) 
+                unlink($param_download['path'] . $filename);
+            $pdf->save($param_download['path'] . $filename);
+            return $filename;
+        }
         return $pdf->stream($filename);
 
         // return view('pasien.print-data', $data);

@@ -51,5 +51,9 @@ class  TarifKategori extends Model
 
 		return $nama;
 	}
+	public function tarif_master()
+	{
+		return $this->hasMany('App\Models\Keuangan\TarifMaster','kategori_id','id');
+	}
 	
 }

@@ -20,8 +20,8 @@ class ViewController extends Controller
 		if(!empty($rekonsiliasi_awal_data->id)) $rekonsiliasi_awal = $rekonsiliasi_awal_data->id;
 		else $rekonsiliasi_awal = null;
 
-		$resep = Resep::where('kasus_id',$kasus->id)->with('resepDetail')->get();
-		$resep_pulang = Resep::where('kasus_id',$kasus->id)->where('jenis_resep','pulang')->with('resepDetail')->get();
+		$resep = Resep::with('resepDetail.item_template.satuan_kekuatan', 'resepDetail.item_template.rute')->where('kasus_id',$kasus->id)->get();
+		$resep_pulang = Resep::with('resepDetail.item_template.satuan_kekuatan', 'resepDetail.item_template.rute')->where('kasus_id',$kasus->id)->where('jenis_resep','pulang')->get();
 
 		$data['reseps'] = $resep;
 		$data['resep_pulang'] = $resep_pulang;
@@ -35,8 +35,29 @@ class ViewController extends Controller
 
 	public function print($nomor_kasus)
 	{
-		$data['kasus'] = Kasus::where('nomor_kasus',$nomor_kasus)->first();
-		$data['rekonsiliasi'] = RekonsiliasiObat::where('kasus_id',$data['kasus']->id)->with('details','creator','updater')->get();
+		$eager = [
+			'details',
+			'creator',
+			'updater',
+			'details.item_template',
+			'details.item_template.kelas_terapi',
+			'kasus.creator'
+		];
+
+		$data['ttd_path'] = '';
+		$kasus = Kasus::with('identitas')->where('nomor_kasus',$nomor_kasus)->first();
+		$data['kasus'] = $kasus;
+		$rekonsiliasi = RekonsiliasiObat::where('kasus_id',$data['kasus']->id)->with($eager)->get();
+		$data['rekonsiliasi'] = $rekonsiliasi;
+		if (count($rekonsiliasi) > 0) {
+			$data['ttd_path'] = $rekonsiliasi[0]->ttd_path ?? '';
+			$data['ttd_name'] = $rekonsiliasi[0]->ttd_name ?? '';
+		}
+
+		if (!empty($kasus->identitas->AlergiObatArray)) {
+			$data['alergi_obat'] = implode(', ', $kasus->identitas->AlergiObatArray);
+		}
+
 		$pdf = DOMPDF::loadView('kasus.farmasi.print-rekonsiliasi',$data);
 		return $pdf->stream('print.pdf');
 

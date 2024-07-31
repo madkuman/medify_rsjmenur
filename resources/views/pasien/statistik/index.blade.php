@@ -1230,6 +1230,22 @@ Laporan & Statistik
                     </div>
                 </div>
             </div>
+
+            <div class="col-lg-3 col-sm-12">
+                <div class="block block-bordered" style="height: 285px !important">
+                    <div class="block-header">
+                        <div class="block-title text-center">
+                            Laporan Sensus Harian Rawat Inap Ruangan
+                        </div>
+                    </div>
+                    <div class="block-content block-content-full text-center">
+                        Laporan Sensus Harian Rawat Inap Ruangan
+                    </div>
+                    <div class="block-content block-content-full text-center">
+                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#modal-sensus-harian-ranap-ruangan">Buat Laporan</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

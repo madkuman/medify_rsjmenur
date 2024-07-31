@@ -15,9 +15,7 @@
         <tr>
             <th>GOL TARIF</th>
             <th>UNIT</th>
-            @php $array_bln = ['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGS','SEP','OKT','NOV','DES'];
-            @endphp
-            @foreach($array_bln as $item)
+            @foreach($header as $item)
             <th>{{$item}}</th>
             @endforeach
             <th>JML</th>
@@ -40,7 +38,7 @@
                 @foreach($data_jumlah as $item_jumlah)
                 <td>{{$item_jumlah}}</td>
                 @endforeach
-                <td>=SUM(C{{$row}}:N{{$row}})</td>
+                <td>=SUM(C{{$row}}:{{excel_column($count_column-1)}}{{$row}})</td>
             </tr>
             @php $row++ @endphp
             @endforeach

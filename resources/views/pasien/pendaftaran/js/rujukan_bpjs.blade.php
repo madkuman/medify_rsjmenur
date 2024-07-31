@@ -64,11 +64,13 @@
                     id:"",
                     "text":""
                 });
-                for (var i = 0; i < res.length ; i++) {
-                    option.push({
-                        id: res[i].kode,
-                        text: res[i].nama
-                    })
+                if (res !== undefined) {
+                    for (var i = 0; i < res.length; i++) {
+                        option.push({
+                            id: res[i].kode,
+                            text: res[i].nama
+                        })
+                    }
                 }
                 $('#provinsi_laka').select2({
                     data : option

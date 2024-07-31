@@ -106,10 +106,11 @@ class LaporanWaktuPelayananExcel implements FromView, WithEvents, WithColumnForm
 
     public function columnFormats(): array
     {
-        return [
-            'A8:N8' => '#,##0',
-            'A9:N9' => '0%',
-        ];
+        // return [
+        //     'A8:N8' => '#,##0',
+        //     'A9:N9' => '0%',
+        // ];
+        return [];
     }
 
     public function __construct($data)

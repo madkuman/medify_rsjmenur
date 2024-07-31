@@ -16,14 +16,14 @@
 		left: calc(50vw - 60px);
 		">Start</button>
 		</div>
-		<div class="hero-static content content-full flat-transparent invisible" data-toggle="appear" data-class="animated fadeIn">
+		{{-- <div class="hero-static content content-full flat-transparent invisible" data-toggle="appear" data-class="animated fadeIn"> --}}
 			<div class="animated fadeIn" id="index">
 				@include('farmasi.screen.content.screen-index')
 			</div>
 			{{-- <div class="animated fadeIn d-none" id="task">
                 @include('farmasi.checkin.content.screen-task')
             </div> --}}
-		</div>
+		{{-- </div> --}}
 	</div>
 @endsection
 

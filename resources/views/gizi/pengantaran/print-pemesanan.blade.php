@@ -88,10 +88,10 @@
             <img width="100" src="{{asset('assets/img/logo-rs.jpg')}}">
         </td>
         <td width="75%" align="center" class="va-mid">
-            <b>RUMAH SAKIT ANGKATAN LAUT <br> Dr. MIDIYATO SURATANI TANJUNGPINANG</b> <br>
-            Jl. Ciptadi No. 1 Tanjungpinang <br>
-            Telp/Fax. 0771-21428 / 0771-318941 <br>
-            E-Mail: Http//rumkitaldr.midiyato@yahoo.co.id
+            <b>RUMAH SAKIT JIWA MENUR <br> PEMERINTAH PROVINSI JAWA TIMUR</b> <br>
+            Jl. Menur 120, Surabaya <br>
+            Telp/Fax. 031-5021635 / 031-5021636/7 <br>
+            E-Mail: rsjmenur@jatimprov.go.id
         </td>
     </tr>
 </table>

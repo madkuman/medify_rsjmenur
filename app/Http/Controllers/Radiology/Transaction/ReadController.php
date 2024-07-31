@@ -286,4 +286,9 @@ class ReadController extends Controller
         return $photos;
     }
 
+    public function getBmhp($transaksi_id){
+        $all_data = app('App\Http\Controllers\Radiology\TransaksiBmhp\ReadController')->getJoinedDatabyTransaksi($transaksi_id);
+        return $all_data;
+    }
+
 }

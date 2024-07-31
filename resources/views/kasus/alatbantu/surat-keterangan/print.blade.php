@@ -88,7 +88,14 @@ Surat Keterangan Istirahat / Dirawat / Sakit - {{$kasus->identitas->nama}}
         <tr>
             <td>Jenis Kelamin</td>
             <td>:</td>
-            <td>{{ $kasus->identitas->jenis_kelamin == 'L' ? 'Laki' : $kasus->identitas->jenis_kelamin == 'P' ? 'Perempuan' : '...............................' }}</td>
+        {{--    <td>{{ $kasus->identitas->jenis_kelamin == 'L' ? 'Laki' : $kasus->identitas->jenis_kelamin == 'P' ? 'Perempuan' : '...............................' }}</td> --}}
+		<td>
+			@if($kasus->identitas->jenis_kelamin == "L" || $kasus->identitas->jenis_kelamin == "P")
+			{{$kasus->identitas->jenis_kelamin === "L" ? "Laki-laki" : "Perempuan"}}
+			@else
+			{{".............................."}}
+			@endif
+		</td>
         </tr>
         <tr>
             <td>Umur</td>

@@ -14,4 +14,7 @@ return [
         'oralit' => $data->dkk_34_laporan_bulanan_diare->oralit ?? [],
         'rl' => $data->dkk_34_laporan_bulanan_diare->rl ?? [],
     ],
+    'pasien_baru' => [
+        'enable_pasien_laborat' => $data->pasien_baru->enable_pasien_laborat ?? 0,
+    ],
 ];

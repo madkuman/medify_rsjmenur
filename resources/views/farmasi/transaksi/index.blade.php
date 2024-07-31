@@ -143,6 +143,10 @@ Farmasi Transaksi
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label for="penyedia">No. Antrian </label>
+                                <input type="text" name="nomor_antrian" id="filter-nomor_antrian" class="form-control" placeholder="Masukan Nomor Antrian">
+                            </div>
                         </div>
                         <div class="col-6">
                             <label for="penyedia">STATUS </label><br>
@@ -152,6 +156,11 @@ Farmasi Transaksi
                                     <input type="checkbox" class="css-control-input" name="status_selesai" id="status_selesai" @if($status_selesai) checked @endif>
                                     <input type="hidden" name="selesai">
                                     <span class="css-control-indicator"></span> Selesai
+                                </label><br>
+                                <label class="css-control css-control-lg css-control-primary css-checkbox">
+                                    <input type="checkbox" class="css-control-input" name="status_dikerjakan" id="status_dikerjakan" @if($status_dikerjakan) checked @endif>
+                                    <input type="hidden" name="dikerjakan">
+                                    <span class="css-control-indicator"></span> Dikerjakan
                                 </label><br>
                                 <label class="css-control css-control-lg css-control-primary css-checkbox">
                                     <input type="checkbox" class="css-control-input" name="status_menunggu" id="status_menunggu" @if($status_menunggu) checked @endif>
@@ -176,10 +185,37 @@ Farmasi Transaksi
                                         <input type="checkbox" class="css-control-input" name="cito" id="cito">
                                         <span class="css-control-indicator"></span> Cito
                                     </label><br>
+					<label class="css-control css-control-lg css-control-primary css-checkbox">
+						<input type="checkbox" class="css-control-input" name"eksekutif" id="eksekutif">
+						<span class-"css-control-indicator"></span> Eksekutif
+					</label><br>
                                     <label class="css-control css-control-lg css-control-primary css-checkbox">
                                         <input type="checkbox" class="css-control-input" name="is_video" id="telekonsultasi">
                                         <span class="css-control-indicator"></span> Telekonsultasi
                                     </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="">ASAL PELAYANAN</label><br>
+                                    <div class="form-group">
+                                        <label class="css-control css-control-lg css-control-primary css-checkbox">
+                                            <input type="checkbox" class="css-control-input" name="asal_pelayanan_igd" @if($asal_pelayanan_igd) checked @endif>
+                                            <span class="css-control-indicator"></span> IGD
+                                        </label>
+                                        <label class="css-control css-control-lg css-control-primary css-checkbox">
+                                            <input type="checkbox" class="css-control-input" name="asal_pelayanan_rawat_inap" @if($asal_pelayanan_rawat_inap) checked @endif>
+                                            <span class="css-control-indicator"></span> Rawat Inap
+                                        </label>
+                                        <label class="css-control css-control-lg css-control-primary css-checkbox">
+                                            <input type="checkbox" class="css-control-input" name="asal_pelayanan_rawat_jalan" @if($asal_pelayanan_rawat_jalan) checked @endif>
+                                            <span class="css-control-indicator"></span> Rawat Jalan
+                                        </label>
+                                        <label class="css-control css-control-lg css-control-primary css-checkbox">
+                                            <input type="checkbox" class="css-control-input" name="asal_pelayanan_lainnya" @if($asal_pelayanan_lainnya) checked @endif>
+                                            <span class="css-control-indicator"></span> Lainnya
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

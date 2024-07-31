@@ -13,6 +13,9 @@
             <th colspan="15">Farmasi : {{$farmasi}}</th>
         </tr>
         <tr>
+            <th colspan="15">Lokasi : {{$lokasi_text}}</th>
+        </tr>
+        <tr>
             <td></td>
         </tr>
     </thead>
@@ -37,7 +40,7 @@
             <th>NOV</th>
             <th>DES</th>
         </tr>
-        @php $row = 8 @endphp
+        @php $row = 9 @endphp
         @foreach($data as $nama => $item)
         <tr>
             <td>{{$loop->iteration}}</td>
@@ -50,7 +53,7 @@
             @endif
 
             <td>
-                {{$value}}
+                {{round($value,2)}}
             </td>
             @endforeach
             <td>

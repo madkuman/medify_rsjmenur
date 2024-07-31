@@ -23,6 +23,10 @@ class Farmasi extends Model
     return $this->hasMany('App\Models\Farmasi\AturanHarga', 'farmasi_id', 'id');
   }
 
+  public function aturan_embalase() {
+    return $this->hasMany('App\Models\Farmasi\AturanEmbalase', 'farmasi_id', 'id');
+  }
+
   public function aturan_shift() {
     return $this->hasMany('App\Models\Farmasi\AturanShift', 'farmasi_id', 'id');
   }

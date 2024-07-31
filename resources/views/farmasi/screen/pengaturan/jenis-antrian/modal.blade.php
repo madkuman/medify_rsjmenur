@@ -30,6 +30,23 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
+                                    <label for="penyedia">Jenis Resep Antrian</label>
+                                    <select class="form-control js-select2" name="jenis_resep_antrian" style="width: 100%" required>
+                                        <option value="0">Semua</option>
+                                        <option value="1">Racikan</option>
+                                        <option value="2">Non Racikan</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="penyedia">Lokasi Departemen</label>
+                                    <select class="form-control js-select2" name="lokasi_departemen_id" style="width: 100%" required>
+                                        <option value="0">Semua</option>
+                                        @foreach ($lokasi_departemen_khusus as $item)
+                                            <option value="{{$item->id}}">{{$item->nama}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
                                     <label>File Sound</label>
                                     <input type="file" accept=".mp3" name="sound" class="form-control">
                                 </div>

@@ -17,12 +17,12 @@
         <td>SEP</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_sep == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_sep != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -30,12 +30,12 @@
         <td>Fotokopi Kartu</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_fotokopi_kartu == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_fotokopi_kartu != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -43,12 +43,12 @@
         <td>Identitas Pasien (Nama, Domisili, Tgl Lahir)</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_identitas_pasien == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_identitas_pasien != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -56,12 +56,12 @@
         <td>Paraf Dokter</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_paraf_dokter == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_paraf_dokter != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -74,12 +74,12 @@
         <td>Nama, Bentuk, Kekuatan</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_nama_obat == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_nama_obat != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -87,12 +87,12 @@
         <td>Jumlah Obat</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_jumlah_obat == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_jumlah_obat != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -100,12 +100,12 @@
         <td>Signa / Aturan Pakai</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_signa_obat == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_signa_obat != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -118,12 +118,12 @@
         <td>Tepat Indikasi</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_tepat_indikasi == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_tepat_indikasi != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -131,12 +131,12 @@
         <td>Tepat Dosis</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_tepat_dosis == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_tepat_dosis != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -144,12 +144,12 @@
         <td>Tepat Rute</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_tepat_rute == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_tepat_rute != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -157,12 +157,12 @@
         <td>Tepat Waktu</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_tepat_waktu == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_tepat_waktu != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -170,12 +170,12 @@
         <td>Tidak Duplikasi Terapi</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_duplikasi_terapi == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_duplikasi_terapi != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -183,12 +183,12 @@
         <td>Tidak Ada Alergi Obat & ROTD</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_alergi_obat == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_alergi_obat != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -196,12 +196,12 @@
         <td>Tidak Ada Interaksi Obat</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_interaksi_obat == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_interaksi_obat != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>
@@ -209,12 +209,12 @@
         <td>Tidak Ada Kontra Indikasi</td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_kontra_indikasi == '1' || empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
         <td class="bordered text-center">
             @if($transaksi->analisa_resep_kontra_indikasi != 1 && !empty($transaksi->analisa_resep_at))
-            X
+            <span style="font-family: DejaVu Sans, sans-serif;">✔</span>
             @endif
         </td>
     </tr>

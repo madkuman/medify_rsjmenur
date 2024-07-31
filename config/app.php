@@ -210,7 +210,7 @@ $config = [
         UxWeb\SweetAlert\SweetAlertServiceProvider::class,
         Jenssegers\Date\DateServiceProvider::class,
         App\Providers\DuskServiceProvider::class,
-       // LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
+        LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
     ],
 
     /*
@@ -251,7 +251,7 @@ $config = [
         'Mail' => Illuminate\Support\Facades\Mail::class,
         'Notification' => Illuminate\Support\Facades\Notification::class,
         'Password' => Illuminate\Support\Facades\Password::class,
-        //'PdfMerger' => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
+        'PdfMerger' => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
         'Queue' => Illuminate\Support\Facades\Queue::class,
         'Redirect' => Illuminate\Support\Facades\Redirect::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,
@@ -313,6 +313,9 @@ $config = [
     'applicare_cons_id' => ($hospital_data->applicare_cons_id ?? ''),
     'applicare_secret' => ($hospital_data->applicare_secret ?? ''),
 
+    'longitude' => ($hospital_data->longitude ?? null),
+    'latitude' => ($hospital_data->latitude ?? null),
+    
     'bpjs_enable' => ($hospital_data->bpjs_enable ?? false),
     'bpjs_stage' => ($hospital_data->bpjs_stage ?? 'development'),
     'inacbg_url' => ($hospital_data->inacbg_url ?? 'http://belajarkoding-inacbg.com/E-Klaim/ws.php?mode=debug'),
@@ -330,6 +333,8 @@ $config = [
 
     'kepegawaian_cuti_min_pengajuan_hari' => ($kepegawaian_data->cuti_min_pengajuan_hari ?? 30),
     'kepegawaian_cuti_max_pengajuan_hari' => ($kepegawaian_data->cuti_max_pengajuan_hari ?? 90),
+
+    'fitur_kasus_resep_kategori' => env('FITUR_KASUS_RESEP_KATEGORI', 0), 
 ];
 
 if(($hospital_data->debug ?? false))

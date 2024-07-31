@@ -11,7 +11,7 @@
                     </div>
                 </div>
                 <div class="block-content">
-                    <form class="js-validation-be-contact" action="{{url('kasus')}}/{{ $nomor_kasus }}/datamedis/cppt/create" method="post">
+                    <form class="js-validation-be-contact" action="{{url('kasus')}}/{{ $nomor_kasus }}/datamedis/cppt/create" method="post" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="">
                             <div class="">
@@ -81,6 +81,12 @@
                                 </label>
                             </div>
                             --}}
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12" for="">File Foto / Video</label>
+                            <div class="col-12">
+                                <input type="file" class="form-control" id="cppt-create-files" name="cppt_files[]" multiple >
+                            </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-12 text-center">

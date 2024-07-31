@@ -235,6 +235,97 @@
 					<td class="align-top border-bottom">:</td>
 					<td class="align-top border-bottom">`+ rencana_edukasi_pasien_tanggal + `</td>
 				</tr>
+				<tr>
+					<td class="align-top border-bottom" colspan="3"><h6 class="mb-0 mt-20">Hambatan Dalam Belajar</h6></td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Pendengaran</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ hambatan_pendengaran + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Budaya</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ hambatan_Budaya + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Penglihatan</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ hambatan_penglihatan + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Agama</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ hambatan_Agama + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Kognitif</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ hambatan_kognitif + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Emosi</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ hambatan_Emosi + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Fisik</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ hambatan_Fisik + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Bahasa</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ hambatan_Bahasa + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Hambatan Lain</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ hambatan_lain + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Penerjemah</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ penerjemah + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom" colspan="3"><h6 class="mb-0 mt-20">Kebutuhan Pembelajaran Pasien</h6></td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Diagnosa & Manajemen</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ kebutuhan_diagnosa + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Manajemen Nyeri</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ kebutuhan_manajemen + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Obat-obatan</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ kebutuhan_obat + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Diet dan Nutrisi</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ kebutuhan_diet + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Perawatan Luka</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ kebutuhan_perawatan + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Rehabilitas</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ kebutuhan_rehabilitas + `</td>
+				</tr>
+				<tr>
+					<td class="align-top border-bottom">Kebutuhan Belajar Lain</td>
+					<td class="align-top border-bottom">:</td>
+					<td class="align-top border-bottom">`+ kebutuhan_lain + `</td>
+				</tr>
 			</table>
 		</td>
 		<td width="50%" style="padding-left: 10px; padding-right: 10px; vertical-align: top">

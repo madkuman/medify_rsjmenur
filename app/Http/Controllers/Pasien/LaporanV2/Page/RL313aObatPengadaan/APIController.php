@@ -32,7 +32,7 @@ class APIController extends Controller
 		$limit = $request->limit;
 
 		$generik = "generik";
-        $formularium = "formularium";
+        $formularium = "fornas";
         $non_generik = "non-generik";
 
         $all_tersedia = Items::select('items.id','items.jumlah','kategori.slug')
@@ -63,7 +63,7 @@ class APIController extends Controller
 		
 		$new_item = new \StdClass();
         $new_item->no = 1;
-        $new_item->golongan = 'Obat Generik (Formularium+Non Formularium)';
+        $new_item->golongan = 'Obat Generik (Fornas + Non Fornas)';
 		$new_item->template = $generik_template ?? 0;
 		$new_item->tersedia = $generik_tersedia ?? 0;
 		$new_item->formularium_tersedia = $generik_formularium_tersedia ?? 0;
@@ -72,7 +72,7 @@ class APIController extends Controller
 
 		$new_item = new \StdClass();
     	$new_item->no = 2;
-        $new_item->golongan = 'Obat Non Generik Formularium';
+        $new_item->golongan = 'Obat Non Generik Fornas';
 		$new_item->template = $non_generik_formularium_template ?? 0;
 		$new_item->tersedia = $non_generik_formularium_tersedia ?? 0;
 		$new_item->formularium_tersedia = $non_generik_formularium_tersedia ?? 0;
@@ -81,7 +81,7 @@ class APIController extends Controller
 
 		$new_item = new \StdClass();
     	$new_item->no = 3;
-        $new_item->golongan = 'Obat Non Generik Non Formularium';
+        $new_item->golongan = 'Obat Non Generik Non Fornas';
 		$new_item->template = $non_generik_template ?? 0;
 		$new_item->tersedia = $non_generik_tersedia ?? 0;
 		$new_item->formularium_tersedia = 0;

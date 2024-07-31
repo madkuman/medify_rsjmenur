@@ -141,6 +141,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#tabs-permintaan-rujuk">Permintaan Rujuk</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tabs-general-consent">General Consent</a>
+                        </li>
                     </ul>
                     <div class="block-content tab-content">
                         <div class="tab-pane active" id="tabs-identitas" role="tabpanel">
@@ -185,7 +188,9 @@
                         <div class="tab-pane" id="tabs-permintaan-rujuk" role="tabpanel">
                             @include('pasien.profile.permintaan-rujuk')
                         </div>
-                        
+                        <div class="tab-pane" id="tabs-general-consent" role="tabpanel">
+                            @include('pasien.profile.general-consent.index')
+                        </div>
                     </div>
                 </div>
 
@@ -195,7 +200,7 @@
 </main>
 
 @include('pasien.pembayaran.delete-modal')
-
+@include('kasus.asesmen.general-consent.modal-ttd')
 @endsection
 
 @section('angular')
@@ -252,5 +257,30 @@
         $('#formFilter').attr("hidden", true);
         $('#btnFilter').attr("hidden", false);
     })
+</script>
+@include('kasus.asesmen.general-consent.js-ttd')
+<script type="text/javascript">
+	$(".deleteBtn").click(function(e){
+		e.preventDefault();
+		id = $(this).data("id");
+		$("#deleteInputId").val(id);
+		swal({
+			title: "Hapus",
+			text: "Apakah anda yakin akan menghapus data ini?",
+			showCancelButton: true,
+			reverseButtons: true,
+			type: "warning",
+			confirmButtonClass: "btn btn-danger",
+			cancelButtonClass: "btn btn-default",
+			confirmButtonText: "Hapus",
+			cancelButtonText: "Kembali",
+			closeOnConfirm: false
+		}).then(function(result) {
+			if(result.value)
+			{
+				$("#formDelete").submit();
+			}
+		});
+	});
 </script>
 @endsection

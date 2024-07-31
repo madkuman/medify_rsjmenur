@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
         //
         Commands\TambahTagihanKamar::class,
         Commands\BarangFarmasi::class,
+        Commands\Medify\MigrateRecursive::class,
         Commands\FarmasiBarangInit::class,
         Commands\RawatInap\Statistik\DataHarian::class,
         Commands\MappingCaraPulangStatusPulang::class,
@@ -55,7 +56,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-        $schedule->command('tagihan:kamar')->dailyAt('13:00');
+        $schedule->command('tagihan:kamar')->dailyAt('00:01');
         // $schedule->command('farmasi:barang')->dailyAt('07:00');
         $schedule->command('kasus:notifgizi')->dailyAt('07:00');
         $schedule->command('kasus:tindakan-subscribe')->dailyAt("00:01");
@@ -76,7 +77,7 @@ class Kernel extends ConsoleKernel
         #start queue work
         $schedule->command('queue:start-work')->everyMinute();
         
-        $schedule->command('kasus:checkout-rajal')->dailyAt('22:00'); // krs & checkout rawatjalan pembayaran bpjs dan asuransi yang belum tercheckout
+        $schedule->command('kasus:checkout-rajal')->dailyAt('23:00'); // krs & checkout rawatjalan pembayaran bpjs dan asuransi yang belum tercheckout
         
         $schedule->command('rawatinap:data-harian')->dailyAt('23:59');
         $schedule->command('rawatinap:create-statistik-harian')->dailyAt('23:30');
@@ -120,8 +121,16 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('thirdparty:jkn-auto-update-task-id-5')->cron('*/5 * * * *');
 
+        # bridging satusehat
+        if (config('medify.third-party.satusehat.on', 0)) {
+            $schedule->command('satusehat:bundle-encounter-condition')->everyMinute()->unlessBetween('07:00', '21:00');
+            $schedule->command('satusehat:bundle-encounter-condition --retry --wait_th=15')->everyMinute()->unlessBetween('07:00', '21:00');
+        }
+
         #COVID19
         $schedule->command('kasus:covid19-statistik-update')->hourly();
+
+        $schedule->command('custom:artisan_call --tries=5')->everyMinute();
 
     }
 

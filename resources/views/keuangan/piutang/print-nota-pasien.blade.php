@@ -179,7 +179,7 @@
             @else
             <td>Dokter</td>
             <td>:</td>
-            <td>@if(!empty($piutang->kasusTagihan)){{$piutang->kasusTagihan->kasus->admin->user->name ?? '-'}} @else {{$piutang->dokter->name ?? '-'}} @endif</td>
+            <td>@if(!empty($piutang->kasusTagihan)){{$piutang->kasusTagihan->kasus->admin->user->name ?? '-'}} @elseif(!empty($piutang->transaksi_rawat_jalan)) {{$piutang->transaksi_rawat_jalan->dokter->name ?? '-'}} @else {{$piutang->dokter->name ?? '-'}} @endif</td>
             @endif
             <td>Spesialisasi</td>
             <td>:</td>

@@ -74,6 +74,13 @@ class ReadController extends Controller
         return $lokasi;
     }
 
+    public function getLokasiByDepartemenSlugExcept($array_slug)
+    {
+        $dept = LokasiDepartemen::whereIn('slug',$array_slug)->pluck('id')->toArray();
+        $lokasi = Lokasi::whereNotIn('lokasi_departemen_id',$dept)->get();
+        return $lokasi;
+    }
+
     public function getLokasibyDepartemenBeauty($slugs)
     {
         /*Untuk Select2 atau select filter*/

@@ -1,19 +1,19 @@
 <div class="modal" id="modal-normal" role="dialog" aria-labelledby="modal-normal" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form method="POST" enctype="multipart/form-data" action="{{url('farmasi/'.session('farmasi')->slug.'/katalog')}}/edit">
+        <form method="POST" enctype="multipart/form-data" action="{{url('farmasi/'.session('farmasi')->slug.'/master-bahan-aktif')}}/edit">
             {{csrf_field()}}
-            <input type="hidden" name="id" value="{{$katalog->id}}">
+            <input type="hidden" name="id" value="{{$master_bahan_aktif->id}}">
             <div class="modal-content">
                 <div class="block block-themed block-transparent mb-0">
                     <div class="block-header">
-                        <h3 class="block-title">Ubah Katalog</h3>
+                        <h3 class="block-title">Ubah Bahan Aktif</h3>
                     </div>
                     <div class="block-content">
                         <div class="row">
                             <div class="col">
                                 <div class="form-group">
-                                    <label class="control-label">Nama Katalog</label>
-                                    <input type="text" class="form-control" name="nama" placeholder="Nama Katalog" value="{{$katalog->nama}}" required>
+                                    <label class="control-label">Nama Bahan Aktif</label>
+                                    <input type="text" class="form-control" name="nama" placeholder="Nama Bahan Aktif" value="{{$master_bahan_aktif->nama}}" required>
                                 </div>
                             </div>
                         </div>

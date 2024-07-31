@@ -66,6 +66,9 @@ class LaporanSuratPemesananMakananController extends Controller
             $data_tambahan[$jenis->nama][] = PemesananDetail::whereBetween('untuk_tanggal', [$date_start, $date_end])->where('makanan_tambahan_ids','LIKE', '%"'.$jenis->id.'"%')->where('waktu_makan_id', $waktu_makan->id)->where('gender', 2)->count();
             $data_tambahan[$jenis->nama][] = PemesananDetail::whereBetween('untuk_tanggal', [$date_start, $date_end])->where('makanan_tambahan_ids','LIKE', '%"'.$jenis->id.'"%')->where('waktu_makan_id', $waktu_makan->id)->count();
         }
+
+
+
         $data['data_utama'] =  $data_utama;
         $data['data_tambahan'] =  $data_tambahan;
         $data['waktu_makan'] = $waktu_makan;
@@ -74,6 +77,59 @@ class LaporanSuratPemesananMakananController extends Controller
         $data['jenis_makanan_tambahan'] = $jenis_makanan_tambahan;
         $data['date'] = $date_start;
         $data['colspan'] =  $colspan;
+        $data = $this->getSubtotal($data);
         return $data;
+    }
+
+    private function getSubtotal($raw_data)
+    {
+        $raw_data['utama_per_gender'] = [];
+        $raw_data['utama_total'] = [];
+        foreach($raw_data['data_utama'] as $diet)
+        {
+            foreach($diet as $index => $data_diet)
+            {
+                if(!isset($raw_data['utama_per_gender'][$index])) $raw_data['utama_per_gender'][$index] = 0;
+                $raw_data['utama_per_gender'][$index] += $data_diet;        
+            }
+        }
+        $raw_data['utama_total'] = [];
+        foreach($raw_data['utama_per_gender'] as $index => $temp_subtotal)
+        {
+            if($index%2==0)
+            {
+                $counter = 1;
+                $current_value = $raw_data['utama_per_gender'][$index];
+                $next_value = $raw_data['utama_per_gender'][$index+1] ?? 0;
+                $raw_data['utama_total'][] = $current_value + $next_value;
+            }
+        }
+
+        /*---TAMBAHAN----*/
+        
+        $raw_data['tambahan_per_gender'] = [];
+        $raw_data['tambahan_total'] = [];
+        foreach($raw_data['data_tambahan'] as $diet)
+        {
+            foreach($diet as $index => $data_diet)
+            {
+                if(!isset($raw_data['tambahan_per_gender'][$index])) $raw_data['tambahan_per_gender'][$index] = 0;
+                $raw_data['tambahan_per_gender'][$index] += $data_diet;        
+            }
+        }
+
+        $raw_data['tambahan_total'] = [];
+        foreach($raw_data['tambahan_per_gender'] as $index => $temp_subtotal)
+        {
+            if($index%2==0)
+            {
+                $counter = 1;
+                $current_value = $raw_data['tambahan_per_gender'][$index];
+                $next_value = $raw_data['tambahan_per_gender'][$index+1] ?? 0;
+                $raw_data['tambahan_total'][] = $current_value + $next_value;
+            }
+        }
+        return $raw_data;
+
     }
 }

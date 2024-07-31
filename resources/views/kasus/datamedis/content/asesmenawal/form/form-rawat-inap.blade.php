@@ -347,7 +347,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row mb-5">
-                                    <label class="col-12">Yang menemani pasien di RS</label>
+                                    {{--<label class="col-12">Yang menemani pasien di RS</label>--}}
                                     <div class="col-12">
                                         <input type="text" class="form-control" name="yang_menemani_pasien_di_rs">
                                     </div>
@@ -358,7 +358,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row mb-5">
-                                    <label class="col-12">Saat ini apakah pasien membutuhkan pelayanan rohani?</label>
+                                    {{--<label class="col-12">Saat ini apakah pasien membutuhkan pelayanan rohani?</label>--}}
                                     <div class="col-12">
                                         <input type="text" class="form-control" name="kebutuhan_pelayanan_rohani_pasien">
                                     </div>
@@ -369,7 +369,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row mb-5">
-                                    <label class="col-12">Penanggung jawab biaya perawatan pasien</label>
+                                    {{--<label class="col-12">Penanggung jawab biaya perawatan pasien</label>--}}
                                     <div class="col-12">
                                         <input type="text" class="form-control" name="penanggung_jawab_biaya_perawatan_pasien">
                                     </div>
@@ -1044,7 +1044,7 @@
                             </div>
                             <div class="col-12"><hr></div>
                             <div class="col-12">
-                                <h5 class="mb-5 mt-10">Asesmen Awal Resiko Jatuh (Skala Edmonson)</h5>
+                                <h5 class="mb-5 mt-10">Skrining Risiko Jatuh</h5>
                             </div>
                             <div class="col-12">
                                 <h6 class="pt-15 mb-5">Usia</h6>
@@ -1770,7 +1770,7 @@
                             <div class="col-12"><br></div>
                             <hr class="col-11">
                             <div class="col-12">
-                                <h5 class="mb-5 mt-10">Skrining Gizi Awal</h5>
+                                <h5 class="mb-5 mt-10">Risiko Nutritional</h5>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row mb-5">
@@ -1868,7 +1868,7 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="form-group row mb-5">
-                                    <label class="col-12">Masalah Keperawatan</label>
+                                    <label class="col-12">Kebutuhan Edukasi</label>
                                     <div class="col-12">
                                         <textarea class="form-control" name="masalah_keperawatan"></textarea>
                                     </div>

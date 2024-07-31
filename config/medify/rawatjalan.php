@@ -12,4 +12,7 @@ return [
     'nomor_antrian' => [
         'per_dokter' => $data->nomor_antrian->per_dokter ?? 0,
     ],
+    'auto_krs_dan_checkout' => [
+        'auto_checkout' => $data->auto_krs_dan_checkout->auto_checkout ?? 0,
+    ],
 ];

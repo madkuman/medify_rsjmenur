@@ -46,4 +46,9 @@ class Diagnosis extends Model
     {
         return $this->hasOne('App\Models\Kasus\ICD10', 'id', 'icd_10')->where('bpjs_support', 1);
     }
+
+    public function satusehat_condition()
+    {
+        return $this->hasOne(\App\Models\ThirdPartySatuSehat\Condition::class, 'diagnosis_id', 'id');
+    }
 }

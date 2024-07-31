@@ -129,5 +129,20 @@
             </a>
         </li>
 
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/surat-pernyataan-kesanggupan-pembiayaan">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Surat Pernyataan Kesanggupan Pembiayaan</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Surat Pernyataan Kesanggupan Pembiayaan</h5>
+                    <p class="desc">Surat Pernyataan Kesanggupan Pembiayaan</p>
+                </div>
+            </a>
+        </li>
+
     </ul>
 </div>

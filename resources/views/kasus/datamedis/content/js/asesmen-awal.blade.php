@@ -8,7 +8,10 @@
 		var item = $(this).data('item');
 		var entry = Object.entries(item);
 		removeAllIcd10();
-		if(item.jenis == "Gawat Darurat"){
+
+        $('#content-daftar-obat').find('.daftar-obat-row-item').not(':first').remove();
+
+        if(item.jenis == "Gawat Darurat"){
 			for (var i = 0; i < entry.length; i++) {
 				var key = entry[i][0];
 				var val = entry[i][1];
@@ -171,17 +174,28 @@
 			$('#modal-dokter-rawat-jalan').modal('toggle');
 		}else
 		if(item.jenis == "Rawat Inap Dokter"){
+            let obat = [];
 			for (var i = 0; i < entry.length; i++) {
 				var key = entry[i][0];
 				var val = entry[i][1];
 				if(val != null && val != ""){
 					if(key == "nyeri_scala"){
 						editNyeriScalaSlider("modal-rawat-inap",val)						
-					}else if(key == 'icd_10_1' || key == 'icd_10_2' || key == 'icd_10_3'){
+					} else if(key == 'icd_10_1' || key == 'icd_10_2' || key == 'icd_10_3'){
                         val = val.split('; ');
                         $.each( val, function( index, value ) {
                             $(`#modal-dokter-rawat-inap select[name="${key}[]"]`).append(new Option(value,value,true, true));
                         });
+                    } else if (key == 'obat_nama') {
+                        obat['obat_nama'] = val.split('; ');
+                    } else if (key == 'dosis') {
+                        obat['dosis'] = val.split('; ');
+                    } else if (key == 'jumlah') {
+                        obat['jumlah'] = val.split('; ');
+                    } else if (key == 'rute') {
+                        obat['rute'] = val.split('; ');
+                    } else if (key == 'aturan_pakai') {
+                        obat['aturan_pakai'] = val.split('; ');
                     }
 					else{
 						$(`#modal-dokter-rawat-inap textarea[name="${key}"]`).html(val);
@@ -189,6 +203,14 @@
 						$(`#modal-dokter-rawat-inap :text[name="${key}"]`).val(val);
 						$(`#modal-dokter-rawat-inap :checkbox[name="${key}"]`).prop('checked', true);
 						$(`#modal-dokter-rawat-inap :radio[name="${key}"][value="${val.toLocaleString().replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '')}"]`).prop('checked', true);
+						
+						if (key == 'reaksi_alergi_makanan' || key == 'reaksi_alergi_obat' || key == 'alergi_terhadap_makanan' || key == 'alergi_terhadap_obat') {
+							const text = val;
+							const text_arr = text.split(",");
+							text_arr.forEach(item => {
+								$(`#modal-dokter-rawat-inap :text[name="${key}"]`).addTag(item);
+							});
+						}
 					}
 				}else{
 					$(`#modal-dokter-rawat-inap select[name="${key}"]`).val(val);
@@ -201,6 +223,23 @@
 
 				}
 			}
+
+            let counter_obat = obat['obat_nama']?.length || 0;
+            if (counter_obat > 0) {
+                for (let i = 0; i < counter_obat; i++) {
+                    let current_obat = $(".daftar-obat-row-item:first");
+                    if (i > 0) {
+                        current_obat = current_obat.clone();
+                        current_obat.appendTo("#content-daftar-obat");
+                    }
+                    current_obat.find(`:text[name="obat_nama[]"]`).val(obat['obat_nama'][i] || null);
+                    current_obat.find(`:text[name="dosis[]"]`).val(obat['dosis'][i] || null);
+                    current_obat.find(`:text[name="jumlah[]"]`).val(obat['jumlah'][i] || null);
+                    current_obat.find(`:text[name="rute[]"]`).val(obat['rute'][i] || null);
+                    current_obat.find(`:text[name="aturan_pakai[]"]`).val(obat['aturan_pakai'][i] || null);
+                }
+            }
+
 			$('#modal-dokter-rawat-inap').modal('toggle');
 		}
 		else{
@@ -416,15 +455,36 @@ function calculateSelect(el, jenis){
 	var score = 0;
 	var wrapper = $(el).closest(`.form-single-wrapper`);
 
-	var select = wrapper.find(`select`);
+	if(jenis == 'skrining_gizi'){
+		var select = wrapper.find(`select:not(.hasil-resiko-skrining_gizi)`);
+	} else {
+		var select = wrapper.find(`select`);
+	};
 
-	select.each(function(i, item){
-		score += parseInt(item.value);
-	});
+	if(jenis == 'skrining_gizi'){
+		select.each(function(i, item){
+			let skor_element_ini = parseInt($(item).find(':selected').data('skor')) === NaN ? 0 : parseInt($(item).find(':selected').data('skor'));
+			score += skor_element_ini;
+		});
+		var hasil_resiko = initHasilResikoSkriningGizi(score);
+		wrapper.find(`.hasil-resiko-skrining_gizi`).val(hasil_resiko);
+	} else {
+		select.each(function(i, item){
+			score += parseInt(item.value);
+		});
+	}
 	wrapper.find(`.input-skor-${jenis}`).val(score);
 	wrapper.find(`.skor-${jenis}`).html(score);
 	wrapper.find(`.analisis-skor-${jenis}`).hide()
 	wrapper.find(`.analisis-skor-${jenis}-${score}`).show();
+}
+
+function initHasilResikoSkriningGizi(score){
+	var hasil_resiko = '';
+	if(score >= 4)  hasil_resiko = 'Berat (4-5)';
+	else if (score >= 1) hasil_resiko = 'Sedang (1-3)';
+	else if (score == 0 ) hasil_resiko = 'Rendah (0)';
+	return hasil_resiko;
 }
 
 function raptPrint(id)
@@ -669,6 +729,11 @@ function removeAllIcd10() {
         }
     }
 }
+
+
+$(document).on("click", ".btn-add-daftar-obat",function() {
+	$(".daftar-obat-row-item:first").clone().appendTo("#content-daftar-obat");
+});
 
 
 </script>

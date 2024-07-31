@@ -13,7 +13,11 @@ return array(
     */
     'show_warnings' => false,   // Throw an Exception on warnings from dompdf
     'orientation' => 'landscape',
+    "DOMPDF_TEMP_DIR" => storage_path('logs/'),
+    "DOMPDF_LOG_OUTPUT_FILE" => storage_path('logs/log.htm'),
     'defines' => array(
+        "DOMPDF_TEMP_DIR" => storage_path('logs/'),
+        "DOMPDF_LOG_OUTPUT_FILE" => storage_path('logs/log.htm'),
         /**
          * The location of the DOMPDF font directory
          *

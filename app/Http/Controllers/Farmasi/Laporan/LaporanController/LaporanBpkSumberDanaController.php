@@ -16,13 +16,30 @@ class LaporanBpkSumberDanaController extends Controller
 {
     public function get($request)
     {
-        $tahun = $request->tahun;
-        $start_date = Carbon::parse($tahun.'-01-01')->startOfYear();
-        $end_date = $start_date->copy()->endOfYear();
-        $sumber_dana = SumberDana::find($request->sumber_dana_id);
+        $start_date = Carbon::createFromFormat("d/m/Y",$request->tanggal_awal);
+        $end_date = Carbon::createFromFormat("d/m/Y",$request->tanggal_akhir);
+        $sumber_dana_id = $request->sumber_dana_id ?? 0;
+        if($sumber_dana_id == 0) {
+            $sumber_dana_kategori_ids = SumberDana::get()->pluck('kategori_id')->toArray();
+            $sumber_dana_name = "Semua";
+        }
+        else {
+            $sumber_dana_kategori_ids = SumberDana::where('id',$sumber_dana_id)->get()->pluck('kategori_id')->toArray();
+            $sumber_dana_single = SumberDana::where('id',$sumber_dana_id)->first();
+            $sumber_dana_name = $sumber_dana_single->nama;
+        }
 
-        $item_template_ids = array_unique(ItemsKategori::where('kategori_id',$sumber_dana->kategori_id)->get()->pluck('item_template_id')->toArray());
-        $farmasi_ids = Farmasi::pluck('id')->toArray();
+        $farmasi_ids = $request->farmasi_ids ?? [];
+        if(count($farmasi_ids) == 0) $farmasi_ids = Farmasi::pluck('id')->toArray();
+
+        $kategori_names = "Semua";
+        $item_template_ids_kategori_data = app('App\Http\Controllers\Farmasi\Laporan\PostController')->getTemplateIdsFromFilterKategori("inklusi",$request->kategori);
+        $item_template_ids_kategori = $item_template_ids_kategori_data["item_template_ids"];
+        $item_template_ids_sumber_dana = array_unique(ItemsKategori::where('kategori_id',$sumber_dana_kategori_ids)->get()->pluck('item_template_id')->toArray());
+        $kategori_names = $item_template_ids_kategori_data['kategori_names'];
+
+        $item_template_ids = array_intersect($item_template_ids_kategori, $item_template_ids_sumber_dana);
+        
         $items = $this->stokLog($farmasi_ids,$start_date,$end_date,$item_template_ids);
         $new_data = [];
         $last_item = '';
@@ -49,8 +66,9 @@ class LaporanBpkSumberDanaController extends Controller
             }
         }
         $data['data'] = $new_data;
-        $data['tahun'] = $tahun;
-        $data['sumber_dana'] = $sumber_dana;
+        $data['tahun'] = indonesian_date($start_date)."-".indonesian_date($end_date);
+        $data['sumber_dana_nama'] = $sumber_dana_name;
+        $data['kategori_names'] = $kategori_names;
         return $data;
     }
 

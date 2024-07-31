@@ -4,7 +4,7 @@
 			<div class="col-12">
 				<div class="block block-transparent">
 					<div class="pb-20 pt-0 text-center" style="height: 100%">
-						<h1 class="text-white">KETERSEDIAAN RAWAT INAP</h1>
+						<h1 class="text-white">KETERSEDIAAN TEMPAT TIDUR</h1>
 						<div class="row p-10 mt-20">
 							<table class="table table-bordered text-white">
 								<tr>
@@ -15,7 +15,7 @@
 								</tr>
 								<tr>
 									@foreach($bangsals[array_key_first($bangsals)] as $nama_kelas => $items)
-										<td style="width: 60px">TTL</td>
+										<td style="width: 60px">JML</td>
 										<td style="width: 60px">ISI</td>
 										<td style="width: 60px">KOSONG</td>
 									@endforeach

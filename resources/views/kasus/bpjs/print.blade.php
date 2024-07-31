@@ -19,7 +19,7 @@
 
 <body style="margin-top: 0px">
 	<div style="position: absolute; top: 10" id="logobpjspanjang">
-		<img src="{{url('assets/img')}}/logobpjspanjang.png" style="height: 30px">
+		<img src="{{ public_path('assets/img/logobpjspanjang.png') }}" style="height: 30px">
 	</div>
 	<div style="position: absolute; top: 5; left: 180;">
 		<span>SURAT ELEGIBILITAS PESERTA <br> {{config('app.name')}}</span>

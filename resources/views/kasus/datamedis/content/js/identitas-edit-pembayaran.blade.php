@@ -11,4 +11,9 @@
 		var print_sep_url = BASE_URL + "bpjs/sep/{{$kasus->active_sep->no_sep ?? ''}}/print";
 		popupwindow(print_sep_url, "Print SEP Pasien", 600, 900);
 	}
-</script>
+
+	function printSEPwithBuktiPelayanan(){
+		var print_sep_url = BASE_URL + "bpjs/sep/{{$kasus->active_sep->no_sep ?? ''}}/print-sep-bukti-layanan";
+		popupwindow(print_sep_url, "Print SEP Pasien + Bukti Pelayanan", 600, 900);
+	}
+</script>	

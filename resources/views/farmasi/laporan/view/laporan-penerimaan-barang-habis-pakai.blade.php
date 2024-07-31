@@ -1,6 +1,6 @@
 <table>
     <tr>
-        <td colspan="11">BUKU PENERIMAAN BARANG HABIS PAKAI</td>
+        <td colspan="11">BUKU PENERIMAAN BARANG</td>
     </tr>
 
     <tr>
@@ -37,7 +37,7 @@
                     <td>{{++$i}}</td>
                     <td>{{date('d/m/Y',strtotime($pengadaan->tanggal))}}</td>
                     <td>{{$pengadaan->supplier_detail->nama}}</td>
-                    <td>{{$pengadaan->nomor_referensi}}</td>
+                    <td>`{{$pengadaan->nomor_referensi}}</td>
                     <td>{{date('d/m/Y',strtotime($pengadaan->tanggal_faktur))}}</td>
                 @else
                     <td></td>

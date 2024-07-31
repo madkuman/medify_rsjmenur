@@ -27,4 +27,9 @@ class Dokter extends Model
 	public function jadwal_temp(){
         return $this->hasMany('App\Models\RawatJalan\DokterJadwalTemp', 'dokter_id', 'id');
     }
+
+	public function satusehat_practitioner()
+	{
+		return $this->hasOne(\App\Models\ThirdPartySatuSehat\Practitioner::class, 'dokter_id', 'id');
+	}
 }

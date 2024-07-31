@@ -24,7 +24,7 @@ class ViewController extends Controller
 		return view('bpjs.sep.single.index');
 	}
 
-    public function print($no_sep)
+    public function print($no_sep, $param_download = [])
     {   
         $bpjs = BPJSSEP::with('pasien', 'dokter.user.specialty_detail', 'poli')->where('no_sep',$no_sep)->first();
         $bpjs_real = json_decode(app('App\Http\Controllers\BPJS\API\Sep\ReadController')->get($no_sep));
@@ -46,6 +46,48 @@ class ViewController extends Controller
         // dd($data);
         // return view('kasus.bpjs.print', $data);
         $pdf = DOMPDF::loadView('kasus.bpjs.print',$data)->setPaper($customPaper);
+
+        if (($param_download['is_download'] ?? null) != null) {
+            $filename = $param_download['filename'] ?? 'Print_SEP.pdf';
+            if (file_exists($param_download['path'] . $filename)) 
+                unlink($param_download['path'] . $filename);
+            $pdf->save($param_download['path'] . $filename);
+            return $filename;
+        }
+
+        return $pdf->stream('print.pdf');
+    }
+
+    public function printSepBuktiLayanan($no_sep, $param_download = [])
+    {
+        $bpjs = BPJSSEP::with('pasien', 'dokter.user.specialty_detail', 'poli')->where('no_sep',$no_sep)->first();
+        $bpjs_real = json_decode(app('App\Http\Controllers\BPJS\API\Sep\ReadController')->get($no_sep));
+
+        $rujukan = json_decode(app(\App\Http\Controllers\ThirdParty\BPJS\VClaim\Rujukan\ReadController::class)->searchAll($bpjs->no_rujukan ?? null));
+        if($bpjs_real->metaData->code != 200) abort(404);
+        else $bpjs_real = $bpjs_real->response ?? null;
+        $sep_internal = app(\App\Http\Controllers\BPJS\API\Sep\ReadController::class)->getInternal($no_sep);
+
+        $customPaper = array(0,0,602,602);
+        $data = [
+                    'bpjs'      => $bpjs,
+                    'bpjs_real' => $bpjs_real ?? null,
+                    'dokter'    => $bpjs->dokter ?? null,
+                    'rujukan'   => $rujukan ?? null,
+                    'sep_internal' => json_decode($sep_internal)->response->list[0] ?? [],
+                    'kasus'     => $bpjs->kasus,
+                ];
+        
+        // return view('kasus.bpjs.print-sep-bukti-layanan', $data);
+        $pdf = DOMPDF::loadView('kasus.bpjs.print-sep-bukti-layanan',$data)->setPaper($customPaper);
+
+        if (($param_download['is_download'] ?? null) != null) {
+            $filename = $param_download['filename'] ?? 'Print_SEP.pdf';
+            if (file_exists($param_download['path'] . $filename)) 
+                unlink($param_download['path'] . $filename);
+            $pdf->save($param_download['path'] . $filename);
+            return $filename;
+        }
 
         return $pdf->stream('print.pdf');
     }

@@ -40,7 +40,7 @@ class ViewController extends Controller
 		$data['rujuk'] = $rujuk;
 		$data['cara_pulang'] = MasterCaraPulang::all();
 		$data['status_pulang'] = MasterStatusPulang::all();
-		$data['rujuk_ke'] = AsalRujukan::all();
+		//$data['rujuk_ke'] = AsalRujukan::distinct('nama')->get();
 
 		$log = app('App\Http\Controllers\Kasus\Log\CreateController')
 			->create($kasus->id, 'view', 'pengaturan', null);

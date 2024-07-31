@@ -140,7 +140,7 @@ Radiologi Hasil
                     <br>
                 </div>
             </div>
-            <div class="col-12">
+            <div>
                 <div>
                     <p class="h6 my-0 mb-10">KETERANGAN </p>
                 </div>
@@ -148,9 +148,15 @@ Radiologi Hasil
                     {{$transaksi->info ? $transaksi->info : '-'}}
                 </div>
             </div>
-               @include('layouts.components2.lab.cetak-verifikasi')
-               @include('layouts.components2.lab.pemeriksaan-oleh')
-           </div>
+            
+            <div class="row">
+                <div class="col-5">
+                    @include('radiolog.transaksi.content.bmhp-view')
+                </div>
+            </div>
+                @include('layouts.components2.lab.cetak-verifikasi')
+                @include('layouts.components2.lab.pemeriksaan-oleh')
+            </div>
        </div>
    </div>
 

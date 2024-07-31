@@ -193,7 +193,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-sm-12"></div>
+                <div class="col-lg-6 col-sm-12">
+                    <div class="row mb-10">
+                        <div class="col-lg-3 col-sm-6">
+                            <label>IHS Number</label>
+                        </div>
+                        <div class="col-lg-9 col-sm-6">
+                            {{$identitas->satusehat_patient->ihs_number or '-'}}
+                        </div>
+                    </div>
+                </div>
 
                 <div class="col-lg-6 col-sm-12">
                     <div class="row mb-10">

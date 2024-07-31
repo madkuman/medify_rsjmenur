@@ -21,6 +21,7 @@ Route::group(['middleware' => ['check-module']], function(){
 		Route::get('/sep/{no_sep}/edit', 'BPJS\SEP\ViewController@edit');
 		Route::post('/sep/{no_sep}/edit', 'BPJS\SEP\PostController@edit');
 		Route::post('/sep/{no_sep}/delete', 'BPJS\SEP\PostController@delete');
+		Route::get('/sep/{no_sep}/print-sep-bukti-layanan', 'BPJS\SEP\ViewController@printSepBuktiLayanan');
 
 
 		//rujukan keluar
@@ -79,6 +80,10 @@ Route::group(['middleware' => ['check-module']], function(){
 		Route::get('/monitoring/kunjungan', 'BPJS\Monitoring\Kunjungan\ViewController@index');
 		Route::get('/monitoring/histori-pelayanan-peserta', 'BPJS\Monitoring\HistoriPelayananPeserta\ViewController@index');
 		Route::get('/monitoring/data-klaim-jasa-raharja', 'BPJS\Monitoring\DataKlaimJasaRaharja\ViewController@index');
+
+        Route::get('/monitoring/potensi-klaim', 'BPJS\Monitoring\PotensiKlaim\ViewController@index');
+        Route::get('/monitoring/potensi-klaim/get-header', 'BPJS\Monitoring\PotensiKlaim\ReadController@header');
+        Route::get('/monitoring/potensi-klaim/get-data', 'BPJS\Monitoring\PotensiKlaim\ReadController@data');
 
 		//REFERENSI
 		Route::get('/referensi', 'BPJS\Referensi\ViewController@index');

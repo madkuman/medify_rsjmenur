@@ -4,6 +4,7 @@
 	@endif
 	@if(!empty($kasus->active_sep))
 	<button class="btn-alt btn-info min-width-125 float-right" onclick="printSEP()">Print SEP</button>
+	<button class="btn-alt btn-secondary min-width-125 float-right" onclick="printSEPwithBuktiPelayanan()"><i class="fas fa-print"></i> SEP + Bukti Pelayanan</button>
 	@endif
 	<h5 class="text-uppercase pt-15">INFORMASI PEMBAYARAN</h5>
 </div>

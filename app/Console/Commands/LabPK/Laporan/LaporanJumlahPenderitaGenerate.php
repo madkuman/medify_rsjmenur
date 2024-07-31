@@ -14,7 +14,7 @@ class LaporanJumlahPenderitaGenerate extends Command
      *
      * @var string
      */
-    protected $signature = 'labpk:laporan-jumlah-penderita {date=0}';
+    protected $signature = 'labpk:laporan-jumlah-penderita {date=0} {jenis_laporan=0} {date_end=0}';
 
     /**
      * The console command description.
@@ -42,11 +42,24 @@ class LaporanJumlahPenderitaGenerate extends Command
     {
         $arguments = $this->arguments();
         $date = $arguments['date'];
+        $date_end = $arguments['date_end'] ?? null;
+        $jenis_laporan = $arguments['jenis_laporan'];
 
-        if($date == 0) $start = Carbon::now()->subMonth()->startOfMonth();
-        else $start = Carbon::parse($date)->startOfMonth(); 
-        
-        $end = $start->copy()->endOfMonth();
+        if($date != 0 ){
+            if($jenis_laporan == 'tahunan') {
+                $start = Carbon::parse($date.'-01')->startOfYear();
+                $end = Carbon::parse($date.'-12')->endOfYear();
+            } elseif($jenis_laporan == 'bulanan') {
+                $start = Carbon::parse($date)->startOfMonth();
+                $end = $start->copy()->endOfMonth();
+            } elseif ($jenis_laporan == 'rentang-tanggal') {
+                $start = Carbon::parse($date);
+                $end = Carbon::parse($date_end);
+            };
+        } else {
+            $start = Carbon::now()->subMonth()->startOfMonth();
+            $end = $start->copy()->endOfMonth();
+        }
 
         echo 'Generating '.$start->format('d-m-Y')." - ".$end->format('d-m-Y')."\n";
 
@@ -56,10 +69,12 @@ class LaporanJumlahPenderitaGenerate extends Command
 
         $data['data'] = app('App\Http\Controllers\LabPK\Laporan\ReadLaporanJumlahPenderitaController')->get($start,$end);
 
+        $keterangan_waktu = $jenis_laporan == 'tahunan' ? 'Tahun ' . $date : ( $jenis_laporan == 'bulanan' ? 'Bulan ' . indonesian_date($end->copy(),'F Y') : ( $jenis_laporan == 'rentang-tanggal' ? 'Tanggal : ' . indonesian_date($start->copy(),'d F Y') . ' - ' . indonesian_date($end->copy(),'d F Y')  : ''));
+        $data['keterangan_waktu'] = $keterangan_waktu;
         $data['bulan'] = indonesian_date($end->copy(),'F Y');
 
 
-        $filename = 'Laporan Jumlah Penderita - '.$end->copy()->format('Y-m');
+        $filename = 'Laporan Jumlah Penderita - ' .( $jenis_laporan == 'tahunan' ? $date : ($jenis_laporan == 'bulanan' ? $end->copy()->format('Y-m') : ($jenis_laporan == 'rentang-tanggal' ? $start->format('d-m-y') . ' - ' . $end->format('d-m-y') : '' )))  ;
         $timestamp_now = Carbon::now()->timestamp;
         $format = '.xlsx';
 
@@ -79,7 +94,7 @@ class LaporanJumlahPenderitaGenerate extends Command
         $laporan_data['end_date'] = $end->toDateTimeString();
         $laporan_data['file_name'] = $filename;
         $laporan_data['file_path'] = $base_path.'/'.$filename_stored;
-
+        
         $temp = app('App\Http\Controllers\Hospital\Laporan\CreateController')->create($laporan_data);
 
         echo 'done --'.$filename."\n";

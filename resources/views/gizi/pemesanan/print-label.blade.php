@@ -4,7 +4,7 @@
         <title>Cetak Label Pemesanan</title>
         <style type="text/css">
         @page{
-            size : 45mm 70mm landscape;
+            size : 34mm 70mm landscape;
             margin-left: 2mm;
             margin-right: 2mm;
             margin-top: 2mm;
@@ -15,12 +15,16 @@
             width: 100%;
         }
         td{
-            font-size: 12px;
+            font-size: 11px;
             padding:0;
         }
+	.bold{
+	font-weight:bold;
+	font-size: 12px;
+	}
         .box {
             border: 1px solid black;
-            padding: 7px;
+            padding: 3px;
         }
         .bordered {
             border-bottom: 1px solid black;
@@ -51,33 +55,39 @@
         @foreach($result as $pemesanan_detail)
             <div class="box" style="border: 1px solid black">
                 <table>
+			<tr>
+			<td style="text-align:center">
+				{{strtoupper($pemesanan_detail->lokasi->nama)}}
+			</td>
+			</tr>
+			<tr>
+			<td style="text-align:center">
+				({{strtoupper($pemesanan_detail->waktu_makan->nama)}})
+			</td>
+			</tr>
                     <tr>
-                        <td>
-                            {{substr(strtoupper($pemesanan_detail->pemesanan->pasien->name),0,16)}},
+                        <td class="bold">
+                            {{substr(strtoupper($pemesanan_detail->pemesanan->pasien->name),0,16)}} /
+				{{$pemesanan_detail->pemesanan->pasien->no_rm_formatted}} /
                             {{date('d-m-Y',strtotime($pemesanan_detail->pemesanan->pasien->date_of_birth))}}
                         </td>
                     </tr>
-                    <tr>
+                    {{--<tr>
                         <td>
                             #{{$pemesanan_detail->pemesanan->pasien->no_rm_formatted}}
                         </td>
                     </tr>
                     <tr>
                         <td class="dummy" rowspan="3">dummy</td>
-                    </tr>
+                    </tr>--}}
                 </table>
                 <table class="bordered">
                     <tr>
                         <td style="width: 15%;">Diet</td>
                         <td style="width: 3%;">:</td>
-                        <td style="width: 82%;white-space: nowrap;overflow: hidden; word-wrap: break-word;">{{$pemesanan_detail->diet->nama}}
+                        <td style="width: 82%; overflow: hidden; word-wrap: break-word;">{{$pemesanan_detail->diet->nama}}
                             @if($pemesanan_detail->catatan!=null) / {{$pemesanan_detail->catatan}} @endif
                         </td>
-                    </tr>
-                    <tr>
-                        <td>Kamar</td>
-                        <td>:</td>
-                        <td>{{$pemesanan_detail->lokasi->nama}}</td>
                     </tr>
                     <tr>
                         <td>Tgl</td>
@@ -85,10 +95,12 @@
                         <td>{{$tanggal}}</td>
                     </tr>
                     <tr>
-                        <td class="dummy" rowspan="3">dummy</td>
+			<td></td>
+			<td></td>
+                        <td>BAIK DIKONSUMSI LANGSUNG</td>
                     </tr>
                 </table>
-                <table style="border-collapse: collapse">
+               {{-- <table style="border-collapse: collapse">
                     <tr>
                         <td style="text-align: center;width: 60%" class="dummy">dummy</td>
                         <td style="text-align: center;width: 40%" class="dummy">dummy</td>
@@ -98,13 +110,13 @@
                         <td style="text-align: center;">QC</td>
                     </tr>
                     <tr>
-                        <td style="text-align: center; font-size: 10px;border-right: solid black 1px;">SEBAIKNYA DIKONSUMSI</td>
+                        <td style="text-align: center; font-size: 10px;border-right: solid black 1px;">SEBAIKNYA DIKONSUMSI LANGSUNG</td>
                         <td style="text-align: center;" rowspan="2">{{$qc}}</td>
                     </tr>
                     <tr>
                         <td style="text-align: center; font-size: 10px;border-right: solid black 1px;">SEBELUM JAM {{$best_before}}</td>
                     </tr>
-                </table>
+                </table>--}}
             </div>
             @if(!$loop->last)
                 <div style="page-break-after:always;"></div>

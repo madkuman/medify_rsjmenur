@@ -56,6 +56,7 @@
                                 <button type="button" class="btn-alt btn-rounded btn-primary min-width-125 float-right" data-toggle="modal" onclick="showModalCreate({{$tagihan->id}})" data-target="#tambahTagihan"><i class="fa fa-plus"></i> Tambah Tagihan</button>
                                 @endif
                                 <a href="javascript:void(0)" onclick="printTagihan('{{url()->current()}}/print/{{$tagihan->id}}')"  class="btn-alt btn-grass float-right">Print</a>
+                                <a href="javascript:void(0)" onclick="printTagihan('{{url()->current()}}/print/{{$tagihan->id}}?ipwl=1')"  class="btn-alt btn-info float-right">Print IPWL</a>
                                 @if((\Illuminate\Support\Facades\Auth::user()->profesi == 20 || \Illuminate\Support\Facades\Auth::user()->id == 3) && $tagihan->is_paid == 0)
                                     <button class="btn-alt btn-rounded btn-warning float-right" onclick="showModalSplit({{$tagihan->id}})"> Split</button>
                                     @if(!$tagihan->checkout)
@@ -114,6 +115,15 @@
                                                 <td class="text-center opsi-element">
 
                                                     @if($my_role)
+                                                    @if(empty($detail->flag_ipwl_at))
+                                                    <button type="button" class="btn btn-circle btn-alt-secondary mr-5 mb-5" onclick="flagIpwl({{$detail->id}})" data-toggle="tooltip" data-placement="top" data-original-title="Tandai Klaim IPWL">  
+                                                        <i class="fa fa-flag"></i>
+                                                    </button>
+                                                    @else
+                                                    <button type="button" class="btn btn-circle btn-alt-danger mr-5 mb-5" onclick="flagIpwl({{$detail->id}})" data-toggle="tooltip" data-placement="top" data-original-title="Hilangkan Tanda Klaim IPWL">  
+                                                        <i class="fa fa-flag"></i>
+                                                    </button>
+                                                    @endif
                                                     @if(!$tagihan->checkout)
                                                     @if($my_role_admin == 1 || $detail->created_by == Auth::user()->id || $detail->created_by == 1 || Auth::user()->admin == 1)
                                                     <button type="button" class="btn btn-circle btn-alt-info mr-5 mb-5" onclick="showModalEdit({{$detail->id}})">
@@ -124,6 +134,11 @@
                                                     </button>
                                                     @endif
                                                     @endif
+                                                    @endif
+
+                                                    
+                                                    @if(!empty($detail->flag_ipwl_at))
+                                                    <span class="badge badge-info">Klaim IPWL</span>
                                                     @endif
 
                                                 </td>
@@ -481,6 +496,11 @@ $('#tagihanCreateTarifTipeID').on("select2:select", function(e) {
 
     }
     $('#tarifEditLoading').hide();
+
+    function flagIpwl(id)
+    {
+        window.location.href = '{{url("kasus")}}/{{$kasus->nomor_kasus}}/tagihan-detail/flag-ipwl/'+id;
+    }
 
     function emptyEditDaftarHargaID()
     {

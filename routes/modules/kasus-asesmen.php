@@ -187,4 +187,166 @@ Route::post("/asesmen/pasien-covid/save", "Kasus\AlatBantu\PasienCovid\PostContr
 Route::post("/asesmen/pasien-covid/delete", "Kasus\AlatBantu\PasienCovid\PostController@delete");
 Route::get("/asesmen/pasien-covid/print/{id}", "Kasus\AlatBantu\PasienCovid\ViewController@print");
 
-?>
+Route::get("/asesmen/skoring-panss-ec/", "Kasus\Asesmen\SkoringPanssEc\ViewController@index");
+Route::post("/asesmen/skoring-panss-ec/save", "Kasus\Asesmen\SkoringPanssEc\PostController@save");
+Route::post("/asesmen/skoring-panss-ec/delete", "Kasus\Asesmen\SkoringPanssEc\PostController@delete");
+Route::get("/asesmen/skoring-panss-ec/print", "Kasus\Asesmen\SkoringPanssEc\ViewController@print");
+
+Route::get("/asesmen/panss-remisi/", "Kasus\Asesmen\PanssRemisi\ViewController@index");
+Route::post("/asesmen/panss-remisi/create", "Kasus\Asesmen\PanssRemisi\PostController@create");
+Route::post("/asesmen/panss-remisi/delete", "Kasus\Asesmen\PanssRemisi\PostController@delete");
+Route::get("/asesmen/panss-remisi/print/{id}", "Kasus\Asesmen\PanssRemisi\ViewController@print");
+Route::get("/asesmen/panss-remisi/print", "Kasus\Asesmen\PanssRemisi\ViewController@printRekap");
+
+Route::get("/asesmen/observasi-tindakan-ect/", "Kasus\Asesmen\ObservasiTindakanEct\ViewController@index");
+Route::post("/asesmen/observasi-tindakan-ect/create", "Kasus\Asesmen\ObservasiTindakanEct\PostController@create");
+Route::post("/asesmen/observasi-tindakan-ect/delete", "Kasus\Asesmen\ObservasiTindakanEct\PostController@delete");
+Route::get("/asesmen/observasi-tindakan-ect/print", "Kasus\Asesmen\ObservasiTindakanEct\ViewController@print");
+
+Route::get("/asesmen/observasi-transfusi-darah", "Kasus\Asesmen\ObservasiTransfusiDarah\ViewController@index");
+Route::get("/asesmen/observasi-transfusi-darah/print/{id}", "Kasus\Asesmen\ObservasiTransfusiDarah\ViewController@print");
+Route::post("/asesmen/observasi-transfusi-darah/create", "Kasus\Asesmen\ObservasiTransfusiDarah\PostController@create");
+Route::post("/asesmen/observasi-transfusi-darah/delete", "Kasus\Asesmen\ObservasiTransfusiDarah\PostController@delete");
+
+
+Route::get("/asesmen/checklist-keselamatan-pasien-dipoli-gigi-dan-mulut", "Kasus\Asesmen\ChecklistKeselamatanPasienDipoliGigiDanMulut\ViewController@index");
+Route::get("/asesmen/checklist-keselamatan-pasien-dipoli-gigi-dan-mulut/view/{id}", "Kasus\Asesmen\ChecklistKeselamatanPasienDipoliGigiDanMulut\ViewController@single");
+Route::get("/asesmen/checklist-keselamatan-pasien-dipoli-gigi-dan-mulut/create", "Kasus\Asesmen\ChecklistKeselamatanPasienDipoliGigiDanMulut\ViewController@create");
+Route::get("/asesmen/checklist-keselamatan-pasien-dipoli-gigi-dan-mulut/edit/{id}", "Kasus\Asesmen\ChecklistKeselamatanPasienDipoliGigiDanMulut\ViewController@edit");
+Route::post("/asesmen/checklist-keselamatan-pasien-dipoli-gigi-dan-mulut/submit-form", "Kasus\Asesmen\ChecklistKeselamatanPasienDipoliGigiDanMulut\PostController@submitForm");
+Route::post("/asesmen/checklist-keselamatan-pasien-dipoli-gigi-dan-mulut/delete", "Kasus\Asesmen\ChecklistKeselamatanPasienDipoliGigiDanMulut\PostController@delete");
+Route::get("/asesmen/checklist-keselamatan-pasien-dipoli-gigi-dan-mulut/print/{id}", "Kasus\Asesmen\ChecklistKeselamatanPasienDipoliGigiDanMulut\ViewController@print");
+Route::get("/asesmen/checklist-keselamatan-pasien-dipoli-gigi-dan-mulut/search-user", "Kasus\Asesmen\ChecklistKeselamatanPasienDipoliGigiDanMulut\PostController@searchUser");
+
+Route::get("/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl", "Kasus\Asesmen\AsesmenWajibLaporDanRehabilitasiMedisIpwl\ViewController@index");
+Route::get("/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl/view/{id}", "Kasus\Asesmen\AsesmenWajibLaporDanRehabilitasiMedisIpwl\ViewController@single");
+Route::get("/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl/create", "Kasus\Asesmen\AsesmenWajibLaporDanRehabilitasiMedisIpwl\ViewController@create");
+Route::get("/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl/edit/{id}", "Kasus\Asesmen\AsesmenWajibLaporDanRehabilitasiMedisIpwl\ViewController@edit");
+Route::post("/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl/submit-form", "Kasus\Asesmen\AsesmenWajibLaporDanRehabilitasiMedisIpwl\PostController@submitForm");
+Route::post("/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl/delete", "Kasus\Asesmen\AsesmenWajibLaporDanRehabilitasiMedisIpwl\PostController@delete");
+Route::get("/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl/print/{id}", "Kasus\Asesmen\AsesmenWajibLaporDanRehabilitasiMedisIpwl\ViewController@print");
+Route::get("/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl/search-user", "Kasus\Asesmen\AsesmenWajibLaporDanRehabilitasiMedisIpwl\PostController@searchUser");
+Route::post("/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl/add-ttd", "Kasus\Asesmen\AsesmenWajibLaporDanRehabilitasiMedisIpwl\PostController@addTTD");
+
+
+Route::get("/asesmen/form-skrining-manajer-pelayanan-pasien/", "Kasus\Asesmen\FormSkriningManajerPelayananPasien\ViewController@index");
+Route::post("/asesmen/form-skrining-manajer-pelayanan-pasien/save", "Kasus\Asesmen\FormSkriningManajerPelayananPasien\PostController@save");
+Route::post("/asesmen/form-skrining-manajer-pelayanan-pasien/delete", "Kasus\Asesmen\FormSkriningManajerPelayananPasien\PostController@delete");
+Route::get("/asesmen/form-skrining-manajer-pelayanan-pasien/print/{id}", "Kasus\Asesmen\FormSkriningManajerPelayananPasien\ViewController@print");
+
+Route::get("/asesmen/implementasi-manajer-pelayanan-pasien/", "Kasus\Asesmen\ImplementasiManajerPelayananPasien\ViewController@index");
+Route::post("/asesmen/implementasi-manajer-pelayanan-pasien/save", "Kasus\Asesmen\ImplementasiManajerPelayananPasien\PostController@save");
+Route::post("/asesmen/implementasi-manajer-pelayanan-pasien/delete", "Kasus\Asesmen\ImplementasiManajerPelayananPasien\PostController@delete");
+Route::get("/asesmen/implementasi-manajer-pelayanan-pasien/print/{id}", "Kasus\Asesmen\ImplementasiManajerPelayananPasien\ViewController@print");
+Route::get("/asesmen/evaluasi-awal-manajer-pelayanan-pasien/", "Kasus\Asesmen\EvaluasiAwalManajerPelayananPasien\ViewController@index");
+Route::post("/asesmen/evaluasi-awal-manajer-pelayanan-pasien/save", "Kasus\Asesmen\EvaluasiAwalManajerPelayananPasien\PostController@save");
+Route::post("/asesmen/evaluasi-awal-manajer-pelayanan-pasien/delete", "Kasus\Asesmen\EvaluasiAwalManajerPelayananPasien\PostController@delete");
+Route::get("/asesmen/evaluasi-awal-manajer-pelayanan-pasien/print/{id}", "Kasus\Asesmen\EvaluasiAwalManajerPelayananPasien\ViewController@print");
+
+Route::get("/asesmen/resiko-melarikan-diri/", "Kasus\Asesmen\ResikoMelarikanDiri\ViewController@index");
+Route::post("/asesmen/resiko-melarikan-diri/save", "Kasus\Asesmen\ResikoMelarikanDiri\PostController@save");
+Route::post("/asesmen/resiko-melarikan-diri/delete", "Kasus\Asesmen\ResikoMelarikanDiri\PostController@delete");
+Route::get("/asesmen/resiko-melarikan-diri/print/{id}", "Kasus\Asesmen\ResikoMelarikanDiri\ViewController@print");
+
+Route::get("/asesmen/resiko-bunuh-diri/", "Kasus\Asesmen\ResikoBunuhDiri\ViewController@index");
+Route::post("/asesmen/resiko-bunuh-diri/save", "Kasus\Asesmen\ResikoBunuhDiri\PostController@save");
+Route::post("/asesmen/resiko-bunuh-diri/delete", "Kasus\Asesmen\ResikoBunuhDiri\PostController@delete");
+Route::get("/asesmen/resiko-bunuh-diri/print/{id}", "Kasus\Asesmen\ResikoBunuhDiri\ViewController@print");
+Route::get("/asesmen/resiko-kekerasan-fisik/", "Kasus\Asesmen\ResikoKekerasanFisik\ViewController@index");
+Route::post("/asesmen/resiko-kekerasan-fisik/save", "Kasus\Asesmen\ResikoKekerasanFisik\PostController@save");
+Route::post("/asesmen/resiko-kekerasan-fisik/delete", "Kasus\Asesmen\ResikoKekerasanFisik\PostController@delete");
+Route::get("/asesmen/resiko-kekerasan-fisik/print/{id}", "Kasus\Asesmen\ResikoKekerasanFisik\ViewController@print");
+
+Route::get("/asesmen/asesmen-permohonan-dan-jawaban-konsultasi", "Kasus\Asesmen\AsesmenPermohonanDanJawabanKonsultasi\ViewController@index");
+Route::get("/asesmen/asesmen-permohonan-dan-jawaban-konsultasi/form/{alat_bantu_id}", "Kasus\Asesmen\AsesmenPermohonanDanJawabanKonsultasi\ViewController@single");
+Route::get("/asesmen/asesmen-permohonan-dan-jawaban-konsultasi/form", "Kasus\Asesmen\AsesmenPermohonanDanJawabanKonsultasi\ViewController@create");
+Route::get("/asesmen/asesmen-permohonan-dan-jawaban-konsultasi/form/{alat_bantu_id}/edit", "Kasus\Asesmen\AsesmenPermohonanDanJawabanKonsultasi\ViewController@edit");
+Route::get("/asesmen/asesmen-permohonan-dan-jawaban-konsultasi/print/{alat_bantu_id}", "Kasus\Asesmen\AsesmenPermohonanDanJawabanKonsultasi\ViewController@print");
+Route::post("/asesmen/asesmen-permohonan-dan-jawaban-konsultasi/form/create", "Kasus\Asesmen\AsesmenPermohonanDanJawabanKonsultasi\CreateController@create");
+Route::put("/asesmen/asesmen-permohonan-dan-jawaban-konsultasi/form/{alat_bantu_id}/edit", "Kasus\Asesmen\AsesmenPermohonanDanJawabanKonsultasi\EditController@edit");
+Route::post("/asesmen/asesmen-permohonan-dan-jawaban-konsultasi/delete", "Kasus\Asesmen\AsesmenPermohonanDanJawabanKonsultasi\DeleteController@delete");
+Route::get("/asesmen/asesmen-permohonan-dan-jawaban-konsultasi/searchICD10", "Kasus\Asesmen\AsesmenPermohonanDanJawabanKonsultasi\PostController@searchICD10");
+
+Route::get("/asesmen/formulir-permintaan-ect", "Kasus\Asesmen\FormulirPermintaanEct\ViewController@index");
+Route::get("/asesmen/formulir-permintaan-ect/view/{id}", "Kasus\Asesmen\FormulirPermintaanEct\ViewController@single");
+Route::get("/asesmen/formulir-permintaan-ect/create", "Kasus\Asesmen\FormulirPermintaanEct\ViewController@create");
+Route::get("/asesmen/formulir-permintaan-ect/edit/{id}", "Kasus\Asesmen\FormulirPermintaanEct\ViewController@edit");
+Route::post("/asesmen/formulir-permintaan-ect/submit-form", "Kasus\Asesmen\FormulirPermintaanEct\PostController@submitForm");
+Route::post("/asesmen/formulir-permintaan-ect/delete", "Kasus\Asesmen\FormulirPermintaanEct\PostController@delete");
+Route::get("/asesmen/formulir-permintaan-ect/print/{id}", "Kasus\Asesmen\FormulirPermintaanEct\ViewController@print");
+Route::get("/asesmen/formulir-permintaan-ect/search-user", "Kasus\Asesmen\FormulirPermintaanEct\PostController@searchUser");
+Route::post("/asesmen/formulir-permintaan-ect/add-ttd", "Kasus\Asesmen\FormulirPermintaanEct\PostController@addTTD");
+
+Route::get("/asesmen/general-consent", "Kasus\Asesmen\GeneralConsent\ViewController@index");
+Route::get("/asesmen/general-consent/single", "Kasus\Asesmen\GeneralConsent\ViewController@single");
+Route::get("/asesmen/general-consent/form", "Kasus\Asesmen\GeneralConsent\ViewController@create");
+Route::get("/asesmen/general-consent/form/edit", "Kasus\Asesmen\GeneralConsent\ViewController@edit");
+Route::get("/asesmen/general-consent/print", "Kasus\Asesmen\GeneralConsent\ViewController@print");
+Route::post("/asesmen/general-consent/form/create", "Kasus\Asesmen\GeneralConsent\CreateController@create");
+Route::put("/asesmen/general-consent/form/edit", "Kasus\Asesmen\GeneralConsent\EditController@edit");
+Route::post("/asesmen/general-consent/delete", "Kasus\Asesmen\GeneralConsent\DeleteController@delete");
+Route::post('/asesmen/general-consent/add-ttd', 'Kasus\Asesmen\GeneralConsent\PostController@addTTD');
+
+Route::get("/asesmen/surat-pernyataan-kesanggupan-pembiayaan/", "Kasus\Asesmen\SuratPernyataanKesanggupanPembiayaan\ViewController@index");
+Route::post("/asesmen/surat-pernyataan-kesanggupan-pembiayaan/create", "Kasus\Asesmen\SuratPernyataanKesanggupanPembiayaan\PostController@create");
+Route::post("/asesmen/surat-pernyataan-kesanggupan-pembiayaan/delete", "Kasus\Asesmen\SuratPernyataanKesanggupanPembiayaan\PostController@delete");
+Route::get("/asesmen/surat-pernyataan-kesanggupan-pembiayaan/print", "Kasus\Asesmen\SuratPernyataanKesanggupanPembiayaan\ViewController@print");
+Route::post("/asesmen/surat-pernyataan-kesanggupan-pembiayaan/add-ttd", "Kasus\Asesmen\SuratPernyataanKesanggupanPembiayaan\PostController@APIAddTTD");
+// START : Form Triage
+Route::get("/form-triage", "Kasus\Asesmen\FormTriage\ViewController@index");
+Route::post("/form-triage/save", "Kasus\Asesmen\FormTriage\PostController@save");
+Route::post("/form-triage/delete", "Kasus\Asesmen\FormTriage\PostController@delete");
+Route::get("/form-triage/print/{id}", "Kasus\Asesmen\FormTriage\ViewController@print");
+// START : Asesmen Awal Dokter Non Jiwa
+Route::get("/asesmen/asesmen-awal-dokter-non-jiwa/", "Kasus\Asesmen\AsesmenAwalDokterNonJiwa\ViewController@index");
+Route::post("/asesmen/asesmen-awal-dokter-non-jiwa/save", "Kasus\Asesmen\AsesmenAwalDokterNonJiwa\PostController@save");
+Route::post("/asesmen/asesmen-awal-dokter-non-jiwa/delete", "Kasus\Asesmen\AsesmenAwalDokterNonJiwa\PostController@delete");
+Route::get("/asesmen/asesmen-awal-dokter-non-jiwa/print/{id}/{type}", "Kasus\Asesmen\AsesmenAwalDokterNonJiwa\ViewController@print");
+// END : Asesmen Awal Dokter Non Jiwa
+
+Route::get("/asesmen/asesmen-kesehatan-gigi-dan-mulut", "Kasus\Asesmen\AsesmenKesehatanGigiDanMulut\ViewController@index");
+Route::get("/asesmen/asesmen-kesehatan-gigi-dan-mulut/view/{id}", "Kasus\Asesmen\AsesmenKesehatanGigiDanMulut\ViewController@single");
+Route::get("/asesmen/asesmen-kesehatan-gigi-dan-mulut/create", "Kasus\Asesmen\AsesmenKesehatanGigiDanMulut\ViewController@create");
+Route::get("/asesmen/asesmen-kesehatan-gigi-dan-mulut/edit/{id}", "Kasus\Asesmen\AsesmenKesehatanGigiDanMulut\ViewController@edit");
+Route::post("/asesmen/asesmen-kesehatan-gigi-dan-mulut/submit-form", "Kasus\Asesmen\AsesmenKesehatanGigiDanMulut\PostController@submitForm");
+Route::post("/asesmen/asesmen-kesehatan-gigi-dan-mulut/delete", "Kasus\Asesmen\AsesmenKesehatanGigiDanMulut\PostController@delete");
+Route::get("/asesmen/asesmen-kesehatan-gigi-dan-mulut/print/{id}", "Kasus\Asesmen\AsesmenKesehatanGigiDanMulut\ViewController@print");
+
+
+#asesmen awal keperawatan medis neonatologi
+Route::get("/asesmen/asesmen-awal-keperawatan-medis-neonatologi", "Kasus\Asesmen\AsesmenAwalKeperawatanMedisNeonatologi\ViewController@index");
+Route::get("/asesmen/asesmen-awal-keperawatan-medis-neonatologi/view/{id}", "Kasus\Asesmen\AsesmenAwalKeperawatanMedisNeonatologi\ViewController@single");
+Route::get("/asesmen/asesmen-awal-keperawatan-medis-neonatologi/create", "Kasus\Asesmen\AsesmenAwalKeperawatanMedisNeonatologi\ViewController@create");
+Route::get("/asesmen/asesmen-awal-keperawatan-medis-neonatologi/edit/{id}", "Kasus\Asesmen\AsesmenAwalKeperawatanMedisNeonatologi\ViewController@edit");
+Route::post("/asesmen/asesmen-awal-keperawatan-medis-neonatologi/submit-form", "Kasus\Asesmen\AsesmenAwalKeperawatanMedisNeonatologi\PostController@submitForm");
+Route::post("/asesmen/asesmen-awal-keperawatan-medis-neonatologi/delete", "Kasus\Asesmen\AsesmenAwalKeperawatanMedisNeonatologi\PostController@delete");
+Route::get("/asesmen/asesmen-awal-keperawatan-medis-neonatologi/print/{id}", "Kasus\Asesmen\AsesmenAwalKeperawatanMedisNeonatologi\ViewController@print");
+Route::get("/asesmen/asesmen-awal-keperawatan-medis-neonatologi/search-user", "Kasus\Asesmen\AsesmenAwalKeperawatanMedisNeonatologi\PostController@searchUser");
+Route::post("/asesmen/asesmen-awal-keperawatan-medis-neonatologi/add-ttd", "Kasus\Asesmen\AsesmenAwalKeperawatanMedisNeonatologi\PostController@addTTD");
+
+#asesmen awal medis neonatologi
+Route::get("/asesmen/asesmen-awal-medis-neonatologi", "Kasus\Asesmen\AsesmenAwalMedisNeonatologi\ViewController@index");
+Route::get("/asesmen/asesmen-awal-medis-neonatologi/view/{id}", "Kasus\Asesmen\AsesmenAwalMedisNeonatologi\ViewController@single");
+Route::get("/asesmen/asesmen-awal-medis-neonatologi/create", "Kasus\Asesmen\AsesmenAwalMedisNeonatologi\ViewController@create");
+Route::get("/asesmen/asesmen-awal-medis-neonatologi/edit/{id}", "Kasus\Asesmen\AsesmenAwalMedisNeonatologi\ViewController@edit");
+Route::post("/asesmen/asesmen-awal-medis-neonatologi/submit-form", "Kasus\Asesmen\AsesmenAwalMedisNeonatologi\PostController@submitForm");
+Route::post("/asesmen/asesmen-awal-medis-neonatologi/delete", "Kasus\Asesmen\AsesmenAwalMedisNeonatologi\PostController@delete");
+Route::get("/asesmen/asesmen-awal-medis-neonatologi/print/{id}", "Kasus\Asesmen\AsesmenAwalMedisNeonatologi\ViewController@print");
+Route::get("/asesmen/asesmen-awal-medis-neonatologi/search-user", "Kasus\Asesmen\AsesmenAwalMedisNeonatologi\PostController@searchUser");
+Route::post("/asesmen/asesmen-awal-medis-neonatologi/add-ttd", "Kasus\Asesmen\AsesmenAwalMedisNeonatologi\PostController@addTTD");
+
+#asesmen inform consent cabut gigi
+Route::get("/asesmen/asesmen-inform-consent-cabut-gigi", "Kasus\Asesmen\AsesmenInformConsentCabutGigi\ViewController@index");
+Route::get("/asesmen/asesmen-inform-consent-cabut-gigi/view/{id}", "Kasus\Asesmen\AsesmenInformConsentCabutGigi\ViewController@single");
+Route::get("/asesmen/asesmen-inform-consent-cabut-gigi/create", "Kasus\Asesmen\AsesmenInformConsentCabutGigi\ViewController@create");
+Route::get("/asesmen/asesmen-inform-consent-cabut-gigi/edit/{id}", "Kasus\Asesmen\AsesmenInformConsentCabutGigi\ViewController@edit");
+Route::post("/asesmen/asesmen-inform-consent-cabut-gigi/submit-form", "Kasus\Asesmen\AsesmenInformConsentCabutGigi\PostController@submitForm");
+Route::post("/asesmen/asesmen-inform-consent-cabut-gigi/delete", "Kasus\Asesmen\AsesmenInformConsentCabutGigi\PostController@delete");
+Route::get("/asesmen/asesmen-inform-consent-cabut-gigi/print/{id}", "Kasus\Asesmen\AsesmenInformConsentCabutGigi\ViewController@print");
+Route::get("/asesmen/asesmen-inform-consent-cabut-gigi/search-user", "Kasus\Asesmen\AsesmenInformConsentCabutGigi\PostController@searchUser");
+Route::post("/asesmen/asesmen-inform-consent-cabut-gigi/add-ttd", "Kasus\Asesmen\AsesmenInformConsentCabutGigi\PostController@addTTD");
+
+Route::get('/asesmen/asesmen-identitikasi-bayi', 'Kasus\Asesmen\IdentifikasiBayi\ViewController@index');
+Route::post('/asesmen/asesmen-identitikasi-bayi/save', 'Kasus\Asesmen\IdentifikasiBayi\PostController@save');
+Route::post('/asesmen/asesmen-identitikasi-bayi/delete', 'Kasus\Asesmen\IdentifikasiBayi\PostController@delete');
+Route::get('/asesmen/asesmen-identitikasi-bayi/print/{id}', 'Kasus\Asesmen\IdentifikasiBayi\ViewController@print');

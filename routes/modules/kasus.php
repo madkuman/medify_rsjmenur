@@ -14,8 +14,10 @@ Route::group(['prefix' => '/kasus/{nomor_kasus}', 'middleware' => 'kasus-optimiz
 	Route::post('/datamedis/cppt/create', 'Kasus\CPPT\PostController@createNewCPPT');
 	Route::post('/datamedis/cppt/edit', 'Kasus\CPPT\PostController@editCPPT');
 	Route::post('/datamedis/cppt/delete', 'Kasus\CPPT\PostController@deleteCPPT');
+	Route::post('/datamedis/cppt/deletefile', 'Kasus\CPPT\PostController@deletefileCPPT');
 	Route::post('/datamedis/cppt/override', 'Kasus\CPPT\PostController@overrideCPPT');
 	Route::get('/datamedis/cppt/print-all', 'Kasus\CPPT\ViewController@printCPPTAll');
+	Route::get('/datamedis/cppt/print-sebagian', 'Kasus\CPPT\ViewController@printCPPTSebagian');
 	Route::get('/datamedis/cppt/print/{id}', 'Kasus\CPPT\ViewController@printCPPT');
 	Route::get('/datamedis/cppt/print-rapt/{id}', 'Kasus\CPPT\ViewController@printRAPT');
 	Route::get('/datamedis/cppt/histori','Kasus\CPPT\ReadController@historiCPPT');
@@ -55,6 +57,7 @@ Route::group(['prefix' => '/kasus/{nomor_kasus}', 'middleware' => 'kasus-optimiz
 	Route::post('/datamedis/resep/delete', 'Kasus\Resep\DeleteController@deleteResep');
 	Route::get('/datamedis/resep/print/{id}', 'Kasus\Resep\PostController@printResep');
 	Route::get('/datamedis/resep/histori','Kasus\Resep\ReadController@historiResep');
+	Route::post('/datamedis/resep/hitung-harga','Kasus\Resep\ReadController@hitungHarga');
 
 
 	Route::post('/datamedis/gizi/create', 'Kasus\Gizi\CreateController@createNewPermintaanMakanan');
@@ -80,18 +83,37 @@ Route::group(['prefix' => '/kasus/{nomor_kasus}', 'middleware' => 'kasus-optimiz
 
 	Route::post('/gizi/create', 'Kasus\Gizi\CreateController@createNewPermintaanMakanan');
 	Route::get('/gizi', 'Kasus\Kasus\ViewController@gizi');
+	Route::post('/gizi/order/create', 'Kasus\Gizi\PostController@createOrder');
+	Route::post('/gizi/order/edit', 'Kasus\Gizi\PostController@editOrder');
+	Route::post('/gizi/order/delete', 'Kasus\Gizi\PostController@deleteOrder');
+	// Route::get('/gizi/skrining/print/{id}', 'Kasus\Kasus\ViewController@giziSkriningPrint');
+	// Route::get('/gizi/asesmen/print/{id}', 'Kasus\Kasus\ViewController@giziAsesmenPrint');
 
+	// Route Lama
+	// Route::get('/farmasi', 'Kasus\Farmasi\ViewController@index');
+	// Route::get('/farmasi/pengobatan-pasien', 'Kasus\Farmasi\ViewController@pengobatanPasien');
+	// Route::get('/farmasi/pengobatan-pasien/print', 'Kasus\Farmasi\ViewController@print');
+	// Route::get('/farmasi/pengobatan-pasien/print-obat-luar', 'Kasus\Farmasi\ViewController@obatLuar');
+	// Route::get('/farmasi/pengobatan-pasien/print-obat-per-oral', 'Kasus\Farmasi\ViewController@obatPerOral');
+	// Route::post('/farmasi/pengobatan-pasien/post', 'Kasus\Farmasi\CatatanPengobatanPasien\PostController@post');
+	// Route::get('/farmasi/pengobatan-pasien/selesai/{id}', 'Kasus\Farmasi\CatatanPengobatanPasien\PostController@selesai');
+	// Route::get('/farmasi/pengobatan-pasien/selesai-batal/{id}', 'Kasus\Farmasi\CatatanPengobatanPasien\PostController@batalSelesai');
+	// Route::post('/farmasi/pengobatan-pasien/delete', 'Kasus\Farmasi\CatatanPengobatanPasien\PostController@delete');
+	// Route::get('/farmasi/pengobatan-pasien/excel', 'Kasus\Farmasi\CatatanPengobatanPasien\ViewController@excel');
+
+	// Route::post('/farmasi/pengobatan-pasien/pemberian-post', 'Kasus\Farmasi\CatatanPengobatanPasienDetail\PostController@post');
+	// Route::post('/farmasi/pengobatan-pasien/pemberian-delete', 'Kasus\Farmasi\CatatanPengobatanPasienDetail\PostController@delete');
+
+	// Route Copas Generik
 	Route::get('/farmasi', 'Kasus\Farmasi\ViewController@index');
 	Route::get('/farmasi/pengobatan-pasien', 'Kasus\Farmasi\ViewController@pengobatanPasien');
-	Route::get('/farmasi/pengobatan-pasien/print', 'Kasus\Farmasi\ViewController@print');
-	Route::get('/farmasi/pengobatan-pasien/print-obat-luar', 'Kasus\Farmasi\ViewController@obatLuar');
-	Route::get('/farmasi/pengobatan-pasien/print-obat-per-oral', 'Kasus\Farmasi\ViewController@obatPerOral');
 	Route::post('/farmasi/pengobatan-pasien/post', 'Kasus\Farmasi\CatatanPengobatanPasien\PostController@post');
 	Route::get('/farmasi/pengobatan-pasien/selesai/{id}', 'Kasus\Farmasi\CatatanPengobatanPasien\PostController@selesai');
 	Route::get('/farmasi/pengobatan-pasien/selesai-batal/{id}', 'Kasus\Farmasi\CatatanPengobatanPasien\PostController@batalSelesai');
 	Route::post('/farmasi/pengobatan-pasien/delete', 'Kasus\Farmasi\CatatanPengobatanPasien\PostController@delete');
-	Route::get('/farmasi/pengobatan-pasien/excel', 'Kasus\Farmasi\CatatanPengobatanPasien\ViewController@excel');
-
+	Route::get('/farmasi/pengobatan-pasien/print', 'Kasus\Farmasi\CatatanPengobatanPasien\ViewController@print');
+	Route::post('/farmasi/pengobatan-pasien/cetak-riwayat-pemberian-obat', 'Kasus\Farmasi\CatatanPengobatanPasien\ViewController@cetakRiwayatPemberianObat');
+	
 	Route::post('/farmasi/pengobatan-pasien/pemberian-post', 'Kasus\Farmasi\CatatanPengobatanPasienDetail\PostController@post');
 	Route::post('/farmasi/pengobatan-pasien/pemberian-delete', 'Kasus\Farmasi\CatatanPengobatanPasienDetail\PostController@delete');
 
@@ -101,12 +123,35 @@ Route::group(['prefix' => '/kasus/{nomor_kasus}', 'middleware' => 'kasus-optimiz
 	Route::post('/farmasi/rekonsiliasi/post', 'Kasus\Farmasi\Rekonsiliasi\PostController@post');
 	Route::post('/farmasi/rekonsiliasi/delete', 'Kasus\Farmasi\Rekonsiliasi\PostController@delete');
 	Route::get('/farmasi/rekonsiliasi/print', 'Kasus\Farmasi\Rekonsiliasi\ViewController@print');
+
+	Route::get('/farmasi/formulir-pelayanan-obat', 'Kasus\Farmasi\FormulirPelayananObat\ViewController@index');
+	Route::get('/farmasi/formulir-pelayanan-obat/{transaksi_id}/print-formulir', 'Kasus\Farmasi\FormulirPelayananObat\ViewController@printFormulir');
+
+	Route::get('/farmasi/screening-pemantauan-terapi-obat-pasien', 'Kasus\Farmasi\ScreeningPemantauanTerapiObatPasien\ViewController@index');
+	Route::post('/farmasi/screening-pemantauan-terapi-obat-pasien/create', 'Kasus\Farmasi\ScreeningPemantauanTerapiObatPasien\PostController@create');
+	Route::get('/farmasi/screening-pemantauan-terapi-obat-pasien/print', 'Kasus\Farmasi\ScreeningPemantauanTerapiObatPasien\ViewController@print');
+	Route::post('/farmasi/screening-pemantauan-terapi-obat-pasien/delete', 'Kasus\Farmasi\ScreeningPemantauanTerapiObatPasien\PostController@delete');
+
+	Route::get('/farmasi/formulir-pasien-pemantauan-terapi-obat', 'Kasus\Farmasi\FormulirPasienPemantauanTerapiObat\ViewController@index');
+	Route::get('/farmasi/formulir-pasien-pemantauan-terapi-obat/print/{id}', 'Kasus\Farmasi\FormulirPasienPemantauanTerapiObat\ViewController@print');
+	Route::post('/farmasi/formulir-pasien-pemantauan-terapi-obat/create', 'Kasus\Farmasi\FormulirPasienPemantauanTerapiObat\PostController@create');
+
+
 	Route::get('/update-plafon', 'Kasus\Kasus\PostController@updatePlafon');
 	Route::get('/update-plafon-part-two', 'Kasus\Kasus\PostController@updatePlafonSecond');
+
+	Route::group(['prefix' => 'farmasi/konseling-obat'], function(){
+		Route::get('/', 'Kasus\Farmasi\KonselingObat\ViewController@index');
+		Route::post('/save', 'Kasus\Farmasi\KonselingObat\PostController@save');
+		Route::post('/delete', 'Kasus\Farmasi\KonselingObat\PostController@delete');
+		Route::post('/add-ttd-pasien', 'Kasus\Farmasi\KonselingObat\PostController@submitTTD');
+		Route::get('/print', 'Kasus\Farmasi\KonselingObat\ViewController@print');
+	});
 
 	Route::group(['prefix' => 'penunjang'], function(){
 		Route::get('/', 'Kasus\Penunjang\ViewController@index');
 		Route::get('/histori', 'Kasus\Penunjang\ViewController@histori');
+		Route::get('/hasil-lab', 'Kasus\Penunjang\ViewController@hasilLab');
 		Route::get('/histori-galeri', 'Kasus\Penunjang\ViewController@historiGaleri');
 		Route::get('/form', 'Kasus\Penunjang\ViewController@form');
 		Route::post('/baru', 'Kasus\Penunjang\CreateController@new');
@@ -140,6 +185,7 @@ Route::group(['prefix' => '/kasus/{nomor_kasus}', 'middleware' => 'kasus-optimiz
 	Route::post('/tagihan/sync', 'Kasus\Tagihan\PostController@syncSEP');
 	Route::post('/tagihan/split', 'Kasus\Tagihan\PostController@split');
 	Route::get('/tagihan/print/{tagihan_id}', 'Kasus\Tagihan\ViewController@print');
+	Route::get('/tagihan-detail/flag-ipwl/{id}', 'Kasus\TagihanDetail\PostController@flagIpwl');
 	Route::post('/tagihan-detail/create', 'Kasus\TagihanDetail\PostController@create');
 	Route::post('/tagihan-detail/edit', 'Kasus\TagihanDetail\PostController@edit');
 	Route::post('/tagihan-detail/pindahkan-multi', 'Kasus\TagihanDetail\PostController@pindahkanMulti');
@@ -195,6 +241,7 @@ Route::group(['prefix' => '/kasus/{nomor_kasus}', 'middleware' => 'kasus-optimiz
 	Route::get('/pengaturan', 'Kasus\Pengaturan\ViewController@index');
 	Route::post('/pengaturan/tutup-kasus', 'Kasus\Pengaturan\PostController@tutupKasus');
 	Route::post('/pengaturan/data/krs', 'Kasus\Pengaturan\PostController@dataKRS');
+	Route::post('/pengaturan/{sep}/update-plafon', 'Kasus\Pengaturan\PostController@updatePlafon');
 	Route::get('/pengaturan/batal-krs', 'Kasus\Pengaturan\PostController@batalKRS');
 	Route::get('/pengaturan/batal-tutup-kasus', 'Kasus\Pengaturan\PostController@batalTutupKasus');
 	
@@ -319,6 +366,8 @@ Route::group(['prefix' => '/kasus/{nomor_kasus}', 'middleware' => 'kasus-optimiz
 	Route::get('/psikologi/pemeriksaan-psikologi-dewasa', 'Kasus\Psikologi\ViewController@pemeriksaanDewasa');
 	Route::get('/psikologi/pemeriksaan-psikologi-anak', 'Kasus\Psikologi\ViewController@pemeriksaanAnak');
 	Route::get('/psikologi/laporan-pemeriksaan-psikologi', 'Kasus\Psikologi\ViewController@laporanPemeriksaanPsikologi');
+	
+	Route::get('/daycare','Kasus\DayCare\ViewController@index');
 
 	Route::post('/keluar-kasus','Kasus\Kolaborator\PostController@keluarKasus');	
 });
@@ -353,7 +402,10 @@ Route::group(['prefix' => 'api/kasus'], function(){
 	Route::get('/purifikasi/potensi/rawat-inap', 'Kasus\PotensiPurifikasi\ViewController@cekPotensiRawatInap');
 
 
+	Route::post('{nomor_kasus}/cppt/set-readback','Kasus\CPPT\PostController@readback');
+	Route::post('{nomor_kasus}/cppt/verifikasi-readback','Kasus\CPPT\PostController@verifReadback');
 	Route::get('{nomor_kasus}/cppt/verifikasi/{id}','Kasus\CPPT\EditController@APIVerifikasi');
+	Route::get('{nomor_kasus}/cppt/marked-print/{id}','Kasus\CPPT\EditController@APIMarkedPrint');
 	Route::get('{nomor_kasus}/cppt/verifikasi-ners/{id}','Kasus\CPPT\EditController@APIVerifikasiNers');
 	Route::get('{nomor_kasus}/suggest/cppt-objective-ttv','Kasus\CPPT\ReadController@getSuggestObjectiveTTV');
 	Route::get('{nomor_kasus}/suggest/cppt-objective-keperawatan','Kasus\CPPT\ReadController@getSuggestObjectiveKeperawatan');
@@ -385,6 +437,8 @@ Route::group(['prefix' => 'api/kasus'], function(){
 	Route::get('{nomor_kasus}/alat-bantu/surveilans/get-pre/{id}','Kasus\AlatBantu\Surveilans\PostController@APIGetSurveilans');
 	Route::get('{nomor_kasus}/alat-bantu/surveilans/get-durante/{id}','Kasus\AlatBantu\Surveilans\PostController@APIGetSurveilans');
 	Route::post('{nomor_kasus}/alat-bantu/edukasi-pasien/add-ttd-pasien','Kasus\AlatBantu\EdukasiPasien\PostController@APIAddTTDPasien');
+
+	Route::post('{nomor_kasus}/farmasi/rekonsiliasi/ttd/save', 'Kasus\Farmasi\Rekonsiliasi\PostController@ttdSubmit');
 });
 
 ?>

@@ -118,13 +118,13 @@
                 <td class="small">Terbilang : {{$terbilang}}</td>
             </tr>
             <tr>
-                <td class="small" style="text-align: right;">Petugas Farmasi</td>
+                <td class="small" style="text-align: right;">Kasir</td>
             </tr>
             <tr>
                 <td class="dummy">.</td>
             </tr>
             <tr>
-                <td class="small" style="text-align: right;">(.......................)</td>
+                <td class="small" style="text-align: right;">Dicky Suliswanto</td>
             </tr>
         </tr>
     </table>

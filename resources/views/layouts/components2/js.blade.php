@@ -578,6 +578,7 @@
             });
             return true;
     });
+    $('.form-unbind').unbind();
    });
 
 
@@ -597,8 +598,36 @@
         var daftar_tarif_url = BASE_URL + "tarif";
         popupwindow(daftar_tarif_url, "Daftar Tarif", 500, 900);
     }
+
+    $(".js-datepicker-month").datepicker( {
+        format: "mm-yyyy",
+        startView: "months", 
+        minViewMode: "months",
+        autoclose: true
+    });
+
+    function formatNumberWithDots(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function downloadFile(url, filename) {
+        // Create a hidden link element
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+
+        // Append the link to the document
+        document.body.appendChild(link);
+
+        // Simulate a click on the link to trigger the download
+        link.click();
+
+        // Remove the link from the document
+        document.body.removeChild(link);
+    }
 </script>
 
+{{-- @include('layouts.components2.js.idle-logout') --}}
 @include('layouts.components2.init')
 
 @yield('js')

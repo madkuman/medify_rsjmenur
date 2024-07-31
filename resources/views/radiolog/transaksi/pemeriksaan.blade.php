@@ -217,11 +217,13 @@ Radiologi
                             @endforeach
                         </div>
                         @include('radiolog.transaksi.content.tambahan-pemeriksaan')
-
-                        <p class="h6 my-0 mb-10">KETERANGAN</p>
-                        <div class="form-group row">
-                            <div class="col-sm-12 col-lg-5">
+                        <div class="row mt-100 mb-50">
+                            <div class="col-6">
+                                <p class="h6 my-0 mb-10">KETERANGAN</p>
                                 <textarea class="form-control" rows="4" cols="50" placeholder="Tambahkan Keterangan Di Sini" name="info"></textarea>
+                            </div>
+                            <div class="col-6">
+                                @include('radiolog.transaksi.content.bmhp')
                             </div>
                         </div>
 

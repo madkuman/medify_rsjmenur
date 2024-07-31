@@ -44,9 +44,9 @@ class ReadController extends Controller
     public function getUnread($date_start = NULL,$date_end = NULL)
     {
         if(is_null($date_start))
-            return Transaksi::where('status',0)->with(RELASI)->get();
+            return Transaksi::where('status',0)->whereNull('deleted_at')->with(RELASI)->get();
         else
-            return Transaksi::where('status',0)->whereBetween('created_at',[$date_start,$date_end])
+            return Transaksi::where('status',0)->whereBetween('inspected_at',[$date_start,$date_end])
         ->with(RELASI)->get();
     }
 
@@ -139,13 +139,13 @@ class ReadController extends Controller
 
         if($date_start || $date_end){
             if($date_start == $date_end)
-                $history = $history->whereDate('result_created_at', $date_end);
+                $history = $history->whereDate('inspected_at', $date_end);
             else if(is_null($date_start))
-                $history = $history->whereDate('result_created_at', '<=', $date_end);
+                $history = $history->whereDate('inspected_at', '<=', $date_end);
             else if(is_null($date_end))
-                $history = $history->whereDate('result_created_at', '>=', $date_start);
+                $history = $history->whereDate('inspected_at', '>=', $date_start);
             else
-                $history = $history->whereBetween('result_created_at', [$date_start, $date_end]);
+                $history = $history->whereBetween('inspected_at', [$date_start, $date_end]);
         }
         if($asal_ruang)
             $history = $history->AsalFilter($asal_ruang);
@@ -274,10 +274,10 @@ class ReadController extends Controller
 
     public function getUnverifiedTransaction($date_start = NULL,$date_end = NULL)
     {
-        if(is_null($date_start))
-            return Transaksi::where('status', 1)->whereNull('verified_at')->orderBy('result_created_at', 'desc')->with(RELASI)->get();
+        if(is_null($date_start)) 
+            return Transaksi::where('status', 1)->whereNull('verified_at')->orderBy('inspected_at', 'desc')->with(RELASI)->get();
         else
-            return Transaksi::where('status', 1)->whereNull('verified_at')->orderBy('result_created_at', 'desc')->whereBetween('result_created_at',[$date_start,$date_end])->with(RELASI)->get();
+            return Transaksi::where('status', 1)->whereNull('verified_at')->orderBy('inspected_at', 'desc')->whereBetween('inspected_at',[$date_start,$date_end])->with(RELASI)->get();
     }
 
     public function getTransactionDetailBySlug($slug)

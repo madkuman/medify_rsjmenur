@@ -1,4 +1,4 @@
-<div style="height: 100px;padding-top: 5px">
+<div style="height: 100px;padding-top: 70px">
 	<table>
 		<tr>
 			<td style="width: 25%">No RM</td>
@@ -14,6 +14,11 @@
 			<td>Tgl Lhr</td>
 			<td>:</td>
 			<td>{{$transaksi->pasien_detail->date_of_birth ?? '-'}} / {{$transaksi->pasien_detail->age ?? '-'}}</td>
+		</tr>
+		<tr>
+			<td>B/T. Badan</td>
+			<td>:</td>
+			<td>{{$transaksi->kasus->identitas->berat_badan ?? '-'}} kg / {{$transaksi->kasus->identitas->tinggi_badan ?? '-'}} cm</td>
 		</tr>
 		<tr>
 			<td>Jns</td>

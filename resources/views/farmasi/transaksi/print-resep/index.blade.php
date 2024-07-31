@@ -88,24 +88,40 @@
             $print = 'UMUM';
         else
             $print = 'ASURANSI';
+            
+        $show_label_high_alert = false;
     @endphp
     @if($transaksi->cito == 1)
     <div class="watermark">CITO</div>
     @endif
-    <table class="vertical-align-top">
+    <table class="vertical-align-top" width="100%" style="margin-bottom: 0; padding-bottom: 0">
         <tr>
             <td style="width: 60%">
                 @include('farmasi.transaksi.print-resep.left-header')
                 @include('farmasi.transaksi.print-resep.left-resep-info')
                 @include('farmasi.transaksi.print-resep.left-resep-content')
                 @include('farmasi.transaksi.print-resep.left-pasien')
-                @include('farmasi.transaksi.print-resep.left-info')
+                {{-- @include('farmasi.transaksi.print-resep.left-info') --}}
             </td>
             <td style="width: 40%; padding:10px;text-align: center;height: 50px;">
                 @include('farmasi.transaksi.print-resep.right-asuransi')
                 @include('farmasi.transaksi.print-resep.right-analisa-resep')
-                @include('farmasi.transaksi.print-resep.right-telaah-obat')
                 @include('farmasi.transaksi.print-resep.right-konfirmasi')
+                {{-- @if ($show_label_high_alert) --}}
+                @include('farmasi.transaksi.print-resep.right-label-obat-high-alert')
+                {{-- @endif --}}
+                {{-- @include('farmasi.transaksi.print-resep.right-telaah-obat') --}}
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%" style="position: fixed; bottom: 95; left: 0">
+        <tr>
+            <td width="35%">
+                @include('farmasi.transaksi.print-resep.left-info')
+            </td>
+            <td width="65%" style="padding:0; text-align: center;">
+                @include('farmasi.transaksi.print-resep.right-telaah-obat')
             </td>
         </tr>
     </table>

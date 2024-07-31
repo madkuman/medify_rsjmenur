@@ -11,6 +11,8 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Farmasi\Farmasi;
+use App\Models\Kasus\AlatBantu;
 use DB;
 
 class LaporanPelayananKefarmasianJatimController extends Controller
@@ -31,6 +33,7 @@ class LaporanPelayananKefarmasianJatimController extends Controller
         $data['s2_farmasi']=$this->getS2Farmasi();
         $data['pio']=$this->getPIO($date_start,$date_end);
         $data['visite']=$this->getVisite($date_start,$date_end);
+        $data['konseling']=$this->getKonseling($date_start,$date_end);
         $data['racikan']=$this->getWaktuPelayanan($date_start,$date_end,'racikan');
         $data['non_racikan']=$this->getWaktuPelayanan($date_start,$date_end,'non-racikan');
 
@@ -60,19 +63,19 @@ class LaporanPelayananKefarmasianJatimController extends Controller
     }
 
     private function getKadepFarmasi(){
-        return null;
+        return Farmasi::whereNotNull('kasie')->first()->kasie;
     }
 
     private function getApoteker(){
-        return null;
+        return 10;
     }
 
     private function getTTK(){
-        return null;
+        return 11;
     }
 
     private function getS2Farmasi(){
-        return null;
+        return 3;
     }
 
     private function getPIO($date_start,$date_end){
@@ -86,6 +89,18 @@ class LaporanPelayananKefarmasianJatimController extends Controller
             ->wherebetween('created_at',[$date_start,$date_end])
             ->count();
         return ceil($visite/3);
+    }
+
+    private function getKonseling($date_start,$date_end){
+        $user_farmasi=User::where('profesi',3)->where('fake_account',0)->pluck('id');
+        $user_input =AlatBantu::wherebetween('created_at',[$date_start,$date_end])
+        ->where('type','edukasi-pasien')
+        ->wherein('created_by',$user_farmasi)
+        ->pluck('created_by')->toArray();
+
+        $total_user = count($user_input);
+
+        return ceil($total_user);
     }
 
     private function getWaktuPelayanan($date_start,$date_end,$jenis_resep){

@@ -10,4 +10,11 @@ class SubSpesialisasi extends Model
 	use DataLogger;
     protected $connection = 'mysql';
 	protected $table = 'profession_subspecialty';
+
+	public function read_sub_by_id($id)
+	{
+		$data = SubSpesialisasi::where('id', $id)->first()->pluck('slug');
+
+		return $data;
+	}
 }

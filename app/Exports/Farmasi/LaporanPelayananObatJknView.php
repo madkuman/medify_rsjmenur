@@ -37,9 +37,10 @@ class LaporanPelayananObatJknView implements FromView, WithEvents, WithColumnFor
                 $event->sheet->getColumnDimension('J')->setAutoSize(true);
                 $event->sheet->getColumnDimension('K')->setAutoSize(true);
                 $event->sheet->getColumnDimension('L')->setAutoSize(true);
+                $event->sheet->getColumnDimension('M')->setAutoSize(true);
 
                 $event->sheet->styleCells(
-                    'A1:L4',
+                    'A1:M4',
                     [
                         'font' => [
                             'bold' => true
@@ -54,7 +55,7 @@ class LaporanPelayananObatJknView implements FromView, WithEvents, WithColumnFor
                 );
 
                 $event->sheet->styleCells(
-                    'A5:L14',
+                    'A5:M14',
                     [
                         'font' => [
                             'bold' => true
@@ -68,7 +69,7 @@ class LaporanPelayananObatJknView implements FromView, WithEvents, WithColumnFor
                 );
 
                 $event->sheet->styleCells(
-                    'A15:L17',
+                    'A15:M17',
                     [
                         'font' => [
                             'bold' => true
@@ -83,7 +84,7 @@ class LaporanPelayananObatJknView implements FromView, WithEvents, WithColumnFor
                 );
 
                 $event->sheet->styleCells(
-                    'A18:L'.$rows,
+                    'A18:M'.$rows,
                     [
                         'alignment' => [
                             'vertical'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
@@ -107,6 +108,7 @@ class LaporanPelayananObatJknView implements FromView, WithEvents, WithColumnFor
             'J' => '#,##0',
             'K' => '#,##0',
             'L' => '#,##0',
+            'M' => '#,##0',
         ];
     }
 

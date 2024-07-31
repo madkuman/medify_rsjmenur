@@ -164,8 +164,8 @@ class PasienKRSController extends Controller
                     'tindakan' => $tindakan_icd9,
                     'mrs_at' => Carbon::createFromFormat('Y-m-d H:i:s', $kasus->created_at)->toDateString(),
                     'krs_at' => Carbon::createFromFormat('Y-m-d H:i:s', $kasus->krs_at)->toDateString(),
-                    'krs_status' => $transaksi->kasus->status_krs->nama,
-                    'krs_alasan' => $transaksi->kasus->alasan_krs->nama,
+                    'krs_status' => $kasus->status_krs->nama,
+                    'krs_alasan' => $kasus->alasan_krs->nama,
                 ];
             }
         }

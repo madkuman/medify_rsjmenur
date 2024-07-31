@@ -175,7 +175,7 @@ class PostController extends Controller
             $pasien = array(
                 'jenis_kartu_identitas_id' => $request->input('jenis_kartu_identitas'),
                 'nomor_identitas' => $request->nomor_identitas,
-                'kategori_pasien' => $request->input('kategori_pasien'),
+                'kategori_pasien' => $request->input('kategori_pasien') ?? 0,
                 'name' => $request->input('name'),
                 'gender' => $request->input('gender'),
                 'marriage' => $request->input('marriage'),
@@ -547,7 +547,9 @@ class PostController extends Controller
 
     public function APIPendaftaranPasien(Request $request)
     {
-        // dd($request->all());
+ini_set('max_memory_limit', '4096M');
+
+//if(\Auth::user()->id == 3)         dd($request->all());
         DB::connection('rawatjalan')->beginTransaction();
         DB::connection('igd')->beginTransaction();
         DB::connection('rekammedis')->beginTransaction();
@@ -563,7 +565,7 @@ class PostController extends Controller
                 Auth::loginUsingId(1);
                 app('debugbar')->disable();
             }
-
+            
             $data_transaksi['poliklinik_id'] = $request->poliklinik_id;
             $data_transaksi['nomor_sep'] = $request->no_sep;
             $data_transaksi['pasien_id'] = $request->input('pasien_id');
@@ -588,8 +590,15 @@ class PostController extends Controller
             $asal_rujukan_id = $request->asal_rujukan;
             #jika bukan number
             if(!is_numeric($asal_rujukan_id)){
-                $asal_rujukan = AsalRujukan::create(['nama' => $asal_rujukan_id]);
-                $asal_rujukan_id = $asal_rujukan->id;
+                // Cari apakah sudah ada rujukan dengan nama yang sama
+                $find_asal_rujukan = AsalRujukan::find($asal_rujukan_id);                    
+                if($find_asal_rujukan == null){
+                     $asal_rujukan = AsalRujukan::create(['nama' => $asal_rujukan_id]);
+                     $asal_rujukan_id = $asal_rujukan->id;
+                }          
+                else {
+                    $asal_rujukan_id = $find_asal_rujukan->id;
+                }      
             }
             $data_transaksi['asal_rujukan_id'] = $asal_rujukan_id;
             // dd($data_transaksi);
@@ -900,6 +909,7 @@ class PostController extends Controller
             'nomor_sep'                 => $transaksi->nomor_sep,
             'id_ibu'                    => null,
             'sirs_pelayanan_khusus_id' => $data_transaksi['sirs_pelayanan_khusus_id'],
+            'asal_rujukan_id' => $transaksi->asal_rujukan ?? null,
         ];
 
         $kasus = app(\App\Http\Controllers\Kasus\Kasus\CreateController::class)->setCreateKasus($set_kasus);
@@ -1031,7 +1041,7 @@ class PostController extends Controller
                         'Administrasi Pendaftaran Pasien',
                         null,
                         null,
-                        $data['created_by'] ?? null
+                        $data['created_by'] ?? $data['dokter']->user->id ?? null
                     );
             } else $retribusi_kasir = null;
 

@@ -1,4 +1,4 @@
-<div style="height: 100px;padding-top: {{$transaksi->cito == 1 ? 30 : 5}}px">
+<div style="padding-top: {{$transaksi->cito == 1 ? 20 : 5}}px">
 	<table>
 		<tr>
 			<td style="width: 60%">
@@ -7,23 +7,26 @@
 						<td>Tanda Tangan Penerima</td>
 					</tr>
 					<tr>
-						<td>&nbsp;</td>
+						<td class="text-center">
+							@if(!empty($transaksi->img_ttd))
+								<img src="{{public_path($transaksi->img_ttd)}}" height="50px">
+							@else
+								<div style="height: 10px"></div>
+							@endif
+						</td>
 					</tr>
+					@if (!empty($transaksi->nama_ttd))
 					<tr>
-						<td>&nbsp;</td>
-					</tr>
+						<td>({{$transaksi->nama_ttd ?? "_____________________"}})</td>
+					</tr>				 
+					@else
 					<tr>
-						<td>&nbsp;</td>
+						<td style="padding-top: 30px">({{$transaksi->nama_ttd ?? "_____________________"}})</td>
 					</tr>
-					<tr>
-						<td>(_____________________)</td>
-					</tr>
-					<tr>
-						<td>Nama Terang</td>
-					</tr>
+					@endif
 				</table>
 			</td>
-			<td>
+			{{-- <td>
 				<table class="border font-8">
 					<tr>
 						<td>Kriteria</td>
@@ -62,7 +65,7 @@
 						</td>
 					</tr>
 				</table>
-			</td>
+			</td> --}}
 		</tr>
 	</table>			
 </div>

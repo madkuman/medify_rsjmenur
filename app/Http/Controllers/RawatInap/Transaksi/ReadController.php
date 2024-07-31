@@ -125,7 +125,8 @@ class ReadController extends Controller
 							->when(!empty($kasus), function ($q) use ($kasus) {
 								$q->where('id', '!=', $kasus->id);
 							})
-							->whereBetween('krs_at', [$date_start, $date_now])
+//							->whereBetween('krs_at', [$date_start, $date_now])
+                            ->whereBetween('mrs_at', [$date_start, $date_now])
 							->first();
 			if (!empty($kasus_pasien)) {
 				$has_ranap_7_hari_terakhir = true;

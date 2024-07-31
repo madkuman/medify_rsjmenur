@@ -39,7 +39,7 @@ Admin - Daftar Tarif
                     </div>
                     <div class="col-3 align-self-start">
                         <label>Tags</label>
-                        <select class="form-control js-select2" name="slug" style="width: 100%;" data-placeholder="Pilih Tags" required="">
+                        <select class="form-control js-select2" name="slug" style="width: 100%;" data-placeholder="Pilih Tags">
                             <option></option>
                             @foreach($slugs as $item)
                             <option value="{{$item->slug}}">{{$item->nama}}</option>

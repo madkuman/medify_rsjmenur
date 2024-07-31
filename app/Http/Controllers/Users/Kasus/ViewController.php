@@ -67,6 +67,9 @@ class ViewController extends Controller
 
     public function loadData($request)
     {
+        ini_set('max_execution_time', 1200); #20mnt
+        ini_set('memory_limit', "2048M");
+        
         if ($request->tanggal_krs_min != NULL) {
             $tanggal_krs_min = $request->tanggal_krs_min;
         }
@@ -98,60 +101,67 @@ class ViewController extends Controller
         $tanggal_krs_max = Carbon::createFromFormat('d/m/Y', $tanggal_krs_max, 'Asia/Jakarta')->endOfDay();
         $tanggal_mrs_min = Carbon::createFromFormat('d/m/Y', $tanggal_mrs_min, 'Asia/Jakarta')->startOfDay();
         $tanggal_mrs_max = Carbon::createFromFormat('d/m/Y', $tanggal_mrs_max, 'Asia/Jakarta')->endOfDay();
-        $kolab = Kolaborator::where('user_id', $id)->where('invitation',1)->pluck('kasus_id')->all();
+       
+        $kasus = Kasus::select('kasus.*')
+        ->join(config('app.db_name').'_kasus.kolaborator', function($query) use ($id){
+            $query->on('kolaborator.kasus_id', 'kasus.id')
+            ->whereNull('kolaborator.deleted_at')
+            ->where('user_id', $id);
+        });
 
         if ($request->tanggal_krs_min != NULL || $request->tanggal_mrs_min != NULL) {
             if ($request->tanggal_krs_min == NULL) {
-                $kasus = Kasus::whereIn('id', $kolab)->whereBetween('created_at', [$tanggal_mrs_min,$tanggal_mrs_max]);
+                $kasus->whereBetween('kasus.created_at', [$tanggal_mrs_min,$tanggal_mrs_max]);
             } elseif ($request->tanggal_mrs_min == NULL) {
-                $kasus = Kasus::whereIn('id', $kolab)->whereBetween('krs_at', [$tanggal_krs_min,$tanggal_krs_max]);
+                $kasus->whereBetween('krs_at', [$tanggal_krs_min,$tanggal_krs_max]);
             } else {
-                $kasus = Kasus::whereIn('id', $kolab)->whereBetween('krs_at', [$tanggal_krs_min,$tanggal_krs_max])->whereBetween('created_at', [$tanggal_mrs_min,$tanggal_mrs_max]);
+                $kasus->whereBetween('krs_at', [$tanggal_krs_min,$tanggal_krs_max])->whereBetween('kasus.created_at', [$tanggal_mrs_min,$tanggal_mrs_max]);
             }
-        } else {
-            $kasus = Kasus::whereIn('id', $kolab)->whereBetween('created_at', [$tanggal_krs_min,$tanggal_krs_max]);
         }
+
         if(!empty($request->ranap) && empty($request->igd) && empty($request->rajal) && empty($request->medical_checkup)){
-            $kasus = $kasus->where('tipe_ri', $request->ranap);
+            $kasus->where('tipe_ri', $request->ranap);
         }
         else if(!empty($request->ranap) || !empty($request->igd) || !empty($request->rajal) || !empty($request->medical_checkup)){
             if (!empty($request->ranap)) {
-                $kasus = $kasus->where('tipe_ri', $request->ranap);
+                $kasus->where('tipe_ri', $request->ranap);
             } else {
-                $kasus = $kasus->where('tipe_ri', 0);
+                $kasus->where('tipe_ri', 0);
             }
             if (!empty($request->rajal)) {
-                $kasus = $kasus->where('tipe_rj', $request->rajal);
+                $kasus->where('tipe_rj', $request->rajal);
             } else {
-                $kasus = $kasus->where('tipe_rj', 0);
+                $kasus->where('tipe_rj', 0);
             }
             if (!empty($request->igd)) {
-                $kasus = $kasus->where('tipe_igd', $request->igd);
+                $kasus->where('tipe_igd', $request->igd);
             } else {
-                $kasus = $kasus->where('tipe_igd', 0);
+                $kasus->where('tipe_igd', 0);
             }
             if (!empty($request->medical_checkup)) {
-                $kasus = $kasus->where('tipe_mc', $request->medical_checkup);
+                $kasus->where('tipe_mc', $request->medical_checkup);
             } else {
-                $kasus = $kasus->where('tipe_mc', 0);
+                $kasus->where('tipe_mc', 0);
             }
         }
         if (!empty($request->input('lokasi'))) {
-            if (!empty($request->input('tipe_lokasi'))) {
-                if ($request->tipe_lokasi == 1) {
-                    $kasus_ids = $kasus->with(['lokasi.lokasi'])->get()->where('lokasi.lokasi.id',$request->input('lokasi'))->pluck('id');
-                    $kasus = Kasus::whereIn('id',$kasus_ids);
-                } else {
-                    $kasus_ids = LokasiKasus::where('lokasi_id', $request->lokasi)->pluck('kasus_id')->toArray();
-                    $kasus = $kasus->whereIn('id', $kasus_ids);
-                }
+
+            if (isset($request->tipe_lokasi) && $request->tipe_lokasi == 1) {
+                $kasus->join(
+                    DB::raw('(select * from  ' . config('app.db_name') . '_kasus.lokasi as lokasi 
+                                    where id in 
+                                        (select max(id) as id from ' . config('app.db_name') . '_kasus.lokasi as sub_lokasi where sub_lokasi.deleted_at is null group by sub_lokasi.kasus_id))
+                                         as lokasi'), function ($query) use ($request) {
+                                    $query->on('kasus.id', 'lokasi.kasus_id')
+                                    ->where('lokasi.lokasi_id', $request->lokasi);
+                            });
             } else {
-                $kasus_ids = LokasiKasus::where('lokasi_id', $request->lokasi)->pluck('kasus_id')->toArray();
-                $kasus = $kasus->whereIn('id', $kasus_ids);
+                    $kasus_ids = LokasiKasus::where('lokasi_id', $request->lokasi)->pluck('kasus_id')->toArray();
+                    $kasus->whereIn('kasus.id', $kasus_ids);
             }
         }
         if (!empty($request->input('no_rm'))) {
-            $kasus = $kasus->whereHas('pasien', function ($q) use($request)
+            $kasus->whereHas('pasien', function ($q) use($request)
             {
                 $q->from(config('app.db_name').'_patients.pasien')->where('no_rm','like', $request->no_rm);
             });

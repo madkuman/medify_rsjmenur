@@ -98,6 +98,19 @@ class DataController extends Controller
                 ],
             ]
         ];
+        $data['pasien_baru'] = [
+            'judul' => 'Pasien Baru',
+            'deskripsi' => 'pengaturan yang terdapat di menu Pasien Baru',
+            'input' => [
+                'enable_pasien_laborat' => [
+                    'col' => 4,
+                    'type' => 'toggle',
+                    'judul' => 'Pasien Laborat',
+                    'name' => 'enable_pasien_laborat',
+                    'deskripsi' => 'Mengaktifkan Pilihan Pasien Laborat',
+                ],
+            ]
+        ];
         return $data;
     }
 
@@ -325,35 +338,81 @@ class DataController extends Controller
             ]
         ];
 
-        $data['satu_sehat'] = [
-            'judul' => 'SATU SEHAT',
-            'deskripsi' => 'Pengaturan Fitur SATU SEHAT',
+        $data['satusehat'] = [
+            'judul' => 'Bridging Satu Sehat',
+            'deskripsi' => 'Pengaturan Bridging Satu Sehat',
             'input' => [
-                'client-id' => [ #client ID
-                    'col' => 4, #optional default 4
-                    'type' => 'input', #nama file di view admin.pengaturan-fitur.components.form
-                    'judul' => 'CLIENT ID',
-                    'name' => 'client_id', #samakan dengan yang ada diconfig
-                    'deskripsi' =>  '',
-                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+                'on' => [
+                    'type' => 'toggle-v2',
+                    'judul' => 'On / Off',
+                    'name' => 'on',
+                    'deskripsi' => 'jika on maka on maka bridging satusehat aktif',
                 ],
-                'secret-id' => [ #secret ID
-                    'col' => 4, #optional default 4
-                    'type' => 'input', #nama file di view admin.pengaturan-fitur.components.form
-                    'judul' => 'SECRET ID',
-                    'name' => 'secret_id', #samakan dengan yang ada diconfig
-                    'deskripsi' =>  '',
-                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+                'stage' => [
+                    'col' => 4,
+                    'type' => 'select2',
+                    'judul' => 'Pilihan Stage',
+                    'name' => 'stage',
+                    'deskripsi' => 'Pilih Stage Bridging',
+                    'options' => [
+                        'development' => "Development",
+                        'production' => "Production",
+                    ]
                 ],
-                'organization-id' => [ #organization ID
-                    'col' => 4, #optional default 4
-                    'type' => 'input', #nama file di view admin.pengaturan-fitur.components.form
-                    'judul' => 'ORGANIZATION ID',
-                    'name' => 'organization_id', #samakan dengan yang ada diconfig
-                    'deskripsi' =>  '',
-                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+                'auth_url' => [
+                    'col' => 4,
+                    'type' => 'input',
+                    'judul' => 'Auth URL',
+                    'name' => 'auth_url',
+                    'deskripsi' => 'Setting auth url satu sehat',
+                ],
+                'base_url' => [
+                    'col' => 4,
+                    'type' => 'input',
+                    'judul' => 'Base URL',
+                    'name' => 'base_url',
+                    'deskripsi' => 'Setting base url satu sehat',
+                ],
+                'consent_url' => [
+                    'col' => 4,
+                    'type' => 'input',
+                    'judul' => 'Consent URL',
+                    'name' => 'consent_url',
+                    'deskripsi' => 'Setting Consent url satu sehat',
+                ],
+                'client_id' => [
+                    'col' => 4,
+                    'type' => 'input',
+                    'judul' => 'Client ID',
+                    'name' => 'client_id',
+                    'deskripsi' => 'Setting Client ID satu sehat',
+                ],
+                'client_secret' => [
+                    'col' => 4,
+                    'type' => 'input',
+                    'judul' => 'Client Secret',
+                    'name' => 'client_secret',
+                    'deskripsi' => 'Setting Client Secret satu sehat',
+                ],
+                'organization_id' => [
+                    'col' => 4,
+                    'type' => 'input',
+                    'judul' => 'Organization ID',
+                    'name' => 'organization_id',
+                    'deskripsi' => 'Setting Organization ID satu sehat',
+                ],
+                'sumber_nik_user' => [
+                    'col' => 4,
+                    'type' => 'select2',
+                    'judul' => 'Sumber NIK user',
+                    'name' => 'sumber_nik_user',
+                    'deskripsi' => 'Pilih Sumber NIK User',
+                    'options' => [
+                        'kepegawaian' => "Kepegawaian (Default)",
+                        'user' => "Pengaturan User",
+                    ]
+                ],
             ],
-            ]
         ];
 
         return $data;
@@ -372,6 +431,19 @@ class DataController extends Controller
                     'judul' => 'Per Dokter',
                     'name' => 'per_dokter',
                     'deskripsi' => 'Nomor antrian per dokter',
+                ],
+            ]
+        ];
+        $data['auto_krs_dan_checkout'] = [
+            'judul' => 'Auto KRS dan Checkout',
+            'deskripsi' => 'Daftar Pengaturan yang mempengaruhi auto KRS dan Checkout Rajal',
+            'input' => [
+                'auto_checkout' => [
+                    'col' => 4,
+                    'type' => 'toggle',
+                    'judul' => 'Auto Checkout',
+                    'name' => 'auto_checkout',
+                    'deskripsi' => 'Fitur untuk menyalakan auto checkout pada command auto krs dan checkout',
                 ],
             ]
         ];

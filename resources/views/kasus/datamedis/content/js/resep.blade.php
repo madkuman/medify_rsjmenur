@@ -69,7 +69,9 @@
                 data: function (params) {
                     return {
                         keyword: params.term,
-                        page: params.page
+                        page: params.page,
+                        order_by_stok : 1,
+                        kasus_id: "{{ $kasus->id }}",
                     };
                 },
                 processResults: function (data, params) {
@@ -99,7 +101,9 @@
         if(item.stok)
             stok = item.stok.aggregate;
         var markup = item.item_detail.nama + " ("+item.item_detail.satuan+") - Stok : " + stok + " - Harga : "+item.item_detail.harga;
-
+        if (stok == 0) {
+            markup = `<div class="select2-warning-item">${markup}</div>`;
+        }
         return markup;
     }
 
@@ -605,7 +609,9 @@
                 {
                     return {
                         keyword: params.term,
-                        page: params.page
+                        page: params.page,
+                        order_by_stok: 1,
+                        kasus_id: "{{ $kasus->id }}",
                     };
                 },
                 processResults: function (data, params) {

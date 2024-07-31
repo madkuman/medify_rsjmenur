@@ -118,7 +118,10 @@
 					@endforeach
 					@endif
 				</td>
-				<td></td>
+				<td>
+					<img src="{{url('')}}/{{$kasus->dpjp->user->ttd}}" style="max-width: 90px;"><br>
+					{{$kasus->dpjp->user->name}}
+				</td>
 			</tr>
 			@endforeach
 		</tbody>

@@ -14,13 +14,17 @@ use Bugsnag;
 
 class EditController extends Controller
 {
-  	public function payment($resep_id,$laba,$tagihan, $farm = null)
+  	public function payment($resep_id,$laba,$tagihan, $farm = null, $request = null)
 	{
+		if ($request == null) {
+			$request = request();
+		}
 		//dd($distribusi_id);
 		$i=0;
 		$resep = ResepDetail::where('resep_id', $resep_id)->get();
 		foreach ($resep as $detail) {
 			$detail->laba = $laba[$i] ?? 0;
+			$detail->embalase = $request->embalase[$i] ?? 0;
 			if($detail->tipe) 
 			{
 				$subtotal = $this->payRacikan($detail->id,$laba[$i]);
@@ -39,6 +43,12 @@ class EditController extends Controller
 				$detail->harga = round($detail->obat_detail->item_detail->harga*(100 + $detail->laba)/100);
 				$detail->subtotal = ceil($detail->harga*$detail->jumlah);
 				$qty = $detail->jumlah;
+			}
+			$detail->subtotal += $detail->embalase;
+			if ($detail->jumlah != 0) {
+				$detail->harga = $detail->subtotal / $detail->jumlah;
+			} else {
+				$detail->harga = 0;
 			}
 			$detail->save();
 			$i++;
@@ -172,6 +182,17 @@ class EditController extends Controller
 	    $data['desc'] = $detail->nama_obat;
 		$data['qty'] = $detail->jumlah;
 	    $data['unit_price'] = $detail->harga;
+		
+		$farmasi = session('farmasi', null);
+		if ($farmasi == null) {
+			$farmasi = $detail->resep_detail->transaksi_detail->owner_detail;
+		}
+		$transaksi_obat = $detail->resep_detail->transaksi_detail;
+		if ($farmasi->perharian && (($transaksi_obat->pembayaran_detail->perusahaan->tipe->slug ?? 'tunai') == 'bpjs')) {
+			if (isset($detail->hari7)) {
+				$data['qty'] = $detail->hari7;
+			}
+		}
 	    $data['nominal'] = $detail->subtotal;
 	    $data['daftar_harga_id'] = 0;
 	    

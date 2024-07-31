@@ -144,8 +144,11 @@ class ViewController extends Controller
     public function buktiPelayanan($nomor_kasus)
     {
     	\Blade::setEchoFormat('nl2br(e(%s))');
-    	$kasus = Kasus::with('operasiTransaksi', 'diagnosis.icd10', 'tindakan_icd9.icd9', 'pasien')->where('nomor_kasus',$nomor_kasus)->first();
-        $data['kasus'] = $kasus;
+		$kasus = Kasus::with('operasiTransaksi', 'diagnosis.icd10', 'tindakan_icd9.icd9', 'pasien', 'verifikasiKoderKasus','kolaborator_admin')->where('nomor_kasus',$nomor_kasus)->first();
+        $resume = Resume::where('kasus_id', $kasus->id)->first();
+		$data['kasus'] = $kasus;
+		$data['resume'] = $resume;
+		
         // return view('kasus.resume.print-pelayanan-ranap', $data);
         $pdf = MPDF::loadView('kasus.resume.print-pelayanan-ranap', $data);
         $filename = $kasus->pasien->name.'-bukti-pelayanan.pdf';

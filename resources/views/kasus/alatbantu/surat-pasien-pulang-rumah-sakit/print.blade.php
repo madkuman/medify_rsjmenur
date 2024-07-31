@@ -35,7 +35,7 @@ Print Surat Pasien Pulang Rumah Sakit
                 <table width="100%" cellpadding="5" style="border-bottom: 1px solid #000;">
                    <tr>
                         <td width="15%" align="left">
-                            <img src="{{ asset('assets/img/logo/jer_basuki_mawa_beya.png') }}" height="80">
+                            <img src="{{ public_path('assets/img/logo/jer_basuki_mawa_beya.png') }}" height="80">
                         </td>
                         <td width="63%" align="center">
                             <p style="font-size: 14px;">PEMERINTAH PROVINSI JAWA TIMUR </p>
@@ -44,7 +44,7 @@ Print Surat Pasien Pulang Rumah Sakit
                             <p style="font-size: 14px;"><b>SURABAYA</b></p>
                         </td>
                         <td width="17%" align="left">
-                            <img src="{{ asset('assets/img/logo/rsj_menur_logo.png') }}" height="80">
+                            <img src="{{ public_path('assets/img/logo/rsj_menur_logo.png') }}" height="80">
                         </td>
                    </tr> 
                 </table>
@@ -175,8 +175,8 @@ Print Surat Pasien Pulang Rumah Sakit
 			        <tr>
 			        	<td><div style="margin-bottom: 50px;"></div></td>
 			        	<td align="center">
-			        		@if(!is_null($kasus->admin->user->ttd)) 
-			        			<img src="{{ asset($kasus->admin->user->ttd) }}" width="70">
+			        		@if(!is_null($kasus->admin->user->ttd ?? null))
+			        			<img src="{{ public_path($kasus->admin->user->ttd ?? '') }}" width="100">
 			        		@else
 			        			<div style="margin-bottom: 50px;"></div>
 			        		@endif

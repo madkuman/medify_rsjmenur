@@ -56,6 +56,26 @@
 									<input type="text" class="form-control input-keterangan" name="keterangan">
 								</div>
 							</div>
+							<div class="form-group row mb-5">
+								<div class="col-5">
+									<label class="css-control css-control-primary css-checkbox">
+										<input type="checkbox" value="1" class="css-control-input input-pemberian-segera" name="cb_segera_diberikan">
+										<span class="css-control-indicator"></span> <small>Segera Diberikan</small>
+									</label>
+								</div>
+								<div class="col-5">
+									<label class="css-control css-control-primary css-checkbox">
+										<input type="checkbox" value="1" class="css-control-input input-pemberian-lambat" name="cb_terlambat_diberikan">
+										<span class="css-control-indicator"></span> <small>Terlambat Diberikan </small>
+									</label>
+								</div>
+								<div class="col-5">
+									<label class="css-control css-control-primary css-checkbox">
+										<input type="checkbox" value="1" class="css-control-input input-pemberian-bebas" name="cb_pemberian_bebas">
+										<span class="css-control-indicator"></span> <small>Pemberian bebas </small>
+									</label>
+								</div>
+                           </div>
 						</div>
 					</div>
 				</div>

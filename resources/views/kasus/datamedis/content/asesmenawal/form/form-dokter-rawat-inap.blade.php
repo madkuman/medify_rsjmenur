@@ -248,6 +248,187 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- alergi -->
+                            <div class="col-12">
+                                <h5 class="mb-5 mt-10">Riwayat Alergi</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-5">
+                                    <label class="css-control css-control-primary css-checkbox">
+                                        <input type="checkbox" value="✔" class="css-control-input" name="ada_alergi">
+                                        <span class="css-control-indicator"></span> Ada Alergi
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-5">
+                                    <label class="css-control css-control-primary css-checkbox">
+                                        <input type="checkbox" value="✔" class="css-control-input" name="tidak_ada_alergi">
+                                        <span class="css-control-indicator"></span> Tidak Ada Alergi
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-5">
+                                    <label class="css-control css-control-primary css-checkbox">
+                                        <input type="checkbox" value="✔" class="css-control-input" name="alergi_tidak_diketahui">
+                                        <span class="css-control-indicator"></span> Tidak Diketahui
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-5">
+                                    <label class="css-control css-control-primary css-checkbox">
+                                        <input type="checkbox" value="✔" class="css-control-input" name="gelang_tanda_alergi_terpasang">
+                                        <span class="css-control-indicator"></span> Gelang Tanda Alergi Terpasang
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12" style="margin-bottom: -10px; margin-top: 10px">
+                                <h6>Alergi Obat</h6>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row mb-5">
+                                    <label class="col-12">Alergi terhadap</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" class="js-tags-input form-control" data-height="34px"  name="alergi_terhadap_obat">
+                                        <small>Tekan TAB setelah input tiap item</small>
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class="col-md-3">
+                                <div class="row">
+                                    <label class="col-12">Tingkat Keparahan</label>
+                                    <div class="form-group col-4" style="">
+                                        <label class="css-control css-control-primary css-checkbox">
+                                            <input type="checkbox" value="✔" class="css-control-input" name="alergi_obat_ringan">
+                                            <span class="css-control-indicator"></span> Ringan
+                                        </label>
+                                    </div>
+                                    <div class="form-group col-4" style="">
+                                        <label class="css-control css-control-primary css-checkbox">
+                                            <input type="checkbox" value="✔" class="css-control-input" name="alergi_obat_sedang">
+                                            <span class="css-control-indicator"></span> Sedang
+                                        </label>
+                                    </div>
+                                    <div class="form-group col-4" style="">
+                                        <label class="css-control css-control-primary css-checkbox">
+                                            <input type="checkbox" value="✔" class="css-control-input" name="alergi_obat_berat">
+                                            <span class="css-control-indicator"></span> Berat
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row mb-5">
+                                    <label class="col-12">Reaksi</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" class="js-tags-input form-control" data-height="34px"  name="reaksi_alergi_obat">
+                                        <small>Tekan TAB setelah input tiap item</small>
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class="col-12" style="margin-bottom: -10px; margin-top: 10px">
+                                <h6>Alergi Makanan</h6>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row mb-5">
+                                    <label class="col-12">Alergi terhadap</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" class="js-tags-input form-control" data-height="34px"  name="alergi_terhadap_makanan">
+                                        <small>Tekan TAB setelah input tiap item</small>
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class="col-md-3">
+                                <div class="row">
+                                    <label class="col-12">Tingkat Keparahan</label>
+                                    <div class="form-group col-4" style="">
+                                        <label class="css-control css-control-primary css-checkbox">
+                                            <input type="checkbox" value="✔" class="css-control-input" name="alergi_makanan_ringan">
+                                            <span class="css-control-indicator"></span> Ringan
+                                        </label>
+                                    </div>
+                                    <div class="form-group col-4" style="">
+                                        <label class="css-control css-control-primary css-checkbox">
+                                            <input type="checkbox" value="✔" class="css-control-input" name="alergi_makanan_sedang">
+                                            <span class="css-control-indicator"></span> Sedang
+                                        </label>
+                                    </div>
+                                    <div class="form-group col-4" style="">
+                                        <label class="css-control css-control-primary css-checkbox">
+                                            <input type="checkbox" value="✔" class="css-control-input" name="alergi_makanan_berat">
+                                            <span class="css-control-indicator"></span> Berat
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row mb-5">
+                                    <label class="col-12">Reaksi</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" class="js-tags-input form-control" data-height="34px"  name="reaksi_alergi_makanan">
+                                        <small>Tekan TAB setelah input tiap item</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end alergi -->
+
+                            <!-- daftar obat -->
+                            <div class="col-12 mt-3" id="judul-content-daftar-obat">
+                                <h5 class="mb-5 mt-10">Daftar Obat yang Digunakan Sebelum Masuk RS & Daftar Obat Rutin</h5>
+                            </div>
+                            <div class="col-12 mt-1" id="content-daftar-obat">
+                                <div class="row daftar-obat-row-item">
+                                    <div class="col-md-3">
+                                        <div class="form-group row mb-5">
+                                            <label class="col-12">Nama Obat</label>
+                                            <div class="col-12">
+                                                <input type="text" class="form-control" name="obat_nama[]">
+                                            </div>
+                                        </div>  
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group row mb-5">
+                                            <label class="col-12">Dosis</label>
+                                            <div class="col-12">
+                                                <input type="text" class="form-control" name="dosis[]">
+                                            </div>
+                                        </div>  
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group row mb-5">
+                                            <label class="col-12">Jumlah</label>
+                                            <div class="col-12">
+                                                <input type="text" class="form-control" name="jumlah[]">
+                                            </div>
+                                        </div>  
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group row mb-5">
+                                            <label class="col-12">Rute</label>
+                                            <div class="col-12">
+                                                <input type="text" class="form-control" name="rute[]">
+                                            </div>
+                                        </div>  
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group row mb-5">
+                                            <label class="col-12">Aturan Pakai</label>
+                                            <div class="col-12">
+                                                <input type="text" class="form-control" name="aturan_pakai[]">
+                                            </div>
+                                        </div>  
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-12">
+                                <a class="btn btn-primary btn-add-daftar-obat mt-2 text-white"><i class="fa fa-plus" aria-hidden="true"></i> Tambah</a>
+                            </div>
+                            <!-- end daftar obat -->
+
                             <hr class="col-11">
                             <div class="col-12">
                                 <h5 class="mb-5 mt-10">Diagnosis</h5>

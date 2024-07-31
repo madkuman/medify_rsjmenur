@@ -9,6 +9,9 @@
         var resepTemp;
         var tipeObatDb;
         var hargaPerRacikan;
+        var item_detail_obat;
+        var status_selected_obat_kronis = false;
+
         $(document).ready(function(){
             
         });
@@ -112,6 +115,7 @@
         }
 
         function formatBarangSelection (item) {
+            item_detail_obat = item.item_detail;
            if(item.item_detail){
                 tipeObatDb = item.item_detail.satuan;
 
@@ -124,11 +128,46 @@
         }
 
         function changeDukungan() {
-            jumlah = $('#jumlah-obat').val();
-            hari7 = $('#hari-7').val();
-            dukungan = $('#dukungan-rs').val();
-            console.log(jumlah,hari7,dukungan);
-            $('#hari-23').val(jumlah-hari7-dukungan);
+            // jumlah = $('#jumlah-obat').val();
+            // hari7 = $('#hari-7').val();
+            // dukungan = $('#dukungan-rs').val();
+            // console.log(jumlah,hari7,dukungan);
+            // $('#hari-23').val(jumlah-hari7-dukungan);
+
+            // ----------------------
+            // let jumlah = $('#jumlah-obat').val();
+            // let dua_puluh_tiga_hari = (parseInt(jumlah) * 23)/30;
+            // let num = Number(dua_puluh_tiga_hari);
+            // let roundedString = num.toFixed(2);
+            // let dua_puluh_tiga_hari_rounded = Number(Math.floor(roundedString));
+
+            // $('#hari-23').val(dua_puluh_tiga_hari_rounded);
+
+            // let tujuh_hari = parseInt(jumlah) - dua_puluh_tiga_hari_rounded;
+            // $('#hari-7').val(tujuh_hari);
+
+
+            // ----------------------
+            if (item_detail_obat) {
+                item_detail_obat.kategori_item.forEach(item => {
+                    if (item.detail_kategori.slug == 'obat-kronis') {
+                        status_selected_obat_kronis = true;
+                    }
+                });
+            }
+
+            if (status_selected_obat_kronis) {
+                let jumlah_obat = $('#jumlah-obat').val();
+                jumlah_obat = parseInt(jumlah_obat);
+                let kolom_7 = Math.round((jumlah_obat/30)*7);
+                let kolom_23 = jumlah_obat - kolom_7;
+
+                $('#hari-7').val(kolom_7);
+                $('#hari-23').val(kolom_23);
+            } else {
+                let jumlah_obat = $('#jumlah-obat').val();
+                $('#hari-7').val(jumlah_obat);
+            }
         }
 
         //Racikan
@@ -483,6 +522,7 @@
         }
 
         function reseFields() {
+            $('#temporary-resep_detail_ori_id').val(null);
             $('#jumlahSisa').val(null).trigger('change');
             $('#detailAsal').val(null).trigger('change');
             $('#tipeObat').val(null).trigger('change');
@@ -523,13 +563,14 @@
                 reseFields();
                 resepTemp = $(this);
                 input = JSON.parse($(this).find('.resep-input').val());
-                console.log(input);
+                $('#temporary-resep_detail_ori_id').val(input.resep_detail_ori_id);
                 if (input.jenis == 'generik') {
                     $("#obatGenerik").prop("checked", true).click();
                     $("#namaObat").append('<option value="'+input.obat+'" selected>'+input.namaObat+'</option>');
                     $('#namaObat').trigger('change');
                     $("#obat-generik").text(input.namaObat);
                     tipeObatDb = input.satuan;
+                    status_selected_obat_kronis = input.is_kronis ? true : false;
                 }
                 else {
                     $("#racikan").prop("checked", true).click();
@@ -667,7 +708,7 @@
             var namaObatVal;
             var satuan_penggunaan = $('#satuan-penggunaan-select2').val();
             var input = {};
-            console.log(jenisObat);
+            input.resep_detail_ori_id = $('#temporary-resep_detail_ori_id').val() || null;
             if(harian)
             {
                 nomorObat = $('#jumlah-obat').val();

@@ -333,6 +333,7 @@
 	Route::get('/alat-bantu/asuhan-gizi', 'Kasus\AlatBantu\AsuhanGizi\ViewController@index');
 	Route::post('/alat-bantu/asuhan-gizi/create', 'Kasus\AlatBantu\AsuhanGizi\PostController@create');
 	Route::post('/alat-bantu/asuhan-gizi/delete', 'Kasus\AlatBantu\AsuhanGizi\PostController@delete');
+	Route::post('/alat-bantu/asuhan-gizi/verifikasi', 'Kasus\AlatBantu\AsuhanGizi\PostController@verifikasi');
 
 	Route::get('/alat-bantu/kemoterapi', 'Kasus\AlatBantu\Kemoterapi\ViewController@index');
 	Route::post('/alat-bantu/kemoterapi/create', 'Kasus\AlatBantu\Kemoterapi\PostController@create');
@@ -415,4 +416,8 @@
     Route::post('/alat-bantu/permintaan-ultrasonografi/edit/{id}', 'Kasus\AlatBantu\PermintaanUSG\PostController@edit');
     Route::post('/alat-bantu/permintaan-ultrasonografi/delete/{id}', 'Kasus\AlatBantu\PermintaanUSG\PostController@delete');
 
-?>
+	Route::get('/alat-bantu/form-transfer-antar-ruangan', 'Kasus\AlatBantu\FormTransferAntarRuangan\ViewController@index');
+	Route::post('/alat-bantu/form-transfer-antar-ruangan/submit', 'Kasus\AlatBantu\FormTransferAntarRuangan\PostController@submit');
+	Route::post('/alat-bantu/form-transfer-antar-ruangan/update', 'Kasus\AlatBantu\FormTransferAntarRuangan\PostController@update');
+	Route::post('/alat-bantu/form-transfer-antar-ruangan/delete', 'Kasus\AlatBantu\FormTransferAntarRuangan\PostController@delete');
+	Route::get('/alat-bantu/form-transfer-antar-ruangan/print/{id}', 'Kasus\AlatBantu\FormTransferAntarRuangan\ViewController@print');

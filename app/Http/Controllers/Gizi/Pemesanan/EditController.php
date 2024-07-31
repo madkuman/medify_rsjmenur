@@ -24,6 +24,7 @@ class EditController extends Controller
        $pemesanan_detail->makanan_tambahan_ids = json_encode($data['makanan_tambahan_ids']);
        $pemesanan_detail->diet_id = $data['diet_id'];
        $pemesanan_detail->catatan = $data['catatan'];
+       $pemesanan_detail->bentuk_makanan_id = $data['bentuk_makanan_id'];
        $pemesanan_detail->save();
    }
 

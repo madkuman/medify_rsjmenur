@@ -23,6 +23,58 @@ use Carbon\Carbon;
 
 class CreateController extends Controller
 {
+	function createFromResepKasus($transaction, $request, $resep_kasus)
+	{
+		$kasus = $resep_kasus->kasus;
+		$pembayaran = $kasus->pembayaran;
+		if ($transaction == null) {
+			$transaction = new TransaksiObat;
+			$transaction->sep_id = $kasus->sep_id;
+			$transaction->farmasi_id = $resep_kasus->farmasi_id;
+			$transaction->created_by = auth()->id();
+			$transaction->is_video = $request->is_video ?? 0;
+			$transaction->pasien_id = $kasus->pasien_id;
+			$transaction->metode_pembayaran_id = $pembayaran->id;
+			$transaction->kasus_id = $kasus->id;
+			$transaction->jenis_resep = $resep_kasus->jenis_resep;
+			$transaction->lokasi_id = $kasus->lokasi->lokasi->id;
+			$transaction->lokasi_text = $kasus->lokasi->lokasi->nama;
+			$transaction->lokasi_id = $kasus->lokasi->lokasi_id;
+			$transaction->lokasi_text = $kasus->lokasi->lokasi->nama;
+			if($request->input('dokter-jenis') == 'rsal'){
+				$transaction->dokter_id = $request->input('dokter-rsal');
+				$dokter = app('App\Http\Controllers\Users\ReadController')->getSingle($request->input('dokter-rsal'));
+				if(!empty($dokter->name))
+					$transaction->dokter_nama = $dokter->name;
+				else{
+					$transaction->dokter_id = 0;
+					$transaction->dokter_nama = (!empty($dokter_luar)) ? $dokter_luar : '-';
+				}
+			} else {
+				$transaction->dokter_id = 0;
+				$transaction->dokter_nama = $request->input('dokter_luar');
+			}
+		} else {
+			app('App\Http\Controllers\Farmasi\Resep\DeleteController')->deleteResep($transaction->resep_final);
+		}
+		$transaction->status = 0;
+		$transaction->cito = $resep_kasus->cito;
+		$transaction->save();
+
+		$request->transaksi_id = $transaction->id;
+		$resep = app(\App\Http\Controllers\Farmasi\Resep\CreateController::class)->createFromResepKasus($request, $resep_kasus);
+
+		$transaction->resep_original = $resep->id;
+		$transaction->no_resep = $resep->nomor_resep;
+		$transaction->resep_final = $resep->id;
+		$transaction->total_biaya_obat = $resep->jumlah_tagihan;
+		$transaction->slug = str_pad($transaction->id, 10, '0', STR_PAD_LEFT);
+		$transaction->save();
+
+		$resep = app(\App\Http\Controllers\Farmasi\Transaksi\EditController::class)->editStatus($transaction->id);
+
+		return $transaction;
+	}
     public function create(Request $request)
 	{
 
@@ -114,6 +166,9 @@ class CreateController extends Controller
 		if($request->input('cito')){
 		    $transaction->cito = 1;
         }
+		if($request->input('eksekutif')){
+			$transaction->eksekutif = 1;
+		}
         $transaction->is_video = $request->is_video ?? 0;
 		$transaction->save();
 
@@ -285,6 +340,16 @@ class CreateController extends Controller
             $transaksi->slug = str_pad($transaksi->id, 10, '0', STR_PAD_LEFT);
             $transaksi->save();
 
+			$is_done = true;
+			foreach ($transaction->final_detail->resep_detail as $resep_detail) {
+				if ($resep_detail->jumlah != 0) {
+					$is_done = false;
+				}
+			}
+			$transaction->status = $is_done ? 1 : 0;
+			$transaction->save();
+			
+
             DB::connection('farmasi')->commit();
             return redirect('farmasi/'.$farm->slug.'/transaksi/'.$transaction->slug)
                         ->with('message', "Copy Resep Berhasil Dibuat")
@@ -293,13 +358,13 @@ class CreateController extends Controller
         }
         catch (\Exception $e) 
         {
-          app('App\Http\Controllers\Error\Handler')->bugsnag($e);
           DB::connection('farmasi')->rollBack();
           if($transaksi){
               DB::connection('farmasi')->beginTransaction();
               $transaksi->delete();
               DB::connection('farmasi')->commit();
           }
+          app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 
           return redirect()->back()
                         ->with('message', 'Terjadi kesalahan server, Silahkan coba beberapa saat lagi')

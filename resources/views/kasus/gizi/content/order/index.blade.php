@@ -12,8 +12,10 @@
         <div class="col-lg-12 mb-20">
 
             @if(session('my_role_'.$kasus->nomor_kasus))
-            <button href="javascript:void(0)" onclick="permintaan_gizi()"  
-            class="btn-alt btn-primary min-width-125 float-right"><i class="fa fa-pencil"></i> Buat Order Diet</button>
+            {{-- <button href="javascript:void(0)" onclick="permintaan_gizi()"  
+            class="btn-alt btn-primary min-width-125 float-right"><i class="fa fa-pencil"></i> Buat Order Diet</button> --}}
+            <button href="javascript:void(0)" class="btn-alt btn-primary min-width-125 float-right" data-toggle="modal" data-target="#modal-order-create"><i class="fa fa-pencil"></i> Buat Order Diet</button>
+            <button href="javascript:void(0)" class="btn-alt btn-secondary min-width-125 float-right" data-toggle="modal" data-target="#modal-list-permintaan"><i class="fa fa-search"></i> Lihat List Permintaan</button>
             @endif
             <h4 class="pt-10">Order Diet</h4>
             <hr>
@@ -50,6 +52,7 @@
                                     <p class="font-w600 font-size-md my-0">{{$detail->waktu_makan->nama ?? ''}}</p>
                                     <span class="font-w400 font-size-md mb-5">Jenis Makanan : {{$detail->jenis_makanan->nama ?? ''}}</span><br>
                                     <span class="font-w400 font-size-md mb-5">Diet : {{$detail->diet->nama ?? ''}}</span><br>
+                                    <span class="font-w400 font-size-md mb-5">Bentuk Makanan : {{$detail->bentuk_makanan->nama ?? ''}}</span><br>
                                     <span class="font-w400 font-size-md mb-5">Makanan Tambahan : {{implode(', ',json_decode($detail->makanan_tambahan_nama))}}</span><br>
                                     <span class="font-w400 font-size-sm mb-5">Catatan : {{$detail->catatan ?? ''}}</span><br>
                                     <span class="font-w400 font-size-sm mb-5">{{indonesian_date(strtotime($detail->untuk_tanggal),'l')}}, {{indonesian_date(strtotime($detail->untuk_tanggal),'j F Y')}}</span><br>

@@ -22,18 +22,19 @@ class ReadController extends Controller
         try {
             $client = new Client(['headers' => $header_array]);
             $timestamp = $header_array['X-timestamp'];
-            $res = $client->request('GET', $this->request->getUrl().'/jadwaldokter/kodepoli/'.$kodepoli.'/tanggal/'.$tanggal,
+            $res = $client->request('GET', $this->request->getUrl().'jadwaldokter/kodepoli/'.$kodepoli.'/tanggal/'.$tanggal,
             [
                 'headers' => ['Content-Type' => 'application/json'], 
                 'Accept' => 'application/json',
-                \GuzzleHttp\RequestOptions::JSON => [],
+                \GuzzleHttp\RequestOptions::JSON => []
             ]);
 
             $content = $res->getBody()->getContents();
 
             if (config('medify.third-party.jkn_online.on')) {
                 $content = json_decode($content);
-                if ($content->metadata->code == 200) {
+                $metadata = isset($content->metadata) ? $content->metadata : $content->metaData;
+                if (($metadata->code ?? $metadata->Code) == 200) {
                     $content->response = json_decode($this->request->stringDecrypt($timestamp, $content->response));
                 }
 
@@ -43,23 +44,9 @@ class ReadController extends Controller
             return $content;
 
         } catch (\Exception $e) {
-            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-            return json_encode([
-                "metaData" => [
-                    "code" => "500",
-                    "message" => "Tidak dapat menghubungkan dengan server BPJS, coba lagi. Apabila tetap muncul pesan ini, sementara gunakan aplikasi Applicare. Apabila Applicare tidak dapat dibuka, hubungi petugas BPJS yang ada."
-                ],
-                "response" => []
-            ]);
+            return $this->request->defaultException($e);
         } catch (GuzzleException $e){
-            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-            return json_encode([
-                "metaData" => [
-                    "code" => "500",
-                    "message" => "Tidak dapat menghubungkan dengan server BPJS, coba lagi. Apabila tetap muncul pesan ini, sementara gunakan aplikasi Applicare. Apabila Applicare tidak dapat dibuka, hubungi petugas BPJS yang ada."
-                ],
-                "response" => []
-            ]);
+            return $this->request->defaultException($e);
         }
     }
 }

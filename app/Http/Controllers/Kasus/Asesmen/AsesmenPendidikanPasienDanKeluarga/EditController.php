@@ -11,9 +11,10 @@ use Carbon\Carbon;
 
 class EditController extends Controller
 {
-    public function edit(Request $req){
-    	$asesmen_pendidikan_pasien_dan_keluarga = AsesmenPendidikanPasienDanKeluarga::find($req->id);
-    	
+    public function edit(Request $req)
+    {
+        $asesmen_pendidikan_pasien_dan_keluarga = AsesmenPendidikanPasienDanKeluarga::find($req->id);
+
         $asesmen_pendidikan_pasien_dan_keluarga->agama_pasien = $req->agama_pasien;
         $asesmen_pendidikan_pasien_dan_keluarga->keyakinan_pasien_pantangan_pemeriksaan_hari_tertentu = $req->keyakinan_pasien_pantangan_pemeriksaan_hari_tertentu;
         $asesmen_pendidikan_pasien_dan_keluarga->keyakinan_pasien_pantangan_masuk_keluar_rs_hari_tertentu = $req->keyakinan_pasien_pantangan_masuk_keluar_rs_hari_tertentu;
@@ -96,7 +97,7 @@ class EditController extends Controller
         $asesmen_pendidikan_pasien_dan_keluarga->edukasi_pasien_pemeriksaan_penunjang_lab_rontgen_dll = $req->edukasi_pasien_pemeriksaan_penunjang_lab_rontgen_dll;
         $asesmen_pendidikan_pasien_dan_keluarga->edukasi_pasien_pemeriksaan_penunjang_lab_rontgen_dll = $req->edukasi_pasien_pemeriksaan_penunjang_lab_rontgen_dll;
         $asesmen_pendidikan_pasien_dan_keluarga->masalah_keperawatan = $req->masalah_keperawatan;
-        if(!empty($req->rencana_edukasi_pasien_tanggal)){        
+        if (!empty($req->rencana_edukasi_pasien_tanggal)) {
             $asesmen_pendidikan_pasien_dan_keluarga->rencana_edukasi_pasien_tanggal = Carbon::createFromFormat("d/m/Y", $req->rencana_edukasi_pasien_tanggal);
         } else {
             $asesmen_pendidikan_pasien_dan_keluarga->rencana_edukasi_pasien_tanggal = null;
@@ -108,13 +109,13 @@ class EditController extends Controller
         $asesmen_pendidikan_pasien_dan_keluarga->kebutuhan_edukasi_keluarga_inform_consent = $req->kebutuhan_edukasi_keluarga_inform_consent;
         $asesmen_pendidikan_pasien_dan_keluarga->kebutuhan_edukasi_keluarga_general_consent = $req->kebutuhan_edukasi_keluarga_general_consent;
         $asesmen_pendidikan_pasien_dan_keluarga->kebutuhan_edukasi_keluarga_general_consent = $req->kebutuhan_edukasi_keluarga_general_consent;
-        if(!empty($req->rencana_edukasi_keluarga_tanggal)){        
+        if (!empty($req->rencana_edukasi_keluarga_tanggal)) {
             $asesmen_pendidikan_pasien_dan_keluarga->rencana_edukasi_keluarga_tanggal = Carbon::createFromFormat("d/m/Y", $req->rencana_edukasi_keluarga_tanggal);
         } else {
             $asesmen_pendidikan_pasien_dan_keluarga->rencana_edukasi_keluarga_tanggal = null;
         }
         $asesmen_pendidikan_pasien_dan_keluarga->agama_keluarga_pasien = $req->agama_keluarga_pasien;
         $asesmen_pendidikan_pasien_dan_keluarga->updated_by = Auth::user()->id;
-    	$asesmen_pendidikan_pasien_dan_keluarga->save();
+        $asesmen_pendidikan_pasien_dan_keluarga->save();
     }
 }

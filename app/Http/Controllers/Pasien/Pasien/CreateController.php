@@ -14,8 +14,12 @@ class CreateController extends Controller
 	public function create($human)
 	{	
 		$kategori_pasien = $human['kategori_pasien'] ?? 0;
-		$getMaxPasien = Pasien::where('kategori_pasien', intval($kategori_pasien))->max('id');
-		$countPasien = $getMaxPasien + 1;
+//		$getMaxPasien = Pasien::where('kategori_pasien', intval($kategori_pasien))->max('id');
+        $getMaxPasien = Pasien::selectRaw('MAX(CAST(no_rm AS UNSIGNED)) AS max_no_rm')
+            ->where('kategori_pasien', intval($kategori_pasien))
+            ->first();
+//		$countPasien = $getMaxPasien + 1;
+        $countPasien = ($getMaxPasien->max_no_rm ?? 0) + 1;
 		$nomor_rm = str_pad($countPasien, 5, "0", STR_PAD_LEFT);
 		$rm_jiwa = $kategori_pasien.''.$nomor_rm;
 

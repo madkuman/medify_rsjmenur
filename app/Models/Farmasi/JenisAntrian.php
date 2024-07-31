@@ -18,4 +18,9 @@ class JenisAntrian extends Model
     {
         return $this->hasOne('App\Models\Pasien\PembayaranPerusahaanType', 'id', 'perusahaan_tipe');
     }
+
+    public function lokasi_departemen()
+    {
+        return $this->hasOne(\App\Models\Hospital\LokasiDepartemen::class, 'id', 'lokasi_departemen_id');
+    }
 }

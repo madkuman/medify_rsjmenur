@@ -101,15 +101,6 @@
                     <li>
                         <a @if($sidebar_active == 'laporan') class="active" @endif href="{{url('farmasi/'.session('farmasi')->slug.'/laporan')}}"><span><i class="fa fa-fw fa-files-o mr-5"></i> Laporan</span></a>
                     </li>
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-square dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Lainnya</button>
-                        <div class="dropdown-menu" aria-labelledby="btn_dropdown_kasus">
-                            <a @if($sidebar_active == 'kategori') class="active" @endif href="{{url('farmasi/'.session('farmasi')->slug.'/kategori')}}"><span><i class="fa fa-fw fa-columns mr-5"></i> Kategori Barang</span></a>
-                            <a @if($sidebar_active == 'sumber_dana') class="active" @endif href="{{url('farmasi/'.session('farmasi')->slug.'/sumber-dana')}}"><span><i class="fa fa-fw fa-money mr-5"></i> Sumber Dana</span></a>
-                            <a @if($sidebar_active == 'katalog') class="active" @endif href="{{url('farmasi/'.session('farmasi')->slug.'/katalog')}}"><span><i class="fa fa-fw fa-book mr-5"></i> Katalog</span></a>
-                            <a @if($sidebar_active == 'screen') class="active" @endif href="{{url('farmasi/'.session('farmasi')->slug.'/screen-tv')}}"><span><i class="fa fa-fw fa-tv mr-5"></i> Layar Antrian</span></a>
-                        </div>
-                    </div>
                     @else
                         <div class="btn-group" role="group">
                             <button type="button" class="btn btn-square dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Lainnya</button>

@@ -37,7 +37,7 @@ class ReadController extends Controller
 				$response = $res->getBody()->getContents();
 				$sep = json_decode($response)->response;
 			}
-			if(isset($sep) && !empty($sep)){
+			if(isset($sep) && !empty($sep->noSep)){
 				$sep_local = BPJSSEP::where('no_sep', $sep->noSep)->orderBy('id', 'DESC')->first();
 				$local = app('App\Http\Controllers\BPJS\SEP\EditController')->sync($sep_local, $sep);
 			}

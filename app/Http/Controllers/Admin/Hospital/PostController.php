@@ -52,6 +52,8 @@ class PostController extends Controller
 			$data->sirs_pass = $request->sirs_pass;
             $data->opentok_api_key = $request->opentok_api_key;
             $data->opentok_api_secret = $request->opentok_api_secret;
+			$data->longitude 					= $request->longitude ?? null;
+			$data->latitude 					= $request->latitude ?? null;
 
 			$newJsonString = json_encode($data, JSON_PRETTY_PRINT);
 			if(!file_exists(base_path().'/settings/settings.json')){

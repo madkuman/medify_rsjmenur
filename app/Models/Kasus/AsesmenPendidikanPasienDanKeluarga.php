@@ -11,14 +11,16 @@ class AsesmenPendidikanPasienDanKeluarga extends Model
     protected $table = "asesmen_pendidikan_pasien_dan_keluarga";
     use SoftDeletes;
 
-    public function creator() {
+    public function creator()
+    {
         return $this->hasOne("App\User", "id", "created_by");
     }
-    public function updater() {
+    public function updater()
+    {
         return $this->hasOne("App\User", "id", "updated_by");
     }
-    public function lembar() {
+    public function lembar()
+    {
         return $this->hasMany("App\Models\Kasus\LembarKomunikasiInformasiDanEdukasiPasienDanKeluarga", "asesmen_id", "id")->orderBy('id');
     }
-    
 }

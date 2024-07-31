@@ -52,11 +52,12 @@ $header = $kasus->header;
                     </h2>
                     @endif
                     
-                    @if(!empty($kasus->active_sep->id) && $kasus->pembayaran->perusahaan->tipe->id == 1)
+                    @if($kasus->pembayaran->perusahaan->type != 2)
                     @php 
-                        if(empty($header->sep_total_pemakaian))
-                            $header->sep_total_pemakaian = 0;
-                        $sisaPlafon = $header->sep_total_plafon - $header->sep_total_pemakaian 
+                        
+                        $total_pemakaian = $header->sep_total_pemakaian ?? $kasus->tagihan_header ?? 0;
+                        $total_plafon = $header->sep_total_plafon ?? $kasus->plafon;
+                        $sisaPlafon = $total_plafon - $total_pemakaian ;
                     @endphp
                     @if($sisaPlafon <= 0)
                     <h6 class="text-danger mb-0">
@@ -72,7 +73,7 @@ $header = $kasus->header;
                     </h6>
                     <h6 class="text-white mb-0">
                         TOTAL PLAFON : Rp 
-                            {{number_format($header->sep_total_plafon)}}
+                            {{number_format($total_plafon)}}
                     </h6>
                     @endif
 

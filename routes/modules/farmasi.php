@@ -70,6 +70,34 @@
             Route::post('/{farmasi}/katalog/new', 'Farmasi\Katalog\CreateController@create');
             Route::post('/{farmasi}/katalog/edit', 'Farmasi\Katalog\EditController@edit');
             Route::post('/{farmasi}/katalog/delete', 'Farmasi\Katalog\DeleteController@delete');
+
+			// Master Bahan Aktif
+            Route::get('/{farmasi}/master-bahan-aktif', 'Farmasi\MasterBahanAktif\ViewController@index');
+            Route::get('/{farmasi}/master-bahan-aktif/{id}', 'Farmasi\MasterBahanAktif\ViewController@single');
+            Route::post('/{farmasi}/master-bahan-aktif/new', 'Farmasi\MasterBahanAktif\CreateController@create');
+            Route::post('/{farmasi}/master-bahan-aktif/edit', 'Farmasi\MasterBahanAktif\EditController@edit');
+            Route::post('/{farmasi}/master-bahan-aktif/delete', 'Farmasi\MasterBahanAktif\DeleteController@delete');
+			
+			// Master Rute
+            Route::get('/{farmasi}/master-rute', 'Farmasi\MasterRute\ViewController@index');
+            Route::get('/{farmasi}/master-rute/{id}', 'Farmasi\MasterRute\ViewController@single');
+            Route::post('/{farmasi}/master-rute/new', 'Farmasi\MasterRute\CreateController@create');
+            Route::post('/{farmasi}/master-rute/edit', 'Farmasi\MasterRute\EditController@edit');
+            Route::post('/{farmasi}/master-rute/delete', 'Farmasi\MasterRute\DeleteController@delete');
+
+			// Master Jenis Interaksi
+            Route::get('/{farmasi}/master-jenis-interaksi', 'Farmasi\MasterJenisInteraksi\ViewController@index');
+            Route::get('/{farmasi}/master-jenis-interaksi/{id}', 'Farmasi\MasterJenisInteraksi\ViewController@single');
+            Route::post('/{farmasi}/master-jenis-interaksi/new', 'Farmasi\MasterJenisInteraksi\CreateController@create');
+            Route::post('/{farmasi}/master-jenis-interaksi/edit', 'Farmasi\MasterJenisInteraksi\EditController@edit');
+            Route::post('/{farmasi}/master-jenis-interaksi/delete', 'Farmasi\MasterJenisInteraksi\DeleteController@delete');
+
+			// Master Satuan Kekuatan
+            Route::get('/{farmasi}/master-satuan-kekuatan', 'Farmasi\MasterSatuanKekuatan\ViewController@index');
+            Route::get('/{farmasi}/master-satuan-kekuatan/{id}', 'Farmasi\MasterSatuanKekuatan\ViewController@single');
+            Route::post('/{farmasi}/master-satuan-kekuatan/new', 'Farmasi\MasterSatuanKekuatan\CreateController@create');
+            Route::post('/{farmasi}/master-satuan-kekuatan/edit', 'Farmasi\MasterSatuanKekuatan\EditController@edit');
+            Route::post('/{farmasi}/master-satuan-kekuatan/delete', 'Farmasi\MasterSatuanKekuatan\DeleteController@delete');
 			
 			// Penghapusan
 			Route::get('/{farmasi}/penghapusan', 'Farmasi\Penghapusan\ViewController@index');
@@ -79,6 +107,22 @@
 			Route::post('/{farmasi}/penghapusan/new', 'Farmasi\Penghapusan\CreateController@create');
 			Route::post('/{farmasi}/penghapusan/edit', 'Farmasi\Penghapusan\EditController@edit');
 			Route::post('/{farmasi}/penghapusan/delete', 'Farmasi\Penghapusan\DeleteController@delete');
+
+			// Master Rak Obat
+			Route::get('/{farmasi}/master-rak-obat', 'Farmasi\MasterRakObat\ViewController@index');
+			Route::get('/{farmasi}/master-rak-obat/{id}', 'Farmasi\MasterRakObat\ViewController@single');
+			Route::post('/{farmasi}/master-rak-obat/new', 'Farmasi\MasterRakObat\CreateController@create');
+			Route::post('/{farmasi}/master-rak-obat/delete', 'Farmasi\MasterRakObat\DeleteController@delete');
+			Route::post('/{farmasi}/master-rak-obat/edit', 'Farmasi\MasterRakObat\EditController@edit');
+
+			
+			Route::get('/{farmasi}/master-kode-rekening', 'Farmasi\MasterKodeRekening\ViewController@index');
+			Route::post('/{farmasi}/master-kode-rekening/form', 'Farmasi\MasterKodeRekening\PostController@form');
+			Route::post('/{farmasi}/master-kode-rekening/delete', 'Farmasi\MasterKodeRekening\PostController@delete');
+			
+			Route::get('/{farmasi}/master-kode-bidang', 'Farmasi\MasterKodeBidang\ViewController@index');
+			Route::post('/{farmasi}/master-kode-bidang/form', 'Farmasi\MasterKodeBidang\PostController@form');
+			Route::post('/{farmasi}/master-kode-bidang/delete', 'Farmasi\MasterKodeBidang\PostController@delete');
 
 			// Barang
 			Route::get('/{farmasi}/item', 'Farmasi\Items\ViewController@index');
@@ -91,10 +135,12 @@
 			Route::post('/{farmasi}/item/load-stok', 'Farmasi\Items\ViewController@loadStok');
 			Route::get('/{farmasi}/item/{slug}', 'Farmasi\Items\ViewController@single');
 			Route::get('/{farmasi}/item/{slug}/kartu-stok', 'Farmasi\Laporan\ViewController@kartuStok');
+			Route::post('/{farmasi}/item/{slug}/kartu-barang', 'Farmasi\Laporan\ViewController@kartuBarang');
 			Route::post('/{farmasi}/item/edit', 'Farmasi\Items\EditController@edit');
 			Route::post('/{farmasi}/item/new', 'Farmasi\Items\CreateController@create');
 			Route::post('/{farmasi}/item/delete', 'Farmasi\Items\DeleteController@delete');
             Route::post('/{farmasi}/item/recalculate', 'Farmasi\Items\EditController@recalculate');
+			Route::get('/{farmasi}/master-data', 'Farmasi\Items\ViewController@masterDataIndex');
 
 			Route::get('/{farmasi}/item/filter/expired', 'Farmasi\Items\ViewController@filterExpired');
 			Route::get('/{farmasi}/item/filter/low-stock', 'Farmasi\Items\ViewController@filterLowStock');
@@ -134,8 +180,11 @@
 			Route::get('/{farmasi}/transaksi/buat-racikan', 'Farmasi\Transaksi\ViewController@createRacikan');
 			Route::get('/{farmasi}/transaksi/analisa-resep/{slug}', 'Farmasi\Transaksi\ViewController@analisaResep');
 			Route::get('/{farmasi}/transaksi/cetak-analisa/{slug}', 'Farmasi\Transaksi\ViewController@cetakanalisa');
+			Route::get('/{farmasi}/transaksi/formulir-permintaan-dispensing-aseptik/{slug}', 'Farmasi\Transaksi\ViewController@formulirPermintaanDispensingAseptik');
+			Route::get('/{farmasi}/transaksi/formulir-permintaan-tpn/{slug}', 'Farmasi\Transaksi\ViewController@formulirPermintaanTpn');
 			Route::get('/{farmasi}/transaksi/cetak-copy/{slug}', 'Farmasi\Transaksi\ViewController@cetakcopy');
 			Route::get('/{farmasi}/transaksi/{slug}', 'Farmasi\Transaksi\ViewController@single');
+			Route::post('{farmasi}/transaksi/{slug}/add-ttd-pasien','Farmasi\Transaksi\EditController@APIAddTTDPasien');
 			Route::post('/{farmasi}/transaksi/{slug}/5-benar', 'Farmasi\Transaksi\EditController@limaBenar');
 			Route::post('/{farmasi}/transaksi/{slug}/kerjakan', 'Farmasi\Transaksi\EditController@kerjakan');
 			Route::post('/{farmasi}/transaksi/new', 'Farmasi\Transaksi\CreateController@createOwn');
@@ -143,18 +192,31 @@
 			Route::post('/{farmasi}/transaksi/copy', 'Farmasi\Transaksi\CreateController@copy');
 			Route::post('/{farmasi}/transaksi/delete', 'Farmasi\Transaksi\DeleteController@delete');
 			Route::post('/{farmasi}/transaksi/payment', 'Farmasi\Transaksi\EditController@payment');
+			Route::post('/{farmasi}/transaksi/konfirmasi-permintaan', 'Farmasi\Transaksi\EditController@konfirmasiPermintaan');
+			Route::post('/{farmasi}/transaksi/batal-konfirmasi-permintaan', 'Farmasi\Transaksi\EditController@batalKonfirmasiPermintaan');
+			Route::post('/{farmasi}/transaksi/batal-konfirmasi-pemesanan', 'Farmasi\Transaksi\EditController@batalKonfirmasiPemesanan');
+			Route::post('/{farmasi}/transaksi/telaah-obat', 'Farmasi\Transaksi\EditController@telaahObat');
+			Route::post('/{farmasi}/transaksi/tindak-lanjut', 'Farmasi\Transaksi\EditController@tindakLanjut');
 			Route::post('/{farmasi}/transaksi/analisa', 'Farmasi\Transaksi\EditController@analisa');
 			Route::post('/{farmasi}/transaksi/retur', 'Farmasi\Transaksi\EditController@retur');
             Route::post('/{farmasi}/transaksi/delete-retur', 'Farmasi\Transaksi\EditController@deleteRetur');
             Route::post('/{farmasi}/transaksi/edit-retur', 'Farmasi\Transaksi\EditController@editRetur');
 			Route::post('/{farmasi}/transaksi/kirim-kasir', 'Farmasi\Transaksi\EditController@kirimKasir');
 			Route::post('/{farmasi}/transaksi/batal-kirim-kasir', 'Farmasi\Transaksi\EditController@batalKirimKasir');
+			Route::post('/{farmasi}/transaksi/{slug}/hitung-harga', 'Farmasi\Transaksi\ReadController@hitungHarga');
 
 			
 			Route::get('/{farmasi}/resep/print/{slug}', 'Farmasi\Transaksi\ViewController@printResep');
 			Route::get('/{farmasi}/resep-ori/print/{slug}', 'Farmasi\Transaksi\ViewController@printResepOri');
 			Route::get('/{farmasi}/resep/print-format-dokter/{slug}', 'Farmasi\Transaksi\ViewController@printResepFormatDokter');
 			Route::get('/{farmasi}/label-obat/print/{slug}', 'Farmasi\Transaksi\ViewController@labelObat');
+
+			// printout label obat dispensing aseptik, tpn, rajal, dan ranap
+			Route::get('/{farmasi}/label-obat/print-dispensing-aseptik/{slug}', 'Farmasi\Printout\LabelObat\ViewController@labelObatDispensingAseptik');
+			Route::get('/{farmasi}/label-obat/print-tpn/{slug}', 'Farmasi\Printout\LabelObat\ViewController@labelObatTpn');
+			Route::get('/{farmasi}/label-obat/print-rawat-jalan/{slug}', 'Farmasi\Printout\LabelObat\ViewController@labelObatRawatJalan');
+			Route::get('/{farmasi}/label-obat/print-udd-oddd-rawat-inap/{slug}', 'Farmasi\Printout\LabelObat\ViewController@labelObatUddOdddRawatInap');
+
 			Route::post('/{farmasi}/transaksi/alih', 'Farmasi\Transaksi\CreateController@alihResep');
 			Route::post('/{farmasi}/transaksi/consis/{slug}', 'Farmasi\Consis\PostController@createTransaksi');
 
@@ -176,6 +238,10 @@
             Route::get('/{farmasi}/screen-tv/loket-antrian', 'Farmasi\LoketAntrian\ViewController@index');
             Route::post('/{farmasi}/screen-tv/loket-antrian/save', 'Farmasi\LoketAntrian\PostController@save');
             Route::post('/{farmasi}/screen-tv/loket-antrian/delete', 'Farmasi\LoketAntrian\PostController@delete');
+
+            Route::get('/{farmasi}/master-penghapusan-jenis', 'Farmasi\PenghapusanJenis\ViewController@index');
+            Route::post('/{farmasi}/master-penghapusan-jenis/save', 'Farmasi\PenghapusanJenis\PostController@save');
+            Route::post('/{farmasi}/master-penghapusan-jenis/delete', 'Farmasi\PenghapusanJenis\PostController@delete');
 
 			// Laporan
 			Route::get('/{farmasi}/laporan', 'Farmasi\Laporan\ViewController@index');
@@ -224,11 +290,20 @@
             Route::get('/{farmasi}/laporan/laporan-bpk-sumber-dana', 'Farmasi\Laporan\PostController@laporanBPKSumberDana');
             Route::get('/{farmasi}/laporan/laporan-bpk-pemakaian', 'Farmasi\Laporan\PostController@laporanBPKPemakaian');
             Route::get('/{farmasi}/laporan/laporan-bpk-penerimaan', 'Farmasi\Laporan\PostController@laporanBPKPenerimaan');
+			Route::get('/{farmasi}/laporan/laporan-penghapusan-barang', 'Farmasi\Laporan\PostController@laporanPenghapusanBarang'); 
+			Route::get('/{farmasi}/laporan/laporan-transaksi-farmasi', 'Farmasi\Laporan\PostController@laporanTransaksiFarmasi'); 
+			Route::get('/{farmasi}/laporan/laporan-realisasi-pengadaan', 'Farmasi\Laporan\PostController@laporanRealisasiPengadaan'); 
+			Route::post('/{farmasi}/laporan/laporan-rekapitulasi-mutasi-barang', 'Farmasi\Laporan\PostController@laporanRekapitulasiMutasiBarang');
+			
+			
+			Route::get('/{farmasi}/laporan/laporan-berita-acara-pemeriksaan', 'Farmasi\Laporan\PostController@laporanBeritaAcaraPemeriksaan');
 
 
 
             Route::group(['prefix' => '/{farmasi}/laporan-v2'], function(){
                 Route::get('/laporan-pelayanan-resep', 'Farmasi\LaporanV2\PelayananResep\ViewController@index');
+				Route::get('/laporan-pelayanan-resep/get-header', 'Farmasi\LaporanV2\PelayananResep\APIController@getTotalData');
+           		Route::get('/laporan-pelayanan-resep/get-data', 'Farmasi\LaporanV2\PelayananResep\APIController@getData');
                 Route::post('/laporan-pelayanan-resep/download', 'Farmasi\LaporanV2\PelayananResep\ViewController@download');
 
             });
@@ -265,13 +340,26 @@
 		Route::get('/histori-resep/get/{id}', 'Farmasi\Transaksi\ReadController@getHistori');
 		Route::get('/penyedia/get', 'Farmasi\Items\ReadController@getItems');
 
-		Route::get('/screen/task/get/{farm_id}/{screen_id}', 'Farmasi\Screen\ViewController@loadDataTable');
+		Route::get('/screen/task/get/{farm_id}/{screen_id}/{slug}', 'Farmasi\Screen\ViewController@loadDataTable');
+		Route::get('/screen/task/get/{farm_id}/{screen_id}/{slug}', 'Farmasi\Screen\ViewController@loadDataTable');
     	Route::post('/screen/task/get-realtime/{farm_id}/{screen_id}', 'Farmasi\Screen\PostController@loadDataRealtime');
         Route::get('{farmasi}/antrian-screen/update', 'Farmasi\Screen\PostController@screenUpdateNomorAntrian');
 
         Route::group(['prefix' => '/{farmasi}/laporan-v2'], function(){
-            Route::get('/laporan-pelayanan-resep/get-total-data', 'Farmasi\LaporanV2\PelayananResep\APIController@getTotalData');
-            Route::get('/laporan-pelayanan-resep/get-data', 'Farmasi\LaporanV2\PelayananResep\APIController@getData');
+            
         });
+
+		
 	});
+	Route::get('/laporan/farmasi/laporan-rekap-pendapatan-farmasi', 'Farmasi\Laporan\LaporanController\LaporanRekapPendapatanFarmasiController@view');
+	Route::get('/laporan/farmasi/laporan-rekap-pendapatan-farmasi/get-data', 'Farmasi\Laporan\LaporanController\LaporanRekapPendapatanFarmasiController@getData');
+	Route::get('/laporan/farmasi/laporan-rekap-pendapatan-farmasi/get-header', 'Farmasi\Laporan\LaporanController\LaporanRekapPendapatanFarmasiController@getHeader');
+	Route::get('/laporan/farmasi/laporan-rekap-pendapatan-farmasi/download-excel', 'Farmasi\Laporan\LaporanController\LaporanRekapPendapatanFarmasiController@downloadExcel');
+
+	Route::get('/laporan/farmasi/laporan-pendapatan-nett-farmasi', 'Farmasi\Laporan\LaporanController\LaporanPendapatanNettFarmasiController@view');
+	Route::get('/laporan/farmasi/laporan-pendapatan-nett-farmasi/get-data', 'Farmasi\Laporan\LaporanController\LaporanPendapatanNettFarmasiController@getData');
+	Route::get('/laporan/farmasi/laporan-pendapatan-nett-farmasi/get-header', 'Farmasi\Laporan\LaporanController\LaporanPendapatanNettFarmasiController@getHeader');
+	Route::get('/laporan/farmasi/laporan-pendapatan-nett-farmasi/download-excel', 'Farmasi\Laporan\LaporanController\LaporanPendapatanNettFarmasiController@downloadExcel');
+	Route::get('/laporan/farmasi/laporan-eresep-kolektif', 'Farmasi\Laporan\LaporanController\LaporanEResepKolektifController@index');
+	Route::post('/laporan/farmasi/laporan-eresep-kolektif/generate', 'Farmasi\Laporan\LaporanController\LaporanEResepKolektifController@generate');
 ?>

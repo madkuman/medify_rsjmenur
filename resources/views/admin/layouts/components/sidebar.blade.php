@@ -251,13 +251,17 @@
                               <span class="sidebar-mini-hide">Pengaturan Fitur</span><span class="pull-right"><i class="fas fa-chevron-down"></i></span>
                          </a>
                          <div class="collapse ml-4" id="pengaturan-fitur">
-                             <li>
-                                 <a href="{{url('admin/pengaturan-fitur/rawatjalan')}}"><i class="fa fa-hospital"></i>
-                                     <span class="sidebar-mini-hide"> Rawat Jalan</span></a>
-                             </li>
                               <li>
-                                        <a href="{{url('admin/pengaturan-fitur/third-party')}}"><i class="fa fa-hospital"></i>
-                                        <span class="sidebar-mini-hide"> Third Party</span></a>
+                                        <a href="{{url('admin/pengaturan-fitur/rawatjalan')}}"><i class="fa fa-hospital"></i>
+                                        <span class="sidebar-mini-hide"> Rawat Jalan</span></a>
+                              </li>
+                              <li>
+                                   <a href="{{url('admin/pengaturan-fitur/third-party')}}"><i class="fa fa-hospital"></i>
+                                   <span class="sidebar-mini-hide"> Third Party</span></a>
+                              </li>
+                              <li>
+                                   <a href="{{url('admin/pengaturan-fitur/pasien')}}"><i class="fa fa-address-book"></i>
+                                   <span class="sidebar-mini-hide"> Pasien/Administrasi</span></a>
                               </li>
                          </div>
                     </ul>

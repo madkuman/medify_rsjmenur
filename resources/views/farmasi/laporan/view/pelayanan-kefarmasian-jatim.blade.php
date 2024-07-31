@@ -47,12 +47,12 @@
         <td>{{$transaksi_rajal}}</td>
         <td>{{$transaksi_ranap}}</td>
         <td></td>
-        <td>{{$kadep_farmasi}} {{$kadep_farmasi}}</td>
+        <td>{{$kadep_farmasi}}</td>
         <td>{{$apoteker}}</td>
         <td>{{$ttk}}</td>
         <td>{{$s2_farmasi}}</td>
         <td>{{$pio}}</td>
-        <td></td>
+        <td>{{$konseling}}</td>
         <td>{{$visite}}</td>
         <td>{{$racikan}}</td>
         <td>{{$non_racikan}}</td>

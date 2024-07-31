@@ -9,6 +9,15 @@ use DB;
 
 class ReadController extends Controller
 {
+	public function getFind(
+		Int $id,
+		Array $eager = []
+	){
+		$kasus = Kasus::with($eager)->find($id);
+
+		return $kasus;
+	}
+	
 	public function get($nomor_kasus)
 	{
 		$kasus = Kasus::where('nomor_kasus', $nomor_kasus)->with('lokasi')->first();

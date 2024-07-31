@@ -1,3 +1,4 @@
+{{--
 <div class="col-md-12">
 	<table class="table table-sm table-striped table-vcenter" style="width: 100%">
 		<thead>
@@ -51,6 +52,7 @@
 		</tbody>
 	</table>
 </div>
+--}}
 @if($res->tindak_lanjut == 'Perlu Asuhan Gizi')
 <div class="col-md-12">
 	<table class="table table-sm table-striped table-vcenter" style="width: 100%">

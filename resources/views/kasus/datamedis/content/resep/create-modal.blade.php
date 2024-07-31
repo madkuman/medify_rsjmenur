@@ -1,6 +1,6 @@
 @php $autoselect_farmasi = false; @endphp
 <div class="modal fade" id="modal-create-resep" role="dialog" aria-labelledby="modal-fromright" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-fromright modal-dialog modal-xl" role="document">
+    <div class="modal-dialog modal-dialog-fromright modal-full" role="document">
         <div class="modal-content">
             <div class="block block-themed block-transparent mb-0">
                 <div class="block-header">
@@ -18,6 +18,9 @@
                         {{ csrf_field() }}
                         <input type="hidden" id="pasien" name="pasien" value="{{$kasus->pasien_id}}">
                         <input type="hidden" id="metode_pembayaran" name="metode_pembayaran" value="{{$kasus->pasien_pembayaran_id}}">
+                        @if (config('app.fitur_kasus_resep_kategori'))
+                        <input type="hidden" name="kategori_resep" value="">
+                        @endif
                         <div class="row">
                             <div class="col-8">
                                 <div class="form-group">
@@ -53,6 +56,10 @@
                                     <input type="checkbox" name="cito" class="css-control-input">
                                     <span class="css-control-indicator"></span> Cito
                                 </label>
+				<label class="css-control css-control-primary css-checkbox">
+					<input type="checkbox" name="eksekutif" class="css-control-input">
+					<span class="css-control-indicator"></span> Eksekutif
+				</label>
                             </div>
                             <div class="col-12">
                                 <div class="bg-warning p-10 mt-10"> Informasi Alergi : 
@@ -79,18 +86,42 @@
 
                             @endif
 
-                            <div class="form-group">
-                                <label>Paket Obat</label><i class="fa fa-spin fa-spinner" id="loading-paket"></i>
-                                <br>
-                                <select class="form-control js-select2" id="selectPaket" data-width="100%">
-                                    <option value="" disabled="" selected="">Pilih Paket</option>
-                                </select>
+                            <div class="row">
+                                <div class="col-9">
+                                    <div class="form-group">
+                                        <label>Paket Obat</label><i class="fa fa-spin fa-spinner" id="loading-paket"></i>
+                                        <br>
+                                        <select class="form-control js-select2" id="selectPaket" data-width="100%">
+                                            <option value="" disabled="" selected="">Pilih Paket</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label for="">Iter Resep</label>
+                                        <input type="number" name="resep_iter" class="form-control">
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
-                                <div class="col-8">
-                                    @include('kasus.datamedis.content.resep.components.form', ['extra_id' => ""])
+                                <div class="col-9">
+                                    @if (config('app.fitur_kasus_resep_kategori'))
+                                        <div id="container-kategori-resep-default">
+                                            @include('kasus.datamedis.content.resep.components.form-kategori-resep-default')
+                                        </div>
+                                        <div id="container-kategori-resep-tpn" style="display: none">
+                                            @include('kasus.datamedis.content.resep.components.form-kategori-resep-tpn')
+                                        </div>
+                                        <div id="container-kategori-resep-dispensing_aseptik" style="display: none">
+                                            @include('kasus.datamedis.content.resep.components.form-kategori-resep-dispensing_aseptik')
+                                        </div>
+                                        <hr>
+                                        @include('kasus.datamedis.content.resep.components.summary-harga')
+                                    @else
+                                        @include('kasus.datamedis.content.resep.components.form', ['extra_id' => ""])
+                                    @endif
                                 </div>
-                                <div class="col-4 py-20">
+                                <div class="col-3 py-20">
                                     <div class="histori-resep-container">
                                     </div>
                                 </div>

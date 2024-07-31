@@ -15,6 +15,7 @@ Farmasi Detail Barang
 @endsection
 
 @section('content')
+@if(Auth::user()->admin == 1) ID Item Template : {{$item->item_detail->id}} @endif
 <div class="row row-deck">
     <div class="col-6">
         <div class="block">
@@ -22,6 +23,7 @@ Farmasi Detail Barang
                 <h3 class="block-title">
                     <small>NAMA BARANG</small> <br>
                     {{$item->item_detail->nama}} <br>
+                    
                     @forelse($item->item_detail->kategori_item as $gori)
                         <span class="badge badge-primary">{{$gori->detail_kategori->nama}}</span>
                     @empty -
@@ -48,9 +50,17 @@ Farmasi Detail Barang
                         <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;Edit
                     </button>
                     @endif
-                    <button type="button" class="btn btn-alt-warning btn-square" id="kartu-stok">
-                        <i class="fa fa-clipboard" aria-hidden="true"></i>&nbsp;&nbsp;Stok
+                    <button type="button" class="btn btn-alt-warning btn-square dropdown-toggle" id="page-header-options-dropdown2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Cetak
                     </button>
+                    <div class="dropdown-menu" aria-labelledby="page-header-options-dropdown2">
+                        <button type="button" class="dropdown-item" id="kartu-stok" style="cursor: pointer;">
+                            <i class="fa fa-clipboard mr-2" aria-hidden="true"></i>Kartu Stok
+                        </button>
+                        <button type="button" class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#modal-kartu-barang">
+                            <i class="fa fa-clipboard mr-2" aria-hidden="true"></i>Kartu Barang
+                        </button>
+                    </div>
                 </div>
                 <hr class="my-5">
             </div>
@@ -61,7 +71,7 @@ Farmasi Detail Barang
                             <label>HARGA SAAT INI</label>
                             <h5>Rp. {{number_format($item->item_detail->harga)}}</h5>
                             <label>STOCK</label>
-                            <h5>{{$item->stok}}</h5>
+                            <h5>{{round($item->stok, 1)}}</h5>
                             <label>SATUAN STOCK</label>
                             <h5>{{$item->item_detail->satuan}}</h5>
                         </div>
@@ -224,6 +234,7 @@ Farmasi Detail Barang
 </div>
 @include('farmasi.item.modals.modal-edit')
 @include('farmasi.item.modals.modal-kartu-stok')
+@include('farmasi.item.modals.modal-kartu-barang')
 
 @if(isset($item->item_detail->produksi) && $item->item_detail->produksi->farmasi_id == session('farmasi')->id)
 @include('farmasi.produksi.modals.modal-produksi', ['produksi' => $item->item_detail->produksi])
@@ -247,6 +258,37 @@ Farmasi Detail Barang
 
     $(document).ready(function() {
         getDataMutasi();
+
+        $('.js-example-basic-multiple').select2({tags: true});
+
+        $('.nama-interaksi-kelas-terapi').select2({tags: true});
+        $('.jenis-interaksi-kelas-terapi').select2({tags: true});        
+
+        if ({!! json_encode($retriksi_bpjs_data_lab_ids) !!}) {
+            $('#select-retriksi-bpjs-data-lab').val({!! json_encode($retriksi_bpjs_data_lab_ids) !!}).change();
+        }
+    });
+
+    $(".nama-interaksi-kelas-terapi").select2({});
+    $(".jenis-interaksi-kelas-terapi").select2({});
+    $(document).on("click", "#btn-tambah-interaksi-kelas-terapi", function() {
+        $(".main-div-interaksi-kelas-terapi:first").clone().appendTo("#row-interaksi-kelas-terapi");
+
+        $(".nama-interaksi-kelas-terapi").select2({});
+        $(".nama-interaksi-kelas-terapi").last().next().next().remove();
+        $(".jenis-interaksi-kelas-terapi").select2({});
+        $(".jenis-interaksi-kelas-terapi").last().next().next().remove();
+    });
+
+    $(".nama-interaksi-obat").select2({});
+    $(".jenis-interaksi-obat").select2({});
+    $(document).on("click", "#btn-tambah-interaksi-obat", function() {
+        $(".main-div-interaksi-obat:first").clone().appendTo("#row-interaksi-obat");
+
+        $(".nama-interaksi-obat").select2({});
+        $(".nama-interaksi-obat").last().next().next().remove();
+        $(".jenis-interaksi-obat").select2({});
+        $(".jenis-interaksi-obat").last().next().next().remove();
     });
 
     @if(isset($item->item_detail->produksi) && $item->item_detail->produksi->farmasi_id == session('farmasi')->id)
@@ -475,7 +517,7 @@ Farmasi Detail Barang
                     temp_array.push(item.tanggal);
                     temp_array.push(item.jenis_transaksi);
                     temp_array.push(item.pihak_kedua);
-                    var stok = numeral(item.stok).format('0,0');
+                    var stok = number_format_formatter.format(item.stok);
                     temp_array.push(stok);
                     var link = '';
                     console.log(item.jenis_transaksi)
@@ -581,5 +623,8 @@ Farmasi Detail Barang
         });
     });
 
+    $(document).on("click", "#btn-tambah-indikasi", function() {
+        $(".div-item-indikasi:first").clone().appendTo("#div-main-indikasi");
+    });
 </script>
 @endsection

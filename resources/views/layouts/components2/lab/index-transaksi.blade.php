@@ -1,15 +1,15 @@
 <div class="row mx-0">
-    <div class="form-group col-lg-3 col-12">
+   {{-- <div class="form-group col-lg-3 col-12">
         <label for="penyedia">Tanggal Transaksi</label>
         <div class="input-group">
-          <input type="text" class="js-datepicker form-control datepicker" data-autoclose="true" data-today-highlight="true" data-date-format="dd-mm-yyyy" value="{{$tanggal ?? ''}}" autocomplete="off" id="tanggalTransaksi" name="date" placeholder="Masukkan Tanggal Transaksi" required>
+          <input type="text" class="js-datepicker form-control datepicker" data-autoclose="true" data-today-highlight="true" data-date-format="dd-mm-yyyy" value="" autocomplete="off" id="tanggalTransaksi" name="date" placeholder="Masukkan Tanggal Transaksi" required>
           <div class="input-group-append">
             <button type="button" class="btn btn-secondary" id="clearTanggal">
                 <i class="fa fa-close"></i>
             </button>
         </div>
     </div>
-</div>
+</div>--}}
 <div class="form-group col-lg-3 col-12">
     <label for="example-select2">Asal Layanan</label>
     <select class="js-select2 form-control" id="jenisLayanan" name="jenis_layanan" style="width: 100%;" data-placeholder="Pilih Asal Layanan" required="required">
@@ -22,7 +22,7 @@
 <div class="form-group col-lg-3 col-12">
     <label>Jenis Layanan</label>
     <select class="js-example-basic-multiple form-control js-select2" id="jenisPemeriksaan" name="pemeriksaan[]" multiple="multiple" data-placeholder="Pilih Layanan" style="width: 100%;">
-        @foreach($pemeriksaan as $item)
+        @foreach($pemeriksaan ?? [] as $item)
                 <option value="{{$item->deskripsi}}">{{$item->deskripsi}}</option>
         @endforeach
     </select>

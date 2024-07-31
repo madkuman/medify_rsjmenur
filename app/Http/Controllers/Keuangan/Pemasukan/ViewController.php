@@ -110,6 +110,7 @@ class ViewController extends Controller
 
         $customPaper = array(0,0,432,792);
         $pdf = DOMPDF::loadView('keuangan.pemasukan.print-nota',$data)->setPaper($customPaper);
+        
         return $pdf->stream('perincian-nota.pdf');
     }
 

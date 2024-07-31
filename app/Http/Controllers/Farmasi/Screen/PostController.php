@@ -145,25 +145,21 @@ class PostController extends Controller
             if($transaksi->pembayaran_detail) $tipe_perusahaan = $transaksi->pembayaran_detail->perusahaan->tipe;
             else $tipe_perusahaan = PembayaranPerusahaanType::where('slug','tunai')->first();
 
-            $jenis_antrian = app('App\Http\Controllers\Farmasi\JenisAntrian\ReadController')->getByTipePerusahaan($tipe_perusahaan->id);
+            $jenis_antrian = app('App\Http\Controllers\Farmasi\JenisAntrian\ReadController')->getByFilter($tipe_perusahaan->id, $jenis_resep, ($transaksi->lokasi->lokasi_departemen_id ?? 0));
             if ($jenis_antrian) {
-                $transaksi_today = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getByDateNow();
-                
                 $kode = $jenis_antrian->kode;
-                $nomor = $transaksi_today->count();
+                $transaksi_today = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getByDateNow($kode);
+                
+                $nomor = $transaksi_today->count() + 1;
                 $nomor = 1000 + $nomor;
                 $nomor = substr($nomor,1);
 
-                if ($jenis_resep == 1) {
-                    $kode_jenis_resep = 'R';
-                } else {
-                    $kode_jenis_resep = 'NR';
-                }
-                
-                $nomor_antrian = $kode.'-'.$kode_jenis_resep.'-'.$nomor;
+                $nomor_antrian = $kode.$nomor;
 
                 $transaksi->nomor_antrian = $nomor_antrian;
                 $transaksi->jenis_resep_antrian = $jenis_resep;
+                $transaksi->jenis_antrian_id = $jenis_antrian->id;
+                $transaksi->jenis_antrian_kode = $jenis_antrian->kode;
                 $transaksi->waktu_check_in = $today;
                 $transaksi->waktu_estimasi_selesai = $estimasi_selesai;
                 $transaksi->save();
@@ -255,10 +251,14 @@ class PostController extends Controller
         $current_antrian = (new \App\Http\Controllers\Farmasi\Transaksi\EditController())->panggilAntrian($farmasi);
         if(!empty($current_antrian))
         {
+            $implode_nomor_antrian = explode('-', ($current_antrian->no_antrian ?? $current_antrian->nomor_antrian ?? ''));
+
             $return['status'] = 1;
             $return['loket_id'] = $current_antrian->loket_id;
             $return['loket_nama'] = $current_antrian->loket_antrian->nama;
             $return['nomor_antrian'] = $current_antrian->no_antrian ?? $current_antrian->nomor_antrian;
+            $return['kode'] = $implode_nomor_antrian[0];
+            $return['tipe'] = $implode_nomor_antrian[1];
             $return['transaksi_id'] = $current_antrian->id;
             return json_encode($return);
         }

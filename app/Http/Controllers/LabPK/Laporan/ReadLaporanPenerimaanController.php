@@ -10,7 +10,7 @@ use Carbon\Carbon;
 
 class ReadLaporanPenerimaanController extends Controller
 {
-    public function get($start,$end)
+    public function get($start,$end,$jenis_laporan)
 	{
 		echo "START AT :".Carbon::now()->format('H:i')."\n";
 		$labpk = config('const.lab-pk');
@@ -33,48 +33,36 @@ class ReadLaporanPenerimaanController extends Controller
 				else if($nama_pelayanan == 'rawat_jalan') $nama_pelayanan = 'Rawat Jalan';
 				else if($nama_pelayanan == 'igd') $nama_pelayanan = 'IGD';
 
-				$current_date = $start->copy();
-
-				$temp_start_of_month = $start->copy()->startOfMonth()->format('Y-m-d');
-				$temp_end_of_month = $end->copy()->endOfMonth()->format('Y-m-d');
-				$format_query = $current_date->startOfMonth()->format('Ym');
+				$date_start = $start->copy()->format('Y-m-d');
+				$date_end = $end->copy()->format('Y-m-d');
 				$asuransi_ids_implode = implode(",", $asuransi_ids);
 				$lokasi_ids = implode(",", $lokasi_list);
-				$month = $end->copy()->endOfMonth()->format('m');
-				$month = (int) $month;
-				$year = $start->copy()->startOfMonth()->format('Y');
+				
+				$data_query = $this->buildDate($jenis_laporan,$start,$end,$asuransi_name,$nama_pelayanan,$result_all);
 
-				for($i=1;$i<=12;$i++)
-				{
-					if($i<=$month) $total_temp = 0;
-					else $total_temp = '';
-
-					$result_all[$asuransi_name][$nama_pelayanan][$year.'-'.$i] = $total_temp;
-				}
-
+				$result_all = $data_query['result_all'];
+				
 				$query= "
 					SELECT 
-						CONCAT(YEAR(k.krs_at), '-' ,MONTH(k.krs_at)) as tanggal,
+						".$data_query['select'].",
 						SUM(tarif.harga) as total
 					FROM 
 						`".$db_name."_lab_pk`.transaksi_detail td,
 						`".$db_name."_lab_pk`.transaksi t,
 						`".$db_name."_keuangan`.tarif tarif,
-						`".$db_name."_kasus`.kasus k,
 						`".$db_name."_patients`.pasien_pembayaran pp
 					WHERE 
 						t.id = td.transaksi_id
 						AND t.tarif_tipe_id = tarif.tipe_id
 						AND td.tarif_id = tarif.tarif_master_id
 						AND tarif.kelas_id IN (t.class,0)
-						AND t.kasus_id = k.id
-						AND k.pasien_pembayaran_id = pp.id
+						AND t.pasien_pembayaran_id = pp.id
 						AND t.lokasi_id IN ($lokasi_ids)
 						AND pp.perusahaan_id IN ($asuransi_ids_implode)
-						AND k.krs_at  
-						BETWEEN CAST('$temp_start_of_month' AS DATE) 
-						AND CAST('$temp_end_of_month' AS DATE)
-						GROUP BY YEAR(k.krs_at), MONTH(k.krs_at)
+						AND t.verified_at  
+						BETWEEN CAST('$date_start' AS DATE) 
+						AND CAST('$date_end' AS DATE)
+					".$data_query['group_by']."
 				";
 
 				
@@ -90,8 +78,8 @@ class ReadLaporanPenerimaanController extends Controller
 			}
 		}
 
-		$medical_checkup = $this->getDataMedicalCheckup($start,$end);
-		$result_all['SK Direktur'] = array_merge($result_all['SK Direktur'], $medical_checkup);
+		$medical_checkup = $this->getDataMedicalCheckup($start,$end,$jenis_laporan);
+		$result_all = array_merge($result_all, $medical_checkup);
 		
 		echo "DONE AT :".Carbon::now()->format('H:i')."\n";
 		return $result_all;
@@ -101,18 +89,18 @@ class ReadLaporanPenerimaanController extends Controller
 	private function getAsuransi()
 	{
 		$data['JKN NON PBI'] = config('const.asuransi_bpjs_non_pbi');
-		$data['JKN PBI'] = config('const.asuransi_bpjs_pbi');	
-		$data['Jamkesda Kota SBY'] = config('const.asuransi_jamkesda_sby');
-		$data['Jamkesda P100'] = config('const.asuransi_jamkesda_p100');
-		$data['Jamkesda P50'] = config('const.asuransi_jamkesda_p50');
+		//$data['JKN PBI'] = config('const.asuransi_bpjs_pbi');	
+		// $data['Jamkesda Kota SBY'] = config('const.asuransi_jamkesda_sby');
+		// $data['Jamkesda P100'] = config('const.asuransi_jamkesda_p100');
+		// $data['Jamkesda P50'] = config('const.asuransi_jamkesda_p50');
 		$data['SK Direktur'] = config('const.asuransi_sk_direktur');
-		$data['SPM'] = config('const.asuransi_spm');
+		//$data['SPM'] = config('const.asuransi_spm');
 		$data['Umum'] = config('const.asuransi_tunai');
 
 		return $data;
 	}
 
-	public function getDataMedicalCheckup($start,$end)
+	public function getDataMedicalCheckup($start,$end,$jenis_laporan)
 	{
 		$db_name = config('app.db_name');
 		$pakets = Paket::all();
@@ -121,24 +109,15 @@ class ReadLaporanPenerimaanController extends Controller
 		{
 			$paket_id = $paket->id;
 			
-			$temp_start_of_month = $start->copy()->startOfMonth()->format('Y-m-d');
-			$temp_end_of_month = $end->copy()->endOfMonth()->format('Y-m-d');
-			$month = $end->copy()->endOfMonth()->format('m');
-			$month = (int) $month;
-			$year = $start->copy()->startOfMonth()->format('Y');
+			$date_start = $start->copy()->format('Y-m-d');
+			$date_end = $end->copy()->format('Y-m-d');
+			$data_query = $this->buildDate($jenis_laporan,$start,$end,'SK Direktur',$paket->nama,$result_all);
+			$result_all = $data_query['result_all'];
 
-
-			for($i=1;$i<=12;$i++)
-			{
-				if($i<=$month) $total_temp = 0;
-				else $total_temp = '';
-
-				$result_all[$paket->nama][$year.'-'.$i] = $total_temp;
-			}
 
 			$query= "
 			SELECT 
-				CONCAT(YEAR(k.krs_at), '-' ,MONTH(k.krs_at)) as tanggal, 
+				".$data_query['select'].",
 				SUM(tarif.harga) as total
 			FROM 
 				`".$db_name."_lab_pk`.transaksi_detail td,
@@ -158,23 +137,72 @@ class ReadLaporanPenerimaanController extends Controller
 				AND t_med.id = td_med.transaksi_id
 				AND td_med.paket_id = p_med.id
 				AND p_med.id = $paket_id
-				AND k.krs_at
-				BETWEEN CAST('$temp_start_of_month' AS DATE) 
-				AND CAST('$temp_end_of_month' AS DATE)
-				GROUP BY YEAR(k.krs_at), MONTH(k.krs_at);";
+				AND t.verified_at
+				BETWEEN CAST('$date_start' AS DATE) 
+				AND CAST('$date_end' AS DATE)
+				".$data_query['group_by']."";
 
 
-			
 			echo $paket->nama;
 			$result = DB::select($query);
 			foreach($result as $result_row)
 			{
-				$result_all[$paket->nama][$result_row->tanggal] = $result_row->total;
+				$result_all['SK Direktur'][$paket->nama][$result_row->tanggal] = $result_row->total;
 			}
 			echo " DONE\n";
 			
 		}
 		return $result_all;
 
+	}
+
+	private function buildDate($jenis_laporan,$start,$end,$asuransi_name,$nama_pelayanan,$result_all)
+	{
+		if($jenis_laporan == 'bulanan')
+		{
+			$month = $end->copy()->format('m');
+			$month = (int) $month;
+			$year = $start->copy()->format('Y');
+			$select = "CONCAT(YEAR(t.verified_at), '-' ,MONTH(t.verified_at)) as tanggal";
+			$group_by = "GROUP BY YEAR(t.verified_at), MONTH(t.verified_at)";
+			for($i=1;$i<=12;$i++)
+			{
+				if($i<=$month) $total_temp = 0;
+				else $total_temp = '';
+
+				$result_all[$asuransi_name][$nama_pelayanan][$year.'-'.$i] = $total_temp;
+			}
+		}
+		else if($jenis_laporan == 'tahunan')
+		{
+			
+			$select = "CONCAT(YEAR(t.verified_at)) as tanggal";
+			$group_by = "GROUP BY YEAR(t.verified_at)";
+			$temp_start = $start->copy();
+            while($temp_start->lte($end))
+            {
+                $year = $temp_start->copy()->format('Y');
+				$result_all[$asuransi_name][$nama_pelayanan][$year] = 0;
+                $temp_start->addYear();
+            }
+		}
+		else if($jenis_laporan == 'harian')
+		{
+			$startDate = $start->copy();
+			
+			while($startDate->lte($end))
+			{
+				$temp_date = $startDate->copy()->format('Y-n-j');
+				$result_all[$asuransi_name][$nama_pelayanan][$temp_date] = 0;
+				$startDate->addDay();
+			}
+			$select = "CONCAT(YEAR(t.verified_at), '-' ,MONTH(t.verified_at), '-' ,DAY(t.verified_at)) as tanggal";
+			$group_by = "GROUP BY YEAR(t.verified_at), MONTH(t.verified_at), DAY(t.verified_at)";
+		}
+		$data['select'] = $select;
+		$data['group_by'] = $group_by;
+		$data['result_all'] = $result_all;
+
+		return $data;
 	}
 }

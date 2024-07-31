@@ -7,7 +7,7 @@
             <th colspan="4">JUMLAH PENDERITA YANG DIPERIKSA LABORATORIUM</th>
         </tr>
         <tr>
-            <th colspan="4">Bulan : {{$bulan}}</th>
+            <th colspan="4"> {{$keterangan_waktu}}</th>
         </tr>
         <tr>
             <td></td>

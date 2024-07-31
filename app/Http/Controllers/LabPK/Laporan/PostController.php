@@ -153,6 +153,8 @@ class PostController extends Controller
     public function kunjunganBerdasarkanGenderDanUsia(Request $request)
     {
         $data['date'] = $request->date;
+        $data['date_end'] = $request->date_end ?? 0;
+        $data['jenis_laporan'] = $request->jenis_laporan ?? 'bulanan';
         dispatch(new QueueArtisan('labpk:laporan-kunjungan-berdasarkan-gender-dan-usia',$data));
         return abort(201);
     }
@@ -160,6 +162,8 @@ class PostController extends Controller
     public function laporanPemeriksaanLaboratorium(Request $request)
     {
         $data['date'] = $request->date;
+        $data['jenis_laporan'] = $request->jenis_laporan;
+        $data['date_end'] = $request->date_end ?? null;
         dispatch(new QueueArtisan('labpk:laporan-pemeriksaan-laboratorium',$data));
         return abort(201);
     }
@@ -167,6 +171,8 @@ class PostController extends Controller
     public function laporanJumlahPenderita(Request $request)
     {
         $data['date'] = $request->date;
+        $data['jenis_laporan'] = $request->jenis_laporan;
+        $data['date_end'] = $request->date_end ?? null;
         dispatch(new QueueArtisan('labpk:laporan-jumlah-penderita',$data));
         return abort(201);
     }
@@ -188,6 +194,8 @@ class PostController extends Controller
     public function laporanPenerimaan(Request $request)
     {
         $data['date'] = $request->date;
+        $data['date_end'] = $request->date_end;
+        $data['jenis_laporan'] = $request->jenis_laporan;
         dispatch(new QueueArtisan('labpk:laporan-penerimaan',$data));
         return abort(201);
     }

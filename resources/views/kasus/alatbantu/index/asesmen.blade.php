@@ -744,5 +744,307 @@
             </a>
         </li>
 
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/skoring-panss-ec">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Skoring Panss EC</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Skoring Panss EC</h5>
+                    <p class="desc">Skoring Panss EC</p>
+                </div>
+            </a>
+        </li>
+        
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/general-consent">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">General Consent</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">General Consent</h5>
+                    <p class="desc">General Consent</p>
+                </div>
+            </a>
+        </li>
+
+        {{-- Asesmen Permohonan dan Jawaban Konsultasi --}}
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/asesmen-permohonan-dan-jawaban-konsultasi">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Asesmen Permohonan dan Jawaban Konsultasi</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Asesmen Permohonan dan Jawaban Konsultasi</h5>
+                    <p class="desc">Asesmen Permohonan dan Jawaban Konsultasi</p>
+                </div>
+            </a>
+        </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/formulir-permintaan-ect">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Formulir Permintaan Electro Convulsive Therapy (ECT)</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Formulir Permintaan Electro Convulsive Therapy (ECT)</h5>
+                    <p class="desc">Formulir Permintaan Electro Convulsive Therapy (ECT)</p>
+                </div>
+            </a>
+        </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/form-skrining-manajer-pelayanan-pasien">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Form Skrining Manajer Pelayanan Pasien</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Form Skrining Manajer Pelayanan Pasien</h5>
+                    <p class="desc">Form Skrining Manajer Pelayanan Pasien</p>
+                </div>
+            </a>
+        </li>
+
+        {{-- Checklist Keselamatan Pasien di Poli Gigi dan Mulut --}}
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/checklist-keselamatan-pasien-dipoli-gigi-dan-mulut">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Checklist Keselamatan Pasien di Poli Gigi dan Mulut</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Checklist Keselamatan Pasien di Poli Gigi dan Mulut</h5>
+                    <p class="desc">Checklist Keselamatan Pasien di Poli Gigi dan Mulut</p>
+                </div>
+            </a>
+        </li>
+                    
+        {{-- Asesmen Wajib Lapor dan Rehabilitasi Medis IPWL --}}
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Asesmen Wajib Lapor dan Rehabilitasi Medis IPWL</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Asesmen Wajib Lapor dan Rehabilitasi Medis IPWL</h5>
+                    <p class="desc">Asesmen Wajib Lapor dan Rehabilitasi Medis IPWL</p>
+                </div>
+            </a>
+        </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/resiko-melarikan-diri">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Asesmen Ulang Resiko Melarikan Diri</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Asesmen Ulang Resiko Melarikan Diri</h5>
+                    <p class="desc">Asesmen Ulang Resiko Melarikan Diri</p>
+                </div>
+            </a>
+        </li>
+        
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/resiko-bunuh-diri">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Asesmen Ulang Resiko Bunuh Diri</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Asesmen Ulang Resiko Bunuh Diri</h5>
+                    <p class="desc">Asesmen Ulang Resiko Bunuh Diri</p>
+                </div>
+            </a>
+        </li>
+        
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/resiko-kekerasan-fisik">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Asesmen Ulang Resiko Kekerasan Fisik</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Asesmen Ulang Resiko Kekerasan Fisik</h5>
+                    <p class="desc">Asesmen Ulang Resiko Kekerasan Fisik</p>
+                </div>
+            </a>
+        </li>
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/evaluasi-awal-manajer-pelayanan-pasien">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Evaluasi Awal Manajer Pelayanan Pasien</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Evaluasi Awal Manajer Pelayanan Pasien</h5>
+                    <p class="desc">Evaluasi Awal Manajer Pelayanan Pasien</p>
+                </div>
+            </a>
+        </li>
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/implementasi-manajer-pelayanan-pasien">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Implementasi Manajer Pelayanan Pasien</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Implementasi Manajer Pelayanan Pasien</h5>
+                    <p class="desc">Implementasi Manajer Pelayanan Pasien</p>
+                </div>
+            </a>
+        </li>
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/panss-remisi">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Panss Remisi</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Panss Remisi</h5>
+                    <p class="desc">Panss Remisi</p>
+                </div>
+            </a>
+        </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/observasi-tindakan-ect">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Observasi Tindakan ECT</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Observasi Tindakan ECT</h5>
+                    <p class="desc">Observasi Tindakan ECT</p>
+                </div>
+            </a>
+        </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/asesmen-kesehatan-gigi-dan-mulut">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Asesmen Kesehatan Gigi dan Mulut</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Asesmen Kesehatan Gigi dan Mulut</h5>
+                    <p class="desc">Asesmen Kesehatan Gigi dan Mulut</p>
+                </div>
+            </a>
+        </li>
+        {{-- Asesmen Awal medis neonatologi --}}
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/asesmen-awal-medis-neonatologi">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Asesmen Awal Medis Neonatologi</h3>
+                 </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Asesmen Awal Medis Neonatologi</h5>
+                    <p class="desc">Asesmen Awal Medis Neonatologi</p>
+                 </div>
+            </a>
+        </li>
+        
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/observasi-transfusi-darah">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Observasi Transfusi Darah</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Observasi Transfusi Darah</h5>
+                    <p class="desc">Observasi Transfusi Darah</p>
+                </div>
+            </a>
+        </li>
+        
+        
+        {{-- Asesmen Inform Consent Cabut gigi --}}
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/asesmen-inform-consent-cabut-gigi">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Asesmen Inform Consent Cabut Gigi</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Asesmen Inform Consent Cabut Gigi</h5>
+                </div>
+            </a>
+        </li>
+
+        {{-- Asesmen Awal Keperawatan medis neonatologi --}}
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/asesmen-awal-keperawatan-medis-neonatologi">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Asesmen Awal Keperawatan Medis Neonatologi</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Asesmen Awal Keperawatan Medis Neonatologi</h5>
+                    <p class="desc">Asesmen Awal Medis Keperawatan Neonatologi</p>
+                </div>
+            </a>
+        </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus/'.$kasus->nomor_kasus.'/asesmen/asesmen-identitikasi-bayi')}}">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Form Identifikasi Bayi</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Form Identifikasi Bayi</h5>
+                    <p class="desc">Form Identifikasi Bayi.</p>
+                </div>
+            </a>
+        </li>
+
     </ul>
 </div>

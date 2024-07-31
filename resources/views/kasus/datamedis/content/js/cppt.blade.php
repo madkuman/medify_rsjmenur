@@ -37,6 +37,12 @@
         $('#cppt-delete-id').val(id)
         $('#cpptModalDelete').modal('show');
     }
+    function cpptDeletefileModal(id,path)
+    {
+        $('#cppt-delete-path').val(path)
+        $('#cppt-deletefile-id').val(id)
+        $('#cpptModalDeletefile').modal('show');
+    }
 
     function cpptPrint(id)
     {
@@ -101,6 +107,7 @@
         $('#cppt-create-a').val('')
         $('#cppt-create-p').val('')
         $('#cppt-create-ppa').val('')
+        $('#cppt-create-files').val('')
         $('#modal-create-cppt').modal('show');
         $('#loading-top').hide();
     }
@@ -150,6 +157,68 @@
         $('#modal-review-cppt .cppt-id').val(id)
         $('#modal-review-cppt').modal('show');
     }
+
+    function markedPrintCPPT(id, index, sudah_termarked)
+    {
+        var success_message = sudah_termarked == true ?  'Marked print CPPT Berhasil dihapus' : 'CPPT berhasil di marked print';
+        $.ajax({
+            url: API_URL + '/kasus/{{$kasus->nomor_kasus}}/cppt/marked-print/'+ id,
+            type: 'GET',
+            dataType: 'json',
+            tryCount : 0,
+            retryLimit : 3,
+            beforeSend: function(){
+                $('#cppt_button_verifikasi_loading_'+index).show()
+            },
+            success: function(data) {
+                $.notify({
+                title: '<strong>Sukses</strong>',
+                message: success_message
+                    },{
+                    type: 'primary',
+                    placement: {
+                        from: "top",
+                        align: "center"
+                    },
+                    delay: 3000
+                });
+
+                $('#cppt_button_verifikasi_loading_'+index).hide()
+                $(`#marked-print-cppt-${index}`).empty();
+                $(this).data('toogle', null);
+                if(sudah_termarked) {
+                    $(`#marked-print-cppt-${index}`).append(`
+                        <button type="button" class="btn-block-option" title="Marked Print" onclick="markedPrintCPPT( ${id} , ${index}, false )">
+                            <i class="si si-flag"></i>
+                        </button>
+                    `);
+                } else {
+                    $(`#marked-print-cppt-${index}`).append(`
+                        <button type="button" class="btn-block-option" title="Hapus Marked Print" onclick="markedPrintCPPT( ${id} , ${index}, true )">
+                            <i class="fa fa-flag"></i>
+                        </button>
+                    `);
+                }
+
+            },
+            error:function(error){
+                console.log('error marked print cppt', error);
+                
+                $.notify({
+                    title: '<strong>Sorry</strong>',
+                    message: 'Terjadi kesalahan server, tidak dapat memproses Markted Print CPPT '
+                },{
+                    type: 'danger',
+                    placement: {
+                        from: "top",
+                        align: "center"
+                    },
+                    delay: 3000
+                });
+                $('#cppt_button_verifikasi_loading_'+index).hide();
+            }
+        });
+    } 
 
     function cpptVerifikasi(id, index)
     {
@@ -781,5 +850,55 @@
         }
 
     });
+
+    let status_btn_content_toogle = '';
+    $(".btn-edit-cppt").on("click", function() {
+        // let btn_toogle_content = $(this).siblings().find('.btn-content-toogle').attr('class'); // buat testing
+        let btn_toogle_content_element = $(this).siblings().find('.btn-content-toogle');
+        let dropdown_is_visible = $(this).parent().siblings().first().is(":visible");
+
+        if (btn_toogle_content_element.data('status') == 'non-active' && dropdown_is_visible == false) {
+            btn_toogle_content_element.trigger('click');
+            btn_toogle_content_element.data('status', 'active');
+        } 
+
+        // let parent = $(this).parent().attr('class'); // buat testing
+        let parent_element = $(this).parent();
+        // let sibling = $(this).parent().siblings().first().attr('class'); // buat testing
+        let sibling_element = $(this).parent().siblings().first();
+        // let row_file_upload = sibling_element.find('#file-upload-row').attr('class'); // buat testing
+        let row_file_upload_element = sibling_element.find('#file-upload-row');
+        $("#file-upload-preview-edit").empty();
+        row_file_upload_element.clone().appendTo("#file-upload-preview-edit");
+
+    });
+
+    $(".btn-content-toogle").on("click", function() {
+        $(this).data('status', 'non-active');
+    });
+
+    function readback(id){
+        console.log(id)
+        $("#modal-readback").modal('show');
+
+        $("#modal-readback #cppt_id").val(id);
+    }
+
+    function verifReadback(id) {
+        console.log(id)
+        $("#verifReadback #readback_id").val(id);
+        swal({
+            title: "Konfirmasi",
+            text: "Ingin konfirmasi readback cppt ini?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Verifikasi",
+        }).then(isConfirm => {
+            if (isConfirm.value) {
+               $("form#verifReadback").submit()
+            }
+        });
+    }
 
 </script>

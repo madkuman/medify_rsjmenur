@@ -727,9 +727,14 @@ class PostController extends Controller
 			$get_rujukan_bpjs = app('App\Http\Controllers\BPJS\API\Rujukan\ReadController')->getRujukanNomor($request);
 			$get_rujukan_bpjs = json_decode($get_rujukan_bpjs);
 			if (empty($get_rujukan_bpjs)) {
-				$message = 'nomorreferensi tidak ditemukan di BPJS';
-				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-					->error(null, 201, $message);
+				$get_rujukan_bpjs = (new \App\Http\Controllers\BPJS\API\RencanaKontrol\ReadController())->rencanaKontrolByNoSk($request->nomorreferensi);
+				$get_rujukan_bpjs = json_decode($get_rujukan_bpjs);
+				if (empty($get_rujukan_bpjs->response) || $get_rujukan_bpjs->metaData->code != '200') {
+					$message = 'nomorreferensi tidak ditemukan di BPJS';
+					return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+						->error(null, 201, $message);
+				}
+				
 			}
 
 			// nomor kartu
