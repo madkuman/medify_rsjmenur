@@ -80,20 +80,12 @@
                             {{ number_format($total_plafon) }}
                         </h6>
                     @endif
-                    @if ($kasus->pembayaran->no_asuransi)
+                    @if (Auth::user()->id == $kasus->admin->user->id)
                         <form>
                             <input type="hidden" id="param" name="param"
-                                value="{{ $kasus->pembayaran->no_asuransi }}">
+                                value="{{ $kasus->pembayaran->no_asuransi ?? $kasus->pasien->no_identitas }}">
                             <input type="hidden" id="kodedokter" name="kodedokter"
-                                value="{{ $kasus->bpjs_kode_dpjp }}">
-                            <button class="btn btn-primary" type="button" onclick="getIcare()">ICare BPJS</button>
-                        </form>
-                    @else
-                        <form>
-                            <input type="hidden" id="param" name="param"
-                                value="{{ $kasus->pasien->no_identitas }}">
-                            <input type="hidden" id="kodedokter" name="kodedokter"
-                                value="{{ $kasus->bpjs_kode_dpjp }}">
+                                value="{{ $kasus->user->dokter->bpjs_kode_dpjp }}">
                             <button class="btn btn-primary" type="button" onclick="getIcare()">ICare BPJS</button>
                         </form>
                     @endif
