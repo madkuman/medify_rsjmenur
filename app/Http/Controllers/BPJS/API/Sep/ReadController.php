@@ -11,24 +11,26 @@ use GuzzleHttp\Exception\RequestException;
 
 class ReadController extends Controller
 {
-    public function get($no_sep)
-    {
-    	$cons_id = config('app.bpjs_cons_id');
-    	$secret = config('app.bpjs_secret');
-    	// dd($nomor_kartu, $multiple);
+	public function get($no_sep)
+	{
+		$cons_id = config('app.bpjs_cons_id');
+		$secret = config('app.bpjs_secret');
+		// dd($nomor_kartu, $multiple);
 		$data = [
 			'medify_cons_id'	=> $cons_id,
 			'bpjs_stage'		=> config('app.bpjs_stage'),
 			'medify_secret' 	=> $secret
 		];
-    	try
-		{
+		try {
 			if (config('medify.third-party.vclaim.on_v2')) {
 				$response = app('App\Http\Controllers\ThirdParty\BPJS\VClaim\SEP\ReadController')->get($no_sep);
 				$sep = json_decode($response)->response;
+				$this->syncDataSep($sep);
 			} else {
 				$client = new Client();
-				$res = $client->request('POST', config('app.bpjs_app_url').'/sep/search/'.$no_sep, 
+				$res = $client->request(
+					'POST',
+					config('app.bpjs_app_url') . '/sep/search/' . $no_sep,
 					[
 						'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
 						\GuzzleHttp\RequestOptions::FORM_PARAMS => $data,
@@ -37,7 +39,7 @@ class ReadController extends Controller
 				$response = $res->getBody()->getContents();
 				$sep = json_decode($response)->response;
 			}
-			if(isset($sep) && !empty($sep->noSep)){
+			if (isset($sep) && !empty($sep->noSep)) {
 				$sep_local = BPJSSEP::where('no_sep', $sep->noSep)->orderBy('id', 'DESC')->first();
 				$local = app('App\Http\Controllers\BPJS\SEP\EditController')->sync($sep_local, $sep);
 			}
@@ -48,12 +50,18 @@ class ReadController extends Controller
 				echo Psr7\str($e->getResponse());
 			}
 		}
-    }
+	}
+
+	public function syncDataSep($resp)
+	{
+		$param['poli_tujuan_nama'] = $resp->sep->poli;
+		$param['kode_dpjp'] = $resp->sep->dpjp->kdDPJP ?? null;
+		app(\App\Http\Controllers\BPJS\SEP\CreateController::class)->create($param, $resp->sep->noSep);
+	}
 
 	public function getInternal($no_sep)
-    {
-    	try
-		{
+	{
+		try {
 			$response = app(\App\Http\Controllers\ThirdParty\BPJS\VClaim\SEP\ReadController::class)->getInternal($no_sep);
 			return $response;
 		} catch (RequestException $e) {
@@ -62,9 +70,10 @@ class ReadController extends Controller
 				echo Psr7\str($e->getResponse());
 			}
 		}
-    }
+	}
 
-	public function dataIndukKecelakaan($nomor_kartu_perserta){
+	public function dataIndukKecelakaan($nomor_kartu_perserta)
+	{
 		try {
 
 			$header_array = app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->getHeader();
@@ -79,7 +88,6 @@ class ReadController extends Controller
 			} else {
 				return $resp;
 			}
-
 		} catch (\Throwable $th) {
 			return $this->bugsnag($th);
 		}

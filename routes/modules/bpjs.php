@@ -90,7 +90,7 @@ Route::group(['middleware' => ['check-module']], function () {
 		Route::post('/referensi', 'BPJS\Referensi\PostController@submit');
 
 		//ICARE
-		Route::get('/icare', 'BPJS\Icare\IcareController@getIcare')->name('icare');
+		Route::post('/icare', 'ThirdParty\BPJS\ICare\IcareController@getIcare')->name('icare');
 	});
 
 	Route::group(['prefix' => 'api/bpjs'], function () {

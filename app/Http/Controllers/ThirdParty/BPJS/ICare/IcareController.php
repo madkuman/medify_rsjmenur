@@ -12,23 +12,36 @@ class IcareController extends Controller
 {
 	public function getIcare(Request $request)
 	{
-		$header_array = app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->getHeader();
-
+		$header_array = app('App\Http\Controllers\ThirdParty\BPJS\ICare\RequestController')->getHeader();
+		// dd($header_array);
 		try {
-			$client = new Client();
 			$timestamp = $header_array['X-timestamp'];
+			$client = new Client([
+				'headers' => $header_array,
+			]);
 			$param = $request->input('param');
-			$kodedokter = $request->input('kodedokter');
+			$kodedokter = (int) $request->input('kodedokter');
+			if (strlen($param) != 13) {
+				return json_encode([
+					"metaData" => [
+						"code" => "500",
+						"message" => "Jumlah digit nomor kartu harus 13 digit."
+					],
+					"response" => []
+				]);
+			}
 
-			$response = $client->request('POST', app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->getIcareUrl(), $header_array, [
-				'param' => $param,
-				'kodedokter' => $kodedokter
+			$response = $client->request('POST', app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->getIcareUrl(), [
+				'Accept' => 'application/json',
+				'headers' => ['Content-Type' => 'application/json'],
+				'json' => ['param' => $param, 'kodedokter' => $kodedokter]
 			]);
 			$results = ($response->getBody()->getContents());
 			$results_decoded = json_decode($results);
 			$results_decoded->response = json_decode(app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->stringDecrypt($timestamp, $results_decoded->response));
 			return (json_encode($results_decoded));
 		} catch (\Exception $e) {
+			// dd($e);
 			return json_encode([
 				"metaData" => [
 					"code" => "500",
