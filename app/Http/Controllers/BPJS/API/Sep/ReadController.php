@@ -54,8 +54,28 @@ class ReadController extends Controller
 
 	public function syncDataSep($resp)
 	{
-		$param['poli_tujuan_nama'] = $resp->sep->poli;
+		$param['poli_tujuan_nama'] = $resp->sep->poli ?? null;
 		$param['kode_dpjp'] = $resp->sep->dpjp->kdDPJP ?? null;
+		$param['tgl_sep'] = $resp->sep->tglSep ?? null;
+		$param['jenis_pelayanan'] = $resp->sep->jnsPelayanan ?? null;
+		$param['kelas_rawat'] = $resp->sep->kelasRawat ?? null;
+		$param['pasien_id'] = $resp->sep->peserta->noMr ?? null;
+		$param['no_mr'] = $resp->sep->peserta->noMr ?? null;
+		$param['no_rujukan'] = $resp->sep->noRujukan ?? null;
+		$param['catatan'] = $resp->sep->catatan ?? null;
+		$param['poli_eksekutif'] = $resp->sep->poliEksekutif ?? null;
+		$param['cob'] = $resp->sep->cob ?? null;
+		$param['katarak'] = $resp->sep->katarak ?? null;
+		$param['penjamin'] = $resp->sep->penjamin ?? null;
+		$param['tgl_kejadian'] = $resp->sep->lokasiKejadian->tglKejadian ?? null;
+		$param['prov_laka'] = $resp->sep->lokasiKejadian->kdProp ?? null;
+		$param['kab_laka'] = $resp->sep->lokasiKejadian->kdKab ?? null;
+		$param['kc_laka'] = $resp->sep->lokasiKejadian->kdKec ?? null;
+		$param['no_skdp'] = $resp->sep->kontrol->noSurat ?? null;
+		$param['tujuan_kunjungan'] = $resp->sep->tujuanKunj->kodes ?? null;
+		$param['flag_procedure'] = $resp->sep->flagProcedure->kode ?? null;
+		$param['penjamin'] = $resp->sep->penjamin ?? null;
+		$param['penjamin'] = $resp->sep->penjamin ?? null;
 		app(\App\Http\Controllers\BPJS\SEP\CreateController::class)->create($param, $resp->sep->noSep);
 	}
 

@@ -10,10 +10,9 @@ class CreateController extends Controller
 {
     public function create($dataArr, $no_sep)
     {
-        $sep = BPJSSEP::where('no_sep',$no_sep)->first();
+        $sep = BPJSSEP::where('no_sep', $no_sep)->first();
         $data = (object) $dataArr;
-        if(empty($sep->id))
-        {
+        if (empty($sep->id)) {
             $sep = new BPJSSEP;
         }
 
@@ -58,14 +57,15 @@ class CreateController extends Controller
         $sep->save();
         // dd($sep);
         return $sep;
-   }
+    }
 
-   public function setVclaimSep2(Request $request){
+    public function setVclaimSep2(Request $request)
+    {
         if ($request->bpjs_jenis_pelayanan == 2)
             $poli = $request->bpjs_poli_tujuan;
         else
             $poli = "";
-        
+
         $noKartu         = (string) $request->bpjs_nomor_kartu;
         $tglSep          = (string) $request->tanggal_sep;
         $jnsPelayanan    = (string) $request->bpjs_jenis_pelayanan;
@@ -83,7 +83,7 @@ class CreateController extends Controller
         $eksekutif       = (string) ($request->bpjs_poli_eksekutif ?? null);
         $cob             = (string) ($request->bpjs_cob ?? null);
         $katarak         = (string) ($request->bpjs_katarak ?? null);
-        $noSurat         = (string) (in_array($request->bpjs_skdp, ['-',"null"])) ? "" : $request->bpjs_skdp;
+        $noSurat         = (string) (in_array($request->bpjs_skdp, ['-', "null"])) ? "" : $request->bpjs_skdp;
         $kodeDPJP        = (string) $request->dpjp;
         $lakaLantas      = (string) ($request->bpjs_jaminan_lakalantas ?? null);
         $tglKejadian     = (string) ($request->bpjs_tgl_kejadian ?? null);
@@ -102,85 +102,85 @@ class CreateController extends Controller
         $list_naik_kelas = config('const.kelas_rawat_naik');
         $kls_rawat_naik = $list_naik_kelas[$klsRawatNaik];
         $is_naik_kelas = 0;
-        if($klsRawatHak > $kls_rawat_naik || in_array($kls_rawat_naik, ['VIP','VVIP'])){
+        if ($klsRawatHak > $kls_rawat_naik || in_array($kls_rawat_naik, ['VIP', 'VVIP'])) {
             $is_naik_kelas = 1;
         }
 
-        if(!$is_naik_kelas){
+        if (!$is_naik_kelas) {
             $klsRawatNaik = "";
             $pembiayaan = "";
             $penanggungJawab = "";
         }
-        if(empty($lakaLantas)){
+        if (empty($lakaLantas)) {
             $tglKejadian = '';
         }
-        $param   = 
-        [
-            "request" => [
-                "t_sep" => [
-                    "noKartu"      => $noKartu,
-                    "tglSep"       => $tglSep, //"2021-07-30",
-                    "ppkPelayanan" => config('app.bpjs_ppk'),//"0301R011",
-                    "jnsPelayanan" => $jnsPelayanan,
-                    "klsRawat" => [
-                        "klsRawatHak"     => $klsRawatHak, //"2",
-                        "klsRawatNaik"    => $klsRawatNaik, //"1",
-                        "pembiayaan"      => $pembiayaan, //"1",
-                        "penanggungJawab" => $penanggungJawab, // "Pribadi"
-                    ],
-                    "noMR" => $noMR, //"MR9835",
-                    "rujukan" => [
-                        "asalRujukan" => $asalRujukan, //"2",
-                        "tglRujukan"  => $tglRujukan, //"2021-07-23",
-                        "noRujukan"   => $noRujukan, //"RJKMR9835001",
-                        "ppkRujukan"  => $ppkRujukan,//"0301R011"
-                    ],
-                    "catatan" => $catatan, //"testinsert RI",
-                    "diagAwal" => $diagAwal, //"E10",
-                    "poli" => [
-                        "tujuan" => $tujuan, //"",
-                        "eksekutif" => $eksekutif, //"0"
-                    ],
-                    "cob" => [
-                        "cob" => $cob, //"0"
-                    ],
-                    "katarak" => [
-                        "katarak" => $katarak, //"0"
-                    ],
-                    "jaminan" => [
-                        "lakaLantas" => $lakaLantas, // "0",
-                        "noLP" => $lakaLantas,//"{No. LP}",
-                        "penjamin" => [
-                            "tglKejadian" => $tglKejadian, // "",
-                            "keterangan"  => $keterangan, // "",
-                            "suplesi" => [
-                                "suplesi"      => $suplesi, // "0",
-                                "noSepSuplesi" => $noSepSuplesi, // "",
-                                "lokasiLaka" => [
-                                    "kdPropinsi"  => $kdPropinsi, // "",
-                                    "kdKabupaten" => $kdKabupaten, // "",
-                                    "kdKecamatan" => $kdKecamatan, // ""
+        $param   =
+            [
+                "request" => [
+                    "t_sep" => [
+                        "noKartu"      => $noKartu,
+                        "tglSep"       => $tglSep, //"2021-07-30",
+                        "ppkPelayanan" => config('app.bpjs_ppk'), //"0301R011",
+                        "jnsPelayanan" => $jnsPelayanan,
+                        "klsRawat" => [
+                            "klsRawatHak"     => $klsRawatHak, //"2",
+                            "klsRawatNaik"    => $klsRawatNaik, //"1",
+                            "pembiayaan"      => $pembiayaan, //"1",
+                            "penanggungJawab" => $penanggungJawab, // "Pribadi"
+                        ],
+                        "noMR" => $noMR, //"MR9835",
+                        "rujukan" => [
+                            "asalRujukan" => $asalRujukan, //"2",
+                            "tglRujukan"  => $tglRujukan, //"2021-07-23",
+                            "noRujukan"   => $noRujukan, //"RJKMR9835001",
+                            "ppkRujukan"  => $ppkRujukan, //"0301R011"
+                        ],
+                        "catatan" => $catatan, //"testinsert RI",
+                        "diagAwal" => $diagAwal, //"E10",
+                        "poli" => [
+                            "tujuan" => $tujuan, //"",
+                            "eksekutif" => $eksekutif, //"0"
+                        ],
+                        "cob" => [
+                            "cob" => $cob, //"0"
+                        ],
+                        "katarak" => [
+                            "katarak" => $katarak, //"0"
+                        ],
+                        "jaminan" => [
+                            "lakaLantas" => $lakaLantas, // "0",
+                            "noLP" => $lakaLantas, //"{No. LP}",
+                            "penjamin" => [
+                                "tglKejadian" => $tglKejadian, // "",
+                                "keterangan"  => $keterangan, // "",
+                                "suplesi" => [
+                                    "suplesi"      => $suplesi, // "0",
+                                    "noSepSuplesi" => $noSepSuplesi, // "",
+                                    "lokasiLaka" => [
+                                        "kdPropinsi"  => $kdPropinsi, // "",
+                                        "kdKabupaten" => $kdKabupaten, // "",
+                                        "kdKecamatan" => $kdKecamatan, // ""
+                                    ]
                                 ]
                             ]
-                        ]
-                    ],
-                    "tujuanKunj"    => $tujuanKunj, // "0",
-                    "flagProcedure" => $flagProcedure, // "",
-                    "kdPenunjang"   => $kdPenunjang, // "",
-                    "assesmentPel"  => $assesmentPel, // "",
-                    "skdp" => [
-                        "noSurat"  => $noSurat, //"0301R0110721K000021", jika 
-                        "kodeDPJP" => $kodeDPJP, //"31574"
-                    ],
-                    "dpjpLayan" => $dpjpLayan, // "",
-                    "noTelp"    => auth()->user()->phone ?? "081111111101", //"081111111101",
-                    "user"      => auth()->user()->name ?? "SuperAdmin"
+                        ],
+                        "tujuanKunj"    => $tujuanKunj, // "0",
+                        "flagProcedure" => $flagProcedure, // "",
+                        "kdPenunjang"   => $kdPenunjang, // "",
+                        "assesmentPel"  => $assesmentPel, // "",
+                        "skdp" => [
+                            "noSurat"  => $noSurat, //"0301R0110721K000021", jika 
+                            "kodeDPJP" => $kodeDPJP, //"31574"
+                        ],
+                        "dpjpLayan" => $dpjpLayan, // "",
+                        "noTelp"    => auth()->user()->phone ?? "081111111101", //"081111111101",
+                        "user"      => auth()->user()->name ?? "SuperAdmin"
+                    ]
                 ]
-            ]
-        ];
+            ];
         // dd($request->all(), $param);
         return $param;
-   }
+    }
 
     public function setVclaimSep2VersiAPI(Request $request)
     {

@@ -21,6 +21,7 @@ class IcareController extends Controller
 			]);
 			$param = $request->input('param');
 			$kodedokter = (int) $request->input('kodedokter');
+
 			if (strlen($param) != 13) {
 				return json_encode([
 					"metaData" => [

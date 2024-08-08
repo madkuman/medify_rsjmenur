@@ -71,9 +71,9 @@ class RequestController extends Controller
         } else {
             if (config('app.bpjs_decrypt', false)) {
                 // return "https://dvlp.bpjs-kesehatan.go.id/VClaim-rest-1.1";
-                return "https://apijkn.bpjs-kesehatan.go.id/wsihs/api/rs/validate";
+                return "https://apijkn-dev.bpjs-kesehatan.go.id/ihs_dev/api/rs/validate";
             } else {
-                return "https://apijkn.bpjs-kesehatan.go.id/wsihs/api/rs/validate";
+                return "https://apijkn-dev.bpjs-kesehatan.go.id/ihs_dev/api/rs/validate";
             }
         }
     }
