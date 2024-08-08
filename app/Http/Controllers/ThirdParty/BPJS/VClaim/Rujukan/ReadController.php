@@ -249,7 +249,8 @@ class ReadController extends Controller
     {
         $rujukRS = json_decode($this->searchRS($param));
         $rujukPKM = json_decode($this->searchPKM($param));
-        if ($rujukRS->response != null) {
+        // dd($rujukRS, $rujukPKM);
+        if ($rujukRS->response != null && !empty($rujukRS->response->rujukan ?? null)) {
             $rujukRS->response->rujukan->tipe_perujuk = 2;
             return json_encode($rujukRS->response->rujukan);
         }

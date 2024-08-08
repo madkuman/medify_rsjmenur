@@ -33,7 +33,7 @@ class PostController extends Controller
 		try {
 			app('debugbar')->disable();
 			$user_token = app('App\Http\Controllers\ThirdParty\MobileBPJS\ReadController')->cekUserToken($this->headers);
-							
+
 			if (empty($user_token)) {
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')->errorAuth();
 			}
@@ -66,34 +66,34 @@ class PostController extends Controller
 			];
 
 			$poliklinik = Poliklinik::where('bpjs_id', $data['kodepoli'])->first();
-			if(empty($poliklinik)) {
+			if (empty($poliklinik)) {
 				$message = 'kodepoli tidak sesuai';
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 					->error(null, 201, $message);
 			}
 
 			$dokter = app('App\Http\Controllers\RawatJalan\Dokter\ReadController')->getDokterByKodeDokter($data['kodedokter']);
-			if(empty($dokter)) {
+			if (empty($dokter)) {
 				$message = 'kode dokter tidak ditemukan';
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 					->error(null, 201, $message);
 			}
 
-            $tanggal = Carbon::parse($request->tanggalperiksa);
-            $hari_poli_aktif = $poliklinik->jadwal->pluck('hari_order')->toArray();
-            $tanggal_format = $tanggal->format('Ymd');
-            if (tanggalMerah($tanggal_format)['status'] == true || in_array($tanggal->dayOfWeek, [0, 6]) || !in_array($tanggal->dayOfWeek, $hari_poli_aktif) || $tanggal < Carbon::today()) {
-                $message = 'tanggal periksa tidak berlaku';
-                return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-                    ->error(null, 201, $message);
-            }
+			$tanggal = Carbon::parse($request->tanggalperiksa);
+			$hari_poli_aktif = $poliklinik->jadwal->pluck('hari_order')->toArray();
+			$tanggal_format = $tanggal->format('Ymd');
+			if (tanggalMerah($tanggal_format)['status'] == true || in_array($tanggal->dayOfWeek, [0, 6]) || !in_array($tanggal->dayOfWeek, $hari_poli_aktif) || $tanggal < Carbon::today()) {
+				$message = 'tanggal periksa tidak berlaku';
+				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+					->error(null, 201, $message);
+			}
 
-            $jam_praktek = explode("-", $data['jampraktek']);
-            $jam['buka'] = $jam_praktek[0].":00";
-            $jam['tutup'] = $jam_praktek[1].":00";
+			$jam_praktek = explode("-", $data['jampraktek']);
+			$jam['buka'] = $jam_praktek[0] . ":00";
+			$jam['tutup'] = $jam_praktek[1] . ":00";
 
 			$antrian = app('App\Http\Controllers\ThirdParty\MobileBPJS\Antrean\ReadController')
-						->getDataAntrian($jam['buka'], $jam['tutup'], $data['tanggalperiksa'], $poliklinik->id, $dokter->id);
+				->getDataAntrian($jam['buka'], $jam['tutup'], $data['tanggalperiksa'], $poliklinik->id, $dokter->id);
 
 
 			$response = [
@@ -101,7 +101,7 @@ class PostController extends Controller
 				'namadokter' => $dokter->name ?? '-',
 				'totalantrean' => $antrian['antrian_all'],
 				'sisaantrean' => $antrian['sisa_all_online'],
-				'antreanpanggil' => $antrian['last_antrian'] ,
+				'antreanpanggil' => $antrian['last_antrian'],
 				'sisakuotajkn' => $antrian['sisa_jkn_online'],
 				'kuotajkn' => $antrian['kuota_jkn_online'],
 				'sisakuotanonjkn' => $antrian['sisa_all_online'] - $antrian['sisa_jkn_online'],
@@ -121,7 +121,6 @@ class PostController extends Controller
 
 			return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 				->success($response);
-
 		} catch (\Exception $e) {
 			DB::connection('thirdp')->rollback();
 			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
@@ -503,8 +502,8 @@ class PostController extends Controller
 
 			// transaksi / antrian dengan id yang di request dari param
 			$transaksi = app('App\Http\Controllers\ThirdParty\MobileBPJS\Antrean\ReadController')->getTransaksiWithPoliDokter($data['kodebooking']);
-			if(empty($transaksi)) {
-				$message = 'Transaksi dengan kodebooking '.$data['kodebooking'].' tidak ditemukan hari ini';
+			if (empty($transaksi)) {
+				$message = 'Transaksi dengan kodebooking ' . $data['kodebooking'] . ' tidak ditemukan hari ini';
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 					->error(null, 201, $message);
 			}
@@ -540,7 +539,7 @@ class PostController extends Controller
 				$menit_sebelumnya = $menit;
 				$detik_sebelumnya = $detik;
 			}
-			
+
 			// total semua estimasi waktu antrian yang masih status 0 dijadikan detik
 			$waktu_tunggu = $total_waktu;
 
@@ -566,7 +565,6 @@ class PostController extends Controller
 
 			return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 				->success($response);
-
 		} catch (\Exception $e) {
 			DB::connection('thirdp')->rollback();
 
@@ -611,8 +609,8 @@ class PostController extends Controller
 
 			// cek antrian hari ini
 			$cekAntrian = app('App\Http\Controllers\ThirdParty\MobileBPJS\Antrean\ReadController')->cekAntrian($data['kodebooking']);
-			if(empty($cekAntrian)) {
-				$message = 'Transaksi dengan kodebooking '.$data['kodebooking'].' tidak ditemukan';
+			if (empty($cekAntrian)) {
+				$message = 'Transaksi dengan kodebooking ' . $data['kodebooking'] . ' tidak ditemukan';
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 					->error(null, 201, $message);
 			}
@@ -638,7 +636,6 @@ class PostController extends Controller
 
 			return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 				->success($response);
-
 		} catch (\Exception $e) {
 			DB::connection('thirdp')->rollback();
 
@@ -700,22 +697,22 @@ class PostController extends Controller
 					->error(null, 201, $message);
 			}
 
-            #dokter
+			#dokter
 			$dokter = app('App\Http\Controllers\RawatJalan\Dokter\ReadController')->getDokterByKodeDokter($request->kodedokter, $request->kodepoli);
-			if(empty($dokter)) {
+			if (empty($dokter)) {
 				$message = 'kode dokter tidak ditemukan';
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 					->error(null, 201, $message);
 			}
 
-            #dokter jadwal
-            $jam_praktek = explode("-",  $request->jampraktek);
-            $jam['buka'] = $jam_praktek[0].":00";
-            $jam['tutup'] = $jam_praktek[1].":00";
+			#dokter jadwal
+			$jam_praktek = explode("-",  $request->jampraktek);
+			$jam['buka'] = $jam_praktek[0] . ":00";
+			$jam['tutup'] = $jam_praktek[1] . ":00";
 			$dokter_jadwal = app('App\Http\Controllers\RawatJalan\DokterJadwal\ReadController')->getByTanggalJam($dokter->id, $jam['buka'], $jam['tutup'], $request->tanggalperiksa);
 
-            // dd($dokter_jadwal);
-            if(empty($dokter_jadwal)) {
+			// dd($dokter_jadwal);
+			if (empty($dokter_jadwal)) {
 				$message = 'jadwal tidak ditemukan';
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 					->error(null, 201, $message);
@@ -734,17 +731,23 @@ class PostController extends Controller
 					return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 						->error(null, 201, $message);
 				}
-				
+				$noka_bpjs = $get_rujukan_bpjs->response->sep->peserta->noKartu ?? null;
+				$tgl_FKTP    = Carbon::parse($get_rujukan_bpjs->response->tglRencanaKontrol);
+				$kode_poli = $get_rujukan_bpjs->response->poliTujuan;
+			} else {
+				$noka_bpjs = $get_rujukan_bpjs->peserta->noKartu ?? null;
+				$tgl_FKTP    = Carbon::parse($get_rujukan_bpjs->tglKunjungan);
+				$kode_poli = $get_rujukan_bpjs->poliRujukan->kode;
 			}
 
 			// nomor kartu
-			if ($get_rujukan_bpjs->peserta->noKartu != $request->nomorkartu) {
+			// dd($noka_bpjs);
+			if ($noka_bpjs != $request->nomorkartu) {
 				$message = 'nomorkartu tidak sesuai di BPJS';
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 					->error(null, 201, $message);
 			}
 			// tanggal kunjungan
-			$tgl_FKTP    = Carbon::parse($get_rujukan_bpjs->tglKunjungan);
 			$tgl_periksa = Carbon::parse($request->tanggalperiksa);
 			$interval    = date_diff($tgl_FKTP, $tgl_periksa)->days;
 
@@ -755,17 +758,17 @@ class PostController extends Controller
 					->error(null, 201, $message);
 			}
 			// kode poli
-			if ($get_rujukan_bpjs->poliRujukan->kode != $request->kodepoli) {
+			if ($kode_poli != $request->kodepoli) {
 				$message = 'kodepoli tidak sesuai BPJS';
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 					->error(null, 201, $message);
 			}
 			// nik
-			if ($get_rujukan_bpjs->peserta->nik != $request->nik) {
-				$message = 'nik tidak sesuai BPJS';
-				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-					->error(null, 201, $message);
-			}
+			// if ($get_rujukan_bpjs->peserta->nik != $request->nik) {
+			// 	$message = 'nik tidak sesuai BPJS';
+			// 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+			// 		->error(null, 201, $message);
+			// }
 
 			#is holiday ? libur ora
 			$tanggal = Carbon::parse($request->tanggalperiksa);
@@ -778,13 +781,12 @@ class PostController extends Controller
 			}
 
 			//cek melibihi jam tutup poli
-            $tanggal = Carbon::parse($request->tanggalperiksa.' '.$jam['tutup']);
-			if($tanggal < Carbon::now())
-            {
-                $message = $poli->name . ' sudah tutup';
-                return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-                    ->error(null, 201, $message);
-            }
+			$tanggal = Carbon::parse($request->tanggalperiksa . ' ' . $jam['tutup']);
+			if ($tanggal < Carbon::now()) {
+				$message = $poli->name . ' sudah tutup';
+				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+					->error(null, 201, $message);
+			}
 
 
 			/**
@@ -794,7 +796,7 @@ class PostController extends Controller
 			$pasien = app('App\Http\Controllers\Pasien\Pasien\ReadController')->getSingleByNik($request->nik);
 			if (empty($pasien)) {
 				$response = [];
-				$message = 'Pasien dengan nik '.$request->nik.' belum terdaftar dirumah sakit. Silahkan daftarkan terlebih dahulu';
+				$message = 'Pasien dengan nik ' . $request->nik . ' belum terdaftar dirumah sakit. Silahkan daftarkan terlebih dahulu';
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 					->error($response, 202, $message);
 			}
@@ -843,12 +845,12 @@ class PostController extends Controller
 			$data_request['tanggal_pemesanan']      = $request->tanggalperiksa;
 			$data_request['keterangan_daftar'] = null;
 			$data_request['created_by']        = $user_token->created_by;
-            $data_request['is_online']         = 1;
-            $data_request['is_bpjs']           = 1;
-            $data_request['dokter_jadwal_id']  = $dokter_jadwal->id;
-            $data_request['dokter_id']         = $dokter->id;
+			$data_request['is_online']         = 1;
+			$data_request['is_bpjs']           = 1;
+			$data_request['dokter_jadwal_id']  = $dokter_jadwal->id;
+			$data_request['dokter_id']         = $dokter->id;
 			$request->merge($data_request);
-
+			// dd('s');
 			$pendaftaran = app('App\Http\Controllers\Pasien\Pasien\PostController')
 				->APIPendaftaranPasien($request);
 			$pendaftaran = json_decode($pendaftaran);
@@ -868,14 +870,14 @@ class PostController extends Controller
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
 					->error(null, 201, $message);
 			}
-			
+
 			$transactions = app('App\Http\Controllers\ThirdParty\MobileBPJS\Antrean\ReadController')
-						->getTransactionByJadwal($data, $poli->id, $dokter->id);
+				->getTransactionByJadwal($data, $poli->id, $dokter->id);
 			$sisa_kuota_jkn = 0;
 			$kuota_jkn = 0;
 			$kuota_non_jkn = 0;
 			$sisa_kuota_non_jkn = 0;
-            $sisa_antrian = 0;
+			$sisa_antrian = 0;
 			foreach ($transactions as $trans) {
 				if ($trans->status == 0) { // masih antri
 					$sisa_antrian++;
@@ -883,22 +885,22 @@ class PostController extends Controller
 				$slug_pembayaran = $trans->pasien_pembayaran->perusahaan->tipe->slug ?? '';
 				if ($slug_pembayaran == 'bpjs') { // kuota jkn/bpjs keseluruhan
 					$kuota_jkn++;
-					if (in_array($trans->status,[0,3])) { // sisa kuota jkn/bpjs yang masih antri
+					if (in_array($trans->status, [0, 3])) { // sisa kuota jkn/bpjs yang masih antri
 						$sisa_kuota_jkn++;
 					}
 				}
 				if ($slug_pembayaran != 'bpjs') { // kuota non jkn/bpjs
 					$kuota_non_jkn++;
-					if (in_array($trans->status,[0,3])) { // sisa kuota non jkn/bpjs yang masih antri
+					if (in_array($trans->status, [0, 3])) { // sisa kuota non jkn/bpjs yang masih antri
 						$sisa_kuota_non_jkn++;
 					}
 				}
 			}
-            // dd($transaksi->nomor_antrian);
+			// dd($transaksi->nomor_antrian);
 
 			$angka_antrian = $transaksi->nomor_antrian;
 			if ($angka_antrian) {
-				$angka_antrian = (int) substr($angka_antrian,-3);
+				$angka_antrian = (int) substr($angka_antrian, -3);
 			}
 
 			/** hasil pendaftaran */
