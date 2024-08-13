@@ -56,27 +56,27 @@ class PostController extends Controller
             }
             $transaksi->save();
 
-            if(config('medify.third-party.jkn_online.on')){
-                if($transaksi->is_online == 1) { // task id 1-3 untuk daftar online, untuk daftar offline ada apipendaftaranpasien
+            if (config('medify.third-party.jkn_online.on')) {
+                if ($transaksi->is_online == 1) { // task id 1-3 untuk daftar online, untuk daftar offline ada apipendaftaranpasien
                     $carbon_today = Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
                     $carbon_today = strtotime($carbon_today);
                     $pasien = $transaksi->pasien;
                     if ($pasien->is_baru == 1) {
-                        $waktu = ($carbon_today - (rand(300,600))) * 1000;
+                        $waktu = ($carbon_today - (rand(300, 600))) * 1000;
                         $data_1['kodebooking'] = $transaksi->id;
                         $data_1['taskid'] = 1;
                         $data_1['waktu'] = $waktu;
 
                         dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 1, 'waktu' => $waktu]));
 
-                        $waktu = ($carbon_today - (rand(60,300))) * 1000;
+                        $waktu = ($carbon_today - (rand(60, 300))) * 1000;
                         $data_2['kodebooking'] = $transaksi->id;
                         $data_2['taskid'] = 2;
                         $data_2['waktu'] = $waktu;
 
                         dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 2, 'waktu' => $waktu]));
                     }
-                    $carbon_today = $carbon_today *1000;
+                    $carbon_today = $carbon_today * 1000;
                     $data['kodebooking'] = $transaksi->id;
                     $data['taskid'] = 3;
                     $data['waktu'] = $carbon_today;
@@ -547,9 +547,9 @@ class PostController extends Controller
 
     public function APIPendaftaranPasien(Request $request)
     {
-ini_set('max_memory_limit', '4096M');
+        ini_set('max_memory_limit', '4096M');
 
-//if(\Auth::user()->id == 3)         dd($request->all());
+        //if(\Auth::user()->id == 3)         dd($request->all());
         DB::connection('rawatjalan')->beginTransaction();
         DB::connection('igd')->beginTransaction();
         DB::connection('rekammedis')->beginTransaction();
@@ -565,7 +565,7 @@ ini_set('max_memory_limit', '4096M');
                 Auth::loginUsingId(1);
                 app('debugbar')->disable();
             }
-            
+
             $data_transaksi['poliklinik_id'] = $request->poliklinik_id;
             $data_transaksi['nomor_sep'] = $request->no_sep;
             $data_transaksi['pasien_id'] = $request->input('pasien_id');
@@ -585,26 +585,24 @@ ini_set('max_memory_limit', '4096M');
             $data_transaksi['tanggal_pemesanan'] = $request->tanggal_pemesanan;
             $transaksi_id = -1;
 
-            
+
 
             $asal_rujukan_id = $request->asal_rujukan;
             #jika bukan number
-            if(!is_numeric($asal_rujukan_id)){
+            if (!is_numeric($asal_rujukan_id)) {
                 // Cari apakah sudah ada rujukan dengan nama yang sama
-                $find_asal_rujukan = AsalRujukan::find($asal_rujukan_id);                    
-                if($find_asal_rujukan == null){
-                     $asal_rujukan = AsalRujukan::create(['nama' => $asal_rujukan_id]);
-                     $asal_rujukan_id = $asal_rujukan->id;
-                }          
-                else {
+                $find_asal_rujukan = AsalRujukan::find($asal_rujukan_id);
+                if ($find_asal_rujukan == null) {
+                    $asal_rujukan = AsalRujukan::create(['nama' => $asal_rujukan_id]);
+                    $asal_rujukan_id = $asal_rujukan->id;
+                } else {
                     $asal_rujukan_id = $find_asal_rujukan->id;
-                }      
+                }
             }
             $data_transaksi['asal_rujukan_id'] = $asal_rujukan_id;
             // dd($data_transaksi);
-            
-            if($layanan == 1) 
-            {
+
+            if ($layanan == 1) {
                 $data_transaksi['mesin_antrian_konfirmasi'] = $request->input('mesin_antrian_konfirmasi');
                 $data_transaksi['mesin_antrian_id'] = $request->input('mesin_antrian_id');
                 $data_transaksi['is_bpjs'] = $request->input('is_bpjs');
@@ -619,25 +617,25 @@ ini_set('max_memory_limit', '4096M');
                 $data_retribusi['lokasi_id'] = $transaksi->poliklinik->lokasi->id;
                 $data_retribusi['lokasi_nama'] = $transaksi->poliklinik->lokasi->nama;
                 $data['url'] = 'rawatjalan/poliklinik/' . $transaksi->poliklinik_id;
-                if(empty($transaksi->rm_transaksi)) {
+                if (empty($transaksi->rm_transaksi)) {
                     $rm_transaksi = $this->permintaanRekamMedis($layanan, $transaksi);
-                }else{
+                } else {
                     $rm_transaksi = app('App\Http\Controllers\RekamMedis\Transaksi\ReadController')->get($transaksi->rm_transaksi->id);
                 }
                 $transaksi = app('App\Http\Controllers\RawatJalan\Transaksi\EditController')->editTransaksiRM($transaksi->id, $rm_transaksi->id);
-                if(config('medify.third-party.jkn_online.on')){
+                if (config('medify.third-party.jkn_online.on')) {
                     //dd($transaksi);
                     $pasien_pembayaran = $transaksi->pasien_pembayaran;
-                    $pasien 		   = $transaksi->pasien;
+                    $pasien            = $transaksi->pasien;
                     $perusahaan        = $pasien_pembayaran->perusahaan;
-                    $poliklinik	       = $transaksi->poliklinik;
-                    $dokter			   = $transaksi->dokter;
+                    $poliklinik           = $transaksi->poliklinik;
+                    $dokter               = $transaksi->dokter;
                     $dokter_jadwal     = $transaksi->dokter_jadwal;
-                    $jam_buka      	   = explode(":",  $dokter_jadwal->jam_buka);
-                    $jam_buka_text     = $jam_buka[0].":".$jam_buka[1];
+                    $jam_buka             = explode(":",  $dokter_jadwal->jam_buka);
+                    $jam_buka_text     = $jam_buka[0] . ":" . $jam_buka[1];
                     $jam_tutup         = explode(":",  $dokter_jadwal->jam_tutup);
-                    $jam_tutup_text    = $jam_tutup[0].":".$jam_tutup[1];
-                    $jam_text  		   = $jam_buka_text."-".$jam_tutup_text;
+                    $jam_tutup_text    = $jam_tutup[0] . ":" . $jam_tutup[1];
+                    $jam_text             = $jam_buka_text . "-" . $jam_tutup_text;
 
                     $sisa_kuota_jkn = 0;
                     $kuota_jkn = 0;
@@ -647,12 +645,12 @@ ini_set('max_memory_limit', '4096M');
                     $data_read['tanggalperiksa'] = Carbon::parse($transaksi->ordered_at);
                     $data_read['jampraktek'] = $jam_text;
                     $transactions_jkn = app('App\Http\Controllers\ThirdParty\MobileBPJS\Antrean\ReadController')
-                                ->getTransactionByJadwal($data_read, $dokter_jadwal->id, $dokter->id);
+                        ->getTransactionByJadwal($data_read, $dokter_jadwal->id, $dokter->id);
                     foreach ($transactions_jkn as $trans) {
                         if ($trans->status == 0) { // masih antri
                             $sisa_antrian++;
                         }
-                        if (!is_null($trans->nomor_sep?? null)) { // kuota jkn/bpjs keseluruhan
+                        if (!is_null($trans->nomor_sep ?? null)) { // kuota jkn/bpjs keseluruhan
                             $kuota_jkn++;
                             if ($trans->status == 0) { // sisa kuota jkn/bpjs yang masih antri
                                 $sisa_kuota_jkn++;
@@ -672,7 +670,7 @@ ini_set('max_memory_limit', '4096M');
                             'nomor_kartu' => $pasien_pembayaran->no_asuransi,
                             'multiple' => 1
                         ]);
-                        
+
                         if (config('medify.third-party.vclaim.on_v2')) {
                             $rujukan = app(\App\Http\Controllers\ThirdParty\BPJS\VClaim\Rujukan\ReadController::class)->searchByNomorKartuAll(1, $pasien_pembayaran->no_asuransi);
                         } else {
@@ -686,32 +684,33 @@ ini_set('max_memory_limit', '4096M');
                     }
 
                     $no_antrian        = (int) preg_replace("/[^0-9]/", "", $transaksi->nomor_antrian);
-                    
 
-                    $response['kodebooking'] 		= $transaksi->id;
-                    $response['jenispasien'] 		= $perusahaan->type == 1 ? "JKN" : "NON JKN";
-                    $response['nomorkartu']  		= $pasien_pembayaran->no_asuransi ?? "";
-                    $response['nik']		 		= $pasien->no_identitas;
-                    $response['nohp']		 		= $pasien->phone;
-                    $response['kodepoli']	 		= $poliklinik->bpjs_id;
-                    $response['namapoli']	 		= $poliklinik->name;
-                    $response['pasienbaru']  		= $pasien->is_baru;
-                    $response['norm']		 		= $pasien->no_rm;
-                    $response['tanggalperiksa']   = Carbon::createFromFormat('Y-m-d H:i:s' ,$transaksi->ordered_at)->format('Y-m-d');
-                    $response['kodedokter']			= $dokter->bpjs_kode_dpjp;
-                    $response['namadokter']			= $dokter->name;
-                    $response['jampraktek']			= $jam_text;
-                    $response['jeniskunjungan']     = 3;//hardcode
+
+
+                    $response['kodebooking']         = $transaksi->id;
+                    $response['jenispasien']         = $perusahaan->type == 1 ? "JKN" : "NON JKN";
+                    $response['nomorkartu']          = $pasien_pembayaran->no_asuransi ?? "";
+                    $response['nik']                 = $pasien->no_identitas;
+                    $response['nohp']                 = $pasien->phone;
+                    $response['kodepoli']             = $poliklinik->bpjs_id;
+                    $response['namapoli']             = $poliklinik->name;
+                    $response['pasienbaru']          = $pasien->is_baru;
+                    $response['norm']                 = $pasien->no_rm;
+                    $response['tanggalperiksa']   = Carbon::createFromFormat('Y-m-d H:i:s', $transaksi->ordered_at)->format('Y-m-d');
+                    $response['kodedokter']            = $dokter->bpjs_kode_dpjp;
+                    $response['namadokter']            = $dokter->name;
+                    $response['jampraktek']            = $jam_text;
+                    $response['jeniskunjungan']     = 3; //hardcode
                     $response['nomorreferensi']     = $nomor_rujukan;
-                    $response['nomorantrean']		= $transaksi->nomor_antrian;
-                    $response['angkaantrean']		= $no_antrian;
+                    $response['nomorantrean']        = $transaksi->nomor_antrian;
+                    $response['angkaantrean']        = $no_antrian;
                     $response['estimasidilayani']   = strtotime($transaksi->ordered_at) * 1000;
                     $response['sisakuotajkn']       = $sisa_kuota_jkn;
                     $response['kuotajkn']           = $kuota_jkn;
                     $response['sisakuotanonjkn']    = $sisa_kuota_non_jkn;
                     $response['kuotanonjkn']        = $kuota_non_jkn;
                     $response['keterangan']         = "Peserta harap 30 menit lebih awal guna pencatatan administrasi.";
-    
+
                     $temp_params = new \Illuminate\Http\Request();
 
                     $temp_params->replace([
@@ -737,38 +736,45 @@ ini_set('max_memory_limit', '4096M');
                         'kuotajkn' => $response['kuotajkn'],
                         'sisakuotanonjkn' => $response['sisakuotanonjkn'],
                         'kuotanonjkn' => $response['kuotanonjkn'],
-                        'keterangan' => $response['keterangan'],  
+                        'keterangan' => $response['keterangan'],
                     ]);
 
                     $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\CreateController::class)->addAntrean($temp_params);
                     $returned = json_decode($returned);
 
                     $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+
+                    $data_log['kodebooking'] = $transaksi->id;
+                    $data_log['response'] = json_encode($returned);
+                    $data_log['request'] = $temp_params->all();
+
+                    app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+
                     if (($metadata->code ?? null) != 200) {
                         $data_log['kodebooking'] = $transaksi->id;
                         $data_log['response'] = json_encode($returned);
 
                         app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
                     } else {
-                        if($transaksi->is_online == 0) { // task id 1-3 untuk daftar offline, untuk daftar online ada di checkin dan konfirmasi antrian
+                        if ($transaksi->is_online == 0) { // task id 1-3 untuk daftar offline, untuk daftar online ada di checkin dan konfirmasi antrian
                             $carbon_today = Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
                             $carbon_today = strtotime($carbon_today);
                             if ($pasien->is_baru == 1) {
-                                $waktu = ($carbon_today - (rand(300,600))) * 1000;
+                                $waktu = ($carbon_today - (rand(300, 600))) * 1000;
                                 $data_1['kodebooking'] = $transaksi->id;
                                 $data_1['taskid'] = 1;
                                 $data_1['waktu'] = $waktu;
 
                                 dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 1, 'waktu' => $waktu]));
 
-                                $waktu = ($carbon_today - (rand(60,300))) * 1000;
+                                $waktu = ($carbon_today - (rand(60, 300))) * 1000;
                                 $data_2['kodebooking'] = $transaksi->id;
                                 $data_2['taskid'] = 2;
                                 $data_2['waktu'] = $waktu;
 
                                 dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 2, 'waktu' => $waktu]));
                             }
-                            $carbon_today = $carbon_today *1000;
+                            $carbon_today = $carbon_today * 1000;
                             $data['kodebooking'] = $transaksi->id;
                             $data['taskid'] = 3;
                             $data['waktu'] = $carbon_today;
@@ -780,7 +786,7 @@ ini_set('max_memory_limit', '4096M');
                 $data_retribusi['kelas'] = "IGD";
                 $data_transaksi['sirs_pelayanan_khusus_id'] = $request->sirs_pelayanan_khusus_id;
                 // dd($data_transaksi, $request->all());
-                $transaksi = $this->daftarIGD($data_transaksi,$request->all());
+                $transaksi = $this->daftarIGD($data_transaksi, $request->all());
                 $transaksi_id = $transaksi->id;
                 $data_retribusi['lokasi_id'] = $transaksi->ruangan->lokasi->id;
                 $data_retribusi['lokasi_nama'] = $transaksi->ruangan->lokasi->nama;
@@ -1434,17 +1440,18 @@ ini_set('max_memory_limit', '4096M');
         return $result;
     }
 
-    public function asalRujukan(Request $request){
+    public function asalRujukan(Request $request)
+    {
         // dd($request->all());
         $data = [];
         DB::connection('patients')->beginTransaction();
         try {
 
-            if(config('app.bpjs_enable') == true){
+            if (config('app.bpjs_enable') == true) {
                 $faskes_medify = app('App\Http\Controllers\BPJS\API\Referensi\ReadController')->getFaskes($request->merge(['faskes' => $request->q]));
                 $faskes_medify = json_decode($faskes_medify);
                 $response_faskes = $faskes_medify->response;
-                if(!is_null($response_faskes)){
+                if (!is_null($response_faskes)) {
                     foreach ($response_faskes as $key => $list_faskes) {
                         foreach ($list_faskes as $key => $value) {
                             AsalRujukan::updateOrCreate(
@@ -1461,14 +1468,11 @@ ini_set('max_memory_limit', '4096M');
                 ->take('20')
                 ->get()
                 ->toArray();
-            
+
             $status  = 'success';
             $title   = 'Berhasil';
             $message = 'Get Data Asal Rujukan';
             $data    = $faskes;
-
-
-
         } catch (\Throwable $th) {
             DB::connection('patients')->rollback();
             app('App\Http\Controllers\Error\Handler')->bugsnag($th);
@@ -1488,7 +1492,7 @@ ini_set('max_memory_limit', '4096M');
 
     public function konfirmasiBatal($id)
     {
-        try{
+        try {
 
             DB::connection('rawatjalan')->beginTransaction();
             $transaksi = Transaksi::find($id);
@@ -1497,19 +1501,17 @@ ini_set('max_memory_limit', '4096M');
             $transaksi->save();
             DB::connection('rawatjalan')->commit();
             return json_encode([
-                'number'=>200,
-                'status'=>'Berhasil!',
-                'ket'=>'Konfirmasi Berhasil'
+                'number' => 200,
+                'status' => 'Berhasil!',
+                'ket' => 'Konfirmasi Berhasil'
             ]);
-
-        }catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
             DB::connection('rawatjalan')->rollBack();
             return json_encode([
-                'number'=>400,
-                'status'=>'Gagal',
-                'ket'=>'Konfirmasi gagal'
+                'number' => 400,
+                'status' => 'Gagal',
+                'ket' => 'Konfirmasi gagal'
             ]);
         }
     }
