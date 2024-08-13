@@ -84,7 +84,7 @@ Transaksi
 			<div class="col-lg-4 col-sm-12">
 				<div class="block">
 					<div class="block-content text-center">
-						<h4 class="mb-0">Edit SEP BPJS</h4>
+						<h4 class="mb-0">Buat SEP BPJS</h4>
 						<div class="py-20">
 							<img src="{{url('')}}/assets/img/bpjs-logo.png" height="100">
 						</div>
