@@ -12,9 +12,10 @@ class CreateController extends Controller
     {
         $log = new LogTaskJknId();
         $log->kodebooking = $data['kodebooking'];
-        $log->task_id = $data['task_id'];
-        $log->waktu = $data['waktu'];
+        $log->task_id = $data['task_id'] ?? null;
+        $log->waktu = $data['waktu'] ?? null;
         $log->response = $data['response'];
+        $log->request = json_encode($data['request']);
         $log->save();
     }
 }

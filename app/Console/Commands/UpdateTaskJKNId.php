@@ -61,6 +61,7 @@ class UpdateTaskJKNId extends Command
             $data_log['task_id'] = $taskid;
             $data_log['waktu'] = $waktu;
             $data_log['response'] = json_encode($returned);
+            $data_log['request'] = $data;
 
             app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
         }
