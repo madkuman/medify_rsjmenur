@@ -89,6 +89,10 @@ Route::group(['middleware' => ['check-module']], function () {
 		Route::get('/referensi', 'BPJS\Referensi\ViewController@index');
 		Route::post('/referensi', 'BPJS\Referensi\PostController@submit');
 
+		//MONITORING ANTREAN
+		Route::get('/referensi', 'BPJS\Monitoring\Antrean\ViewController@index');
+		Route::get('/monitoring/antrean', 'BPJS\Monitoring\Antrean\PostController@searchByKodeBooking')->name('antrean.searchByKodeBooking');
+
 		//ICARE
 		Route::post('/icare', 'ThirdParty\BPJS\ICare\IcareController@getIcare')->name('icare');
 	});
