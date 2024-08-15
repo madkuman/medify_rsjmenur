@@ -685,6 +685,30 @@ class PostController extends Controller
 
                     $no_antrian        = (int) preg_replace("/[^0-9]/", "", $transaksi->nomor_antrian);
 
+                    //Penentuan jenis_kunjungan dan nomor_referensi
+                    $rujukan = app(\App\Http\Controllers\ThirdParty\BPJS\VClaim\Rujukan\ReadController::class)->searchAll($nomor_rujukan);
+                    $jenis_rujukan = $rujukan->tipe_perujuk;
+                    $kode_poli_rujukan = $rujukan->poliRujukan->kode;
+
+                    $get_jumlah_sep = app(\App\Http\Controllers\BPJS\Rujukan\PostController::class)->dataJumlahSepRujukan($jenis_rujukan, $nomor_rujukan);
+                    $jumlah_sep = int($get_jumlah_sep->jumlahSEP);
+
+                    if ($jumlah_sep == 0 && $poliklinik->bpjs_id == $kode_poli_rujukan) {
+                        if ($jenis_rujukan == 1) {
+                            $jenis_kunjungan = 1;
+                            $nomor_referensi = $nomor_rujukan;
+                        } else {
+                            $jenis_kunjungan = 4;
+                            $nomor_referensi = $nomor_rujukan;
+                        }
+                    }
+
+                    $get_rencana_kontrol = app(\App\Http\Controllers\ThirdParty\BPJS\VClaim\RencanaKontrol\ReadController::class)->getDataNoSK($tgl_awal, $tgl_akhir, $format_filter);
+
+                    if ($jumlah_sep >= 1 && $poliklinik->bpjs_id == $kode_poli_rujukan) {
+                        $jenis_kunjungan = 3;
+                        $nomor_referensi = $nomor_rujukan;
+                    }
 
 
                     $response['kodebooking']         = $transaksi->id;
