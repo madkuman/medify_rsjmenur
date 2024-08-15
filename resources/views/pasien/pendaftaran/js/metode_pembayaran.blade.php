@@ -1,5 +1,5 @@
 <script type="text/javascript">
-	function loadingMetode()
+    function loadingMetode()
     {
         $("#InfoPembayaran").html(`<div id="myLoading" class="col-12 text-center">
             <i class="fa fa-4x fa-asterisk fa-spin text-info mb-5"></i>
@@ -20,9 +20,17 @@
             dataType: 'json',
             success:function(data){
                 if (data.perusahaan.tipe.slug=='bpjs') {
-                    $('#form-no-sep').show();
-                    $('#nomorSEP').show();
-                    $('#noSEP').val('');
+                    if(valLayanan != 1){
+                        $('#form-no-sep').show();
+                        $('#nomorSEP').show();
+                        $('#noSEP').val('');
+                        $('.bpjs').show();
+                    }else{
+                        $('#form-no-sep').hide();
+                        $('#nomorSEP').hide();
+                        $('#noSEP').val('');
+                        $('.bpjs').hide();
+                    }
                     $("#InfoPembayaran").html(`
                         <div class="col-12">
                             <span class="font-w600 h3">
@@ -50,7 +58,7 @@
                     is_bpjs = 1;
                     
                     @if(config('app.bpjs_enable', false))
-                        $('.bpjs').show();
+                        
                         getNoRujukan(data.no_asuransi);
                     @endif
                 }

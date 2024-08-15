@@ -1,8 +1,8 @@
 <script type="text/javascript">
-
     function changeDaftar(val)
     {
         valLayanan = val;
+        $('.pilih-sep').show();
         if(val == 1)
         {
             $('.pilih-poli').show();
@@ -12,6 +12,7 @@
             $('.pilih-dokter').show();
             $('.konsul-dokter').show();
             checkKelas();
+            $('.pilih-sep').hide();
         }
         else if(val == 2)
         {

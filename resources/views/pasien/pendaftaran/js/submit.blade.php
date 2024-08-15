@@ -1,5 +1,4 @@
 <script type="text/javascript">
-	
     function inputValidation(){
         var errCounter=0;
         $('#pasienSubmit input, #pasienSubmit select').not('.sep_input').each(function(n,element){
@@ -140,7 +139,7 @@
             formData.append('mesin_antrian_konfirmasi', 1);
         }
 
-        if(is_bpjs == 1){
+        if(is_bpjs == 1 && valLayanan != 1){
             var sep_bpjs = false;
             
             if($('#custom_sep_check').is(':checked')){
