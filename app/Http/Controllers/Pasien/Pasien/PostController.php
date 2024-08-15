@@ -691,7 +691,7 @@ class PostController extends Controller
                     $kode_poli_rujukan = $rujukan->poliRujukan->kode;
 
                     $get_jumlah_sep = app(\App\Http\Controllers\BPJS\Rujukan\PostController::class)->dataJumlahSepRujukan($jenis_rujukan, $nomor_rujukan);
-                    $jumlah_sep = int($get_jumlah_sep->jumlahSEP);
+                    $jumlah_sep = (int)$get_jumlah_sep->jumlahSEP;
 
                     if ($jumlah_sep == 0 && $poliklinik->bpjs_id == $kode_poli_rujukan) {
                         if ($jenis_rujukan == 1) {
