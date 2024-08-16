@@ -862,7 +862,7 @@ class PostController extends Controller
             $data['is_bpjs'] = $request->input('is_bpjs');
             $data['transaksi_id'] = $transaksi->id;
 
-            dd('s');
+            // dd('s');
 
             DB::connection('rawatjalan')->commit();
             DB::connection('igd')->commit();

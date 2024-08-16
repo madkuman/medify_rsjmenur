@@ -113,8 +113,9 @@
                     param: param,
                     kodedokter: kodedokter
                 },
-                success: function(data) {
-                    window.open(data.url, 'miniWindow', 'width=1200,height=800');
+                success: function(response) {
+                    let data = JSON.parse(response);
+                    window.open(data.response.url, 'miniWindow', 'width=1200,height=800');
                 }
             });
         }
