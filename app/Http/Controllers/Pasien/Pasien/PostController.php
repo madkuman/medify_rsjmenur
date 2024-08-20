@@ -707,14 +707,17 @@ class PostController extends Controller
 
                             $get_rencana_kontrol = app(\App\Http\Controllers\ThirdParty\BPJS\VClaim\RencanaKontrol\ReadController::class)->getDataNoKartu($bulan, $tahun, $no_kartu, $format_filter);
                             $rencana_kontrol = json_decode($get_rencana_kontrol);
-                            // dd($rencana_kontrol);
+                            // dd($rencana_kontrol, $bulan, $tahun, $no_kartu, $format_filter);
+                            // dd($poliklinik->bpjs_id, $kode_poli_rujukan);
                             if ($jumlah_sep >= 1) {
                                 if ($poliklinik->bpjs_id == $kode_poli_rujukan) {
                                     $jenis_kunjungan = 3;
+                                    $nomor_referensi = $rencana_kontrol->response->list[0]->noSuratKontrol ?? "";
                                 } else {
                                     $jenis_kunjungan = 2;
+                                    $nomor_kasus = str_pad($transaksi->kasus_id, 11, "0", STR_PAD_LEFT);
+                                    $nomor_referensi = config('app.bpjs_ppk') . $nomor_kasus;
                                 }
-                                $nomor_referensi = $rencana_kontrol->response->list[0]->noSuratKontrol ?? "";
                             }
                         }
                     }
@@ -727,8 +730,8 @@ class PostController extends Controller
                     $response['nomorkartu']          = $pasien_pembayaran->no_asuransi ?? "";
                     $response['nik']                 = $pasien->no_identitas;
                     $response['nohp']                 = $pasien->phone;
-                    $response['kodepoli']             = $poliklinik->bpjs_id;
-                    $response['namapoli']             = $poliklinik->name;
+                    $response['kodepoli']             = $dokter->bpjs_poli ?? $poliklinik->bpjs_id;
+                    $response['namapoli']             = $dokter->bpjs_poli_text ?? $poliklinik->name;
                     $response['pasienbaru']          = $pasien->is_baru;
                     $response['norm']                 = $pasien->no_rm;
                     $response['tanggalperiksa']   = Carbon::createFromFormat('Y-m-d H:i:s', $transaksi->ordered_at)->format('Y-m-d');
@@ -745,7 +748,7 @@ class PostController extends Controller
                     $response['sisakuotanonjkn']    = $sisa_kuota_non_jkn;
                     $response['kuotanonjkn']        = $kuota_non_jkn;
                     $response['keterangan']         = "Peserta harap datang 30 menit lebih awal guna pencatatan administrasi.";
-                    // dd($response);
+                    dd($response);
                     $temp_params = new \Illuminate\Http\Request();
 
                     $temp_params->replace([

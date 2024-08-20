@@ -41,6 +41,16 @@ class IcareController extends Controller
 			$results_decoded = json_decode($results);
 			$results_decoded->response = json_decode(app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->stringDecrypt($timestamp, $results_decoded->response));
 			return (json_encode($results_decoded));
+			// $hasil = [
+			// 	'response' => [
+			// 		'url' => "https://www.youtube.com"
+			// 	],
+			// 	'metaData' => [
+			// 		'code' => 200,
+			// 		'message' => "Berhasil coba"
+			// 	]
+			// ];
+			// return (json_encode($hasil));
 		} catch (\Exception $e) {
 			// dd($e);
 			return json_encode([
