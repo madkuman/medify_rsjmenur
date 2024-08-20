@@ -24,21 +24,21 @@
                 <h5><small>Silahkan print dokumen dokumen dibawah ini</small></h5>
             </div>
             <div class="row justify-content-center row-deck">
-                {{-- @if (!empty($transaksi->nomor_sep)) --}}
-                <div class="col-lg-4 col-sm-12">
-                    <div class="block">
-                        <div class="block-content text-center">
-                            <h4 class="mb-0">SEP BPJS</h4>
-                            <div class="py-20">
-                                <img src="{{ url('') }}/assets/img/bpjs-logo.png" height="100">
+                @if (!empty($transaksi->nomor_sep))
+                    <div class="col-lg-4 col-sm-12">
+                        <div class="block">
+                            <div class="block-content text-center">
+                                <h4 class="mb-0">SEP BPJS</h4>
+                                <div class="py-20">
+                                    <img src="{{ url('') }}/assets/img/bpjs-logo.png" height="100">
+                                </div>
+                                <button class="btn btn-primary" onclick="printSEP()">Print</button>
+                                <!-- <small class="text-danger">Print SEP selain dari modul BPJS tidak diperbolehkan</small>
+                      <button class="btn btn-primary" disabled="">Print</button> -->
                             </div>
-                            <button class="btn btn-primary" onclick="printSEP()">Print</button>
-                            <!-- <small class="text-danger">Print SEP selain dari modul BPJS tidak diperbolehkan</small>
-                  <button class="btn btn-primary" disabled="">Print</button> -->
                         </div>
                     </div>
-                </div>
-                {{-- @endif --}}
+                @endif
                 <div class="col-lg-4 col-sm-12">
                     <div class="block">
                         <div class="block-content text-center">

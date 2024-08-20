@@ -683,12 +683,12 @@ class PostController extends Controller
                         if ($rujukan->metaData->code == 200) {
                             $rujukan = $rujukan->response->rujukan[0] ?? null;
                             $nomor_rujukan = $rujukan->noKunjungan ?? "";
-                            $jenis_rujukan = $rujukan->tipe_perujuk;
-                            $kode_poli_rujukan = $rujukan->poliRujukan->kode;
+                            $jenis_rujukan = $rujukan->tipe_perujuk ?? "";
+                            $kode_poli_rujukan = $rujukan->poliRujukan->kode ?? "";
 
                             $get_jumlah_sep = app(\App\Http\Controllers\BPJS\Rujukan\PostController::class)->dataJumlahSepRujukan($jenis_rujukan, $nomor_rujukan);
                             $get_jumlah_sep = json_decode($get_jumlah_sep);
-                            $jumlah_sep = (int)$get_jumlah_sep->response->jumlahSEP;
+                            $jumlah_sep = $get_jumlah_sep->response->jumlahSEP ?? "";
 
                             if ($jumlah_sep == 0 && $poliklinik->bpjs_id == $kode_poli_rujukan) {
                                 if ($jenis_rujukan == 1) {
@@ -722,9 +722,6 @@ class PostController extends Controller
                     $no_antrian        = (int) preg_replace("/[^0-9]/", "", $transaksi->nomor_antrian);
 
                     //Penentuan jenis_kunjungan dan nomor_referensi
-
-
-
                     $response['kodebooking']         = $transaksi->id;
                     $response['jenispasien']         = $perusahaan->type == 1 ? "JKN" : "NON JKN";
                     $response['nomorkartu']          = $pasien_pembayaran->no_asuransi ?? "";
@@ -747,7 +744,7 @@ class PostController extends Controller
                     $response['kuotajkn']           = $kuota_jkn;
                     $response['sisakuotanonjkn']    = $sisa_kuota_non_jkn;
                     $response['kuotanonjkn']        = $kuota_non_jkn;
-                    $response['keterangan']         = "Peserta harap 30 menit lebih awal guna pencatatan administrasi.";
+                    $response['keterangan']         = "Peserta harap datang 30 menit lebih awal guna pencatatan administrasi.";
                     // dd($response);
                     $temp_params = new \Illuminate\Http\Request();
 
@@ -776,7 +773,7 @@ class PostController extends Controller
                         'kuotanonjkn' => $response['kuotanonjkn'],
                         'keterangan' => $response['keterangan'],
                     ]);
-
+                    // dd($temp_params);
                     $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\CreateController::class)->addAntrean($temp_params);
                     $returned = json_decode($returned);
 

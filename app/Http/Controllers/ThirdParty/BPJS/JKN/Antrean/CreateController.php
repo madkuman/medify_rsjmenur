@@ -21,16 +21,18 @@ class CreateController extends Controller
         $header_array = $this->request->getHeader();
         try {
             $client = new Client(['headers' => $header_array]);
-            $res = $client->request('POST', $this->request->getUrl().'/antrean/add',
-            [
-                'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
-                \GuzzleHttp\RequestOptions::JSON => $params->all(),
-            ]);
+            $res = $client->request(
+                'POST',
+                $this->request->getUrl() . '/antrean/add',
+                [
+                    'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
+                    \GuzzleHttp\RequestOptions::JSON => $params->all(),
+                ]
+            );
 
             $content = $res->getBody()->getContents();
 
             return $content;
-
         } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
             return json_encode([
@@ -40,7 +42,7 @@ class CreateController extends Controller
                 ],
                 "response" => []
             ]);
-        } catch (GuzzleException $e){
+        } catch (GuzzleException $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
             return json_encode([
                 "metaData" => [
