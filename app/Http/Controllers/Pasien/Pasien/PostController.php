@@ -748,7 +748,7 @@ class PostController extends Controller
                     $response['sisakuotanonjkn']    = $sisa_kuota_non_jkn;
                     $response['kuotanonjkn']        = $kuota_non_jkn;
                     $response['keterangan']         = "Peserta harap datang 30 menit lebih awal guna pencatatan administrasi.";
-                    dd($response);
+                    // dd($response);
                     $temp_params = new \Illuminate\Http\Request();
 
                     $temp_params->replace([

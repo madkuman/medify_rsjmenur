@@ -39,7 +39,7 @@ class RequestController extends Controller
     public function getIcareUrl()
     {
         if (strtolower(config('app.bpjs_stage')) == "production") {
-            return "https://apijkn-dev.bpjs-kesehatan.go.id/ihs/api/rs/validate";
+            return "https://apijkn.bpjs-kesehatan.go.id/wsihs/api/rs/validate";
         } else {
             if (config('app.bpjs_decrypt', false)) {
                 // return "https://dvlp.bpjs-kesehatan.go.id/VClaim-rest-1.1";

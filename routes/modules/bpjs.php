@@ -22,6 +22,7 @@ Route::group(['middleware' => ['check-module']], function () {
 		Route::post('/sep/{no_sep}/edit', 'BPJS\SEP\PostController@edit');
 		Route::post('/sep/{no_sep}/delete', 'BPJS\SEP\PostController@delete');
 		Route::get('/sep/{no_sep}/print-sep-bukti-layanan', 'BPJS\SEP\ViewController@printSepBuktiLayanan');
+		Route::get('/sep/sync/{no_sep}', 'BPJS\API\Sep\ReadController@syncDataSep');
 
 
 		//rujukan keluar
