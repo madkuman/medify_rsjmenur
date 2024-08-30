@@ -19,11 +19,14 @@ Route::group(['prefix' => 'mobile-bpjs'], function () {
 	Route::post('antrean/get-status-antrean', 'ThirdParty\MobileBPJS\Antrean\PostController@getStatusAntrean');
 	Route::post('antrean/sisa-antrean', 'ThirdParty\MobileBPJS\Antrean\PostController@getSisaAntrean');
 	Route::post('antrean/batal-antrean', 'ThirdParty\MobileBPJS\Antrean\PostController@batalAntrean');
-    //v1
+	//v1
 	Route::post('antrean/get-no-antrean', 'ThirdParty\MobileBPJS\Antrean\PostController@getNoAntrean');
 	Route::post('antrean/get-rekap-no-antrean', 'ThirdParty\MobileBPJS\Antrean\PostController@getRekapNoAntrean');
 
 	/** end antrean */
 	Route::post('pasien/check-in', 'ThirdParty\MobileBPJS\Pasien\PostController@checkIn');
 	Route::post('pasien/baru', 'ThirdParty\MobileBPJS\Pasien\PostController@pasienBaru');
+
+	/** antrean farmasi */
+	Route::post('farmasi/get-antrean', 'ThirdParty\MobileBPJS\Farmasi\PostController@getAntrean');
 });

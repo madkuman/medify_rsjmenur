@@ -92,6 +92,9 @@ Route::group(['middleware' => ['check-module']], function () {
 
 		//ICARE
 		Route::post('/icare', 'ThirdParty\BPJS\ICare\IcareController@getIcare')->name('icare');
+
+		//ANTREAN
+		Route::get('/antrean-online', 'BPJS\Antrean\PostController@getAntreanPerTanggal');
 	});
 
 	Route::group(['prefix' => 'api/bpjs'], function () {
