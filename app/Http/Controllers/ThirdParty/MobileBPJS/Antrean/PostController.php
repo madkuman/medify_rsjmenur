@@ -81,7 +81,7 @@ class PostController extends Controller
 
 			$tanggal = Carbon::parse($request->tanggalperiksa);
 			$hari_poli_aktif = $poliklinik->jadwal->pluck('hari_order')->toArray();
-			$tanggal_format = $tanggal->format('Ymd');
+			$tanggal_format = $tanggal->format('Y-m-d');
 			if (tanggalMerah($tanggal_format)['status'] == true || in_array($tanggal->dayOfWeek, [0, 6]) || !in_array($tanggal->dayOfWeek, $hari_poli_aktif) || $tanggal < Carbon::today()) {
 				$message = 'tanggal periksa tidak berlaku';
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
@@ -240,7 +240,7 @@ class PostController extends Controller
 			#is holiday ? libur ora
 			$tanggal = Carbon::parse($request->tanggalperiksa);
 			$hari_poli_aktif = $poli->jadwal->pluck('hari_order')->toArray();
-			$tanggal_format = $tanggal->format('Ymd');
+			$tanggal_format = $tanggal->format('Y-m-d');
 			if (tanggalMerah($tanggal_format)['status'] == true || in_array($tanggal->dayOfWeek, [0, 6]) || !in_array($tanggal->dayOfWeek, $hari_poli_aktif)) {
 				$message = $poli->name . ' sedang tutup';
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
@@ -773,7 +773,7 @@ class PostController extends Controller
 			#is holiday ? libur ora
 			$tanggal = Carbon::parse($request->tanggalperiksa);
 			$hari_poli_aktif = $poli->jadwal->pluck('hari_order')->toArray();
-			$tanggal_format = $tanggal->format('Ymd');
+			$tanggal_format = $tanggal->format('Y-m-d');
 			if (tanggalMerah($tanggal_format)['status'] == true || in_array($tanggal->dayOfWeek, [0, 6]) || !in_array($tanggal->dayOfWeek, $hari_poli_aktif)) {
 				$message = $poli->name . ' sedang tutup';
 				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')

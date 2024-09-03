@@ -80,7 +80,7 @@
                             {{ number_format($total_plafon) }}
                         </h6>
                     @endif
-                    @if (Auth::user()->profesi == 1 || Auth::user()->profesi == 20)
+                    @if (Auth::user()->id == ($kasus->admin->user->id ?? null) || Auth::user()->profesi == 20)
                         {{-- @if (Auth::user()->dokter->bpjs_kode_dpjp == $kasus->sep->dpjp) --}}
                         <form>
                             <input type="hidden" id="param" name="param"
@@ -117,12 +117,7 @@
                 },
                 success: function(response) {
                     let data = JSON.parse(response);
-                    if (data.metaData.code == 200) {
-                        window.open(data.response.url, 'miniWindow', 'width=1200,height=800');
-                    } else {
-                        callSwal('error', 'Respon dari server BPJS', data.metaData.message, '',
-                            confirmButtonText: 'OK');
-                    }
+                    window.open(data.response.url, 'miniWindow', 'width=1200,height=800');
                 }
             });
         }
