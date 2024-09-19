@@ -13,13 +13,13 @@
 
 include('modules/survey-kepuasan.php');
 
-if (Request::server('HTTP_X_FORWARDED_PROTO') == 'https'){
+if (Request::server('HTTP_X_FORWARDED_PROTO') == 'https') {
 	URL::forceScheme('https');
 }
 Route::get('/testing', 'HomeController@testing');
 
 Auth::routes();
-Route::get('/admin/user-control/{id}/bypass-login','Admin\UserControl\ViewController@bypassLogin');
+Route::get('/admin/user-control/{id}/bypass-login', 'Admin\UserControl\ViewController@bypassLogin');
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::get('api/official-website/dokter/index', 'Website\APIController@dokterIndex');
 Route::get('api/official-website/dokter/get/{slug}', 'Website\APIController@dokterSingle');
@@ -37,9 +37,9 @@ Route::get('labpk/api/LIS/import', 'LabPK\ImportController@importLISTarif');
 Route::post('labpk/api/LIS/insert-result', 'LabPK\LIS\ApiController@insertHasilByJson');
 // Route::get('labpk/api/transaksi/exportPasien', 'LabPK\ImportController@exportPasien');
 
-Route::get('pasien/api/get','Pasien\Pasien\ReadController@APIGetPasien');
-Route::post('pasien/api/baru','Pasien\Pasien\PostController@APICreatePasien');
-Route::get('pasien/api/get-pembayaran','Pasien\Pasien\ReadController@APIGetPasienPembayaran');
+Route::get('pasien/api/get', 'Pasien\Pasien\ReadController@APIGetPasien');
+Route::post('pasien/api/baru', 'Pasien\Pasien\PostController@APICreatePasien');
+Route::get('pasien/api/get-pembayaran', 'Pasien\Pasien\ReadController@APIGetPasienPembayaran');
 Route::post('pasien/api/pendaftaran/baru', 'Pasien\Pasien\PostController@APIPendaftaranPasienMobile');
 Route::post('pasien/api/pendaftaran/batal', 'RawatJalan\Transaksi\PostController@cancel');
 Route::get('pasien/api/poli/antrian/{id}', 'RawatJalan\Poliklinik\ReadController@antrianPoliAPI');
@@ -49,13 +49,14 @@ include('modules-api/third-party-medify-online.php');
 include('modules/third-party/mobile-bpjs.php');
 include('modules/third-party/vclaim-v2.php');
 include('modules/third-party/jkn.php');
+include('modules/third-party/whatsapp.php');
 // Route::group(['middleware' => []], function () {
-Route::group(['middleware' => ['auth','user-activated']], function () {
+Route::group(['middleware' => ['auth', 'user-activated']], function () {
 
 	include('modules/getting-started.php');
 
 	Route::group(['middleware' => ['getting-started']], function () {
-	// Route::group(['middleware' => []], function () {
+		// Route::group(['middleware' => []], function () {
 		Route::get('/', 'HomeController@index')->name('home');
 		Route::get('/home', 'HomeController@index')->name('home');
 		Route::get('/kasus', 'Kasus\Kasus\ViewController@index');
@@ -83,7 +84,7 @@ Route::group(['middleware' => ['auth','user-activated']], function () {
 		include('modules/farmasi.php');
 		include('modules/keuangan.php');
 		include('modules/aset.php');
-        include('modules/alat-medis.php');
+		include('modules/alat-medis.php');
 		include('modules/kamaroperasi.php');
 		include('modules/kasir.php');
 		include('modules/harmat.php');
@@ -112,12 +113,12 @@ Route::group(['middleware' => ['auth','user-activated']], function () {
 		include('modules/mutu.php');
 		include('modules/it.php');
 		include('modules/remunerasi.php');
-        include('modules/covid19.php');
-        include('modules/esakip.php');
-        include('modules/eusulan.php');
+		include('modules/covid19.php');
+		include('modules/esakip.php');
+		include('modules/eusulan.php');
 
 		Route::view('/monitor', 'monitor.index');
-		Route::group(['prefix' => 'api'], function(){
+		Route::group(['prefix' => 'api'], function () {
 
 			Route::get('/dokter/get', 'KamarOperasi\Transaksi\ReadController@getdokter');
 			Route::get('/search', 'SearchController@ajaxSearch');
@@ -126,12 +127,12 @@ Route::group(['middleware' => ['auth','user-activated']], function () {
 			Route::post('/arsip-kasus/load-table', 'Users\Kasus\ViewController@loadTabelKasus');
 		});
 
-		Route::group(['prefix' => 'jasa-medis'], function(){
+		Route::group(['prefix' => 'jasa-medis'], function () {
 			Route::get('/', 'Users\JasaMedis\ViewController@index');
 			Route::get('/paid', 'Users\JasaMedis\ViewController@paid');
 		});
 
-		Route::group(['prefix' => 'my'], function(){
+		Route::group(['prefix' => 'my'], function () {
 			Route::get('/rekam-medis', 'Users\RekamMedis\ViewController@index');
 			Route::get('/arsip-kasus', 'Users\Kasus\ViewController@index');
 			Route::get('/arsip-kasus/download', 'Users\Kasus\ViewController@download');
@@ -141,7 +142,7 @@ Route::group(['middleware' => ['auth','user-activated']], function () {
 		include('modules/high-level-report.php');
 		include('modules-api/third-party-sirs.php');
 
-		Route::group(['prefix' => 'api'], function(){
+		Route::group(['prefix' => 'api'], function () {
 			include('modules-api/bpjs.php');
 			include('modules-api/spm.php');
 			Route::get('/search-user', 'SearchController@searchUser');

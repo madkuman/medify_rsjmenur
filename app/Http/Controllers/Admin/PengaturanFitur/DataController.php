@@ -40,11 +40,11 @@ class DataController extends Controller
         $data['laporan_rawat_jalan_persentase_ketepatan_waktu_pelayanan_rawat_jalan'] = [
             'judul' => 'Laporan Rawat Jalan - Persentase Ketepatan Waktu Pelayanan Rawat Jalan',
             'input' => [
-                'jangka-waktu' => [ 
+                'jangka-waktu' => [
                     'col' => 4,
                     'type' => 'input',
                     'judul' => 'Jangka Waktu',
-                    'name' => 'jangka_waktu', 
+                    'name' => 'jangka_waktu',
                     'deskripsi' =>  'jangka waktu dalam satuan detik',
                 ],
             ]
@@ -52,10 +52,10 @@ class DataController extends Controller
         $data['laporan_igd_ketepatan_waktu_pelayanan_igd'] = [
             'judul' => 'Laporan IGD - Ketepatan Waktu Pelayanan IGD',
             'input' => [
-                'jangka-waktu' => [ 
+                'jangka-waktu' => [
                     'type' => 'input',
                     'judul' => 'Jangka Waktu',
-                    'name' => 'jangka_waktu', 
+                    'name' => 'jangka_waktu',
                     'deskripsi' =>  'jangka waktu dalam satuan detik',
                 ],
             ]
@@ -69,32 +69,32 @@ class DataController extends Controller
         $data['dkk_34_laporan_bulanan_diare'] = [
             'judul' => 'DKK 34 Laporan Bulanan Diare',
             'input' => [
-                'zinc' => [ 
+                'zinc' => [
                     'type' => 'select2multiple',
                     'judul' => 'Obat Zinc',
-                    'name' => 'zinc', 
+                    'name' => 'zinc',
                     'deskripsi' =>  'Daftar Obat yang termasuk',
                     'placeholder' => "Pilih Obat",
                     'source_url' => url('admin/select2/farmasi/item-template'),
-                    'selected_option' => app(\App\Http\Controllers\Farmasi\ItemTemplate\ReadController::class)->select2GetSelected(config('medify.pasien.dkk_34_laporan_bulanan_diare.zinc',[])),
+                    'selected_option' => app(\App\Http\Controllers\Farmasi\ItemTemplate\ReadController::class)->select2GetSelected(config('medify.pasien.dkk_34_laporan_bulanan_diare.zinc', [])),
                 ],
-                'oralit' => [ 
+                'oralit' => [
                     'type' => 'select2multiple',
                     'judul' => 'Obat Oralit',
-                    'name' => 'oralit', 
+                    'name' => 'oralit',
                     'deskripsi' =>  'Daftar Obat yang termasuk',
                     'placeholder' => "Pilih Obat",
                     'source_url' => url('admin/select2/farmasi/item-template'),
-                    'selected_option' => app(\App\Http\Controllers\Farmasi\ItemTemplate\ReadController::class)->select2GetSelected(config('medify.pasien.dkk_34_laporan_bulanan_diare.oralit',[])),
+                    'selected_option' => app(\App\Http\Controllers\Farmasi\ItemTemplate\ReadController::class)->select2GetSelected(config('medify.pasien.dkk_34_laporan_bulanan_diare.oralit', [])),
                 ],
-                'rl' => [ 
+                'rl' => [
                     'type' => 'select2multiple',
                     'judul' => 'Obat RL',
-                    'name' => 'rl', 
+                    'name' => 'rl',
                     'deskripsi' =>  'Daftar Obat yang termasuk',
                     'placeholder' => "Pilih Obat",
                     'source_url' => url('admin/select2/farmasi/item-template'),
-                    'selected_option' => app(\App\Http\Controllers\Farmasi\ItemTemplate\ReadController::class)->select2GetSelected(config('medify.pasien.dkk_34_laporan_bulanan_diare.rl',[])),
+                    'selected_option' => app(\App\Http\Controllers\Farmasi\ItemTemplate\ReadController::class)->select2GetSelected(config('medify.pasien.dkk_34_laporan_bulanan_diare.rl', [])),
                 ],
             ]
         ];
@@ -199,7 +199,7 @@ class DataController extends Controller
                 ],
             ],
         ];
-    
+
         $data['jkn_online'] = [
             'judul' => 'JKN Online',
             'deskripsi' => 'JKN Online Update',
@@ -291,8 +291,8 @@ class DataController extends Controller
                     'name' => 'on',
                     'deskripsi' => 'On Features Ini',
                 ],
-                'cms_guide' => [ 
-                    'col' => 12, 
+                'cms_guide' => [
+                    'col' => 12,
                     'type' => 'textarea',
                     'attributes' => [
                         'class' => 'wysiwyg',
@@ -302,8 +302,8 @@ class DataController extends Controller
                     'deskripsi' => 'CMS Halaman Panduan',
                     'value' => app('App\Http\Controllers\Admin\ThirdParty\RsOnline\ReadController')->getBySlug('halaman-panduan')->content ?? null,
                 ],
-                'cms_privacy_policy' => [ 
-                    'col' => 12, 
+                'cms_privacy_policy' => [
+                    'col' => 12,
                     'type' => 'textarea',
                     'attributes' => [
                         'class' => 'wysiwyg',
@@ -313,8 +313,8 @@ class DataController extends Controller
                     'deskripsi' => 'CMS Halaman Kebijakan Privasi',
                     'value' => app('App\Http\Controllers\Admin\ThirdParty\RsOnline\ReadController')->getBySlug('halaman-kebijakan-privasi')->content ?? null,
                 ],
-                'cms_about_app' => [ 
-                    'col' => 12, 
+                'cms_about_app' => [
+                    'col' => 12,
                     'type' => 'textarea',
                     'attributes' => [
                         'class' => 'wysiwyg',
@@ -324,8 +324,8 @@ class DataController extends Controller
                     'deskripsi' => 'CMS Halaman Tentang Aplikasi',
                     'value' => app('App\Http\Controllers\Admin\ThirdParty\RsOnline\ReadController')->getBySlug('halaman-tentang-aplikasi')->content ?? null,
                 ],
-                'cms_call_center' => [ 
-                    'col' => 12, 
+                'cms_call_center' => [
+                    'col' => 12,
                     'type' => 'textarea',
                     'attributes' => [
                         'class' => 'wysiwyg',
@@ -413,6 +413,31 @@ class DataController extends Controller
                     ]
                 ],
             ],
+        ];
+
+        $data['whatsapp'] = [
+            'judul' => 'Whatsapp Gateway',
+            'deskripsi' => 'Pengaturan WhatsApp Gateway menggunakan Fonnte',
+            'input' => [
+                'on' => [ #key unique dibuat attribute id
+                    'col' => 12, #optional default 4
+                    'type' => 'toggle', #nama file di view admin.pengaturan-fitur.components.form
+                    'judul' => 'Pengaturan On / Off',
+                    'name' => 'on', #samakan dengan yang ada diconfig
+                    'deskripsi' => 'pengaturan on / off fitur ini',
+                    'preview' => url('pasien'), #optional default null, input type url eg: "www.google.com"
+                    'preview_size' => 'medium', #optional default 'small', currently available small,medium
+                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+                ],
+                'token' => [ #token diambil dari situsnya Fonnte
+                    'col' => 4, #optional default 4
+                    'type' => 'input', #nama file di view admin.pengaturan-fitur.components.form
+                    'judul' => 'Token device yang terdaftar di Fonnte',
+                    'name' => 'token', #samakan dengan yang ada diconfig
+                    'deskripsi' =>  '',
+                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+                ],
+            ]
         ];
 
         return $data;

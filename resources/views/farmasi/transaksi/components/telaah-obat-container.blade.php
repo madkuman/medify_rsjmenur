@@ -40,7 +40,8 @@
                                         &#10003;
                                     @endif
                                 @else
-                                    <input type="checkbox" name="telaah[penyiapan][{{ $key }}]" value="1" checked>
+                                    <input type="checkbox" name="telaah[penyiapan][{{ $key }}]" value="1"
+                                        checked>
                                 @endif
                             </td>
                             <td class="text-center">
@@ -49,7 +50,8 @@
                                         &#10003;
                                     @endif
                                 @else
-                                    <input type="checkbox" name="telaah[pengemasan][{{ $key }}]" value="1" checked>
+                                    <input type="checkbox" name="telaah[pengemasan][{{ $key }}]" value="1"
+                                        checked>
                                 @endif
                             </td>
                             <td class="text-center">
@@ -58,7 +60,8 @@
                                         &#10003;
                                     @endif
                                 @else
-                                    <input type="checkbox" name="telaah[penyerahan][{{ $key }}]" value="1" checked>
+                                    <input type="checkbox" name="telaah[penyerahan][{{ $key }}]" value="1"
+                                        checked>
                                 @endif
                             </td>
                             @if ($is_rawat_inap)
@@ -78,9 +81,24 @@
                 <tfoot>
                     <tr>
                         <th>Paraf</th>
-                        <th style="text-align: center">@if(!empty($transaksi->transaksi_obat_telaah_obat_penyiapan->user_telaah->ttd)) <img src="{{asset($transaksi->transaksi_obat_telaah_obat_penyiapan->user_telaah->ttd)}}" alt="" style="width: 80px; max-width: 80px;"> @endif</th>
-                        <th style="text-align: center">@if(!empty($transaksi->transaksi_obat_telaah_obat_pengemasan->user_telaah->ttd)) <img src="{{asset($transaksi->transaksi_obat_telaah_obat_pengemasan->user_telaah->ttd)}}" alt="" style="width: 80px; max-width: 80px;"> @endif</th>
-                        <th style="text-align: center">@if(!empty($transaksi->transaksi_obat_telaah_obat_penyerahan->user_telaah->ttd)) <img src="{{asset($transaksi->transaksi_obat_telaah_obat_penyerahan->user_telaah->ttd)}}" alt="" style="width: 80px; max-width: 80px;"> @endif</th>
+                        <th style="text-align: center">
+                            @if (!empty($transaksi->transaksi_obat_telaah_obat_penyiapan->user_telaah->ttd))
+                                <img src="{{ asset($transaksi->transaksi_obat_telaah_obat_penyiapan->user_telaah->ttd) }}"
+                                    alt="" style="width: 80px; max-width: 80px;">
+                            @endif
+                        </th>
+                        <th style="text-align: center">
+                            @if (!empty($transaksi->transaksi_obat_telaah_obat_pengemasan->user_telaah->ttd))
+                                <img src="{{ asset($transaksi->transaksi_obat_telaah_obat_pengemasan->user_telaah->ttd) }}"
+                                    alt="" style="width: 80px; max-width: 80px;">
+                            @endif
+                        </th>
+                        <th style="text-align: center">
+                            @if (!empty($transaksi->transaksi_obat_telaah_obat_penyerahan->user_telaah->ttd))
+                                <img src="{{ asset($transaksi->transaksi_obat_telaah_obat_penyerahan->user_telaah->ttd) }}"
+                                    alt="" style="width: 80px; max-width: 80px;">
+                            @endif
+                        </th>
                         @if ($is_rawat_inap)
                             <th></th>
                         @endif
@@ -91,7 +109,8 @@
                         <th>{{ $transaksi->transaksi_obat_telaah_obat_pengemasan->user_telaah->name ?? '' }}</th>
                         <th>{{ $transaksi->transaksi_obat_telaah_obat_penyerahan->user_telaah->name ?? '' }}</th>
                         @if ($is_rawat_inap)
-                            <th>{{ $transaksi->transaksi_obat_telaah_obat_penerimaan_perawat->user_telaah->name ?? '' }}</th>
+                            <th>{{ $transaksi->transaksi_obat_telaah_obat_penerimaan_perawat->user_telaah->name ?? '' }}
+                            </th>
                         @endif
                     </tr>
                     <tr>
@@ -100,14 +119,16 @@
                             @if (!empty($transaksi->transaksi_obat_telaah_obat_penyiapan))
                                 <small>{{ $transaksi->transaksi_obat_telaah_obat_penyiapan->telaah_at->format('Y-m-d') }}</small>
                             @else
-                                <button type="submit" class="btn btn-sm btn-block btn-primary" name="submit" value="penyiapan">Simpan</button>
+                                <button type="submit" class="btn btn-sm btn-block btn-primary" name="submit"
+                                    value="penyiapan">Simpan</button>
                             @endif
                         </th>
                         <th>
                             @if (!empty($transaksi->transaksi_obat_telaah_obat_pengemasan))
                                 <small>{{ $transaksi->transaksi_obat_telaah_obat_pengemasan->telaah_at->format('Y-m-d') }}</small>
                             @else
-                                <button type="submit" class="btn btn-sm btn-block btn-primary" name="submit" value="pengemasan">Simpan</button>
+                                <button type="submit" class="btn btn-sm btn-block btn-primary" name="submit"
+                                    value="pengemasan">Simpan</button>
                             @endif
                         </th>
                         <th>
@@ -115,16 +136,19 @@
                                 <small>{{ $transaksi->transaksi_obat_telaah_obat_penyerahan->telaah_at->format('Y-m-d H:i:s') }}</small>
                             @else
                                 @if ($transaksi->dikerjakan_at != null)
-                                    <button type="submit" class="btn btn-sm btn-block btn-primary" name="submit" value="penyerahan">Simpan</button>
-                                @else 
-                                    <button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="tooltip" title="Konfirmasi Pemesanan Terlebih Dahulu" disabled>Simpan</button>
+                                    <button type="submit" class="btn btn-sm btn-block btn-primary" name="submit"
+                                        value="penyerahan">Simpan</button>
+                                @else
+                                    <button type="button" class="btn btn-sm btn-block btn-primary"
+                                        data-toggle="tooltip" title="Konfirmasi Pemesanan Terlebih Dahulu"
+                                        disabled>Simpan</button>
                                 @endif
                             @endif
                         </th>
                         @if ($is_rawat_inap)
                             <th>
                                 @if (!empty($transaksi->transaksi_obat_telaah_obat_penerimaan_perawat))
-                                <small>{{ $transaksi->transaksi_obat_telaah_obat_penerimaan_perawat->telaah_at->format('Y-m-d H:i:s') }}</small>
+                                    <small>{{ $transaksi->transaksi_obat_telaah_obat_penerimaan_perawat->telaah_at->format('Y-m-d H:i:s') }}</small>
                                 @endif
                             </th>
                         @endif
@@ -137,11 +161,13 @@
                         <label for="">Kirim Ke Ruangan</label>
                         <br>
                         @if ($transaksi->telaah_kirim_ruangan !== null)
-                            <h4>{{ ($transaksi->telaah_kirim_ruangan ? 'Ya' : 'Tidak') }}</h4>
+                            <h4>{{ $transaksi->telaah_kirim_ruangan ? 'Ya' : 'Tidak' }}</h4>
                         @else
                             <div class="btn-group">
-                                <button type="submit" class="btn btn-sm btn-outline-primary" style="width: 100px" name="submit" value="kirim_ruangan_ya">Ya</button>
-                                <button type="submit" class="btn btn-sm btn-outline-primary" style="width: 100px" name="submit" value="kirim_ruangan_tidak">Tidak</button>
+                                <button type="submit" class="btn btn-sm btn-outline-primary" style="width: 100px"
+                                    name="submit" value="kirim_ruangan_ya">Ya</button>
+                                <button type="submit" class="btn btn-sm btn-outline-primary" style="width: 100px"
+                                    name="submit" value="kirim_ruangan_tidak">Tidak</button>
                             </div>
                         @endif
                     </div>
@@ -162,3 +188,9 @@
         </div>
     </div>
 </form>
+
+<div class="row">
+    <div class="col-12">
+        @include('farmasi.transaksi.components.kirim-pesan-whatsapp')
+    </div>
+</div>
