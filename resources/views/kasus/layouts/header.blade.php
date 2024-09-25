@@ -81,16 +81,16 @@
                         </h6>
                     @endif
                     @if (Auth::user()->id == ($kasus->admin->user->id ?? null) || Auth::user()->profesi == 20)
-                        {{-- @if (Auth::user()->dokter->bpjs_kode_dpjp == $kasus->sep->dpjp) --}}
-                        <form>
-                            <input type="hidden" id="param" name="param"
-                                value="{{ $kasus->pembayaran->no_asuransi ?? $kasus->pasien->no_identitas }}">
-                            <input type="hidden" id="kodedokter" name="kodedokter"
-                                value="{{ $kasus->admin->user->dokter->bpjs_kode_dpjp ?? '' }}">
-                            {{-- value="{{ $kasus->sep->dpjp ?? '' }}"> --}}
-                            <button class="btn btn-primary" type="button" onclick="getIcare()">ICare BPJS</button>
-                        </form>
-                        {{-- @endif --}}
+                        @if ($kasus->tipe_ri == 0 && $kasus->tipe_igd == 0 && $kasus->tipe_rj == 1)
+                            <form>
+                                <input type="hidden" id="param" name="param"
+                                    value="{{ $kasus->pembayaran->no_asuransi ?? $kasus->pasien->no_identitas }}">
+                                <input type="hidden" id="kodedokter" name="kodedokter"
+                                    value="{{ $kasus->admin->user->dokter->bpjs_kode_dpjp ?? '' }}">
+                                {{-- value="{{ $kasus->sep->dpjp ?? '' }}"> --}}
+                                <button class="btn btn-primary" type="button" onclick="getIcare()">ICare BPJS</button>
+                            </form>
+                        @endif
                     @endif
                 </div>
             </div>
