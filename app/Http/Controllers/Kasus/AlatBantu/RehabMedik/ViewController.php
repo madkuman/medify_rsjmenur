@@ -8,9 +8,16 @@ use App\Models\Kasus\Kasus;
 use App\Models\Kasus\AlatBantu;
 
 
-define('relasi', ['lokasi.lokasi.departemen', 'identitas', 
-    'pembayaran.perusahaan.tipe', 'pasien', 'kelas', 'end_by_creator', 
-    'TransaksiRawatInap', 'myInvitation']);
+define('relasi', [
+    'lokasi.lokasi.departemen',
+    'identitas',
+    'pembayaran.perusahaan.tipe',
+    'pasien',
+    'kelas',
+    'end_by_creator',
+    'TransaksiRawatInap',
+    'myInvitation'
+]);
 
 class ViewController extends Controller
 {
@@ -18,10 +25,10 @@ class ViewController extends Controller
 
     public function index($nomor_kasus)
     {
-        $kasus = Kasus::with(relasi)->where('nomor_kasus',$nomor_kasus)->first();
+        $kasus = Kasus::with(relasi)->where('nomor_kasus', $nomor_kasus)->first();
         $data['kasus'] = $kasus;
-        $kemoterapi = AlatBantu::with(['creator'])->where('kasus_id',$kasus->id)
-        		->where('type', self::$type)->orderBy('id','desc')->get();
+        $kemoterapi = AlatBantu::with(['creator'])->where('kasus_id', $kasus->id)
+            ->where('type', self::$type)->orderBy('id', 'desc')->get();
 
         $data['kemoterapi'] = $kemoterapi;
         $data['sidebar_active'] = 'alat';

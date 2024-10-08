@@ -1,6 +1,6 @@
 <div class="modal" id="modalFormPemberianObatSingle" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{url()->current()}}/pemberian-post">
+        <form method="POST" action="{{ url()->current() }}/pemberian-post">
             <div class="modal-content">
                 <div class="block block-themed block-transparent mb-0">
                     <div class="block-header ">
@@ -12,7 +12,7 @@
                         </div>
                     </div>
                     <div class="block-content ">
-                        {{csrf_field()}}
+                        {{ csrf_field() }}
                         <div class="form-group">
                             <input type="hidden" class="input-id" name="id">
                             <input type="hidden" class="input-method" name="method">
@@ -20,8 +20,8 @@
                                     obat</span></label>
                             <select id="selected-obat" class="js-select2 form-control input-select-obat"
                                 style="width:100%" data-close-on-select="false" name="cpo_ids">
-                                @foreach($pengobatan as $item)
-                                <option value="{{$item->id}}">{{$item->nama_obat}}</option>
+                                @foreach ($pengobatan as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama_obat }}</option>
                                 @endforeach
                             </select>
                             <div id="obat-badged">
@@ -30,13 +30,13 @@
                         <div class="form-group">
                             <label>Jam</label>
                             <input type="text" name="jam" class="form-control time input-jam" placeholder="hh:mm"
-                                id="jam-pemberian" required="" value="{{Carbon\Carbon::now()->format('H:i')}}"
+                                id="jam-pemberian" required="" value="{{ Carbon\Carbon::now()->format('H:i') }}"
                                 required="">
                         </div>
                         <div class="form-group">
                             <label>Tanggal</label>
                             <input type="date" class="form-control input-tanggal" autocomplete="off" name="tanggal"
-                                value="{{Carbon\Carbon::now()->format('Y-m-d')}}" required="">
+                                value="{{ Carbon\Carbon::now()->format('Y-m-d') }}" required="">
                         </div>
                         <div class="form-group">
                             <label>Status</label>
@@ -56,32 +56,32 @@
                         </div>
                         <div class="form-group">
                             <label>Verifikator 1</label>
-                            <select class="form-control js-select2 input-verified-by" id="input-verified-by" name="verified_by"
-                                style="width: 100%">
-                                @foreach($kolaborator as $item)
-                                <option value="{{$item->user->id}}">{{$item->user->name}}</option>
+                            <select class="form-control js-select2 input-verified-by" id="input-verified-by"
+                                name="verified_by" style="width: 100%">
+                                @foreach ($kolaborator as $item)
+                                    <option value="{{ $item->user->id }}">{{ $item->user->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Verifikator 2</label>
-                            <select class="form-control js-select2 input-verified-by-2"id="input-verified-by-2" name="verified_by_2"
-                                style="width: 100%">
-                                @foreach($kolaborator as $item)
-                                <option value="{{$item->user->id}}">{{$item->user->name}}</option>
+                            <select class="form-control js-select2 input-verified-by-2"id="input-verified-by-2"
+                                name="verified_by_2" style="width: 100%">
+                                @foreach ($kolaborator as $item)
+                                    <option value="{{ $item->user->id }}">{{ $item->user->name }}</option>
                                 @endforeach
                             </select>
                         </div>
 
-                        @if(config('medify.kasus.info_pemberian_obat.on'))
-                        <div class="form-group">
-                            <label>Dibuat Oleh</label>
-                            <input type="text" class="form-control input-created-by" readonly value="-">
-                        </div>
-                        <div class="form-group">
-                            <label>Diupdate Oleh</label>
-                            <input type="text" class="form-control input-updated-by" readonly value="-">
-                        </div>
+                        @if (config('medify.kasus.info_pemberian_obat.on'))
+                            <div class="form-group">
+                                <label>Dibuat Oleh</label>
+                                <input type="text" class="form-control input-created-by" readonly value="-">
+                            </div>
+                            <div class="form-group">
+                                <label>Diupdate Oleh</label>
+                                <input type="text" class="form-control input-updated-by" readonly value="-">
+                            </div>
                         @endif
 
                     </div>

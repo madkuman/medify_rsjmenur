@@ -32,20 +32,20 @@ class PostController extends Controller
 		}
 	}
 	*/
-	public function printResep($nomor_kasus,$id)
-    {
-        $kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
+	public function printResep($nomor_kasus, $id)
+	{
+		$kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
 		$resep = Resep::find($id);
 		$kasusId = $resep->kasus_id;
 		$data['resep'] = $resep;
 		$data['kasus'] = $kasus;
 		//dd($data);
-        $pdf = MPDF::loadView('kasus.datamedis.content.resep.print', $data,  [], [
-            'mode' => 'utf-8',
-            'format' => 'A5'
-        ]);
+		$pdf = MPDF::loadView('kasus.datamedis.content.resep.print', $data,  [], [
+			'mode' => 'utf-8',
+			'format' => 'A5'
+		]);
 
-        $filename = '-resep.pdf';
-        return $pdf->stream($filename);
-    }
+		$filename = '-resep.pdf';
+		return $pdf->stream($filename);
+	}
 }

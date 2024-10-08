@@ -804,7 +804,7 @@ class PostController extends Controller
 
 			$data['nomorkartu']     = $request->nomorkartu; //nomor asuransi
 			$data['nik']            = $request->nik; //nik pasien
-			$data['notelp']         = $request->notelp;
+			$data['notelp']         = $request->nohp;
 			$data['tanggalperiksa'] = $request->tanggalperiksa;
 			$data['kodepoli']       = $request->kodepoli;
 			$data['nomorreferensi'] = $request->nomorreferensi; //NOMOR REFERENSI (NOMOR RUJUKAN / NOMOR KONTROL)
@@ -917,7 +917,7 @@ class PostController extends Controller
 			$response['kuotajkn']	      = $kuota_jkn;
 			$response['sisakuotanonjkn']  = $kuota_non_jkn;
 			$response['kuotanonjkn']	  = $sisa_kuota_non_jkn;
-			$response['keterangan']		  = "Peserta harap 60 menit lebih awal guna pencatatan administrasi";
+			$response['keterangan']		  = "Peserta harap datang 60 menit lebih awal guna pencatatan administrasi";
 
 			$log = [
 				'url'           => 'antrean/get-antrean',
