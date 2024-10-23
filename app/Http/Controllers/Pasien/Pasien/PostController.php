@@ -680,6 +680,7 @@ class PostController extends Controller
                         }
 
                         $rujukan = json_decode($rujukan);
+                        // dd($rujukan);
                         if ($rujukan->metaData->code == 200) {
                             $rujukan = $rujukan->response->rujukan[0] ?? null;
                             $nomor_rujukan = $rujukan->noKunjungan ?? "";
@@ -688,6 +689,7 @@ class PostController extends Controller
 
                             $get_jumlah_sep = app(\App\Http\Controllers\BPJS\Rujukan\PostController::class)->dataJumlahSepRujukan($jenis_rujukan, $nomor_rujukan);
                             $get_jumlah_sep = json_decode($get_jumlah_sep);
+                            // dd($get_jumlah_sep);
                             $jumlah_sep = $get_jumlah_sep->response->jumlahSEP ?? "";
 
                             if ($jumlah_sep == 0 && $poliklinik->bpjs_id == $kode_poli_rujukan) {
@@ -707,11 +709,12 @@ class PostController extends Controller
 
                             $get_rencana_kontrol = app(\App\Http\Controllers\ThirdParty\BPJS\VClaim\RencanaKontrol\ReadController::class)->getDataNoKartu($bulan, $tahun, $no_kartu, $format_filter);
                             $rencana_kontrol = json_decode($get_rencana_kontrol);
-                            // dd($rencana_kontrol, $bulan, $tahun, $no_kartu, $format_filter);
-                            // dd($poliklinik->bpjs_id, $kode_poli_rujukan);
+                            // dd($rencana_kontrol);
                             if ($jumlah_sep >= 1) {
+                                // dd($poliklinik->bpjs_id, $kode_poli_rujukan);
                                 if ($poliklinik->bpjs_id == $kode_poli_rujukan) {
                                     $jenis_kunjungan = 3;
+                                    // dd($rencana_kontrol->response->list[0]->noSuratKontrol);
                                     $nomor_referensi = $rencana_kontrol->response->list[0]->noSuratKontrol ?? "";
                                 } else {
                                     $jenis_kunjungan = 2;
@@ -721,8 +724,8 @@ class PostController extends Controller
                             }
                         }
                     }
-
-                    $no_antrian        = (int) preg_replace("/[^0-9]/", "", $transaksi->nomor_antrian);
+                    // dd($jenis_kunjungan, $nomor_referensi);
+                    $no_antrian = (int) preg_replace("/[^0-9]/", "", $transaksi->nomor_antrian);
 
                     //Penentuan jenis_kunjungan dan nomor_referensi
                     $response['kodebooking']         = $transaksi->id;
@@ -1253,7 +1256,14 @@ class PostController extends Controller
             'tni_korps_id' => $pasien->tni_korps_id,
             'avatar' => $pasien->photo_ori,
             'avatar_thumb' => $pasien->photo_thumb,
-            'suku' => $pasien->suku
+            'suku' => $pasien->suku,
+            'kategori_pasien' => 5,
+            'address_domisili' => $pasien->address,
+            'alergi' => null,
+            'nama_ayah' => null,
+            'nama_ibu' => $pasien->name,
+            'nama_suami' => null,
+            'nama_istri' => null
         );
 
         $kerabat = array(
