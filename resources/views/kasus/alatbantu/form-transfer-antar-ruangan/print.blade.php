@@ -378,7 +378,7 @@
         <tr class="text-center">
             <td width="48%"><strong>Petugas yang menyerahkan</strong></td>
             <td width="4%"></td>
-            <td width="48%"><strong>Petugas yang menyerahkan</strong></td>
+            <td width="48%"><strong>Petugas yang menerima</strong></td>
         </tr>
         <tr class="text-center">
             <td width="48%" style="padding-top: 50px">
