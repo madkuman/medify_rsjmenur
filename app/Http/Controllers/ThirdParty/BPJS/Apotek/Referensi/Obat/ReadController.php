@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\ThirdParty\BPJS\VClaim\Referensi;
+namespace App\Http\Controllers\ThirdParty\BPJS\Apotek\Referensi\Obat;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
-class ObatGenerikController extends Controller
+
+class ReadController extends Controller
 {
-    public function getObatGenerik($param)
+    public function getReferensiObat($param, $tglresep, $filter)
     {
         if (is_array($param)) $param = (object) $param;
-
-        $header_array = app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->getHeader();
-        $url = app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->getUrl() . '/referensi/obatprb/' . $param->nama_obat;
+        $header_array = app('App\Http\Controllers\ThirdParty\BPJS\ICare\RequestController')->getHeader();
+        $url = app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->getUrlApotek() . '/referensi/obat/' . $param->nama_obat . '/' . $tglresep . '/' . $filter;
         try {
             $timestamp = $header_array['X-timestamp'];
             $client = new Client(['headers' => $header_array]);
@@ -29,11 +30,11 @@ class ObatGenerikController extends Controller
                 return $content;
             }
         } catch (\Exception $e) {
-
+            // dd($e);
             return json_encode([
                 "metaData" => [
                     "code" => "500",
-                    "message" => "Tidak dapat menghubungkan dengan server BPJS, coba lagi. Apabila tetap muncul pesan ini, sementara gunakan aplikasi VClaim. Apabila VClaim tidak dapat dibuka, hubungi petugas BPJS yang ada."
+                    "message" => "Tidak dapat menghubungkan dengan server BPJS, coba lagi."
                 ],
                 "response" => []
             ]);
@@ -41,7 +42,7 @@ class ObatGenerikController extends Controller
             return json_encode([
                 "metaData" => [
                     "code" => "500",
-                    "message" => "Tidak dapat menghubungkan dengan server BPJS, coba lagi. Apabila tetap muncul pesan ini, sementara gunakan aplikasi VClaim. Apabila VClaim tidak dapat dibuka, hubungi petugas BPJS yang ada."
+                    "message" => "Tidak dapat menghubungkan dengan server BPJS, coba lagi."
                 ],
                 "response" => []
             ]);

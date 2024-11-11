@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Farmasi\MasterKodeBidang;
+namespace App\Http\Controllers\Farmasi\MasterKFA;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Farmasi\MasterKodeBidang;
+use App\Models\Farmasi\MasterKFA;
 use DB;
 use Auth;
 
@@ -18,7 +18,7 @@ class PostController extends Controller
             $id = $request->id;
 
             if ($id) {
-                $data = MasterKodeBidang::find($id);
+                $data = MasterKFA::find($id);
                 $data->kode = $request->kode;
                 $data->nama = $request->nama;
                 $data->parent_id = $request->parent_id;
@@ -27,7 +27,7 @@ class PostController extends Controller
 
                 $message = "Berhasil mengubah data";
             } else {
-                $data = new MasterKodeBidang;
+                $data = new MasterKFA;
                 $data->kode = $request->kode;
                 $data->nama = $request->nama;
                 $data->parent_id = $request->parent_id;
@@ -64,7 +64,7 @@ class PostController extends Controller
             $farm = session('farmasi');
             $id = $request->id;
 
-            $data = MasterKodeBidang::find($id);
+            $data = MasterKFA::find($id);
             $data->deleted_by = Auth::user()->id;
             $data->save();
             $data->delete();

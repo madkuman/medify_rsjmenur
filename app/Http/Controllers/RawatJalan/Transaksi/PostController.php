@@ -23,10 +23,10 @@ use Illuminate\Support\Facades\Artisan;
 
 class PostController extends Controller
 {
-    public function createPasien($pasien_id,$kasus_id=0,Request $request)
+    public function createPasien($pasien_id, $kasus_id = 0, Request $request)
     {
         $rujuk = $request->get('rujuk');
-        if(empty($rujuk)) $rujuk = 0;
+        if (empty($rujuk)) $rujuk = 0;
         $poli = app('App\Http\Controllers\RawatJalan\Transaksi\ReadController')->getPoli();
         $poli =  json_decode($poli);
         $data['poli'] = $poli->data;
@@ -34,18 +34,16 @@ class PostController extends Controller
         $data['pasien_id'] = $pasien_id;
         $data['kasus_id'] = $kasus_id;
         $data['rujuk'] = $rujuk;
-        return view('rawatjalan.antrian.create-poliklinik',$data);
+        return view('rawatjalan.antrian.create-poliklinik', $data);
     }
 
     public function cancel(Request $request)
     {
         DB::connection('rawatjalan')->beginTransaction();
         DB::connection('rekammedis')->beginTransaction();
-        try
-        {   
+        try {
             $transaksi = Transaksi::find($request->id);
-            if(in_array($transaksi->status,[1,2]) && isset($request->kodebooking))
-            {
+            if (in_array($transaksi->status, [1, 2]) && isset($request->kodebooking)) {
                 $return['status'] = -1;
                 $return['message'] = 'Pasien Sudah Dilayani. Antrean Tidak Dapat Dibatalkan';
                 return $return;
@@ -55,8 +53,8 @@ class PostController extends Controller
             $transaksi->cancel_at = Carbon::now();
             $transaksi->cancel_by = Auth::user()->id ?? 1;
             $transaksi->save();
-            
-            $data = app('App\Http\Controllers\RekamMedis\Transaksi\EditController')->tolakPengiriman($transaksi->rm_transaksi_id,$request->keterangan);
+
+            $data = app('App\Http\Controllers\RekamMedis\Transaksi\EditController')->tolakPengiriman($transaksi->rm_transaksi_id, $request->keterangan);
 
             if (config('medify.third-party.jkn_online.on')) {
                 $data['kodebooking'] = $transaksi->id;
@@ -72,12 +70,12 @@ class PostController extends Controller
                 $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->batal($request_data);
                 $returned = json_decode($returned);
                 $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
-                if(($metadata->code ?? null) != "200"){
+                if (($metadata->code ?? null) != "200") {
                     $data_log['kodebooking'] = $transaksi->id;
                     $data_log['response'] = json_encode($returned);
 
                     app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
-                }else{
+                } else {
                     if (config('medify.third-party.jkn_online.on')) {
                         $carbon_today = Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
                         $carbon_today = strtotime($carbon_today) * 1000;
@@ -97,7 +95,6 @@ class PostController extends Controller
 
             DB::connection('rawatjalan')->commit();
             DB::connection('rekammedis')->commit();
-
         } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
             DB::connection('rawatjalan')->rollback();
@@ -116,15 +113,15 @@ class PostController extends Controller
         }
 
         return back()
-        ->with('message', $message)
-        ->with('title',$title)
-        ->with('status', $status);
+            ->with('message', $message)
+            ->with('title', $title)
+            ->with('status', $status);
     }
 
     public function konfirmasiAntrian(Request $request)
     {
-    	$pasien = app('App\Http\Controllers\RawatJalan\Transaksi\ReadController')->getSinglePasien($request->input('pasien_id'));
-    	$poli = app('App\Http\Controllers\RawatJalan\Transaksi\ReadController')->getSinglePoli($request->input('poliklinik_id'));
+        $pasien = app('App\Http\Controllers\RawatJalan\Transaksi\ReadController')->getSinglePasien($request->input('pasien_id'));
+        $poli = app('App\Http\Controllers\RawatJalan\Transaksi\ReadController')->getSinglePoli($request->input('poliklinik_id'));
 
         $kasus_id = $request->input('kasus_id');
         $rujuk = $request->input('rujuk');
@@ -135,7 +132,7 @@ class PostController extends Controller
         $data['pasien'] = $pasien;
         $data['routeFlag'] = 1;
         $data['rujuk'] = $rujuk;
-        return view('rawatjalan.antrian.create-konfirmasi',$data);
+        return view('rawatjalan.antrian.create-konfirmasi', $data);
     }
 
 
@@ -146,8 +143,7 @@ class PostController extends Controller
         DB::connection('kasus')->beginTransaction();
         DB::connection('mysql')->beginTransaction();
         DB::connection('kasir')->beginTransaction();
-        try
-        {
+        try {
             $pasien_id = $request->input('pasien_id');
             $poli_id = $request->input('poliklinik_id');
             $kasus_id = $request->input('kasus_id');
@@ -161,22 +157,20 @@ class PostController extends Controller
             $bayar_id = $request->input('bayar_id');
             $rujuk_id = $request->input('rujuk_id');
             $rujuk = $request->input('rujuk');
-            
+
             $last_antrian = app('App\Http\Controllers\RawatJalan\Transaksi\ReadController')->getLastAntrian($poli_id);
 
-            $transaksi_masuk_detail = app('App\Http\Controllers\Hospital\Transaksi\CreateController')->create(2,1,$pasien_id);
+            $transaksi_masuk_detail = app('App\Http\Controllers\Hospital\Transaksi\CreateController')->create(2, 1, $pasien_id);
 
             $transaksi = new Transaksi;
             $transaksi->poliklinik_id = $poli_id;
             $transaksi->pasien_id = $pasien_id;
-            $transaksi->nomor_antrian = $last_antrian+1;
-            $transaksi->ordered_at = $this->getEstimasiWaktuPemeriksaan($last_antrian+1);
-            if($kasus_id > 0)
-            {
+            $transaksi->nomor_antrian = $last_antrian + 1;
+            $transaksi->ordered_at = $this->getEstimasiWaktuPemeriksaan($last_antrian + 1);
+            if ($kasus_id > 0) {
                 $transaksi->kasus_id = $kasus_id;
             }
-            if($rujuk_id > 0)
-            {
+            if ($rujuk_id > 0) {
                 $transaksi->rujuk = 1;
                 $transaksi->permintaan_rujuk_id = 1;
             }
@@ -187,16 +181,16 @@ class PostController extends Controller
             $transaksi->is_kartu_baru = $is_kartu;
             $transaksi->is_karcis_poli = $is_kartu_poli;
             $transaksi->is_file_tni = $is_file_tni;
-            $transaksi->asal_rujukan = $asal_rujukan; 
+            $transaksi->asal_rujukan = $asal_rujukan;
             $transaksi->total_retribusi = $total_retribusi;
             $transaksi->pasien_pembayaran_id = $bayar_id;
             $transaksi->waktu_masuk = Carbon::now();
             $transaksi->save();
-            
+
             $lokasi = $transaksi->poliklinik->name;
 
             //mengarahkan transaksi masuk detail pada global menjadi transaksi id pada lokal
-            $transaksi_masuk_detail = app('App\Http\Controllers\Hospital\Transaksi\EditController')->edit($transaksi_masuk_detail->id,$transaksi->id);
+            $transaksi_masuk_detail = app('App\Http\Controllers\Hospital\Transaksi\EditController')->edit($transaksi_masuk_detail->id, $transaksi->id);
 
             //permintaan rekam medis
             $request->merge(['pasien' => $transaksi->pasien_id, 'tujuan' => "Pelayanan", 'lokasi' => $lokasi, 'keterangan' => "Permintaan dari Rawat Jalan"]);
@@ -221,23 +215,21 @@ class PostController extends Controller
 
             $rm_trans = app('App\Http\Controllers\RekamMedis\Transaksi\CreateController')->create($data_rm);
 
-            if($rujuk_id > 0)
-            {
+            if ($rujuk_id > 0) {
                 $permintan_rujukan = PermintaanRujuk::find($rujuk_id);
                 $permintan_rujukan->status = 1;
                 $permintan_rujukan->save();
 
                 //akan di cek apakah SEP nya diganti apa ngga
                 //jika diganti dan memang blm ada SEP nya maka, SEPnya yang baru akan dibuat
-                if($kasus_id > 0)
-                {
-                    if ($nomor_sep!='0') {
-                        $cekSEP = app('App\Http\Controllers\Kasus\BPJS\PostController')->cekSEP($nomor_sep,$kasus_id);
+                if ($kasus_id > 0) {
+                    if ($nomor_sep != '0') {
+                        $cekSEP = app('App\Http\Controllers\Kasus\BPJS\PostController')->cekSEP($nomor_sep, $kasus_id);
                     }
                 }
             }
 
-            if ($total_retribusi!=0) {
+            if ($total_retribusi != 0) {
                 $kasir = $this->kirimKasir($request);
             }
 
@@ -245,26 +237,24 @@ class PostController extends Controller
             $message = 'Pasien berhasil didaftarkan ke dalam antrian.';
             $title = 'Berhasil!';
 
-            if(!empty($transaksi->kasus_id))
-            {
+            if (!empty($transaksi->kasus_id)) {
                 $log = app('App\Http\Controllers\Kasus\Log\CreateController')
-                ->create($transaksi->kasus_id,'create','administrasi-rawatjalan-daftar',$transaksi->id);
+                    ->create($transaksi->kasus_id, 'create', 'administrasi-rawatjalan-daftar', $transaksi->id);
             }
 
             $data['type'] = 'success';
             $data['title'] = 'Berhasil';
             $data['text'] = 'Pasien berhasil didaftarkan';
-            $data['url'] = 'rawatjalan/poliklinik/'.$poli_id;
-            
+            $data['url'] = 'rawatjalan/poliklinik/' . $poli_id;
+
             DB::connection('rawatjalan')->commit();
             DB::connection('rekammedis')->commit();
             DB::connection('kasus')->commit();
             DB::connection('mysql')->commit();
             DB::connection('kasir')->commit();
             return json_encode($data);
-
         } catch (\Exception $e) {
-         
+
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 
             DB::connection('rawatjalan')->rollback();
@@ -284,24 +274,22 @@ class PostController extends Controller
     {
         DB::connection('rawatjalan')->beginTransaction();
         DB::connection('kasus')->beginTransaction();
-        try
-        {
+        try {
             $perawat_url = Auth::user()->profesi == 2 ? '/datamedis/asesmenawal' : '';
             $transaksi_id = $request->input('transaksi_id');
 
             $asal_rujukan_id = null;
 
-            $transaksi = Transaksi::with('rujukan')->where('id',$transaksi_id)->first();
-            $judul_kasus = 'Rawat Jalan #'.$transaksi_id;
+            $transaksi = Transaksi::with('rujukan')->where('id', $transaksi_id)->first();
+            $judul_kasus = 'Rawat Jalan #' . $transaksi_id;
             $pasien = Pasien::find($transaksi->pasien_id);
             $kelas = $transaksi->kelas_id; //ID KELAS URJ
             $lokasi = $transaksi->poliklinik->lokasi_id;
 
-            if ($transaksi->asal_rujukan!=0) {
+            if ($transaksi->asal_rujukan != 0) {
                 $pasien->asal_rujukan = $transaksi->rujukan->nama ?? '-';
                 $asal_rujukan_id = $transaksi->asal_rujukan ?? '';
-            }
-            else $pasien->asal_rujukan = "-";
+            } else $pasien->asal_rujukan = "-";
 
             if (Auth::user()->profesi ==  1) {
                 $status_tipe = 1;
@@ -309,17 +297,16 @@ class PostController extends Controller
                 $status_tipe = 0;
             }
 
-            if(empty($transaksi->kasus_id))
-            {
+            if (empty($transaksi->kasus_id)) {
                 $kasus = app('App\Http\Controllers\Kasus\Kasus\CreateController')
-                ->createKasus($judul_kasus,$pasien,$lokasi,$transaksi->id,$kelas,$transaksi->pasien_pembayaran_id,$transaksi->nomor_sep,null,$asal_rujukan_id);
+                    ->createKasus($judul_kasus, $pasien, $lokasi, $transaksi->id, $kelas, $transaksi->pasien_pembayaran_id, $transaksi->nomor_sep, null, $asal_rujukan_id);
 
                 $kasus->tipe_rj = 1;
                 $kasus->save();
-                
-                $transaksi->status=$status_tipe;
-                $transaksi->kasus_id=$kasus->id;
-                if($status_tipe == 1) {
+
+                $transaksi->status = $status_tipe;
+                $transaksi->kasus_id = $kasus->id;
+                if ($status_tipe == 1) {
                     $transaksi->waktu_pemeriksaan = Carbon::now();
                 }
                 $transaksi->save();
@@ -333,23 +320,20 @@ class PostController extends Controller
                         $transaksi->save();
                     }
                 }
-            }
-            else
-            {
-                if(!empty($transaksi->permintaan_rujuk_id) && $transaksi->status == 0)
-                {
-                    $this->changeKasusLokasi($transaksi->kasus_id,$lokasi);
-                    if($transaksi->kasus->pembayaran->perusahaan->tipe->slug == 'bpjs')
+            } else {
+                if (!empty($transaksi->permintaan_rujuk_id) && $transaksi->status == 0) {
+                    $this->changeKasusLokasi($transaksi->kasus_id, $lokasi);
+                    if ($transaksi->kasus->pembayaran->perusahaan->tipe->slug == 'bpjs')
                         $activesep = app('App\Http\Controllers\Kasus\Kasus\EditController')->changeActiveSEPtoLatestSEP($transaksi->kasus_id);
 
-                    $transaksi->status=$status_tipe;
-                    if($status_tipe == 1) {
+                    $transaksi->status = $status_tipe;
+                    if ($status_tipe == 1) {
                         $transaksi->waktu_pemeriksaan = Carbon::now();
                     }
                     $transaksi->save();
-                }elseif($transaksi->status == 0){
-                    $transaksi->status=1;
-                    if($status_tipe == 1) {
+                } elseif ($transaksi->status == 0) {
+                    $transaksi->status = 1;
+                    if ($status_tipe == 1) {
                         $transaksi->waktu_pemeriksaan = Carbon::now();
                     }
                     $transaksi->save();
@@ -359,7 +343,7 @@ class PostController extends Controller
             $this->checkIfKolaborator($transaksi->kasus_id);
 
             if (!empty($pasien->is_baru)) {
-                if ($pasien->is_baru==1) {
+                if ($pasien->is_baru == 1) {
                     $update_pasien = app('App\Http\Controllers\Pasien\Pasien\EditController')->updatePasienBaru($pasien->id);
                     $transaksi->is_pasien_baru = 1;
                     $transaksi->save();
@@ -370,15 +354,40 @@ class PostController extends Controller
             if (config('medify.third-party.jkn_online.on') && $transaksi->task_id_jkn < 4) {
                 $carbon_today = Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
                 $carbon_today = strtotime($carbon_today) * 1000;
-                $data['kodebooking'] = $transaksi->id;
-                $data['taskid'] = 4;
-                $data['waktu'] = $carbon_today;
-                dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 4, 'waktu' => $carbon_today]));
+                //$data['kodebooking'] = $transaksi->id;
+                //$data['taskid'] = 4;
+                //$data['waktu'] = $carbon_today;
+                //dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 4, 'waktu' => $carbon_today]));
+                $data = [
+                    'kodebooking' => $transaksi->id,
+                    'taskid' => 4,
+                    'waktu' => $carbon_today
+                ];
+                $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
+                $returned = json_decode($returned);
+                $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+                if ($metadata->code != "200") {
+                    $data_log['kodebooking'] = $transaksi->id;
+                    $data_log['response'] = json_encode($returned);
+
+                    app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+                } else {
+                    $data_log['kodebooking'] = $transaksi->id;
+                    $data_log['task_id'] = 4;
+                    $data_log['waktu'] = $carbon_today;
+                    $data_log['response'] = json_encode($returned);
+                    $data_log['request'] = $data;
+
+                    app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+                }
+                $transaksi = Transaksi::find($transaksi->id);
+                $transaksi->task_id_jkn = 4;
+                $transaksi->save();
             }
 
             DB::connection('kasus')->commit();
             DB::connection('rawatjalan')->commit();
-            return redirect('kasus/'.$transaksi->kasus->nomor_kasus.$perawat_url);
+            return redirect('kasus/' . $transaksi->kasus->nomor_kasus . $perawat_url);
         } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 
@@ -391,14 +400,14 @@ class PostController extends Controller
     {
         /*CHECK APAKAH SI USER KOLABORATOR, JIKA TIDAK MAKA DI CREATE, JIKA IYA MAKA DI UPDATE*/
         $user_id = Auth::user()->id;
-        $status = app('App\Http\Controllers\Kasus\Kolaborator\ReadController')->checkIfExist($kasus_id,$user_id);
-        if(!empty($status->id))
-            $status = app('App\Http\Controllers\Kasus\Kolaborator\EditController')->updateStatus($status->id,1);
+        $status = app('App\Http\Controllers\Kasus\Kolaborator\ReadController')->checkIfExist($kasus_id, $user_id);
+        if (!empty($status->id))
+            $status = app('App\Http\Controllers\Kasus\Kolaborator\EditController')->updateStatus($status->id, 1);
         else
-            $status = app('App\Http\Controllers\Kasus\Kolaborator\CreateController')->createWithStatus($kasus_id,$user_id,1,0);
+            $status = app('App\Http\Controllers\Kasus\Kolaborator\CreateController')->createWithStatus($kasus_id, $user_id, 1, 0);
     }
 
-    private function changeKasusLokasi($kasus_id,$lokasi)
+    private function changeKasusLokasi($kasus_id, $lokasi)
     {
         $id_user = Auth::user()->id;
         # TODO byepass pindah ruangan gizi
@@ -419,34 +428,34 @@ class PostController extends Controller
     {
         $pasien_id = $request->input('pasien_id');
         $ruangan_id = $request->input('ruangan_id');
-        $kasus_id=$request->input('kasus_id');
-        $transaksi_masuk_id=$request->input('transaksi_masuk_id');
+        $kasus_id = $request->input('kasus_id');
+        $transaksi_masuk_id = $request->input('transaksi_masuk_id');
 
         $last_antrian = app('App\Http\Controllers\RawatJalan\Transaksi\ReadController')->getLastAntrian($ruangan_id);
         #buat dulu transaksi masuk
         #yang me return transaksi_masuk_detail
-        $transaksi_detail = app('App\Http\Controllers\Hospital\Transaksi\CreateController')->createDetail($transaksi_masuk_id,2,1);
+        $transaksi_detail = app('App\Http\Controllers\Hospital\Transaksi\CreateController')->createDetail($transaksi_masuk_id, 2, 1);
 
         #buat transaksi pada IGD
         $transaksi = new Transaksi;
         $transaksi->poliklinik_id = $ruangan_id;
         $transaksi->pasien_id = $pasien_id;
-        $transaksi->nomor_antrian = $last_antrian+1;
+        $transaksi->nomor_antrian = $last_antrian + 1;
         $transaksi->kasus_id = $kasus_id;
-        $transaksi->ordered_at = $this->getEstimasiWaktuPemeriksaan($last_antrian+1);
+        $transaksi->ordered_at = $this->getEstimasiWaktuPemeriksaan($last_antrian + 1);
         $transaksi->transaksi_masuk_detail_id = $transaksi_detail->id;
         $transaksi->status = 1;
         $transaksi->created_by = Auth::user()->id;
         $transaksi->save();
         #mengupdate transaksi_detail yang tadi dibuat, karena dia tadi belum nyimpen local id
-        $transaksi_detail = app('App\Http\Controllers\Hospital\Transaksi\EditController')->edit($transaksi_detail->id,$transaksi->id);
+        $transaksi_detail = app('App\Http\Controllers\Hospital\Transaksi\EditController')->edit($transaksi_detail->id, $transaksi->id);
         $kasus = Kasus::find($kasus_id);
         #kalo dia gabuat kasus baru maka perlu di arahkan supaya jadi aktif lagi
-        $changePoli = $this->updatePoli($kasus->transaksi_masuk_detail_id,$transaksi->id);
-        $newTransaksiMasukDetail = app('App\Http\Controllers\Kasus\Kasus\EditController')->changeActiveTransaksiMasukDetail($transaksi->kasus_id,$transaksi->transaksi_masuk_detail_id);
+        $changePoli = $this->updatePoli($kasus->transaksi_masuk_detail_id, $transaksi->id);
+        $newTransaksiMasukDetail = app('App\Http\Controllers\Kasus\Kasus\EditController')->changeActiveTransaksiMasukDetail($transaksi->kasus_id, $transaksi->transaksi_masuk_detail_id);
 
         $log = app('App\Http\Controllers\Kasus\Log\CreateController')
-        ->create($kasus->id,'create','administrasi-rawatjalan-pindah',$transaksi->id);
+            ->create($kasus->id, 'create', 'administrasi-rawatjalan-pindah', $transaksi->id);
 
         $data['type'] = 'success';
         $data['title'] = 'Berhasil';
@@ -455,20 +464,20 @@ class PostController extends Controller
         return json_encode($data);
     }
 
-    private function updatePoli($old_id,$new_poli_id)
+    private function updatePoli($old_id, $new_poli_id)
     {
         $old_transaksi = GlobalTransaksiMasukDetail::find($old_id);
         $old_poli = Transaksi::find($old_transaksi->transaksi_lokal_id);
 
         $new_poli = Transaksi::find($new_poli_id);
-        $new_poli->is_karcis_pengunjung=$old_poli->is_karcis_pengunjung;
-        $new_poli->is_kartu_baru=$old_poli->is_kartu_baru;
-        $new_poli->is_karcis_poli=$old_poli->is_karcis_poli;
-        $new_poli->is_file_tni=$old_poli->is_file_tni;
-        $new_poli->total_retribusi=$old_poli->total_retribusi;
-        $new_poli->asal_rujukan=$old_poli->asal_rujukan;
-        $new_poli->nomor_sep=$old_poli->nomor_sep;
-        $new_poli->pasien_pembayaran_id=$old_poli->pasien_pembayaran_id;
+        $new_poli->is_karcis_pengunjung = $old_poli->is_karcis_pengunjung;
+        $new_poli->is_kartu_baru = $old_poli->is_kartu_baru;
+        $new_poli->is_karcis_poli = $old_poli->is_karcis_poli;
+        $new_poli->is_file_tni = $old_poli->is_file_tni;
+        $new_poli->total_retribusi = $old_poli->total_retribusi;
+        $new_poli->asal_rujukan = $old_poli->asal_rujukan;
+        $new_poli->nomor_sep = $old_poli->nomor_sep;
+        $new_poli->pasien_pembayaran_id = $old_poli->pasien_pembayaran_id;
         $new_poli->save();
 
         return $new_poli;
@@ -494,7 +503,7 @@ class PostController extends Controller
             $newtrans->created_at = Carbon::now();
             $newtrans->updated_at = Carbon::now();
             $newtrans->created_by = Auth::user()->id;
-            $transaksi[]=$newtrans;
+            $transaksi[] = $newtrans;
         }
 
         $is_kartu = $request->input('is_kartu');
@@ -512,7 +521,7 @@ class PostController extends Controller
             $newtrans->created_at = Carbon::now();
             $newtrans->updated_at = Carbon::now();
             $newtrans->created_by = Auth::user()->id;
-            $transaksi[]=$newtrans;
+            $transaksi[] = $newtrans;
         }
 
         $is_kartu_poli = $request->input('is_kartu_poli');
@@ -530,7 +539,7 @@ class PostController extends Controller
             $newtrans->created_at = Carbon::now();
             $newtrans->updated_at = Carbon::now();
             $newtrans->created_by = Auth::user()->id;
-            $transaksi[]=$newtrans;
+            $transaksi[] = $newtrans;
         }
 
         $is_file_tni = $request->input('is_file');
@@ -548,27 +557,26 @@ class PostController extends Controller
             $newtrans->created_at = Carbon::now();
             $newtrans->updated_at = Carbon::now();
             $newtrans->created_by = Auth::user()->id;
-            $transaksi[]=$newtrans;
+            $transaksi[] = $newtrans;
         }
 
         $request->merge([
             'id' => null,
-            'kasir_id' => 7, 
-            'created_at' => Carbon::now(), 
-            'updated_at' => Carbon::now(), 
-            'alljumlah' => $request->total_retribusi, 
-            'alldiskon' => 0, 
-            'alltotal' => $request->total_retribusi, 
-            'asal_layanan' => "URJ", 
-            'pasien_id' => $pasien_id, 
-            'transaksi' => json_encode($transaksi), 
-            'judul' => 'Retribusi Pendaftaran Rawat Jalan - '.$pasien->name
+            'kasir_id' => 7,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+            'alljumlah' => $request->total_retribusi,
+            'alldiskon' => 0,
+            'alltotal' => $request->total_retribusi,
+            'asal_layanan' => "URJ",
+            'pasien_id' => $pasien_id,
+            'transaksi' => json_encode($transaksi),
+            'judul' => 'Retribusi Pendaftaran Rawat Jalan - ' . $pasien->name
         ]);
 
         if (!empty($transaksi)) {
             $transaksi_kasir = app('App\Http\Controllers\Kasir\Transaksi\PostController')->apiSubmit($request);
-        }
-        else $transaksi_kasir = null;
+        } else $transaksi_kasir = null;
 
         return $transaksi_kasir;
     }
@@ -582,26 +590,26 @@ class PostController extends Controller
         $title = 'Berhasil!';
 
         return back()
-        ->with('message', $message)
-        ->with('active_nav','cppt')
-        ->with('title',$title)
-        ->with('status', $status);
+            ->with('message', $message)
+            ->with('active_nav', 'cppt')
+            ->with('title', $title)
+            ->with('status', $status);
         return back();
     }
 
     public function kembalikanFile($transaksi_id)
     {
         $transaksi = Transaksi::find($transaksi_id);
-        
+
         $data['pasien_id'] = $transaksi->pasien_id;
         $data['status'] = 1;
         $data['holder_keterangan'] = '';
-        $data['holder_type'] = 2; 
+        $data['holder_type'] = 2;
         $data['holder_user_id'] = null;
         $rm_group = app('App\Http\Controllers\Group\Group\ReadController')->getRMGroupSlug('rekam-medis');
         $data['holder_group_id'] = $rm_group->id;
 
-        $data['lokasi'] = 'Poli '.$transaksi->poliklinik->name;
+        $data['lokasi'] = 'Poli ' . $transaksi->poliklinik->name;
         $data['tujuan_id'] = 1;
         $data['jenis'] = 2;
 
@@ -610,17 +618,17 @@ class PostController extends Controller
         $data['sender_keterangan'] = '';
 
         $rm_transaksi = app('App\Http\Controllers\RekamMedis\Transaksi\CreateController')->create($data);
-        $transaksi = app('App\Http\Controllers\RawatJalan\Transaksi\EditController')->editTransaksiPengembalianRM($transaksi->id,$rm_transaksi->id);
+        $transaksi = app('App\Http\Controllers\RawatJalan\Transaksi\EditController')->editTransaksiPengembalianRM($transaksi->id, $rm_transaksi->id);
 
         $status = 1;
         $message = 'Berhasil membuat pengembalian file';
         $title = 'Berhasil!';
 
         return back()
-        ->with('message', $message)
-        ->with('active_nav','cppt')
-        ->with('title',$title)
-        ->with('status', $status);
+            ->with('message', $message)
+            ->with('active_nav', 'cppt')
+            ->with('title', $title)
+            ->with('status', $status);
         return back();
     }
 
@@ -628,11 +636,10 @@ class PostController extends Controller
     {
         $transaksi = Transaksi::find($id);
 
-        if(isset($request->sep)) {
+        if (isset($request->sep)) {
             $sep = json_decode($request->sep);
             $nomor_sep = $sep->no_sep;
-        }
-        else {
+        } else {
             $nomor_sep = $request->custom_sep;
             $sep['no_bpjs'] = $transaksi->pasien_pembayaran->no_asuransi;
             $sep['tgl_sep'] = Carbon::now()->format('Y-m-d');
@@ -645,12 +652,12 @@ class PostController extends Controller
         $transaksi->nomor_sep = $nomor_sep;
         $transaksi->save();
 
-        app('App\Http\Controllers\BPJS\SEP\CreateController')->create($sep,$nomor_sep);
+        app('App\Http\Controllers\BPJS\SEP\CreateController')->create($sep, $nomor_sep);
 
-        return redirect('rawatjalan/transaksi/pendaftaran/'.$id)
-        ->with('message', 'Sukses mengubah nomor SEP')
-        ->with('title','Sukses')
-        ->with('status', 1);
+        return redirect('rawatjalan/transaksi/pendaftaran/' . $id)
+            ->with('message', 'Sukses mengubah nomor SEP')
+            ->with('title', 'Sukses')
+            ->with('status', 1);
     }
 
     public function generateAutoSEP($transaksi_id)
@@ -681,7 +688,7 @@ class PostController extends Controller
 
             $auto_sep = app('App\Http\Controllers\BPJS\AutoSEP\CreateController')->generate('rawatjalan', $pasien_id, $pembayaran_id, $poli_id, $dokter_id);
             $result_sep = json_decode($auto_sep);
-            if($result_sep->status == 200) {
+            if ($result_sep->status == 200) {
                 $transaksi->nomor_sep = $result_sep->result->response->sep->noSep ?? null;
                 $transaksi->save();
             }
@@ -736,7 +743,7 @@ class PostController extends Controller
                 $return_data['status'] = 1;
                 $return_data['message'] = 'Pendaftaran Pasien Berhasil';
                 $return_data['ordered_at'] = app('App\Http\Controllers\Functions\DateFormatter')->timestampFormat($transaksi->ordered_at, '%d %B %Y, %H:%M');
-                $return_data['barcode'] = '<img class="big_barcode" src="data:image/png;base64,' . DNS1D::getBarcodePNG($transaksi->pasien->no_rm, "C128",3,30) . '" alt="barcode"  style="width:900px;" />';
+                $return_data['barcode'] = '<img class="big_barcode" src="data:image/png;base64,' . DNS1D::getBarcodePNG($transaksi->pasien->no_rm, "C128", 3, 30) . '" alt="barcode"  style="width:900px;" />';
                 $return_data['transaksi'] = $transaksi;
                 $return_data['check_in'] = Carbon::now()->format('d-m-Y H:i:s');
 

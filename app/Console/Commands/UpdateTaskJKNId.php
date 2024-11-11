@@ -43,12 +43,10 @@ class UpdateTaskJKNId extends Command
         $kodebooking = $this->argument('kodebooking');
         $taskid = $this->argument('taskid');
         $waktu = $this->argument('waktu');
-        $jenisresep = $this->argument('jenisresep');
         $data = [
             'kodebooking' => $kodebooking,
             'taskid' => $taskid,
-            'waktu' => $waktu,
-            'jenisresep' => $jenisresep
+            'waktu' => $waktu
         ];
         $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
         $returned = json_decode($returned);
@@ -64,7 +62,6 @@ class UpdateTaskJKNId extends Command
             $data_log['waktu'] = $waktu;
             $data_log['response'] = json_encode($returned);
             $data_log['request'] = $data;
-            $data_log['jenisresep'] = $jenisresep;
 
             app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
         }

@@ -110,7 +110,8 @@ class ReadController extends Controller
 
         if ($rujukRS->metaData->code == 200) {
             if ($multi) {
-                foreach ($rujukRS->response->rujukan as $rujuk) {
+                // foreach ($rujukRS->response->rujukan as $rujuk) {
+                foreach (($rujukRS->response->rujukan ?? []) as $rujuk) {
                     $rujuk->tipe_perujuk = 2;
                     array_push($rujuk_res, $rujuk);
                 }

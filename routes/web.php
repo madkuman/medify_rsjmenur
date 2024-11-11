@@ -50,6 +50,7 @@ include('modules/third-party/mobile-bpjs.php');
 include('modules/third-party/vclaim-v2.php');
 include('modules/third-party/jkn.php');
 include('modules/third-party/whatsapp.php');
+include('modules/third-party/satusehat.php');
 // Route::group(['middleware' => []], function () {
 Route::group(['middleware' => ['auth', 'user-activated']], function () {
 

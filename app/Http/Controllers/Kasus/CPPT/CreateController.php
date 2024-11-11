@@ -15,6 +15,7 @@ use App\User;
 use Auth, DB;
 use Bugsnag;
 use Carbon\Carbon;
+use App\Models\RawatJalan\Transaksi;
 
 class CreateController extends Controller
 {
@@ -63,13 +64,13 @@ class CreateController extends Controller
 
         $date = Carbon::now()->toDateString();
         $path_files = [];
-        $i=1;
+        $i = 1;
         if ($request->hasFile('cppt_files')) {
 
             foreach ($request->file('cppt_files') as $key => $value) {
-                $data_files = app('App\Http\Controllers\Functions\ImageUploader')->upload($value,'cppt');
+                $data_files = app('App\Http\Controllers\Functions\ImageUploader')->upload($value, 'cppt');
                 $path_files[] = [
-                    'id'=> $i,
+                    'id' => $i,
                     'nama_file' => $value->getClientOriginalName(),
                     'path' => $data_files['file_original'],
                 ];
@@ -149,6 +150,40 @@ class CreateController extends Controller
                 $cppt->tagihan_detail_id = $createDetail->id;
                 $cppt->save();
             }
+            if (config('medify.third-party.jkn_online.on')) {
+                $kasus = app(\App\Http\Controllers\Kasus\Kasus\ReadController::class)->get($nomor_kasus);
+                $transaksi = $kasus->rawat_jalan_transaksi_last_attr;
+                $profesi = Auth::user()->profesi;
+                if ($kasus->lokasi->lokasi->departemen->id == 2 && $profesi == 1 && $transaksi && $transaksi->task_id_jkn < 5) {
+                    $carbon_today = Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
+                    $carbon_today = strtotime($carbon_today) * 1000;
+                    $data = [
+                        'kodebooking' => $transaksi->id,
+                        'taskid' => 5,
+                        'waktu' => $carbon_today
+                    ];
+                    $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
+                    $returned = json_decode($returned);
+                    $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+                    if ($metadata->code != "200") {
+                        $data_log['kodebooking'] = $transaksi->id;
+                        $data_log['response'] = json_encode($returned);
+
+                        app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+                    } else {
+                        $data_log['kodebooking'] = $transaksi->id;
+                        $data_log['task_id'] = 5;
+                        $data_log['waktu'] = $carbon_today;
+                        $data_log['response'] = json_encode($returned);
+                        $data_log['request'] = $data;
+
+                        app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+                    }
+                    $transaksi = Transaksi::find($transaksi->id);
+                    $transaksi->task_id_jkn = 5;
+                    $transaksi->save();
+                }
+            }
         }
 
 
@@ -163,7 +198,5 @@ class CreateController extends Controller
         return $visite;
     }
 
-    public function sendToDiagnosis()
-    {
-    }
+    public function sendToDiagnosis() {}
 }

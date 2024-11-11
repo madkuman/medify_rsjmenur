@@ -143,21 +143,21 @@ class CreateController extends Controller
                 $resep->save();
             }
 
-            if (config('medify.third-party.jkn_online.on')) {
-                $kasus = app(\App\Http\Controllers\Kasus\Kasus\ReadController::class)->get($kasus->nomor_kasus);
-                $transaksi = $kasus->rawat_jalan_transaksi_last_attr;
-                $profesi = Auth::user()->profesi;
-                if ($kasus->lokasi->lokasi->departemen->id == 2 && $transaksi && $transaksi->task_id_jkn < 5) {
-                    $carbon_today = Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
-                    $carbon_today = strtotime($carbon_today) * 1000;
-                    $data['kodebooking'] = $transaksi->id;
-                    $data['taskid'] = 5;
-                    $data['waktu'] = $carbon_today;
-                    $data['jenisresep'] = ucfirst($request->input('kategori')) ?? 'Tidak ada';
-                    dd($data);
-                    dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 5, 'waktu' => $carbon_today, 'jenisresep' => ucfirst($request->input('kategori')) ?? 'Tidak ada']));
-                }
-            }
+            // if (config('medify.third-party.jkn_online.on')) {
+            //     $kasus = app(\App\Http\Controllers\Kasus\Kasus\ReadController::class)->get($kasus->nomor_kasus);
+            //     $transaksi = $kasus->rawat_jalan_transaksi_last_attr;
+            //     $profesi = Auth::user()->profesi;
+            //     if ($kasus->lokasi->lokasi->departemen->id == 2 && $transaksi && $transaksi->task_id_jkn < 5) {
+            //         $carbon_today = Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
+            //         $carbon_today = strtotime($carbon_today) * 1000;
+            //         $data['kodebooking'] = $transaksi->id;
+            //         $data['taskid'] = 5;
+            //         $data['waktu'] = $carbon_today;
+            //         $data['jenisresep'] = ucfirst($request->input('kategori')) ?? 'Tidak ada';
+            //         dd($data);
+            //         dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 5, 'waktu' => $carbon_today, 'jenisresep' => ucfirst($request->input('kategori')) ?? 'Tidak ada']));
+            //     }
+            // }
 
             $log = app('App\Http\Controllers\Kasus\Log\CreateController')
                 ->create($kasusId, 'create', 'resep', $resep->id);

@@ -53,18 +53,16 @@ class TambahTagihanKamarDateSpecific extends Command
         $tanggal = is_null($this->option('tanggal')) ? Carbon::now()->day : $this->option('tanggal');
         $bulan = is_null($this->option('bulan')) ? Carbon::now()->month : $this->option('bulan');
         $tahun = is_null($this->option('tahun')) ? Carbon::now()->year : $this->option('tahun');
-        $date = $tahun.'-'.$bulan.'-'.$tanggal;
+        $date = $tahun . '-' . $bulan . '-' . $tanggal;
         $start_date = Carbon::createFromFormat('Y-m-d', $date);
-        $start_date->hour(13);
-        $start_date->minute(00);
+        $start_date->hour(00);
+        $start_date->minute(02);
         $start_date->second(00);
-        $transaksi = Transaksi::whereNull('waktu_keluar')->whereNotNull('kedatangan_at')->whereIn('status',[1,2])->get();
-        foreach($transaksi as $item)
-        {
-            try
-            {
+        $transaksi = Transaksi::whereNull('waktu_keluar')->whereNotNull('kedatangan_at')->whereIn('status', [1, 2])->get();
+        foreach ($transaksi as $item) {
+            try {
                 DB::connection('kasus')->beginTransaction();
-                $tipe_default = TarifTipe::where('slug','default')->first();
+                $tipe_default = TarifTipe::where('slug', 'default')->first();
                 $kasus = $item->kasus;
                 $detail = $this->addTagihan($kasus, $item->tempat_tidur->ruangan->tarif, $tipe_default);
                 $detail->created_at = $start_date;
@@ -78,13 +76,12 @@ class TambahTagihanKamarDateSpecific extends Command
                     $detail->save();
                 }
                 DB::connection('kasus')->commit();
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 DB::connection('kasus')->rollback();
                 app('App\Http\Controllers\Error\Handler')->bugsnag($e);
             }
         }
-echo 'done';
+        echo 'done';
     }
 
     public function addTagihan($kasus, $tarif, $tipe_default)
@@ -99,7 +96,7 @@ echo 'done';
         $data['qty'] = 1;
         $data['daftar_harga_id'] = null;
         $data['tarif_id'] = $tarif->id;
-        if(!empty($kasus->active_sep))
+        if (!empty($kasus->active_sep))
             $data['sep_id'] = $kasus->active_sep->id;
         else
             $data['sep_id'] = null;

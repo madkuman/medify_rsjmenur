@@ -191,6 +191,7 @@ class ReadController extends Controller
     public function getDataNoKartu($bulan, $tahun, $noKartu, $format_filter)
     {
         $header_array = app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->getHeader();
+
         try {
             $client = new Client(['headers' => $header_array]);
             $res = $client->request('GET', app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->getUrl() . '/RencanaKontrol/ListRencanaKontrol/Bulan/' . $bulan . '/Tahun/' . $tahun . '/Nokartu/' . $noKartu . '/filter/' . $format_filter);
@@ -199,6 +200,7 @@ class ReadController extends Controller
                 $timestamp = $header_array['X-timestamp'];
                 $redecode = json_decode($response);
                 $redecode->response = json_decode(app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->stringDecrypt($timestamp, $redecode->response));
+                // dd($redecode);
                 return (json_encode($redecode));
             }
             return $response;

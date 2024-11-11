@@ -15,7 +15,7 @@ class PostController extends Controller
         $nama = $request->input('nama_pasien');
         $lokasi = $request->input('lokasi');
         // dd($token, $target, $nama);
-        if ($lokasi == 12 || $lokasi == 13 || $lokasi == 11) {
+        if ($lokasi == 12 || $lokasi == 13 || $lokasi == 11 || $lokasi == 18 || $lokasi == 62) {
             $loket = 1;
         } else {
             $loket = 2;

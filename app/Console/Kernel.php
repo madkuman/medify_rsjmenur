@@ -64,7 +64,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('rawatjalan:importlaporan')->twiceDaily(13, 15); //diimpor dua kali bee dia narik data tiap mau pulang
         $schedule->command('rawatjalan:importlaporan')->daily(); //diimpor tiap malam juga
         $schedule->command('rawatjalan:importlaporanrekapharian')->dailyAt('22:00'); //diimpor dua kali bee dia narik data tiap mau pulang
-        
+
         $schedule->command('bpjs:applicare-update')->hourly();
         $schedule->command('bpjs:auto-sep-online')->dailyAt("00:10");
 
@@ -76,9 +76,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('igd:importlaporan')->daily(); //diimpor tiap malam juga
         #start queue work
         $schedule->command('queue:start-work')->everyMinute();
-        
+
         $schedule->command('kasus:checkout-rajal')->dailyAt('23:00'); // krs & checkout rawatjalan pembayaran bpjs dan asuransi yang belum tercheckout
-        
+
         $schedule->command('rawatinap:data-harian')->dailyAt('23:59');
         $schedule->command('rawatinap:create-statistik-harian')->dailyAt('23:30');
         $schedule->command('rawatinap:create-statistik-mingguan')->weeklyOn(2, '23:30');
@@ -131,7 +131,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('kasus:covid19-statistik-update')->hourly();
 
         $schedule->command('custom:artisan_call --tries=5')->everyMinute();
-
     }
 
     /**
@@ -141,7 +140,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

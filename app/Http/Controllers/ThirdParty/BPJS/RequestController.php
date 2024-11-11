@@ -92,6 +92,20 @@ class RequestController extends Controller
         }
     }
 
+    public function getUrlApotek()
+    {
+        if (strtolower(config('app.bpjs_stage')) == "production") {
+            return "https://apijkn.bpjs-kesehatan.go.id/apotek-rest";
+        } else {
+            if (config('app.bpjs_decrypt', false)) {
+                // return "https://dvlp.bpjs-kesehatan.go.id/VClaim-rest-1.1";
+                return "https://apijkn-dev.bpjs-kesehatan.go.id/apotek-rest-dev";
+            } else {
+                return "https://apijkn-dev.bpjs-kesehatan.go.id/apotek-rest-dev";
+            }
+        }
+    }
+
     function stringDecrypt($timestamp, $string)
     {
 

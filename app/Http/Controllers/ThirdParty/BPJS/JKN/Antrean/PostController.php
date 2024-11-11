@@ -66,7 +66,6 @@ class PostController extends Controller
             'kodebooking' => $data['kodebooking'],
             'taskid' => $data['taskid'],
             'waktu' => $data['waktu'],
-            'jenisresep' => $data['jenisresep']
         ]);
 
         $returned = $this->updateWaktuAntrean($request);

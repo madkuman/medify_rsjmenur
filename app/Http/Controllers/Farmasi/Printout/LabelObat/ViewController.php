@@ -15,36 +15,36 @@ class ViewController extends Controller
     public function labelObatDispensingAseptik(Request $request, $farmasi, $slug)
     {
         $farmasi = session('farmasi');
-		$data['farmasi'] = $farmasi;
-		$transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug);
+        $data['farmasi'] = $farmasi;
+        $transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug);
         $data['transaksi'] = $transaksi;
 
         $pdf = DOMPDF::loadView('farmasi.transaksi.printout-label-obat.dispensing-aseptik', $data)->setPaper([0, 0, 150, 212.4], 'landscape');
-		return $pdf->stream('label-obat-dispensing-aseptik.pdf');
+        return $pdf->stream('label-obat-dispensing-aseptik.pdf');
     }
 
     public function labelObatTpn(Request $request, $farmasi, $slug)
     {
         $farmasi = session('farmasi');
-		$data['farmasi'] = $farmasi;
-		$transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug);
+        $data['farmasi'] = $farmasi;
+        $transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug);
         $data['transaksi'] = $transaksi;
 
         $pdf = DOMPDF::loadView('farmasi.transaksi.printout-label-obat.tpn', $data)->setPaper([0, 0, 150, 212.4], 'landscape');
-		return $pdf->stream('label-obat-tpn.pdf');
+        return $pdf->stream('label-obat-tpn.pdf');
     }
 
     public function labelObatRawatJalan(Request $request, $farmasi, $slug)
     {
         $farmasi = session('farmasi');
-		$data['farmasi'] = $farmasi;
-		$transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug);
+        $data['farmasi'] = $farmasi;
+        $transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug);
         $data['transaksi'] = $transaksi;
         $type = 'rajal';
         $data['exp_dates'] = $this->getExpDate($transaksi, $transaksi->final_detail->resep_detail, $type);
 
         $pdf = DOMPDF::loadView('farmasi.transaksi.printout-label-obat.rawat-jalan', $data)->setPaper([0, 0, 150, 212.4], 'landscape');
-		return $pdf->stream('label-obat-rawat-jalan.pdf');
+        return $pdf->stream('label-obat-rawat-jalan.pdf');
     }
 
     public function labelObatUddOdddRawatInap(Request $request, $farmasi, $slug)
@@ -53,7 +53,7 @@ class ViewController extends Controller
 
         $temp_arr = [];
         $temp_arr[] = $items_rows_raw;
-        $items_rows_raw = $temp_arr; 
+        $items_rows_raw = $temp_arr;
 
         $items_rows = explode("],[", $items_rows_raw[0]);
 
@@ -61,7 +61,7 @@ class ViewController extends Controller
         foreach ($items_rows as $key => $item) {
             $temp_item = trim($item, "[");
             $temp_item = trim($temp_item, "]");
-            
+
             $temp_item = explode(",", $temp_item);
             $temp_item_copy = $temp_item;
             array_shift($temp_item_copy);
@@ -70,10 +70,10 @@ class ViewController extends Controller
         }
 
         $farmasi = session('farmasi');
-		$data['farmasi'] = $farmasi;
-		$transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug);
+        $data['farmasi'] = $farmasi;
+        $transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingle($slug);
         $data['transaksi'] = $transaksi;
-        
+
 
         if ($request->label_type == 'udd') {
             $resep_detail = [];
@@ -81,7 +81,7 @@ class ViewController extends Controller
                 foreach ($items[1] as $key_item => $item_jam_aturan_pakai) {
                     foreach ($transaksi->final_detail->resep_detail as $i => $detail) {
                         if ($detail->id == $items[0]) {
-                            $resep_detail[] = [$detail, $item_jam_aturan_pakai];          
+                            $resep_detail[] = [$detail, $item_jam_aturan_pakai];
                         }
                     }
                 }
@@ -93,8 +93,7 @@ class ViewController extends Controller
 
             $pdf = DOMPDF::loadView('farmasi.transaksi.printout-label-obat.udd-rawat-inap', $data)->setPaper([0, 0, 150, 212.4], 'landscape');
             return $pdf->stream('label-obat-udd-rawat-inap.pdf');
-
-        } else if($request->label_type == 'oddd') {
+        } else if ($request->label_type == 'oddd') {
             $jam_aturan_pakai = [];
             foreach ($new_items as $key => $items) {
                 foreach ($items[1] as $key_item => $item_jam_aturan_pakai) {
@@ -161,7 +160,7 @@ class ViewController extends Controller
             $data['exp_dates'] = $this->getExpDate($transaksi, ($resep_detail[0][1] ?? []));
 
             $pdf = DOMPDF::loadView('farmasi.transaksi.printout-label-obat.oddd-rawat-inap', $data)->setPaper([0, 0, 150, 212.4], 'landscape');
-		    return $pdf->stream('label-obat-oddd-rawat-inap.pdf');
+            return $pdf->stream('label-obat-oddd-rawat-inap.pdf');
         }
     }
 
@@ -173,7 +172,7 @@ class ViewController extends Controller
          * 
          * Cara mengecek apakah resep detail itu termasuk racikan/bukan bisa cek kolom "tipe" di resep_detail, kalau 1 mk racikan, kalau 0 bukan racikan.
          * Untuk ambil ED obatnya dari log transaksi > items > kadaluarsa.
-        */
+         */
 
         $exp_dates = [];
         if (count($resep_detail) <= 0) return $exp_dates;
@@ -190,7 +189,6 @@ class ViewController extends Controller
                 } else {
                     $exp_dates[] = '-';
                 }
-
             } else if ($detail->tipe == 1) { # racikan
 
                 if (!empty($transaksi->final_detail->konfirmasi_permintaan_at)) { # harus sudah di konfirmasi terlebih dahulu
@@ -203,19 +201,14 @@ class ViewController extends Controller
 
                     $exp_date = date('d/m/y', strtotime($date));
                     $exp_dates[] = $exp_date;
-
                 } else {
                     $exp_dates[] = '-';
                 }
-
             } else {
                 $exp_dates[] = '-';
             }
-            
         }
 
         return $exp_dates;
     }
-
-
 }

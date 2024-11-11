@@ -124,6 +124,12 @@ Route::group(['prefix' => '/farmasi'], function () {
 		Route::post('/{farmasi}/master-kode-bidang/form', 'Farmasi\MasterKodeBidang\PostController@form');
 		Route::post('/{farmasi}/master-kode-bidang/delete', 'Farmasi\MasterKodeBidang\PostController@delete');
 
+		// KFA
+		// Route::get('/{farmasi}/master-kfa', 'Farmasi\MasterKFA\ViewController@index');
+		// Route::post('/{farmasi}/master-kfa/form', 'Farmasi\MasterKFA\PostController@form');
+		// Route::post('/{farmasi}/master-kfa/delete', 'Farmasi\MasterKFA\PostController@delete');
+		// Route::get('/{farmasi}/kfa/search-obat', 'ThirdParty\SatuSehat\ReadController@search');
+
 		// Barang
 		Route::get('/{farmasi}/item', 'Farmasi\Items\ViewController@index');
 		Route::post('/{farmasi}/item', 'Farmasi\Items\ViewController@index');

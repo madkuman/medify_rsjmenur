@@ -22,19 +22,21 @@ class ReadController extends Controller
         $key = $this->request->getKey();
         try {
             $client = new Client(['headers' => $header_array]);
-            $res = $client->request('GET', $this->request->getUrl().'/ref/'.$url,
-            [
-                'headers' => ['Content-Type' => 'application/json'], 
-                'Accept' => 'application/json',
-                \GuzzleHttp\RequestOptions::JSON => [],
-            ]);
+            $res = $client->request(
+                'GET',
+                $this->request->getUrl() . '/ref/' . $url,
+                [
+                    'headers' => ['Content-Type' => 'application/json'],
+                    'Accept' => 'application/json',
+                    \GuzzleHttp\RequestOptions::JSON => [],
+                ]
+            );
 
             $content = $res->getBody()->getContents();
 
             $content = $this->request->stringDecrypt($key, $content);
 
             return $content;
-
         } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
             return json_encode([
@@ -44,7 +46,7 @@ class ReadController extends Controller
                 ],
                 "response" => []
             ]);
-        } catch (GuzzleException $e){
+        } catch (GuzzleException $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
             return json_encode([
                 "metaData" => [

@@ -17,6 +17,7 @@ use Auth;
 use DB;
 use Bugsnag;
 use Carbon\Carbon;
+use App\Models\RawatJalan\Transaksi;
 
 class PostController extends Controller
 {
@@ -42,20 +43,44 @@ class PostController extends Controller
 					->with('status', $status);
 			}
 
-			// if (config('medify.third-party.jkn_online.on')) {
-			// 	$kasus = app(\App\Http\Controllers\Kasus\Kasus\ReadController::class)->get($nomor_kasus);
-			// 	$transaksi = $kasus->rawat_jalan_transaksi_last_attr;
-			// 	$profesi = Auth::user()->profesi;
-			// 	if ($kasus->lokasi->lokasi->departemen->id == 2 && $profesi == 1 && $transaksi && $transaksi->task_id_jkn < 5) {
-			// 		$carbon_today = Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
-			// 		$carbon_today = strtotime($carbon_today) * 1000;
-			// 		$data['kodebooking'] = $transaksi->id;
-			// 		$data['taskid'] = 5;
-			// 		$data['waktu'] = $carbon_today;
-			// 		dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 5, 'waktu' => $carbon_today]));
-			// 	}
-			// }
+			if (config('medify.third-party.jkn_online.on')) {
+				$kasus = app(\App\Http\Controllers\Kasus\Kasus\ReadController::class)->get($nomor_kasus);
+				$transaksi = $kasus->rawat_jalan_transaksi_last_attr;
+				$profesi = Auth::user()->profesi;
+				if ($kasus->lokasi->lokasi->departemen->id == 2 && $profesi == 1 && $transaksi && $transaksi->task_id_jkn < 5) {
+					$carbon_today = Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
+					$carbon_today = strtotime($carbon_today) * 1000;
+					//$data['kodebooking'] = $transaksi->id;
+					//$data['taskid'] = 5;
+					//$data['waktu'] = $carbon_today;
+					//dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 5, 'waktu' => $carbon_today]));
+					$data = [
+						'kodebooking' => $transaksi->id,
+						'taskid' => 5,
+						'waktu' => $carbon_today
+					];
+					$returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
+					$returned = json_decode($returned);
+					$metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+					if ($metadata->code != "200") {
+						$data_log['kodebooking'] = $transaksi->id;
+						$data_log['response'] = json_encode($returned);
 
+						app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+					} else {
+						$data_log['kodebooking'] = $transaksi->id;
+						$data_log['task_id'] = 5;
+						$data_log['waktu'] = $carbon_today;
+						$data_log['response'] = json_encode($returned);
+						$data_log['request'] = $data;
+
+						app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+					}
+					$transaksi = Transaksi::find($transaksi->id);
+					$transaksi->task_id_jkn = 5;
+					$transaksi->save();
+				}
+			}
 			$status = 1;
 			$message = 'CPPT baru berhasil dibuat!';
 			$title = 'Berhasil!';
