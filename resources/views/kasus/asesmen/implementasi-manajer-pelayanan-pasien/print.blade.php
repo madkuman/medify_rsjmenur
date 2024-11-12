@@ -164,7 +164,8 @@
         @foreach ($json->data as $index => $item)
             <tr>
                 <td>{{ \Carbon\Carbon::parse($item->tgl)->format('d/m/Y') }} {{ $item->jam }}</td>
-                <td>{{ $item->implementasi }}</td>
+                {{-- <td>{{ $item->implementasi }}</td> --}}
+                <td @if (empty($item->implementasi)) style="padding-top: 50px" @endif>{!! nl2br($item->implementasi) !!}</td>
                 <td @if (empty($item->evaluasi)) style="padding-top: 50px" @endif>{!! nl2br($item->evaluasi) !!}</td>
                 <td @if (empty($item->paraf)) style="padding-top: 50px" @endif>{!! nl2br($item->paraf) !!}</td>
             </tr>
