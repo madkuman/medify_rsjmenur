@@ -82,7 +82,32 @@ class PostController extends Controller
                         $data['kodebooking'] = $transaksi->id;
                         $data['taskid'] = 99;
                         $data['waktu'] = $carbon_today;
-                        dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 99, 'waktu' => $carbon_today]));
+                        // dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 99, 'waktu' => $carbon_today]));
+                        $data = [
+                            'kodebooking' => $transaksi->id,
+                            'taskid' => 99,
+                            'waktu' => $carbon_today
+                        ];
+                        $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
+                        $returned = json_decode($returned);
+                        $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+                        if ($metadata->code != "200") {
+                            $data_log['kodebooking'] = $transaksi->id;
+                            $data_log['response'] = json_encode($returned);
+
+                            app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+                        } else {
+                            $data_log['kodebooking'] = $transaksi->id;
+                            $data_log['task_id'] = 99;
+                            $data_log['waktu'] = $carbon_today;
+                            $data_log['response'] = json_encode($returned);
+                            $data_log['request'] = $data;
+
+                            app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+                        }
+                        $transaksi = Transaksi::find($transaksi->id);
+                        $transaksi->task_id_jkn = 99;
+                        $transaksi->save();
                     }
                 }
                 $transaksi->task_id_jkn = 99;

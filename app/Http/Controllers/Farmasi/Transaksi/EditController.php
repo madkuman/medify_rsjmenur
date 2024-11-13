@@ -743,12 +743,12 @@ class EditController extends Controller
                 $returned = json_decode($returned);
                 $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
                 if ($metadata->code != "200") {
-                    $data_log['kodebooking'] = $transaksi->id;
+                    $data_log['kodebooking'] = $transaksi_rajal->id;
                     $data_log['response'] = json_encode($returned);
 
                     app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
                 } else {
-                    $data_log['kodebooking'] = $transaksi->id;
+                    $data_log['kodebooking'] = $transaksi_rajal->id;
                     $data_log['task_id'] = 7;
                     $data_log['waktu'] = $carbon_today;
                     $data_log['response'] = json_encode($returned);
@@ -756,9 +756,9 @@ class EditController extends Controller
 
                     app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
                 }
-                $transaksi = Transaksi::find($transaksi->id);
-                $transaksi->task_id_jkn = 7;
-                $transaksi->save();
+                $transaksi_rajal = Transaksi::find($transaksi->id);
+                $transaksi_rajal->task_id_jkn = 7;
+                $transaksi_rajal->save();
             }
         }
 
