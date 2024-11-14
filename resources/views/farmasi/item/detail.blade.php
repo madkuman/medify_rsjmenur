@@ -78,6 +78,8 @@
                                 <h5>{{ round($item->stok, 1) }}</h5>
                                 <label>SATUAN STOCK</label>
                                 <h5>{{ $item->item_detail->satuan }}</h5>
+                                <label>KODE KFA</label>
+                                <h5>{{ $item->item_detail->kode_kfa }}</h5>
                             </div>
                             <div class="col">
                                 <label>BATASAN STOCK</label>
@@ -208,29 +210,83 @@
                     <h3 class="block-title">Mapping KFA</h3>
                 </div>
                 <div class="block-content">
+                    <div class="row">
+                        <div class="col">
+                            {{-- <form method="POST" action="">
+                                <div class="form-group">
+                                    {{ csrf_field() }}
+                                    <input type="text" class="form-control" id="search-obat" placeholder="Cari obat...">
+                                </div> --}}
+                            <div class="form-group">
+                                <select class="js-select2 form-control" id="obat-dropdown" name="kode_kfa">
+                                    <option value="">-- Pilih Obat --</option>
+                                </select>
+                                <button id="simpan-kode-kfa" class="btn btn-primary mt-3">Simpan</button>
+                            </div>
+                            {{-- </form> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
 
+    {{-- <div class="row row-deck">
+        <div class="col-12">
+            <div class="block">
+                <div class="block-header">
+                    <h3 class="block-title">Mapping KFA</h3>
+                </div>
+                <div class="block-content">
                     <div class="form-group row">
                         <div class="col-lg-4">
-                            <input type="text" id="search-keyword" class="form-control" placeholder="Masukkan nama obat">
+                            <input type="text" id="search-keyword" class="form-control"
+                                placeholder="Masukkan nama obat">
                         </div>
                         <div class="col-lg-4">
                             <button class="btn btn-primary" id="search-button">
                                 Cari</button>
                         </div>
                     </div>
-                    <table class="table table-hover table-vcenter " id="detail_kfa">
+                    <table class="table table-hover table-vcenter " id="search-results">
                         <thead>
                             <tr>
                                 <th>Kode KFA</th>
-                                <th>Name</th>
-                                <th>Kode KFA 92</th>
-                                <th>Kode KFA 91</th>
-                                <th>Aksi</th>
+                                <th>Nama Obat</th>
+                                <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div> --}}
+
+    <!-- Modal Detail Obat -->
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailModalLabel">Detail Obat</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Nama:</strong> <span id="detail-nama"></span></p>
+                    <p><strong>Kode KFA:</strong> <span id="detail-kode"></span></p>
+                    <p><strong>NIE:</strong> <span id="detail-nie"></span></p>
+                    <p><strong>Nama Dagang:</strong> <span id="detail-nama-dagang"></span></p>
+                    <p><strong>Manufacturer:</strong> <span id="detail-manufacturer"></span></p>
+                    <p><strong>Registrar:</strong> <span id="detail-registrar"></span></p>
+                    <!-- Tambahkan detail lain sesuai kebutuhan -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -710,7 +766,9 @@
         });
     </script>
 
-    <script>
+
+
+    {{-- <script>
         $(document).ready(function() {
             // Event ketika tombol "Cari" diklik
             $('#search-button').on('click', function(e) {
@@ -733,9 +791,9 @@
                         $.each(data.items.data, function(index, item) {
                             let row = `
                             <tr>
-                                <td>${item.kode_kfa}</td>
+                                <td>${item.kfa_code}</td>
                                 <td>${item.name}</td>
-                                <td><button class="btn btn-info btn-sm detail-button" data-kode="${item.kode_kfa}">Detail</button></td>
+                                <td><button class="btn btn-info btn-sm detail-button" data-kode="${item.kfa_code}">Detail</button></td>
                             </tr>`;
                             $('#search-results tbody').append(row);
                         });
@@ -748,17 +806,20 @@
 
             // Event ketika tombol "Detail" diklik
             $(document).on('click', '.detail-button', function() {
-                let kodeObat = $(this).data('kode');
+                let kodeObat = $(this).data('kfa_code');
 
                 // AJAX request untuk mengambil detail obat
                 $.ajax({
-                    url: `/obat/detail/${kodeObat}`,
+                    url: "/satusehat/kfa/search/detail/{kodeObat}",
                     type: "GET",
                     success: function(data) {
                         // Isi data detail obat di modal
-                        $('#detail-nama').text(data.nama);
-                        $('#detail-kategori').text(data.kategori);
-                        $('#detail-dosis').text(data.dosis);
+                        $('#detail-nama').text(data.result.name);
+                        $('#detail-kode').text(data.result.kode_kfa);
+                        $('#detail-nie').text(data.result.nie);
+                        $('#detail-nama-dagang').text(data.result.nama_dagang);
+                        $('#detail-manufacturer').text(data.result.manufacturer);
+                        $('#detail-registrar').text(data.result.registrar);
                         // Tambahkan field lain jika diperlukan
 
                         // Tampilkan modal
@@ -768,6 +829,98 @@
                         alert("Gagal mengambil detail produk. Silakan coba lagi.");
                     }
                 });
+            });
+        });
+    </script> --}}
+
+    {{-- <script>
+        $(document).ready(function() {
+            $('#obat-dropdown').on('keyup', function() {
+                let keyword = $(this).val();
+
+                if (keyword.length >= 3) { // Trigger saat ada minimal 3 karakter
+                    $.ajax({
+                        url: "{{ route('kfa.search') }}",
+                        type: "GET",
+                        data: {
+                            q: keyword
+                        },
+                        success: function(data) {
+                            $('#obat-dropdown').empty(); // Kosongkan opsi sebelumnya
+                            $('#obat-dropdown').append(
+                                '<option value="">-- Pilih Obat --</option>');
+
+                            // Menambahkan opsi hasil pencarian ke dropdown
+                            $.each(data['items']['data'], function(index, item) {
+                                $('#obat-dropdown').append(
+                                    `<option value="${item.kfa_code}"> ${item.kfa_code} | ${item.name}</option>`
+                                );
+                            });
+                        },
+                        error: function() {
+                            alert("Gagal mengambil data. Silakan coba lagi.");
+                        }
+                    });
+                }
+            });
+        });
+    </script> --}}
+
+    <script>
+        $(document).ready(function() {
+            // Inisialisasi Select2
+            $('#obat-dropdown').select2({
+                placeholder: "-- Pilih Obat --",
+                allowClear: true,
+                minimumInputLength: 3, // Mulai pencarian saat minimal 3 karakter
+                ajax: {
+                    url: "{{ route('kfa.search') }}",
+                    dataType: 'json',
+                    delay: 250, // Penundaan 250ms untuk mengurangi request saat mengetik
+                    data: function(params) {
+                        return {
+                            q: params.term // Mengirimkan input pencarian
+                        };
+                    },
+                    processResults: function(data) {
+                        // Map data hasil dari API ke format Select2
+                        return {
+                            results: $.map(data['items']['data'], function(item) {
+                                return {
+                                    id: item.kfa_code,
+                                    text: item.kfa_code + " | " + item.name
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                }
+            });
+
+            // Event listener untuk tombol "Simpan"
+            $('#simpan-kode-kfa').on('click', function() {
+                // Ambil nilai kfa_code yang dipilih dari Select2
+                let selectedKfaCode = $('#obat-dropdown').val();
+
+                if (selectedKfaCode) {
+                    $.ajax({
+                        url: "{{ route('kfa.update') }}",
+                        type: "POST",
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            kfa_code: selectedKfaCode,
+                            item_template_id: '{{ $item->item_detail->id }}'
+                        },
+                        success: function(response) {
+                            alert(response.message); // Menampilkan pesan sukses
+                        },
+                        error: function() {
+                            alert("Gagal menyimpan kode KFA. Silakan coba lagi.");
+                        }
+                    });
+                } else {
+                    alert("Pilih kode KFA terlebih dahulu.");
+                }
             });
         });
     </script>

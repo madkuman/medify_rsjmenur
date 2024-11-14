@@ -14,7 +14,6 @@ class ReadController extends Controller
 
         $client = new Client();
         $headers = app(\App\Http\Controllers\ThirdParty\SatuSehat\RequestController::class)->getHeader();
-        // dd($headers);
         $response = $client->get(
             'https://api-satusehat.kemkes.go.id//kfa-v2/products/all',
             [
@@ -31,18 +30,22 @@ class ReadController extends Controller
         return response()->json($products);
     }
 
-    public function getProductDetail($kode)
+    public function getProductDetail($keyword)
     {
-        $token = app('app\Http\Controllers\ThirdParty\SatuSehat\Auth\PostController')->getToken();
-
-        $client = new \GuzzleHttp\Client();
-        $response = $client->get("https://api-satusehat.kemkes.go.id/kfa-v2/products/$kode", [
-            'headers' => [
-                'Authorization' => "Bearer $token",
-            ],
+        // dd('s');
+        $client = new Client();
+        $headers = app(\App\Http\Controllers\ThirdParty\SatuSehat\RequestController::class)->getHeader();
+        $response = $client->get("https://api-satusehat.kemkes.go.id//kfa-v2/products?identifier=kfa&code=$keyword", [
+            'headers' => $headers,
+            'query' => [
+                'identifier' => 'kfa',
+                'code' => $keyword,
+            ]
         ]);
 
         $productDetail = json_decode($response->getBody()->getContents(), true);
-        return response()->json($productDetail);
+        // $productDetail = json_encode($productDetail);
+        // return response()->json($productDetail);
+        return (json_encode($productDetail));
     }
 }
