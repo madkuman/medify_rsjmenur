@@ -30,7 +30,7 @@ $('#selectTtdTerapisGigiDanMulut1').select2({
             }
             return {
                 results: $.map(results, function(obj) {
-                    return { id: obj.id, text: obj.name };
+                    return { id: obj.id, text: obj.name, ttd: obj.ttd };
                 })
             };
         },
@@ -60,7 +60,7 @@ $('#selectTtdTerapisGigiDanMulut2').select2({
             }
             return {
                 results: $.map(results, function(obj) {
-                    return { id: obj.id, text: obj.name };
+                    return { id: obj.id, text: obj.name, ttd: obj.ttd };
                 })
             };
         },

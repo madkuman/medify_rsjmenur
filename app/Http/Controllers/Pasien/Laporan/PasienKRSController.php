@@ -53,6 +53,9 @@ class PasienKRSController extends Controller
                     'krs_at' => Carbon::createFromFormat('Y-m-d H:i:s', $transaksi->kasus->krs_at)->toDateString(),
                     'krs_status' => $transaksi->kasus->status_krs->nama,
                     'krs_alasan' => $transaksi->kasus->alasan_krs->nama,
+                    'phone' => $transaksi->kasus->pasien->phone,
+                    'wali_phone' => $transaksi->kasus->pasien->wali->phone,
+                    'wali_name' => $transaksi->kasus->pasien->wali->name,
                 ];
             }
         }
@@ -91,6 +94,9 @@ class PasienKRSController extends Controller
                     'krs_at' => Carbon::createFromFormat('Y-m-d H:i:s', $transaksi->kasus->krs_at)->toDateString(),
                     'krs_status' => $transaksi->kasus->status_krs->nama,
                     'krs_alasan' => $transaksi->kasus->alasan_krs->nama,
+                    'phone' => $transaksi->kasus->pasien->phone,
+                    'wali_phone' => $transaksi->kasus->pasien->wali->phone,
+                    'wali_name' => $transaksi->kasus->pasien->wali->name,
                 ];
             }
         }
@@ -129,6 +135,9 @@ class PasienKRSController extends Controller
                     'krs_at' => Carbon::createFromFormat('Y-m-d H:i:s', $transaksi->kasus->krs_at)->toDateString(),
                     'krs_status' => $transaksi->kasus->status_krs->nama,
                     'krs_alasan' => $transaksi->kasus->alasan_krs->nama,
+                    'phone' => $transaksi->kasus->pasien->phone,
+                    'wali_phone' => $transaksi->kasus->pasien->wali->phone,
+                    'wali_name' => $transaksi->kasus->pasien->wali->name,
                 ];
             }
         }
@@ -166,6 +175,9 @@ class PasienKRSController extends Controller
                     'krs_at' => Carbon::createFromFormat('Y-m-d H:i:s', $kasus->krs_at)->toDateString(),
                     'krs_status' => $kasus->status_krs->nama,
                     'krs_alasan' => $kasus->alasan_krs->nama,
+                    'phone' => $kasus->pasien->phone,
+                    'wali_phone' => $kasus->pasien->wali->phone,
+                    'wali_name' => $kasus->pasien->wali->name,
                 ];
             }
         }

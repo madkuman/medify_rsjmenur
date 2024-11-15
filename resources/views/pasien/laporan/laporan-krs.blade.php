@@ -20,6 +20,9 @@
             <th>Nama Pasien</th>
             <th>No. RM</th>
             <th>Alamat</th>
+            <th>No HP Pasien</th>
+            <th>Nama Keluarga</th>
+            <th>No HP Keluarga</th>
             <th>Jenis Bayar</th>
             <th>Kelas Bayar</th>
             <th>No. Asuransi</th>
@@ -42,6 +45,9 @@
             <td>{{$pasien['nama']}}</td>
             <td>{{$pasien['no_rm']}}</td>
             <td>{{$pasien['alamat']}}</td>
+            <td>{{$pasien['phone']}}</td>
+            <td>{{$pasien['wali_name']}}</td>
+            <td>{{$pasien['wali_phone']}}</td>
             <td>{{$pasien['jenis_bayar']}}</td>
             <td>{{$pasien['kelas_bayar']}}</td>
             <td>{{$pasien['no_asuransi']}}</td>

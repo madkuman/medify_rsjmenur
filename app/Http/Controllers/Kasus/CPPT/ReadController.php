@@ -385,7 +385,10 @@ class ReadController extends Controller
 
 		$text[4] = 'Ambulasi : <br>Status General : <br>Status Musculoskeletal : <br>ROM : <br>MMT : <br>Status Neurologis : <br>Status Localis : <br>Special Test : <br>Uji Fungsi : <br>';
 		$title[4] = 'Objective Rehabilitasi Medik';
-
+		
+		$text[5] = 'Sondasi : <br>Perkusi : <br>Drak : <br>Termis : <br>Socket : <br>Warna Gusi : <br>Oedema : <br>';
+		$title[5] = 'Objective Gigi';
+		
 		$suggest = [];
 		foreach ($text as $key => $item_text) {
 			$temp = new \stdClass();

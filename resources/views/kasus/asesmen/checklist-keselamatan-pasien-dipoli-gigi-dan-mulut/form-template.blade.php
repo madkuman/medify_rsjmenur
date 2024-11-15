@@ -535,7 +535,7 @@
 <table style="width:100%;">
     <tr>
         <td style="width: 50%" class=" position-relative text-center" colspan="1" rowspan="1">
-            <div>Terapis Gigi dan Mulut I</div>
+            <div>Dokter Gigi Spesialis / Dokter Gigi</div>
             @php $hasil_data_temp = $hasil_data->{'terapis_gigi_dan_mulut_1'} ?? '' @endphp
             <span>
                 <select class="js-select2 form-control" id="selectTtdTerapisGigiDanMulut1" name="selectTtdTerapisGigiDanMulut1">
@@ -550,7 +550,7 @@
             </span>
         </td>
         <td style="width: 50%" class=" position-relative text-center" colspan="1" rowspan="1">
-            <div>Terapis Gigi dan Mulut II</div>
+            <div>Terapis Gigi dan Mulut</div>
             @php $hasil_data_temp = $hasil_data->{'terapis_gigi_dan_mulut_2'} ?? '' @endphp
             <span>
                 <select class="js-select2 form-control" id="selectTtdTerapisGigiDanMulut2" name="selectTtdTerapisGigiDanMulut2">
@@ -570,7 +570,7 @@
 <table style="width:100%;">
     <tr>
         <td style="width: 33%;" class=" position-relative text-center" colspan="1" rowspan="1">
-            <div>Dokter Gigi</div>
+            <div>Dokter DPJP</div>
             @if (($kasus->dpjp ?? null) != null)
                 @if (file_exists(((($kasus->dpjp->user->ttd ?? '') ?? ''))))
                 <div>
@@ -587,7 +587,7 @@
             @endif
         </td>
         <td style="width: 33%" class=" position-relative text-center" colspan="1" rowspan="1">
-            <div>Terapis Gigi dan Mulut I</div>
+            <div>Dokter Gigi Spesialis / Dokter Gigi</div>
             @if (($hasil_data->{'terapis_gigi_dan_mulut_1'} ?? '') != '')
                 @if (file_exists(((($hasil_data->{'ttd_terapis_gigi_dan_mulut_1'} ?? '') ?? ''))))
                 <div>
@@ -604,7 +604,7 @@
             @endif
         </td>
         <td class=" position-relative text-center" colspan="1" rowspan="1">
-            <div>Terapis Gigi dan Mulut II</div>
+            <div>Terapis Gigi dan Mulut</div>
             @if (($hasil_data->{'terapis_gigi_dan_mulut_2'} ?? '') != '')
                 @if (file_exists(((($hasil_data->{'ttd_terapis_gigi_dan_mulut_2'} ?? '') ?? ''))))
                 <div>
