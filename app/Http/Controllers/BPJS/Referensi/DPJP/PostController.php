@@ -8,7 +8,8 @@ use GuzzleHttp\Client;
 
 class PostController extends Controller
 {
-    public function search(Request $request){
+    public function search(Request $request)
+    {
         try {
 
             $pelayanan = $request->pelayanan;

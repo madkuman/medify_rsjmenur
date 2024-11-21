@@ -13,24 +13,24 @@ class PostController extends Controller
 	public function delete(Request $request, $no_sep)
 	{
 		$data = [
-    		'request' => [
-	    		't_sep' => [
-    				'noSep' => $no_sep,
-    				'user' => Auth::user()->name
+			'request' => [
+				't_sep' => [
+					'noSep' => $no_sep,
+					'user' => Auth::user()->name
 				],
 			],
 		];
 
-		if(config('app.bpjs_enable', false)){
+		if (config('app.bpjs_enable', false)) {
 			$res['result'] =  app('App\Http\Controllers\BPJS\API\Sep\DeleteController')->delete($data);
 			$res['bpjs_enable'] = true;
 			$resp = json_decode($res['result']);
-			if($resp->metaData->code == 200){
+			if ($resp->metaData->code == 200) {
 				app('App\Http\Controllers\BPJS\SEP\DeleteController')->delete($no_sep);
 			}
-		}else{
+		} else {
 			$res['bpjs_enable'] = false;
-			$res['result'] = 'Nomor SEP tidak dihapus - '. ($no_sep+1) .' (Tidak terkoneksi BPJS)';
+			$res['result'] = 'Nomor SEP tidak dihapus - ' . ($no_sep + 1) . ' (Tidak terkoneksi BPJS)';
 		}
 		$res['data'] = $data;
 		return $res;
@@ -41,7 +41,7 @@ class PostController extends Controller
 		$tgl_sep      = $this->tanggal(($request->tanggal_sep ?? ''));
 		$tgl_rujukan  = $this->tanggal(($request->bpjs_tgl_rujukan ?? ''));
 		$tgl_kejadian = $this->tanggal(($request->bpjs_tgl_kejadian ?? ''));
-		
+
 		$param = [
 			'no_bpjs'             => $request->bpjs_nomor_kartu,
 			'tgl_sep'             => $tgl_sep,
@@ -69,7 +69,7 @@ class PostController extends Controller
 			'prov_laka'           => $request->bpjs_prov_laka,
 			'kab_laka'            => $request->bpjs_kab_laka,
 			'kc_laka'             => $request->bpjs_kc_laka,
-			'no_skdp'             => $request->bpjs_skdp == "null" ? "-": $request->bpjs_skdp,
+			'no_skdp'             => $request->bpjs_skdp == "null" ? "-" : $request->bpjs_skdp,
 			'kode_dpjp'           => $request->dpjp,
 			'no_telp'             => auth()->user()->phone ?? '081262227177',
 			'user'                => auth()->user()->name ?? 'SuperAdmin',
@@ -81,19 +81,20 @@ class PostController extends Controller
 			'poli_tujuan_nama'	  => $request->bpjs_poli_tujuan_nama ?? null,
 		];
 		// dd($param);
-		if(config('medify.third-party.vclaim.on_v2')){
+		if (config('medify.third-party.vclaim.on_v2')) {
 			$request->merge([
 				'tanggal_sep'       => $tgl_sep,
 				'bpjs_tgl_rujukan'  => $tgl_rujukan,
 				'bpjs_tgl_kejadian' => $tgl_kejadian,
 			]);
-			
+
 			$data = app(\App\Http\Controllers\BPJS\SEP\CreateController::class)->setVclaimSep2($request);
 			if (config('app.bpjs_enable', false)) {
 				$res['result'] =  app(\App\Http\Controllers\ThirdParty\BPJS\VClaim\SEP\CreateController::class)->createSep2($request);
 				$resp = json_decode($res['result']);
 				if ($resp->metaData->code == 200) {
 					$param['poli_tujuan_nama'] = $resp->response->sep->poli;
+					$param['kode_dpjp'] = $resp->response->sep->dpjp->kdDPJP ?? null;
 					app(\App\Http\Controllers\BPJS\SEP\CreateController::class)->create($param, $resp->response->sep->noSep);
 				}
 			} else {
@@ -101,17 +102,17 @@ class PostController extends Controller
 			}
 			$res['data'] = $data;
 			return $res;
-		}else{
+		} else {
 
 			$data = app(\App\Http\Controllers\BPJS\SEP\ReadController::class)->formatRequestCreateSEP($param);
-			if(config('app.bpjs_enable', false)){
+			if (config('app.bpjs_enable', false)) {
 				$res['result'] =  app('App\Http\Controllers\ThirdParty\BPJS\VClaim\SEP\CreateController')->create($data);
 				$resp = json_decode($res['result']);
-	
-				if($resp->metaData->code == 200){
+
+				if ($resp->metaData->code == 200) {
 					app('App\Http\Controllers\BPJS\SEP\CreateController')->create($param, $resp->response->sep->noSep);
 				}
-			}else{
+			} else {
 				$res['result'] = 'Nomor SEP tidak dibuat (Tidak terkoneksi BPJS)';
 			}
 			$res['data'] = $data;
@@ -124,9 +125,9 @@ class PostController extends Controller
 	{
 		// dd(json_encode($request->all()));
 		$sep = BPJSSEP::where('no_sep', $no_sep)->orderBy('id', 'DESC')->first();
-		$sep_same_rujuk = BPJSSEP::where("no_rujukan",$request->bpjs_no_rujukan)->orderBy('id', 'desc')->first();
+		$sep_same_rujuk = BPJSSEP::where("no_rujukan", $request->bpjs_no_rujukan)->orderBy('id', 'desc')->first();
 
-		if(isset($sep_same_rujuk)) {
+		if (isset($sep_same_rujuk)) {
 			$dpjp = $sep_same_rujuk->dpjp;
 			$skdp = $sep_same_rujuk->skdp;
 		} else {
@@ -174,29 +175,28 @@ class PostController extends Controller
 		if (config('medify.third-party.vclaim.on_v2')) {
 			// dd($request->all());
 			$data = app(\App\Http\Controllers\BPJS\SEP\ReadController::class)->formatRequestEditSEPV2($request->merge($param));
-			if(config('app.bpjs_enable', false)){
+			if (config('app.bpjs_enable', false)) {
 				$res['result'] =  app(\App\Http\Controllers\ThirdParty\BPJS\VClaim\SEP\EditController::class)->editSep2($data);
 				$resp = json_decode($res['result']);
-				if($resp->metaData->code == 200){
+				if ($resp->metaData->code == 200) {
 					app('App\Http\Controllers\BPJS\SEP\EditController')->edit($param);
 				}
-			}else{
-				$res['result'] = 'Nomor SEP tidak dibuat - '. ($no_sep+1) .' (Tidak terkoneksi BPJS)';
+			} else {
+				$res['result'] = 'Nomor SEP tidak dibuat - ' . ($no_sep + 1) . ' (Tidak terkoneksi BPJS)';
 			}
 			$res['data'] = $data;
 			return $res;
-
-		}else{
+		} else {
 			$data = app('App\Http\Controllers\BPJS\SEP\ReadController')->formatRequestEditSEP($param);
-	
-			if(config('app.bpjs_enable', false)){
+
+			if (config('app.bpjs_enable', false)) {
 				$res['result'] =  app('App\Http\Controllers\ThirdParty\BPJS\VClaim\SEP\EditController')->edit($data);
 				$resp = json_decode($res['result']);
-				if($resp->metaData->code == 200){
+				if ($resp->metaData->code == 200) {
 					app('App\Http\Controllers\BPJS\SEP\EditController')->edit($param);
 				}
-			}else{
-				$res['result'] = 'Nomor SEP tidak dibuat - '. ($no_sep+1) .' (Tidak terkoneksi BPJS)';
+			} else {
+				$res['result'] = 'Nomor SEP tidak dibuat - ' . ($no_sep + 1) . ' (Tidak terkoneksi BPJS)';
 			}
 			$res['data'] = $data;
 			return $res;
@@ -209,10 +209,10 @@ class PostController extends Controller
 		if (config('medify.third-party.vclaim.on_v2')) {
 			$tgl = explode("-", $request->tgl);
 			$sep = BPJSSEP::where('no_sep', $request->no_sep)->first();
-			
-			if(strlen($tgl[0]) >= 3){
+
+			if (strlen($tgl[0]) >= 3) {
 				$tgl = implode("-", $tgl);
-			}else{
+			} else {
 				$tgl = implode("-", array_reverse($tgl));
 			}
 
@@ -229,13 +229,13 @@ class PostController extends Controller
 			$res = app(\App\Http\Controllers\BPJS\API\Sep\PostController::class)->sepPulang($request->no_sep, $tgl);
 			$res = json_decode($res);
 
-			if($res->metaData->code == 200){
+			if ($res->metaData->code == 200) {
 				$sep->tgl_pulang = $tgl;
 				$sep->save();
 				$status = 1;
 				$message = "Data pasien BPJS KRS berhasil disimpan";
 				$title = 'Berhasil!';
-			}else{
+			} else {
 				$status = -1;
 				$message = $res->metaData->message;
 				$title = 'Gagal!';
@@ -246,27 +246,27 @@ class PostController extends Controller
 			$ppk = config('app.bpjs_ppk');
 			$tgl = explode("-", $request->tgl);
 			$sep = BPJSSEP::where('no_sep', $request->no_sep)->first();
-			if(strlen($tgl[0]) >= 3){
+			if (strlen($tgl[0]) >= 3) {
 				$tgl = implode("-", $tgl);
-			}else{
+			} else {
 				$tgl = implode("-", array_reverse($tgl));
 			}
 			$data = [
 				'medify_cons_id'		=> $cons_id,
 				'bpjs_stage'			=> config('app.bpjs_stage'),
-				'medify_secret' 		=> $secret, 
+				'medify_secret' 		=> $secret,
 				'no_sep' 				=> $request->no_sep,
 				'tgl_pulang' 			=> $tgl,
 				'user'					=> Auth::user()->id
 			];
 			$res = app('App\Http\Controllers\BPJS\API\Sep\EditController')->pulang($data);
-			if($res->metaData->code == 200){
+			if ($res->metaData->code == 200) {
 				$sep->tgl_pulang = $tgl;
 				$sep->save();
 				$status = 1;
 				$message = "Data pasien BPJS KRS berhasil disimpan";
 				$title = 'Berhasil!';
-			}else{
+			} else {
 				$status = -1;
 				$message = $res->metaData->message;
 				$title = 'Gagal!';
@@ -275,18 +275,17 @@ class PostController extends Controller
 
 
 		return back()
-		->with('message', $message)
-		->with('title',$title)
-		->with('status', $status);
-
+			->with('message', $message)
+			->with('title', $title)
+			->with('status', $status);
 	}
 
 	private function tanggal($tanggal)
 	{
-		if($tanggal != ""){
+		if ($tanggal != "") {
 			$tgl = explode("-", $tanggal);
-			if(strlen($tgl[0]) <= 2)
-				$tanggal = implode("-",array_reverse($tgl));
+			if (strlen($tgl[0]) <= 2)
+				$tanggal = implode("-", array_reverse($tgl));
 		} else {
 			$tanggal = Carbon::today()->toDateString();
 		}
@@ -294,7 +293,8 @@ class PostController extends Controller
 		return $tanggal;
 	}
 
-	public function putUpdateTanggalPulang(Request $request){
+	public function putUpdateTanggalPulang(Request $request)
+	{
 		try {
 			// "noSep": "{nosep}",
 			// "statusPulang":"{1:Atas Persetujuan Dokter, 3:Atas Permintaan Sendiri, 4:Meninggal, 5:Lain-lain}",
@@ -306,19 +306,19 @@ class PostController extends Controller
 			$data = [
 				'request' => [
 					't_sep' => [
-						"noSep"			   => $request->no_sep,// "0301R0110121V000829",
-                        "statusPulang"     => $request->status_pulang,//"4",
-                        "noSuratMeninggal" => $request->no_surat_meninggal,//"325/K/KMT/X/2021",
-                        "tglMeninggal"     => $request->tanggal_meninggal,//"2021-02-10",
-                        "tglPulang"        => $request->tanggal_pulang,//"2021-02-14",
-                        "noLPManual"       => $request->no_kll,//"",
-                        "user"             => auth()->user()->name ?? 'SuperAdmin',//"coba"
+						"noSep"			   => $request->no_sep, // "0301R0110121V000829",
+						"statusPulang"     => $request->status_pulang, //"4",
+						"noSuratMeninggal" => $request->no_surat_meninggal, //"325/K/KMT/X/2021",
+						"tglMeninggal"     => $request->tanggal_meninggal, //"2021-02-10",
+						"tglPulang"        => $request->tanggal_pulang, //"2021-02-14",
+						"noLPManual"       => $request->no_kll, //"",
+						"user"             => auth()->user()->name ?? 'SuperAdmin', //"coba"
 					],
 				],
 			];
 
 			$header_array = $this->getInitThirdPartyBPJS()->getHeader();
-			
+
 			$timestamp = $header_array['X-timestamp'];
 			$client = new Client(['headers' => $header_array]);
 			$url = $this->getInitThirdPartyBPJS()->getUrl() . '/SEP/2.0/updtglplg';
@@ -336,7 +336,6 @@ class PostController extends Controller
 			} else {
 				return $rujukan;
 			}
-
 		} catch (\Throwable $th) {
 			return $this->bugsnag($th);
 		}

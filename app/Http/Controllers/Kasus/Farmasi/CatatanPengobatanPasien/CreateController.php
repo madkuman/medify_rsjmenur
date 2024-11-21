@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class CreateController extends Controller
 {
-	public function create($data,$kasus_id)
+	public function create($data, $kasus_id)
 	{
 		$obat = new CatatanPengobatanPasien;
 		$obat->obat_id = $data->obat_id;
@@ -23,7 +23,11 @@ class CreateController extends Controller
 		$obat->created_by = Auth::user()->id;
 		$obat->cb_segera_diberikan 	  = $data->cb_segera_diberikan ?? null;
 		$obat->cb_terlambat_diberikan = $data->cb_terlambat_diberikan ?? null;
-		$obat->cb_pemberian_bebas     = $data->cb_pemberian_bebas ?? null;
+		$obat->aturan_per_jam_1     = $data->aturan_per_jam_1 ?? null;
+		$obat->aturan_per_jam_2     = $data->aturan_per_jam_2 ?? null;
+		$obat->aturan_per_jam_3     = $data->aturan_per_jam_3 ?? null;
+		$obat->aturan_per_jam_4     = $data->aturan_per_jam_4 ?? null;
+		$obat->aturan_per_jam_5     = $data->aturan_per_jam_5 ?? null;
 		$obat->save();
 
 		return $obat;
@@ -48,13 +52,13 @@ class CreateController extends Controller
 			}
 
 			$catatan_pengobatan_pasien = CatatanPengobatanPasien::where('kasus_id', $transaksi->kasus_id)->where(function ($query) use ($resep_detail, $aturan, $rute) {
-					if (!$resep_detail->tipe) {
-						$query->where('obat_id', $resep_detail->obat_detail->item_template_id);
-					}
-					$query->where('nama_obat', $resep_detail->nama_obat);
-					$query->where('aturan_pemakaian', $aturan);
-					$query->where('rute', $rute);
-				})
+				if (!$resep_detail->tipe) {
+					$query->where('obat_id', $resep_detail->obat_detail->item_template_id);
+				}
+				$query->where('nama_obat', $resep_detail->nama_obat);
+				$query->where('aturan_pemakaian', $aturan);
+				$query->where('rute', $rute);
+			})
 				->first();
 			if ($catatan_pengobatan_pasien == null) {
 				$catatan_pengobatan_pasien = new CatatanPengobatanPasien;

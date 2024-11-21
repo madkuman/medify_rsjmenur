@@ -11,22 +11,22 @@ use DOMPDF;
 class ViewController extends Controller
 {
     public function index(Request $request, $nomor_kasus)
-    {    
-		$kasus = Kasus::with('pasien')->where('nomor_kasus',$nomor_kasus)->first();
+    {
+        $kasus = Kasus::with('pasien')->where('nomor_kasus', $nomor_kasus)->first();
 
         $pemantauan_terapi = AlatBantu::with(['creator'])->where('kasus_id', $kasus->id)->where('type', 'Screening Pemantauan Terapi Obat Pasien')->get();
         $data['pemantauan_terapi'] = $pemantauan_terapi;
 
-		$data['kasus'] = $kasus;
-		$data['sidebar_active'] = 'farmasi';
-		$data['active_nav'] = 'screening-pemantauan-terapi-obat-pasien';
+        $data['kasus'] = $kasus;
+        $data['sidebar_active'] = 'farmasi';
+        $data['active_nav'] = 'screening-pemantauan-terapi-obat-pasien';
 
-		return view('kasus.farmasi.screening-pemantauan-terapi-obat-pasien',$data);
+        return view('kasus.farmasi.screening-pemantauan-terapi-obat-pasien', $data);
     }
 
     public function print($nomor_kasus)
     {
-        $kasus = Kasus::with('pasien')->where('nomor_kasus',$nomor_kasus)->first();
+        $kasus = Kasus::with('pasien')->where('nomor_kasus', $nomor_kasus)->first();
         $data['kasus'] = $kasus;
 
         $pemantauan_terapi = AlatBantu::with(['creator'])->where('kasus_id', $kasus->id)->where('type', 'Screening Pemantauan Terapi Obat Pasien')->get();

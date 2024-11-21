@@ -30,12 +30,12 @@ class CreateController extends Controller
 		$farmasi = Farmasi::find($transaksi->farmasi_id);
 
 		$recipe = new Resep;
-		$recipe->pasien_id = $transaksi->pasien_id;//$request->input('pasien');
-		if(is_null($transaksi->kasus_id)) $recipe->tipe = $request->tipe;
-		else if($transaksi->ori_detail) $recipe->kasus_resep_id = is_null($request->input('resep_id')) ? $transaksi->ori_detail->kasus_resep_id : $request->input('resep_id');//$request->input('kasus');	
+		$recipe->pasien_id = $transaksi->pasien_id; //$request->input('pasien');
+		if (is_null($transaksi->kasus_id)) $recipe->tipe = $request->tipe;
+		else if ($transaksi->ori_detail) $recipe->kasus_resep_id = is_null($request->input('resep_id')) ? $transaksi->ori_detail->kasus_resep_id : $request->input('resep_id'); //$request->input('kasus');	
 		$recipe->transaksi_id = $request->transaksi_id;
 		$recipe->tipe = $request->tipe;
-		$recipe->farmasi_id = $transaksi->farmasi_id;//$request->input('farmasi'); //2
+		$recipe->farmasi_id = $transaksi->farmasi_id; //$request->input('farmasi'); //2
 		$recipe->save();
 
 		$count = Resep::whereDate('created_at', '>=', $day->copy()->startOfDay())->count();
@@ -43,7 +43,7 @@ class CreateController extends Controller
 		if (!empty($request->nomor_resep)) {
 			$recipe->nomor_resep = $request->nomor_resep;
 		} else {
-			$recipe->nomor_resep = $request->input('nomor_resep') ? $request->input('nomor_resep') : date('dmY').str_pad($count, 5, '0', STR_PAD_LEFT);
+			$recipe->nomor_resep = $request->input('nomor_resep') ? $request->input('nomor_resep') : date('dmY') . str_pad($count, 5, '0', STR_PAD_LEFT);
 		}
 		$recipe->save();
 
@@ -53,14 +53,13 @@ class CreateController extends Controller
 			$jumlah = $request->input('jumlah');
 			$satuan = $request->input('satuan');
 			$aturan = $request->input('aturan');
-			if($farmasi->perharian) {
+			if ($farmasi->perharian) {
 				$hari7 = $request->input('hari7');
 				$hari23 = $request->input('hari23');
 				$dukunganrs = $request->input('dukunganrs');
 			}
 			$mode = 0;
-		}
-		else {
+		} else {
 			$obat = $request->input('id-obat'); //[3,6,1];//
 			$nama_obat = $request->input('nama-obat'); //["Bodrex","Panadol","Ablixa"];//
 			$jumlah = $request->input('jumlah-obat'); //[5,10,5];//	
@@ -69,27 +68,21 @@ class CreateController extends Controller
 			$racikan = $request->input('racikan');
 			$mode = 1;
 		}
-		
+
 		$total = 0;
 		$i = 0;
 		$racikanDetailObat = [];
 		$racikanDetalJumlah = [];
 		$racikanDetalNama = [];
-		foreach($obat as $item)
-		{
-			if(!is_null($jumlah[$i])) 
-			{
-				if($mode) {
-							// $namaObat = $nama_obat[$i] ? $nama_obat[$i] : $racikan[$i];
-					if(!empty($request->input('kategori-obat')))
-					{
-						if($request->input('kategori-obat.'.$i.'') == "generik")
-						{
+		foreach ($obat as $item) {
+			if (!is_null($jumlah[$i])) {
+				if ($mode) {
+					// $namaObat = $nama_obat[$i] ? $nama_obat[$i] : $racikan[$i];
+					if (!empty($request->input('kategori-obat'))) {
+						if ($request->input('kategori-obat.' . $i . '') == "generik") {
 							$namaObat = $nama_obat[$i];
 							$tipe = 0;
-						}
-						else
-						{
+						} else {
 							$namaObat =  $racikan[$i];
 							$tipe = 1;
 
@@ -97,34 +90,31 @@ class CreateController extends Controller
 							$racikanDetalJumlah = json_decode($request->input('racikan-detail-jumlah')[$i]);
 							$racikanDetalNama = json_decode($request->input('racikan-detail-nama')[$i]);
 						}
-					}
-					else
-					{
+					} else {
 						$tipe = $racikan[$i] ? 1 : 0;
-						$namaObat =  $racikan[$i] ?  $racikan[$i] : $nama_obat[$i];	
+						$namaObat =  $racikan[$i] ?  $racikan[$i] : $nama_obat[$i];
 						$racikanDetailObat = [];
 						$racikanDetalJumlah = [];
 						$racikanDetalNama = [];
 					}
-					$subtotal = app('App\Http\Controllers\Farmasi\ResepDetail\CreateController')->create($item, $mode, $tipe, $jumlah[$i], $recipe->id, $recipe->farmasi_id, $racikanDetalNama,$racikanDetailObat,$racikanDetalJumlah, $satuan[$i], $aturan[$i], $namaObat);
-				}
-				else {
-					if($farmasi->perharian) $subtotal = app('App\Http\Controllers\Farmasi\ResepDetail\CreateController')->create($item, $mode, $tipe, $jumlah[$i], $recipe->id, $recipe->farmasi_id, $satuan[$i], $aturan[$i], $nama_obat, $hari7[$i], $hari23[$i], $dukunganrs[$i]);
+					$subtotal = app('App\Http\Controllers\Farmasi\ResepDetail\CreateController')->create($item, $mode, $tipe, $jumlah[$i], $recipe->id, $recipe->farmasi_id, $racikanDetalNama, $racikanDetailObat, $racikanDetalJumlah, $satuan[$i], $aturan[$i], $namaObat);
+				} else {
+					if ($farmasi->perharian) $subtotal = app('App\Http\Controllers\Farmasi\ResepDetail\CreateController')->create($item, $mode, $tipe, $jumlah[$i], $recipe->id, $recipe->farmasi_id, $satuan[$i], $aturan[$i], $nama_obat, $hari7[$i], $hari23[$i], $dukunganrs[$i]);
 					else $subtotal = app('App\Http\Controllers\Farmasi\ResepDetail\CreateController')->create($item, $mode, $tipe, $jumlah[$i], $recipe->id, $recipe->farmasi_id, $satuan[$i], $aturan[$i]);
-				} 
+				}
 
 				$total += $subtotal;
 			}
 			$i++;
 		}
 		//$recipe->slug = str_pad($recipe->id, 10, '0', STR_PAD_LEFT);
-		
-		if($farmasi->pembulatan) $recipe->jumlah_tagihan = ceil($total/1000)*1000;
+
+		if ($farmasi->pembulatan) $recipe->jumlah_tagihan = ceil($total / 1000) * 1000;
 		else $recipe->jumlah_tagihan = $total;
 		$recipe->save();
 
 		return $recipe;
-  		//return redirect('apotek/'.$apotek.'/recipe/'.$recipe->slug)->with('status', 'Transaksi baru berhasil dibuat');
+		//return redirect('apotek/'.$apotek.'/recipe/'.$recipe->slug)->with('status', 'Transaksi baru berhasil dibuat');
 	}
 
 	public function createWithRacikan(Request $request)
@@ -135,12 +125,12 @@ class CreateController extends Controller
 		$farmasi = Farmasi::find($transaksi->farmasi_id);
 
 		$recipe = new Resep;
-		$recipe->pasien_id = $transaksi->pasien_id;//$request->input('pasien');
-		if(is_null($transaksi->kasus_id)) $recipe->tipe = $request->tipe;
-		else if($transaksi->ori_detail) $recipe->kasus_resep_id = is_null($request->input('resep_id')) ? $transaksi->ori_detail->kasus_resep_id : $request->input('resep_id');//$request->input('kasus');	
+		$recipe->pasien_id = $transaksi->pasien_id; //$request->input('pasien');
+		if (is_null($transaksi->kasus_id)) $recipe->tipe = $request->tipe;
+		else if ($transaksi->ori_detail) $recipe->kasus_resep_id = is_null($request->input('resep_id')) ? $transaksi->ori_detail->kasus_resep_id : $request->input('resep_id'); //$request->input('kasus');	
 		$recipe->transaksi_id = $request->transaksi_id;
 		$recipe->tipe = $request->tipe;
-		$recipe->farmasi_id = $transaksi->farmasi_id;//$request->input('farmasi'); //2
+		$recipe->farmasi_id = $transaksi->farmasi_id; //$request->input('farmasi'); //2
 		$recipe->is_kemo = $request->is_kemo ? 1 : 0;
 		$recipe->save();
 
@@ -149,42 +139,41 @@ class CreateController extends Controller
 		if (!empty($request->nomor_resep)) {
 			$recipe->nomor_resep = $request->nomor_resep;
 		} else {
-			$recipe->nomor_resep = $request->input('nomor_resep') ? $request->input('nomor_resep') : date('dmY').str_pad($count, 5, '0', STR_PAD_LEFT);
+			$recipe->nomor_resep = $request->input('nomor_resep') ? $request->input('nomor_resep') : date('dmY') . str_pad($count, 5, '0', STR_PAD_LEFT);
 		}
 		$recipe->save();
 
 		$input = $request->input('input');
-		
+
 		$total = 0;
 		$i = 0;
-		foreach($input as $put)
-		{
+		foreach ($input as $put) {
 			$put_obj = json_decode($put);
-			if($request->is_kemo)
+			if ($request->is_kemo)
 				$subtotal = app('App\Http\Controllers\Farmasi\ResepDetail\CreateController')->createKemo($put_obj, $recipe->id);
 			else
-				$subtotal = app('App\Http\Controllers\Farmasi\ResepDetail\CreateController')->createWithRacikan($put_obj,$recipe->id);
+				$subtotal = app('App\Http\Controllers\Farmasi\ResepDetail\CreateController')->createWithRacikan($put_obj, $recipe->id);
 			$total += $subtotal;
 			$i++;
 		}
 		//$recipe->slug = str_pad($recipe->id, 10, '0', STR_PAD_LEFT);
-		
-		if($farmasi->pembulatan) $recipe->jumlah_tagihan = ceil($total/1000)*1000;
+
+		if ($farmasi->pembulatan) $recipe->jumlah_tagihan = ceil($total / 1000) * 1000;
 		else $recipe->jumlah_tagihan = $total;
 		$recipe->save();
 
 		return $recipe;
-  		//return redirect('apotek/'.$apotek.'/recipe/'.$recipe->slug)->with('status', 'Transaksi baru berhasil dibuat');
+		//return redirect('apotek/'.$apotek.'/recipe/'.$recipe->slug)->with('status', 'Transaksi baru berhasil dibuat');
 	}
 
 	public function copyResep($id)
-    {
-        $old_resep = Resep::find($id);
-        $new_resep = collect($old_resep)->except(['id','created_at','updated_at','deleted_at'])->toArray();
-        $new_resep_id = DB::connection('farmasi')->table('resep')->insertGetId($new_resep);
-        app('App\Http\Controllers\Farmasi\ResepDetail\CreateController')->copyResepDetail($old_resep->id,$new_resep_id);
-        return $new_resep_id;
-    }
+	{
+		$old_resep = Resep::find($id);
+		$new_resep = collect($old_resep)->except(['id', 'created_at', 'updated_at', 'deleted_at'])->toArray();
+		$new_resep_id = DB::connection('farmasi')->table('resep')->insertGetId($new_resep);
+		app('App\Http\Controllers\Farmasi\ResepDetail\CreateController')->copyResepDetail($old_resep->id, $new_resep_id);
+		return $new_resep_id;
+	}
 
 	public function createFromResepKasus(Request $request, $resep_kasus)
 	{
@@ -204,9 +193,9 @@ class CreateController extends Controller
 		$resep->save();
 
 		$count = Resep::whereDate('created_at', '>=', $day->copy()->startOfDay())->count();
-		$resep->nomor_resep = date('dmY').str_pad($count, 5, '0', STR_PAD_LEFT);
+		$resep->nomor_resep = date('dmY') . str_pad($count, 5, '0', STR_PAD_LEFT);
 		$resep->save();
-		
+
 		$total = 0;
 		foreach ($resep_kasus->resepDetail as $resep_detail_kasus) {
 
@@ -231,15 +220,15 @@ class CreateController extends Controller
 			$resep_detail->tpn_kemasan = $resep_detail_kasus->tpn_kemasan;
 			$resep_detail->tpn_rute_pemberian = $resep_detail_kasus->tpn_rute_pemberian;
 			$resep_detail->tpn_aturan_penggunaan = $resep_detail_kasus->tpn_aturan_penggunaan;
-            $resep_detail->dispensing_aseptik_aturan_penggunaan = $resep_detail_kasus->dispensing_aseptik_aturan_penggunaan;
-            $resep_detail->dispensing_aseptik_catatan = $resep_detail_kasus->dispensing_aseptik_catatan;
-            $resep_detail->tipe_racikan_id = $resep_detail_kasus->tipe_racikan_id;
+			$resep_detail->dispensing_aseptik_aturan_penggunaan = $resep_detail_kasus->dispensing_aseptik_aturan_penggunaan;
+			$resep_detail->dispensing_aseptik_catatan = $resep_detail_kasus->dispensing_aseptik_catatan;
+			$resep_detail->tipe_racikan_id = $resep_detail_kasus->tipe_racikan_id;
 			$resep_detail->satuan = $resep_detail_kasus->type;
 			$resep_detail->save();
 
 			if ($resep_detail_kasus->kategori == 'racikan') {
 				$racikan_total = 0;
-				foreach($resep_detail_kasus->racikan_detail as $resep_racikan_detail_kasus) {
+				foreach ($resep_detail_kasus->racikan_detail as $resep_racikan_detail_kasus) {
 					$racikanDetail = new RacikanDetail();
 					$racikanDetail->resep_detail_id = $resep_detail->id;
 					$racikanDetail->nama_obat = $resep_racikan_detail_kasus->nama_obat;
@@ -264,7 +253,7 @@ class CreateController extends Controller
 			}
 			$total += $resep_detail->subtotal;
 		}
-		if($farmasi->pembulatan) $resep->jumlah_tagihan = ceil($total/1000)*1000;
+		if ($farmasi->pembulatan) $resep->jumlah_tagihan = ceil($total / 1000) * 1000;
 		else $resep->jumlah_tagihan = $total;
 		$resep->save();
 
@@ -281,15 +270,15 @@ class CreateController extends Controller
 			return 'Transaksi sudah dikonfirmasi harap melakukan edit terlebih dahulu jika ingin melakukan perubahan';
 		}
 		$farmasi = $transaksi->owner_detail;
-		if($transaksi->kasus_id != null){
-            $kasus = $transaksi->kasus;
-            if($kasus != null){
-                $perusahaan_tipe = $kasus->pembayaran->perusahaan->type ?? null;
-                $lokasi_departemen_id = $kasus->lokasi->lokasi->lokasi_departemen_id ?? null;
-            }
-        }
-        $aturan_harga = app(\App\Http\Controllers\Farmasi\AturanHarga\ReadController::class)->filterAturan($farmasi->id, $perusahaan_tipe ?? null, $transaksi ?? null, $jenis_pasien ?? null, $lokasi_departemen_id ?? null);
-        
+		if ($transaksi->kasus_id != null) {
+			$kasus = $transaksi->kasus;
+			if ($kasus != null) {
+				$perusahaan_tipe = $kasus->pembayaran->perusahaan->type ?? null;
+				$lokasi_departemen_id = $kasus->lokasi->lokasi->lokasi_departemen_id ?? null;
+			}
+		}
+		$aturan_harga = app(\App\Http\Controllers\Farmasi\AturanHarga\ReadController::class)->filterAturan($farmasi->id, $perusahaan_tipe ?? null, $transaksi ?? null, $jenis_pasien ?? null, $lokasi_departemen_id ?? null);
+
 
 		$resep_ori = $transaksi->ori_detail;
 		$resep_final = $transaksi->final_detail;
@@ -448,9 +437,9 @@ class CreateController extends Controller
 				$resep_detail->roman = app('App\Http\Controllers\Functions\DateFormatter')->numberToRoman((int) ceil($resep_detail->jumlah));
 				$resep_detail->save();
 
-				if(isset($resep_detail->detail_asal_id)){
+				if (isset($resep_detail->detail_asal_id)) {
 					$resep_asal = ResepDetail::find($resep_detail->detail_asal_id);
-					if(isset($resep_asal)){
+					if (isset($resep_asal)) {
 						$resep_asal->jumlah_diambil += ($resep_detail->jumlah - $resep_detail_ori->jumlah);
 						$resep_asal->jumlah = $resep_asal->jumlah_awal - $resep_asal->jumlah_diambil;
 						$resep_asal->save();

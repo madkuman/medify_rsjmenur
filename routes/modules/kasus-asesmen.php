@@ -287,6 +287,16 @@ Route::put("/asesmen/general-consent/form/edit", "Kasus\Asesmen\GeneralConsent\E
 Route::post("/asesmen/general-consent/delete", "Kasus\Asesmen\GeneralConsent\DeleteController@delete");
 Route::post('/asesmen/general-consent/add-ttd', 'Kasus\Asesmen\GeneralConsent\PostController@addTTD');
 
+Route::get("/asesmen/general-consent-for-treatment", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@index");
+Route::get("/asesmen/general-consent-for-treatment/single", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@single");
+Route::get("/asesmen/general-consent-for-treatment/form", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@create");
+Route::get("/asesmen/general-consent-for-treatment/form/edit", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@edit");
+Route::get("/asesmen/general-consent-for-treatment/print", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@print");
+Route::post("/asesmen/general-consent-for-treatment/form/create", "Kasus\Asesmen\GeneralConsentForTreatment\CreateController@create");
+Route::put("/asesmen/general-consent-for-treatment/form/edit", "Kasus\Asesmen\GeneralConsentForTreatment\EditController@edit");
+Route::post("/asesmen/general-consent-for-treatment/delete", "Kasus\Asesmen\GeneralConsentForTreatment\DeleteController@delete");
+Route::post('/asesmen/general-consent-for-treatment/add-ttd', 'Kasus\Asesmen\GeneralConsentForTreatment\PostController@addTTD');
+
 Route::get("/asesmen/surat-pernyataan-kesanggupan-pembiayaan/", "Kasus\Asesmen\SuratPernyataanKesanggupanPembiayaan\ViewController@index");
 Route::post("/asesmen/surat-pernyataan-kesanggupan-pembiayaan/create", "Kasus\Asesmen\SuratPernyataanKesanggupanPembiayaan\PostController@create");
 Route::post("/asesmen/surat-pernyataan-kesanggupan-pembiayaan/delete", "Kasus\Asesmen\SuratPernyataanKesanggupanPembiayaan\PostController@delete");

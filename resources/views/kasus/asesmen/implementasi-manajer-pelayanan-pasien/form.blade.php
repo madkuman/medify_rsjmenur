@@ -148,14 +148,15 @@
                     </div>
                 </td>
                 <td>
-                    {{ $item }}
-                    <input name="data[{{ $index }}][implementasi]" type="hidden" value="{{ $item }}" class="data-implementasi">
+                    {{-- {{ $item }}
+                    <input name="data[{{ $index }}][implementasi]" type="hidden" value="{{ $item }}" class="data-implementasi"> --}}
+                    <textarea name="data[{{ $index }}][implementasi]" class="form-control data-implementasi"></textarea>
                 </td>
                 <td>
-                    <textarea name="data[{{ $index }}][evaluasi]" class="form-control data-evaluasi" ></textarea>
+                    <textarea name="data[{{ $index }}][evaluasi]" class="form-control data-evaluasi"></textarea>
                 </td>
                 <td>
-                    <textarea name="data[{{ $index }}][paraf]" class="form-control data-paraf" ></textarea>
+                    <textarea name="data[{{ $index }}][paraf]" class="form-control data-paraf"></textarea>
                 </td>
             </tr>
         @endforeach

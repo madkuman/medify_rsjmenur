@@ -6,7 +6,7 @@
 </div>
 
 <script type="text/javascript">
-  // Notice how this gets configured before we load Font Awesome
+    // Notice how this gets configured before we load Font Awesome
   window.FontAwesomeConfig = { autoReplaceSvg: false }
 </script>
 <script src="{{asset('assets/js/core/jquery.min.js')}}"></script>
@@ -112,7 +112,9 @@
 <script src="{{asset('assets/js/moment-with-locales.min.js')}}"></script>
 <script src="{{asset('assets/js/plugins/combodate/combodate.js')}}"></script>
 <script src="{{asset('assets/js/plugins/bootstrap-datepaginator.js')}}"></script>
-<script type="text/javascript">$.fn.poshytip={defaults:null};</script>
+<script type="text/javascript">
+    $.fn.poshytip={defaults:null};
+</script>
 <script src="{{asset('assets/js/jquery-editable-poshytip.min.js')}}"></script>
 <script src="{{asset('assets/js/typeahead.bundle.min.js')}}"></script>
 <script src="{{asset('assets/js/numeral.min.js')}}"></script>
@@ -219,7 +221,6 @@
 </script>
 
 <script type="text/javascript">
-
     const getCircularReplacer = () => {
       const seen = new WeakSet();
       return (key, value) => {
@@ -633,3 +634,5 @@
 @yield('js')
 
 @yield('angular')
+
+@stack('js')

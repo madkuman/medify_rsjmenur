@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\ThirdParty\BPJS;
+namespace App\Http\Controllers\ThirdParty\BPJS\ICare;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,7 +18,6 @@ class RequestController extends Controller
         $cons_id = config('app.bpjs_cons_id');
         $secret = config('app.bpjs_secret');
         $user_key = config('app.bpjs_user_key');
-        // dd($cons_id, $secret);
         // Computes the timestamp
         $timestamp = strval(Carbon::now()->setTimezone('UTC')->timestamp);
         date_default_timezone_set('Asia/Jakarta');
@@ -37,29 +36,16 @@ class RequestController extends Controller
         return $header_array;
     }
 
-    public function getUrl()
+    public function getIcareUrl()
     {
         if (strtolower(config('app.bpjs_stage')) == "production") {
-            return "https://apijkn.bpjs-kesehatan.go.id/vclaim-rest";
+            return "https://apijkn.bpjs-kesehatan.go.id/wsihs/api/rs/validate";
         } else {
             if (config('app.bpjs_decrypt', false)) {
                 // return "https://dvlp.bpjs-kesehatan.go.id/VClaim-rest-1.1";
-                return "https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev";
+                return "https://apijkn-dev.bpjs-kesehatan.go.id/ihs/api/rs/validate";
             } else {
-                return "https://dvlp.bpjs-kesehatan.go.id/VClaim-rest";
-            }
-        }
-    }
-    public function getAplicareUrl()
-    {
-        if (strtolower(config('app.bpjs_stage')) == "production") {
-            return "https://apijkn.bpjs-kesehatan.go.id/aplicaresws";
-        } else {
-            if (config('app.bpjs_decrypt', false)) {
-                // return "https://dvlp.bpjs-kesehatan.go.id/VClaim-rest-1.1";
-                return "https://apijkn-dev.bpjs-kesehatan.go.id/aplicaresws";
-            } else {
-                return "https://apijkn-dev.bpjs-kesehatan.go.id/aplicaresws";
+                return "https://apijkn-dev.bpjs-kesehatan.go.id/ihs/api/rs/validate";
             }
         }
     }
@@ -89,7 +75,6 @@ class RequestController extends Controller
     // function lzstring decompress https://github.com/nullpunkt/lz-string-php
     function decompress($string)
     {
-
         return \LZCompressor\LZString::decompressFromEncodedURIComponent($string);
     }
 }

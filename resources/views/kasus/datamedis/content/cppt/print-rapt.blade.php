@@ -46,7 +46,7 @@
     
     <table>
         <tr>
-            <td class="centered big">DETAIL RAPT</td>
+            <td class="centered big">DETAIL CPPT</td>
         </tr>
     </table>
     <br>
@@ -124,10 +124,17 @@
         </p>
         @endif
         <hr>
-        <p>
-            <small>DIBUAT OLEH</small><br>
-            {{{ $cppt->creator->name }}}<br>
-            {{{ $cppt->tanggal }}}
-        </p>
+            <p>
+                <small>DIBUAT OLEH</small><br>
+                {{{ $cppt->creator->name }}}<br>
+                {{{ $cppt->tanggal }}}
+            </p>
+        @if (!empty($cppt->verified_by))
+            <p>
+                <small>DIVERIFIKASI DOKTER OLEH</small><br>
+                {{{ $cppt->verifier->name }}}<br>
+                {{{ $cppt->tanggal_verifikasi }}}
+            </p>
+        @endif
     </div>
 </body>

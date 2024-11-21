@@ -1,6 +1,6 @@
 <?php
-Route::group(['middleware' => ['check-module']], function(){ 
-	Route::group(['prefix' => 'bpjs'], function(){
+Route::group(['middleware' => ['check-module']], function () {
+	Route::group(['prefix' => 'bpjs'], function () {
 		Route::get('/', 'BPJS\ViewController@index');
 		Route::get('/approve', 'BPJS\SEP\ViewController@approve');
 		Route::get('/pengajuan', 'BPJS\SEP\ViewController@pengajuan');
@@ -22,6 +22,7 @@ Route::group(['middleware' => ['check-module']], function(){
 		Route::post('/sep/{no_sep}/edit', 'BPJS\SEP\PostController@edit');
 		Route::post('/sep/{no_sep}/delete', 'BPJS\SEP\PostController@delete');
 		Route::get('/sep/{no_sep}/print-sep-bukti-layanan', 'BPJS\SEP\ViewController@printSepBuktiLayanan');
+		Route::get('/sep/sync/{no_sep}', 'BPJS\API\Sep\ReadController@syncDataSep');
 
 
 		//rujukan keluar
@@ -34,7 +35,7 @@ Route::group(['middleware' => ['check-module']], function(){
 		Route::post('/rujukan-keluar/{no_rujukan}/edit', 'BPJS\Rujukan\PostController@setEditV2');
 		Route::post('/rujukan-keluar/{no_rujukan}/delete', 'BPJS\Rujukan\PostController@delete');
 		Route::post('/rujukan-keluar/get-spesialis', 'BPJS\Rujukan\ReadController@getSpeliasis');
-		
+
 		//rujukan masuk
 		Route::get('/rujukan', 'BPJS\Rujukan\ViewController@search');
 		Route::get('/rujukan/search-kartu', 'BPJS\Rujukan\ViewController@search');
@@ -81,16 +82,22 @@ Route::group(['middleware' => ['check-module']], function(){
 		Route::get('/monitoring/histori-pelayanan-peserta', 'BPJS\Monitoring\HistoriPelayananPeserta\ViewController@index');
 		Route::get('/monitoring/data-klaim-jasa-raharja', 'BPJS\Monitoring\DataKlaimJasaRaharja\ViewController@index');
 
-        Route::get('/monitoring/potensi-klaim', 'BPJS\Monitoring\PotensiKlaim\ViewController@index');
-        Route::get('/monitoring/potensi-klaim/get-header', 'BPJS\Monitoring\PotensiKlaim\ReadController@header');
-        Route::get('/monitoring/potensi-klaim/get-data', 'BPJS\Monitoring\PotensiKlaim\ReadController@data');
+		Route::get('/monitoring/potensi-klaim', 'BPJS\Monitoring\PotensiKlaim\ViewController@index');
+		Route::get('/monitoring/potensi-klaim/get-header', 'BPJS\Monitoring\PotensiKlaim\ReadController@header');
+		Route::get('/monitoring/potensi-klaim/get-data', 'BPJS\Monitoring\PotensiKlaim\ReadController@data');
 
 		//REFERENSI
 		Route::get('/referensi', 'BPJS\Referensi\ViewController@index');
 		Route::post('/referensi', 'BPJS\Referensi\PostController@submit');
+
+		//ICARE
+		Route::post('/icare', 'ThirdParty\BPJS\ICare\IcareController@getIcare')->name('icare');
+
+		//ANTREAN
+		Route::get('/antrean-online', 'BPJS\Antrean\PostController@getAntreanPerTanggal');
 	});
 
-	Route::group(['prefix' => 'api/bpjs'], function(){
+	Route::group(['prefix' => 'api/bpjs'], function () {
 		Route::get('/penagihan/getbyfilter', 'BPJS\Piutang\ReadController@getByFilter');
 		Route::post('/edit-plafon', 'BPJS\SEP\EditController@editPlafon');
 
@@ -100,13 +107,13 @@ Route::group(['middleware' => ['check-module']], function(){
 		Route::get('/monitoring/histori-pelayanan-peserta/get-data', 'BPJS\Monitoring\HistoriPelayananPeserta\ViewController@getData');
 
 		// Rencana Kontrol 
-        Route::get('rencana-kontrol/get', 'BPJS\RencanaKontrol\ReadController@getListDataRencanaKontrol');
-        Route::get('rencana-kontrol/detail', 'BPJS\RencanaKontrol\ReadController@detail');
-        Route::get('rencana-kontrol/data-dokter', 'BPJS\API\RencanaKontrol\ReadController@getDokterRencanaKontrol');
+		Route::get('rencana-kontrol/get', 'BPJS\RencanaKontrol\ReadController@getListDataRencanaKontrol');
+		Route::get('rencana-kontrol/detail', 'BPJS\RencanaKontrol\ReadController@detail');
+		Route::get('rencana-kontrol/data-dokter', 'BPJS\API\RencanaKontrol\ReadController@getDokterRencanaKontrol');
 		Route::get('rencana-kontrol/skdp-sirp', 'BPJS\API\RencanaKontrol\PostController@getSkdpSirp');
-        Route::post('rencana-kontrol/create', 'BPJS\API\RencanaKontrol\PostController@create');
-        Route::post('rencana-kontrol/update', 'BPJS\API\RencanaKontrol\PostController@update');
-        Route::post('rencana-kontrol/delete', 'BPJS\API\RencanaKontrol\PostController@delete');
+		Route::post('rencana-kontrol/create', 'BPJS\API\RencanaKontrol\PostController@create');
+		Route::post('rencana-kontrol/update', 'BPJS\API\RencanaKontrol\PostController@update');
+		Route::post('rencana-kontrol/delete', 'BPJS\API\RencanaKontrol\PostController@delete');
 		Route::get('/rencana-kontrol/getData', 'BPJS\RencanaKontrol\ReadController@getListDataRencanaKontrol');
 
 		Route::get('/rujuk-balik/get-data', 'BPJS\RujukBalik\ReadController@getData');
@@ -117,5 +124,3 @@ Route::group(['middleware' => ['check-module']], function(){
 		Route::get('/rujukan-khusus/get-data', 'BPJS\RujukanKhusus\ReadController@getData');
 	});
 });
- 
-?>

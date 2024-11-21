@@ -15,9 +15,9 @@ use DOMPDF;
 class ViewController extends Controller
 {
 	public function print($nomor_kasus)
-    {
-		$kasus = Kasus::where('nomor_kasus',$nomor_kasus)->first();
-		
+	{
+		$kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
+
 
 		$data = $this->getData($kasus);
 		$data['kasus'] = $kasus;
@@ -26,15 +26,14 @@ class ViewController extends Controller
 			'mode' => 'utf-8',
 			'format' => 'A4'
 		]);
-		$filename = $kasus->pasien->no_rm.'-pemberian-obat-pasien-'.$kasus->id.'.pdf';
+		$filename = $kasus->pasien->no_rm . '-pemberian-obat-pasien-' . $kasus->id . '.pdf';
 
 		return $pdf->stream($filename);
-
-    }
+	}
 
 	public function cetakRiwayatPemberianObat(Request $request, $nomor_kasus)
-    {
-		$kasus = Kasus::where('nomor_kasus',$nomor_kasus)->first();
+	{
+		$kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
 		$data['kasus'] = $kasus;
 		$data['data'] = [];
 		$data['carbon_tanggal'] = $carbon_tanggal = Carbon::createFromFormat('d/m/Y', $request->tanggal);
@@ -94,31 +93,29 @@ class ViewController extends Controller
 				} else if ($jam >= 7) {
 					$aturan_pakai = "1";
 				}
-				$item_pemberian_obat['aturan_pakai_'. $aturan_pakai]['catatan_pengobatan_pasien_detail'] = $detail;
-				$item_pemberian_obat['aturan_pakai_'. $aturan_pakai]['resep_detail'][] = $item->farmasi_resep_detail->where('id', $detail->farmasi_resep_detail_id)->first();
+				$item_pemberian_obat['aturan_pakai_' . $aturan_pakai]['catatan_pengobatan_pasien_detail'] = $detail;
+				$item_pemberian_obat['aturan_pakai_' . $aturan_pakai]['resep_detail'][] = $item->farmasi_resep_detail->where('id', $detail->farmasi_resep_detail_id)->first();
 			}
-			$list_pemberian_obat[] = $item_pemberian_obat; 
+			$list_pemberian_obat[] = $item_pemberian_obat;
 		}
 		$data['list_pemberian_obat'] = $list_pemberian_obat;
-		$pdf = DOMPDF::loadView('kasus.farmasi.printout.cetak-riwayat-pemberian-obat',$data)->setPaper('legal', 'landscape');
+		$pdf = DOMPDF::loadView('kasus.farmasi.printout.cetak-riwayat-pemberian-obat', $data)->setPaper('legal', 'landscape');
 		return $pdf->stream('cetak riwayat pemberian obat.pdf');
+	}
 
-    }
-
-    public function getData($kasus)
-    {
-    	$obat = CatatanPengobatanPasien::with('details')->where('kasus_id',$kasus->id)->orderBy('id','desc')->get();
+	public function getData($kasus)
+	{
+		$obat = CatatanPengobatanPasien::with('details')->where('kasus_id', $kasus->id)->orderBy('id', 'desc')->get();
 
 		$data_pemberian = [];
 		$data_obat = [];
 
-		foreach($obat as $obat_item){
+		foreach ($obat as $obat_item) {
 			$last_date = '';
-			$data_obat[$obat_item->id]= $obat_item;
-			foreach($obat_item->details as $pemberian)
-			{
+			$data_obat[$obat_item->id] = $obat_item;
+			foreach ($obat_item->details as $pemberian) {
 				$current_date = date('d-m-Y', strtotime($pemberian->pemberian_at));
-				if($last_date != $current_date) {
+				if ($last_date != $current_date) {
 					$i = 1;
 					$last_date = $current_date;
 				}
@@ -129,5 +126,5 @@ class ViewController extends Controller
 		$data['obat'] = $data_obat;
 
 		return $data;
-    }
+	}
 }

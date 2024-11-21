@@ -1,5 +1,6 @@
 <div class="table-responsive" style="max-height: calc(100vh - 100px);">
-    <table class="table table-bordered table-vcenter table-main table-sticky-header" data-last_index="{{ $transaksi->ori_detail->resep_detail->count() - 1 }}" style="font-size: 13px !important;">
+    <table class="table table-bordered table-vcenter table-main table-sticky-header"
+        data-last_index="{{ $transaksi->ori_detail->resep_detail->count() - 1 }}" style="font-size: 13px !important;">
         <thead>
             <tr>
                 <th rowspan="3" style="border-bottom: 1px solid">No</th>
@@ -45,16 +46,21 @@
             @endphp
             @foreach ($list_resep_detail as $key => $item)
                 @php
-                    $item_final = $transaksi->final_detail->resep_detail->where('resep_detail_ori_id', $item->id)->first();
+                    $item_final = $transaksi->final_detail->resep_detail
+                        ->where('resep_detail_ori_id', $item->id)
+                        ->first();
                     if ($item_final == null) {
                         $item_final = $transaksi->final_detail->resep_detail[$key] ?? null;
                     }
                 @endphp
-                @include('farmasi.transaksi.components.kategori-resep-default-table-belum-dikonfirmasi-row', [
-                    'index' => $loop->index,
-                    'item' => $item,
-                    'item_final' => $item_final,
-                ])
+                @include(
+                    'farmasi.transaksi.components.kategori-resep-default-table-belum-dikonfirmasi-row',
+                    [
+                        'index' => $loop->index,
+                        'item' => $item,
+                        'item_final' => $item_final,
+                    ]
+                )
             @endforeach
         </tbody>
         <tfoot>
@@ -64,5 +70,5 @@
                 <th class="header-total"></th>
             </tr>
         </tfoot>
-    </table>    
+    </table>
 </div>

@@ -39,9 +39,8 @@ class PostController extends Controller
 
             DB::connection('farmasi')->commit();
 
-            $status = 1;            
+            $status = 1;
             $title = 'Berhasil!';
-
         } catch (\Exception $e) {
             DB::connection('farmasi')->rollback();
 
@@ -51,11 +50,11 @@ class PostController extends Controller
             $message = "Gagal menyimpan data. Error Server";
             $title = 'Gagal!';
         }
-        
+
         return back()
-        ->with('status', $status)
-        ->with('message', $message)
-        ->with('title', $title);            
+            ->with('status', $status)
+            ->with('message', $message)
+            ->with('title', $title);
     }
 
     public function delete(Request $request, $farmasi)
@@ -64,7 +63,7 @@ class PostController extends Controller
         try {
             $farm = session('farmasi');
             $id = $request->id;
-            
+
             $data = MasterKodeBidang::find($id);
             $data->deleted_by = Auth::user()->id;
             $data->save();
@@ -72,10 +71,9 @@ class PostController extends Controller
 
             DB::connection('farmasi')->commit();
 
-            $status = 1;            
+            $status = 1;
             $title = 'Berhasil!';
             $message = "Berhasil menghapus data";
-
         } catch (\Exception $e) {
             DB::connection('farmasi')->rollback();
 
@@ -85,10 +83,10 @@ class PostController extends Controller
             $message = "Gagal menghapus data. Error Server";
             $title = 'Gagal!';
         }
-        
+
         return back()
-        ->with('status', $status)
-        ->with('message', $message)
-        ->with('title', $title);        
+            ->with('status', $status)
+            ->with('message', $message)
+            ->with('title', $title);
     }
 }

@@ -49,10 +49,10 @@ class FarmasiTransaksiGenerator extends Command
         $date_end = $arguments['date_end'];
         $total_px = $arguments['total-px'];
 
-        if($date_start != 0) $start = Carbon::createFromFormat('d-m-Y',$date_start)->startOfDay();
+        if ($date_start != 0) $start = Carbon::createFromFormat('d-m-Y', $date_start)->startOfDay();
         else $start = Carbon::now();
 
-        if($date_end != 0) $end= Carbon::createFromFormat('d-m-Y',$date_end)->endOfDay();
+        if ($date_end != 0) $end = Carbon::createFromFormat('d-m-Y', $date_end)->endOfDay();
         else $end = Carbon::now()->endOfDay();
 
         $today = Carbon::today()->startOfDay();
@@ -60,9 +60,9 @@ class FarmasiTransaksiGenerator extends Command
         $current_date = $start->copy()->addHours(1);
         Auth::loginUsingId(2);
         $count_error = 1;
-        
-        while($current_date <= $end){
-            echo "\n\n ---------------- Start :".$current_date->format('d-m-Y')."-----------------\n";
+
+        while ($current_date <= $end) {
+            echo "\n\n ---------------- Start :" . $current_date->format('d-m-Y') . "-----------------\n";
 
             $new_kasus_ids_ri = [];
             $kasus_id_krs = [];
@@ -70,7 +70,7 @@ class FarmasiTransaksiGenerator extends Command
             $kasus_ids = Kasus::get()->random($total_px)->pluck('id')->toArray();
 
             $data['date'] = $current_date;
-            foreach($kasus_ids as $index=> $kasus_id){
+            foreach ($kasus_ids as $index => $kasus_id) {
                 try {
                     DB::connection('kasus')->beginTransaction();
                     DB::connection('keuangan')->beginTransaction();
@@ -78,13 +78,13 @@ class FarmasiTransaksiGenerator extends Command
                     $kasus = Kasus::find($kasus_id);
 
 
-                    
+
                     $current_date->startOfDay()->addHours(1);
                     Carbon::setTestNow($current_date);
 
-                    $obat_fornas = ['362','222','107'];
-                    $obat_formularium_rs = ['158','222','107'];
-                    $obat_fornas_formularium_rs = ['222','107'];
+                    $obat_fornas = ['362', '222', '107'];
+                    $obat_formularium_rs = ['158', '222', '107'];
+                    $obat_fornas_formularium_rs = ['222', '107'];
                     $array_nama_obat = [];
                     $array_kategori_obat = [];
                     $array_tipe_obat = [];
@@ -97,39 +97,35 @@ class FarmasiTransaksiGenerator extends Command
                     $array_racikan_detail_nama_obat = [];
 
                     $nama_apotek = 2;
-                    $random = rand(1,2);
-                    if($random == 1) $total_obat = 2;
+                    $random = rand(1, 2);
+                    if ($random == 1) $total_obat = 2;
                     else $total_obat = 3;
                     $is_racikan_exist = 0;
 
-                    for($i=0;$i<$total_obat;$i++)
-                    {
-                        $random = rand(1,9);
-                        if($random <= 3) {
+                    for ($i = 0; $i < $total_obat; $i++) {
+                        $random = rand(1, 9);
+                        if ($random <= 3) {
                             $random_obat = $obat_fornas;
                             $kategori_check = "fornas";
-                        }
-                        elseif($random <= 6) {
+                        } elseif ($random <= 6) {
                             $random_obat = $obat_formularium_rs;
                             $kategori_check = "formularium_rs";
-                        }
-                        elseif($random <= 9) {
+                        } elseif ($random <= 9) {
                             $random_obat = $obat_fornas_formularium_rs;
                             $kategori_check = "fornas_formularium_rs";
                         }
 
-                        $random = rand(1,10);
-                        if($random <= 2) $is_racikan = 1;
+                        $random = rand(1, 10);
+                        if ($random <= 2) $is_racikan = 1;
                         else $is_racikan = 0;
 
-                        if($is_racikan == 1) $is_racikan_exist = 1;
+                        if ($is_racikan == 1) $is_racikan_exist = 1;
 
-                        if($is_racikan){
+                        if ($is_racikan) {
                             $id_obat_racikan_array = [];
                             $jumlah_obat_racikan_array = [];
                             $nama_obat_racikan_array = [];
-                            foreach($random_obat as $obat_id)
-                            {
+                            foreach ($random_obat as $obat_id) {
                                 $obat = ItemsTemplate::find($obat_id);
                                 $id_obat_racikan_array[] = $obat_id;
                                 $jumlah_obat_racikan_array[] = "12";
@@ -144,17 +140,15 @@ class FarmasiTransaksiGenerator extends Command
                             $array_nama_obat[] = null;
                             $array_tipe_obat[] = "Tablet";
                             $array_jumlah_obat[] = "12";
-                            $array_racikan_obat[] = "Paket Racikan ".$kategori_check;
+                            $array_racikan_obat[] = "Paket Racikan " . $kategori_check;
                             $array_aturan_obat[] = "3x1";
                             $array_id_obat[] = null;
                             $array_racikan_detail_id_obat[] = $id_obat_racikan_json;
                             $array_racikan_detail_jumlah_obat[] = $jumlah_obat_racikan_json;
                             $array_racikan_detail_nama_obat[] = $nama_obat_racikan_json;
-                        }
-                        else
-                        {
-                            $count_array = count($random_obat)-1;
-                            $random = rand(0,$count_array);
+                        } else {
+                            $count_array = count($random_obat) - 1;
+                            $random = rand(0, $count_array);
                             $obat_id = $random_obat[$random];
 
                             $obat = ItemsTemplate::find($obat_id);
@@ -169,8 +163,6 @@ class FarmasiTransaksiGenerator extends Command
                             $array_racikan_detail_jumlah_obat[] = "[]";
                             $array_racikan_detail_nama_obat[] = "[]";
                         }
-
-
                     }
 
                     $request = new \Illuminate\Http\Request();
@@ -194,13 +186,13 @@ class FarmasiTransaksiGenerator extends Command
                         'racikan-detail-nama-obat' => $array_racikan_detail_nama_obat,
                         'kasus' => $kasus,
                     ]);
-                    app('App\Http\Controllers\Kasus\Resep\CreateController')->createNewResep($kasus->nomor_kasus,$request);
+                    app('App\Http\Controllers\Kasus\Resep\CreateController')->createNewResep($kasus->nomor_kasus, $request);
 
-                    $transaksi_obat = TransaksiObat::orderBy('id','desc')->first();
-                    $farmasi = Farmasi::where('id',$nama_apotek)->first();
+                    $transaksi_obat = TransaksiObat::orderBy('id', 'desc')->first();
+                    $farmasi = Farmasi::where('id', $nama_apotek)->first();
 
-                    if($is_racikan_exist) $random_time = rand(60,180);
-                    else $random_time = rand(15,90);
+                    if ($is_racikan_exist) $random_time = rand(60, 180);
+                    else $random_time = rand(15, 90);
 
                     $current_date->addMinutes($random_time);
                     Carbon::setTestNow($current_date);
@@ -210,15 +202,15 @@ class FarmasiTransaksiGenerator extends Command
                     $transaksi_obat->dikerjakan_at = $current_dikerjakan;
                     $transaksi_obat->save();
 
-                    if($is_racikan_exist) $random_time = rand(60,180);
-                    else $random_time = rand(15,90);
+                    if ($is_racikan_exist) $random_time = rand(60, 180);
+                    else $random_time = rand(15, 90);
 
                     $current_date->addMinutes($random_time);
                     Carbon::setTestNow($current_date);
 
                     $request = new \Illuminate\Http\Request();
                     $request->replace([
-                        'laba' => [0,0,0],
+                        'laba' => [0, 0, 0],
                         'embalase' => 0,
                         'id' => $transaksi_obat->id,
                         'farmasi' => $farmasi->slug,
@@ -228,10 +220,9 @@ class FarmasiTransaksiGenerator extends Command
                         'shift_id' => 2,
                     ]);
 
-                    $random = rand(1,10);
+                    $random = rand(1, 10);
 
-                    if($random >=2)
-                    {
+                    if ($random >= 2) {
                         app('App\Http\Controllers\Farmasi\Transaksi\EditController')->payment($request);
                     }
 
@@ -242,7 +233,7 @@ class FarmasiTransaksiGenerator extends Command
                     DB::connection('keuangan')->rollback();
                     DB::connection('kasus')->rollback();
                     DB::connection('farmasi')->rollback();
-                    echo 'Gagal-'.$count_error++;
+                    echo 'Gagal-' . $count_error++;
                 }
             }
 
@@ -250,7 +241,8 @@ class FarmasiTransaksiGenerator extends Command
         }
     }
 
-    public function updateAnalisa(){
+    public function updateAnalisa()
+    {
         $query = 'UPDATE resep
         SET analisa_resep_at = created_at,
         analisa_by = 3,

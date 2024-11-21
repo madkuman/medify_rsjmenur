@@ -43,7 +43,7 @@ class PostController extends Controller
                 $this->request->getAuthUrl() . '/accesstoken?grant_type=client_credentials',
                 [
                     'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
-					\GuzzleHttp\RequestOptions::FORM_PARAMS => $params->all(),
+                    \GuzzleHttp\RequestOptions::FORM_PARAMS => $params->all(),
                 ]
             );
             $content = json_decode($res->getBody()->getContents());
@@ -55,7 +55,7 @@ class PostController extends Controller
                 'response' => json_encode($content),
                 'created_by' => auth()->user()->id
             ]);
-            
+
             return $content->access_token ?? null;
         } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
