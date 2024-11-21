@@ -80,6 +80,17 @@
                                 <h5>{{ $item->item_detail->satuan }}</h5>
                                 <label>KODE KFA</label>
                                 <h5>{{ $item->item_detail->kode_kfa }}</h5>
+                                @if ($item->item_detail->kode_kfa)
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#productDetailModal">
+                                        Detail KFA
+                                    </button>
+                                    {{-- <button class="btn btn-primary view-details" data-id="{{ $product->id }}">Detail
+                                        KFA</button> --}}
+                                    {{-- <a href="{{ url('satusehat' . '/kfa/detail/view/' . $item->item_detail->kode_kfa) }}"
+                                        data-toggle="modal" data-target="productDetailModal"><i
+                                            class="fa fa-search"></i></a> --}}
+                                @endif
                             </div>
                             <div class="col">
                                 <label>BATASAN STOCK</label>
@@ -230,67 +241,8 @@
             </div>
         </div>
     </div>
-    </div>
 
-    {{-- <div class="row row-deck">
-        <div class="col-12">
-            <div class="block">
-                <div class="block-header">
-                    <h3 class="block-title">Mapping KFA</h3>
-                </div>
-                <div class="block-content">
-                    <div class="form-group row">
-                        <div class="col-lg-4">
-                            <input type="text" id="search-keyword" class="form-control"
-                                placeholder="Masukkan nama obat">
-                        </div>
-                        <div class="col-lg-4">
-                            <button class="btn btn-primary" id="search-button">
-                                Cari</button>
-                        </div>
-                    </div>
-                    <table class="table table-hover table-vcenter " id="search-results">
-                        <thead>
-                            <tr>
-                                <th>Kode KFA</th>
-                                <th>Nama Obat</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 
-    <!-- Modal Detail Obat -->
-    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="detailModalLabel">Detail Obat</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>Nama:</strong> <span id="detail-nama"></span></p>
-                    <p><strong>Kode KFA:</strong> <span id="detail-kode"></span></p>
-                    <p><strong>NIE:</strong> <span id="detail-nie"></span></p>
-                    <p><strong>Nama Dagang:</strong> <span id="detail-nama-dagang"></span></p>
-                    <p><strong>Manufacturer:</strong> <span id="detail-manufacturer"></span></p>
-                    <p><strong>Registrar:</strong> <span id="detail-registrar"></span></p>
-                    <!-- Tambahkan detail lain sesuai kebutuhan -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="row row-deck">
         <div class="col-12">
@@ -342,9 +294,14 @@
     @include('farmasi.item.modals.modal-edit')
     @include('farmasi.item.modals.modal-kartu-stok')
     @include('farmasi.item.modals.modal-kartu-barang')
+    @if ($item->item_detail->kode_kfa)
+        @include('farmasi.item.modals.modal-kfa-detail')
+    @endif
 
     @if (isset($item->item_detail->produksi) && $item->item_detail->produksi->farmasi_id == session('farmasi')->id)
-        @include('farmasi.produksi.modals.modal-produksi', ['produksi' => $item->item_detail->produksi])
+        @include('farmasi.produksi.modals.modal-produksi', [
+            'produksi' => $item->item_detail->produksi,
+        ])
     @endif
 @endsection
 
@@ -766,105 +723,33 @@
         });
     </script>
 
-
-
-    {{-- <script>
+    <script>
         $(document).ready(function() {
-            // Event ketika tombol "Cari" diklik
-            $('#search-button').on('click', function(e) {
-                e.preventDefault();
-                let keyword = $('#search-keyword').val();
+            $('.view-details').click(function() {
+                const productId = $(this).data('id');
 
-                // AJAX request untuk pencarian
-                $.ajax({
-                    url: "{{ route('kfa.search') }}", // Pastikan route ini menuju ke controller pencarian
-                    type: "GET",
-                    data: {
-                        q: keyword
-                    },
-                    success: function(data) {
-                        $('#search-results').show(); // Tampilkan tabel hasil pencarian
-                        $('#search-results tbody')
-                            .empty(); // Kosongkan tabel sebelum menambahkan data baru
+                // AJAX request untuk mendapatkan detail produk {{ url('satusehat' . '/kfa/detail/view/' . $item->item_detail->kode_kfa) }}
+                $.get("{{ url('satusehat' . '/kfa/detail/view/') }}" + productId, function(product) {
+                    // Isi data produk ke dalam modal
+                    $('#kodeKfa').text(product.kode_kfa);
+                    $('#name').text(product.name);
+                    $('#active').text(product.active);
+                    $('#ucum').text(product.ucum);
+                    $('#uom').text(product.uom);
+                    $('#nie').text(product.nie);
+                    $('#manufacturer').text(product.manufacturer);
+                    $('#fix_price').text(product.fix_price);
+                    $('#het_price').text(product.het_price);
+                    $('#nama_dagang').text(product.nama_dagang);
+                    $('#kode_kfa_92').text(product.kode_kfa_92);
+                    // Tambahkan elemen lain jika perlu
 
-                        // Loop hasil pencarian dan tambahkan ke tabel
-                        $.each(data.items.data, function(index, item) {
-                            let row = `
-                            <tr>
-                                <td>${item.kfa_code}</td>
-                                <td>${item.name}</td>
-                                <td><button class="btn btn-info btn-sm detail-button" data-kode="${item.kfa_code}">Detail</button></td>
-                            </tr>`;
-                            $('#search-results tbody').append(row);
-                        });
-                    },
-                    error: function() {
-                        alert("Gagal mengambil data. Silakan coba lagi.");
-                    }
-                });
-            });
-
-            // Event ketika tombol "Detail" diklik
-            $(document).on('click', '.detail-button', function() {
-                let kodeObat = $(this).data('kfa_code');
-
-                // AJAX request untuk mengambil detail obat
-                $.ajax({
-                    url: "/satusehat/kfa/search/detail/{kodeObat}",
-                    type: "GET",
-                    success: function(data) {
-                        // Isi data detail obat di modal
-                        $('#detail-nama').text(data.result.name);
-                        $('#detail-kode').text(data.result.kode_kfa);
-                        $('#detail-nie').text(data.result.nie);
-                        $('#detail-nama-dagang').text(data.result.nama_dagang);
-                        $('#detail-manufacturer').text(data.result.manufacturer);
-                        $('#detail-registrar').text(data.result.registrar);
-                        // Tambahkan field lain jika diperlukan
-
-                        // Tampilkan modal
-                        $('#detailModal').modal('show');
-                    },
-                    error: function() {
-                        alert("Gagal mengambil detail produk. Silakan coba lagi.");
-                    }
+                    // Tampilkan modal
+                    $('#productDetailModal').modal('show');
                 });
             });
         });
-    </script> --}}
-
-    {{-- <script>
-        $(document).ready(function() {
-            $('#obat-dropdown').on('keyup', function() {
-                let keyword = $(this).val();
-
-                if (keyword.length >= 3) { // Trigger saat ada minimal 3 karakter
-                    $.ajax({
-                        url: "{{ route('kfa.search') }}",
-                        type: "GET",
-                        data: {
-                            q: keyword
-                        },
-                        success: function(data) {
-                            $('#obat-dropdown').empty(); // Kosongkan opsi sebelumnya
-                            $('#obat-dropdown').append(
-                                '<option value="">-- Pilih Obat --</option>');
-
-                            // Menambahkan opsi hasil pencarian ke dropdown
-                            $.each(data['items']['data'], function(index, item) {
-                                $('#obat-dropdown').append(
-                                    `<option value="${item.kfa_code}"> ${item.kfa_code} | ${item.name}</option>`
-                                );
-                            });
-                        },
-                        error: function() {
-                            alert("Gagal mengambil data. Silakan coba lagi.");
-                        }
-                    });
-                }
-            });
-        });
-    </script> --}}
+    </script>
 
     <script>
         $(document).ready(function() {

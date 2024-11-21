@@ -37,4 +37,9 @@ class KodeKfaDetail extends Model
     protected $casts = [
         'value' => 'array',
     ];
+
+    public function getJsonDataAttribute()
+    {
+        return json_decode($this->attributes['value'], true);
+    }
 }

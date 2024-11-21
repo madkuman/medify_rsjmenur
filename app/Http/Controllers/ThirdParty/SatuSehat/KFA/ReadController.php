@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\ThirdParty\SatuSehat\KFA;
 
 use Illuminate\Http\Request;
+// use Illuminate\Database\Query\Builder;
 use App\Http\Controllers\Controller;
 use GuzzleHttp\Client;
+use App\Models\Farmasi\KodeKfaDetail as KodeKfaDetail;
 
 class ReadController extends Controller
 {
@@ -47,5 +49,12 @@ class ReadController extends Controller
         // $productDetail = json_encode($productDetail);
         // return response()->json($productDetail);
         return (json_encode($productDetail));
+    }
+
+    public function getKfaDetail($kode_kfa)
+    {
+        return KodeKfaDetail::where(['kode_kfa' => $kode_kfa])->first();
+        // dd($product);
+        // return $product;
     }
 }
