@@ -92,6 +92,16 @@
                             </form>
                         @endif
                     @endif
+                    @if ($kasus->tipe_ri == 0 && $kasus->tipe_igd == 0 && $kasus->tipe_rj == 1)
+                        @if (empty($kasus->rawat_jalan_transaksi_first->selesai_pelayanan_at))
+                            <button id="selesai-btn" data-id="{{ $kasus->rawat_jalan_transaksi_first->id }}"
+                                class="btn btn-success" style="margin-top: 5px">Selesai
+                                Pelayanan</button>
+                        @else
+                            <button class="btn btn-success" style="margin-top: 5px" disabled>Telah Selesai
+                                Pelayanan</button>
+                        @endif
+                    @endif
                 </div>
             </div>
         </div>
@@ -121,5 +131,29 @@
                 }
             });
         }
+    </script>
+    <script>
+        $('#selesai-btn').on('click', function() {
+            var id = $(this).data('id');
+            $.ajax({
+                url: "{{ route('selesai.pelayanan', '') }}/" + id,
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        swal('Berhasil', response.message, 'success');
+                        // Refresh halaman setelah alert ditutup
+                        location.reload();
+                    } else {
+                        swal("Opps!", response.message);
+                    }
+                },
+                error: function() {
+                    swal("Opps!", response.message, "error");
+                }
+            });
+        });
     </script>
 @endpush
