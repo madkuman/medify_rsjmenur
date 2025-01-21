@@ -421,3 +421,21 @@ Route::post('/alat-bantu/form-transfer-antar-ruangan/submit', 'Kasus\AlatBantu\F
 Route::post('/alat-bantu/form-transfer-antar-ruangan/update', 'Kasus\AlatBantu\FormTransferAntarRuangan\PostController@update');
 Route::post('/alat-bantu/form-transfer-antar-ruangan/delete', 'Kasus\AlatBantu\FormTransferAntarRuangan\PostController@delete');
 Route::get('/alat-bantu/form-transfer-antar-ruangan/print/{id}', 'Kasus\AlatBantu\FormTransferAntarRuangan\ViewController@print');
+
+Route::get('/alat-bantu/surat-keterangan-fisik', 'Kasus\AlatBantu\SuratKeteranganFisik\ViewController@index');
+Route::post('/alat-bantu/surat-keterangan-fisik/submit', 'Kasus\AlatBantu\SuratKeteranganFisik\PostController@submit');
+Route::post('/alat-bantu/surat-keterangan-fisik/update', 'Kasus\AlatBantu\SuratKeteranganFisik\PostController@update');
+Route::post('/alat-bantu/surat-keterangan-fisik/delete', 'Kasus\AlatBantu\SuratKeteranganFisik\PostController@delete');
+Route::get('/alat-bantu/surat-keterangan-fisik/print/{id}', 'Kasus\AlatBantu\SuratKeteranganFisik\ViewController@print');
+
+Route::get('/alat-bantu/surat-keterangan-jiwa', 'Kasus\AlatBantu\SuratKeteranganJiwa\ViewController@index');
+Route::post('/alat-bantu/surat-keterangan-jiwa/submit', 'Kasus\AlatBantu\SuratKeteranganJiwa\PostController@submit');
+Route::post('/alat-bantu/surat-keterangan-jiwa/update', 'Kasus\AlatBantu\SuratKeteranganJiwa\PostController@update');
+Route::post('/alat-bantu/surat-keterangan-jiwa/delete', 'Kasus\AlatBantu\SuratKeteranganJiwa\PostController@delete');
+Route::get('/alat-bantu/surat-keterangan-jiwa/print/{id}', 'Kasus\AlatBantu\SuratKeteranganJiwa\ViewController@print');
+
+Route::get('/alat-bantu/surat-keterangan-napza', 'Kasus\AlatBantu\SuratKeteranganNapza\ViewController@index');
+Route::post('/alat-bantu/surat-keterangan-napza/submit', 'Kasus\AlatBantu\SuratKeteranganNapza\PostController@submit');
+Route::post('/alat-bantu/surat-keterangan-napza/update', 'Kasus\AlatBantu\SuratKeteranganNapza\PostController@update');
+Route::post('/alat-bantu/surat-keterangan-napza/delete', 'Kasus\AlatBantu\SuratKeteranganNapza\PostController@delete');
+Route::get('/alat-bantu/surat-keterangan-napza/print/{id}', 'Kasus\AlatBantu\SuratKeteranganNapza\ViewController@print');
