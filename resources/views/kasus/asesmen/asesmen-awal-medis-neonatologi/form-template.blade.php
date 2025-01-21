@@ -1958,7 +1958,18 @@
     </tr>
     <tr>
         <td colspan="5" class=" text-center">
-            
+           @if(!empty($asesmen_get->created_by))
+					@php
+						$ttd = \App\User::find($asesmen_get->created_by)->ttd ?? null;
+					@endphp
+					@if(!empty($ttd))
+						<br><img src="{{ url('/' . $ttd) }}" alt="" width="90" height="55"><br>
+
+					@else
+						<br><br><br>
+						........................................................
+					@endif
+				@endif 
         </td>
         <td colspan="4" class=" text-center">
             
@@ -1966,10 +1977,10 @@
     </tr>
     <tr>
         <td colspan="5" class=" text-center">
-            ..............................
+            {{$hasil->creator->name}}
         </td>
         <td colspan="4" class=" text-center">
-            ..............................
+            {{$hasil->kasus->admin->user->name}}
         </td>
     </tr>
 </table>

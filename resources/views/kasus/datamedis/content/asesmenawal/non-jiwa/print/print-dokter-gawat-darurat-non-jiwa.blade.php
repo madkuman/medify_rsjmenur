@@ -352,7 +352,7 @@
 		</tr>
 		<tr>
 			<td class="align-top border-bottom">Penatalaksanaan</td>
-			<td class="align-top border-bottom">: {!! nl2br($asesmen->penatalaksanaan ?? '-') !!}</td>
+			<td class="align-top border-bottom">: {{$asesmen->penatalaksanaan ?? '-'}}</td>
 		</tr>
 	</table>
 	<br>
