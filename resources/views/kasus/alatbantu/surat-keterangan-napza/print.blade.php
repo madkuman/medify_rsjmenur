@@ -1,7 +1,7 @@
 @extends('layouts.print')
 
 @section('title')
-    {{ $kasus->judul_kasus }} - Print Surat Keterangan Sehat Jiwa
+    {{ $kasus->judul_kasus }} - Print Surat Keterangan Pemeriksaan Napza
 @endsection
 
 @section('css')
@@ -51,7 +51,7 @@
     <table style="width:100%">
         <tr>
             <td>
-                <h2 style="text-align: center; padding-top: 2px"><u>SURAT KETERANGAN SEHAT JIWA</u></h2>
+                <h2 style="text-align: center; padding-top: 2px"><u>SURAT KETERANGAN PEMERIKSAAN NAPZA</u></h2>
                 <h2 style="text-align: center">NOMOR : {{ $form_data->nomor }}</h2>
             </td>
         </tr>
@@ -130,12 +130,20 @@
             </tr>
         </table>
         <br>
-        <p>Setelah dilakukan wawancara psikiatrik, pemeriksaan psikiatrik dan psikotest, disimpulkan saat ini yang
-            bersangkutan dinyatakan: </p>
+        <p>Pada pemeriksaan tanggal {{ indonesian_date($form_data->tanggal_pemeriksaan) }} jam {{ $form_data->jam }}
+            WIB, dinyatakan <b>BEBAS NARKOBA / NAPZA</b> dengan pemeriksaan laboratorium tidak didapatkan adanya tanda -
+            tanda
+            pemakaian :</p>
         <br>
-        <div class="subheader">
-            <b>SEHAT JIWA</b>
-        </div>
+        <table style="padding-left: 50px;">
+            @foreach ($form_data->parameter as $index => $parameter)
+                <tr>
+                    <td style="padding-right: 133px">
+                        <p>{{ chr(97 + $index) }}. {{ $parameter }}</p>
+                    </td>
+                </tr>
+            @endforeach
+        </table>
         <br>
         <p>Surat keterangan ini dibuat sebagai <b>{{ $form_data->syarat }}</b>.</p>
     </div>
