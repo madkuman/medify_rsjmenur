@@ -87,6 +87,9 @@
                                 <a class="dropdown-item" href="javascript:void(0)" onclick="new_window('{{url()->current()}}/print/general-consent', '')">
                                     <i class="fa fa-file-text mr-5"></i> General Consent
                                 </a>
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="new_window('{{url()->current()}}/print/general-consent-treatment', '')">
+                                    <i class="fa fa-file-text mr-5"></i> General Consent For Treatment
+                                </a>
                                 <a class="dropdown-item" href="javascript:void(0)" onclick="new_window('{{url()->current()}}/print/tindakan-kedokteran', '')">
                                     <i class="fa fa-file-text mr-5"></i> Tindakan Kedokteran
                                 </a>
@@ -144,6 +147,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#tabs-general-consent">General Consent</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tabs-general-consent-treatment">GC For Treatment</a>
+                        </li>
                     </ul>
                     <div class="block-content tab-content">
                         <div class="tab-pane active" id="tabs-identitas" role="tabpanel">
@@ -190,6 +196,9 @@
                         </div>
                         <div class="tab-pane" id="tabs-general-consent" role="tabpanel">
                             @include('pasien.profile.general-consent.index')
+                        </div>
+                        <div class="tab-pane" id="tabs-general-consent-treatment" role="tabpanel">
+                            @include('pasien.profile.general-consent-treatment.index')
                         </div>
                     </div>
                 </div>

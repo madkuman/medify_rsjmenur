@@ -51,6 +51,12 @@ class ViewController extends Controller
         $data['id']=$id;
         $data['general_consent'] = $general_consent;
         return view('pasien.profile',$data);
+
+        $general_consent = $query->where("type", 'general-consent-treatment')->orderBy("id","asc")->get();
+        $this->checkToAbort($data['identitas']);
+        $data['id']=$id;
+        $data['general_consent'] = $general_consent;
+        return view('pasien.profile',$data);
     }
 
     public function edit($id)
@@ -374,6 +380,12 @@ ini_set('memory_limit', '2046M');
         $data = app('App\Http\Controllers\Pasien\Pasien\ReadController')->ringkasanRajal($id);
         $pdf = DOMPDF::loadView('pasien.profile.print-general-consent', $data);
         return $pdf->stream('persetujuan_umum_general_consent.pdf');
+    }
+    public function generalConsentTreatment($id)
+    {
+        $data = app('App\Http\Controllers\Pasien\Pasien\ReadController')->ringkasanRajal($id);
+        $pdf = DOMPDF::loadView('pasien.profile.print-general-consent-treatment', $data);
+        return $pdf->stream('persetujuan_umum_general_consent_treatment.pdf');
     }
 
     public function tindakanKedokteran()

@@ -71,8 +71,9 @@
 	<thead>
 	<tr>
 		<th width="5%">No</th>
-		<th width="25%">Kasus</th>
-		<th width="30%">Nama Pasien</th>
+		<th width="20%">Kasus</th>
+		<th width="10%">NRM</th>
+		<th width="25%">Nama Pasien</th>
 		<th width="10%">JK/Usia</th>
 		<th width="15%">Lokasi</th>
 		<th width="15%">Status</th>
@@ -83,6 +84,7 @@
 		<tr>
 			<td>{{++$i}}</td>
 			<td>{{$k->judul_kasus}}</td>
+			<td>{{$k->pasien->no_rm}}</td>
 			<td>{{$k->identitas->nama}}</td>
 			<td>{{$k->identitas->gender}} / {{$k->identitas->age}}</td>
 			<td>{{$k->lokasi->lokasi->nama}}</td>

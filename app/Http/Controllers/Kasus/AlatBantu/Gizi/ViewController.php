@@ -12,7 +12,7 @@ class ViewController extends Controller
 {
     public function index($nomor_kasus)
     {   
-        $kasus = Kasus::with(relasi)->where('nomor_kasus',$nomor_kasus)->first();
+        $kasus = Kasus::with('relasi')->where('nomor_kasus',$nomor_kasus)->first();
         $data['kasus'] = $kasus;
         
 

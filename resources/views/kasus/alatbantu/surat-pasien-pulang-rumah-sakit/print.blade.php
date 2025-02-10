@@ -29,30 +29,13 @@ Print Surat Pasien Pulang Rumah Sakit
         </table>
     </header>
 
-    <table width="70%" align="center">
+    <table width="100%">
         <tr>
-            <td width="100%" valign="top">
-                <table width="100%" cellpadding="5" style="border-bottom: 1px solid #000;">
-                   <tr>
-                        <td width="15%" align="left">
-                            <img src="{{ public_path('assets/img/logo/jer_basuki_mawa_beya.png') }}" height="80">
-                        </td>
-                        <td width="63%" align="center">
-                            <p style="font-size: 14px;">PEMERINTAH PROVINSI JAWA TIMUR </p>
-                            <p style="font-size: 14px;"><b>RUMAH SAKIT JIWA MENUR</b></p>
-                            <p style="font-size: 12px;">Jln. Menur No. 120, Telp. (031) 5021635, 5021637</p>
-                            <p style="font-size: 14px;"><b>SURABAYA</b></p>
-                        </td>
-                        <td width="17%" align="left">
-                            <img src="{{ public_path('assets/img/logo/rsj_menur_logo.png') }}" height="80">
-                        </td>
-                   </tr> 
-                </table>
-            </td>
+            <td align="center" width="100%"><img src="{{ config('app.kop_lg') }}" height="135"></td>
         </tr>
     </table>
 
-    <table width="90%" class="bordered" align="center" cellpadding="5" style="margin-top: 20px;">
+    <table width="90%" class="bordered" align="center" cellpadding="5" style="margin-top: 10px;">
         <tr>
             <th align="center">
                 <h4>SURAT PASIEN PULANG / KELUAR RUMAH SAKIT</h4>
@@ -60,7 +43,7 @@ Print Surat Pasien Pulang Rumah Sakit
         </tr>
         <tr>
             <th align="center">
-                <h4>Nomor : 441.6/______/305/20..........</h4>
+                <h4>Nomor : 441.6/______/102.8/{{ date('Y') }}</h4>
             </th>
         </tr>
         <tr>

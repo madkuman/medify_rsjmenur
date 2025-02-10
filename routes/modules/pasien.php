@@ -223,6 +223,7 @@ Route::group(['middleware' => ['check-module']], function () {
 		Route::get('{id}/print/ringkasan-rajal', 'Pasien\Pasien\ViewController@ringkasanRajal');
 		Route::get('{id}/print/prmrj', 'Pasien\Pasien\ViewController@prmrj');
 		Route::get('{id}/print/general-consent', 'Pasien\Pasien\ViewController@generalConsent');
+		Route::get('{id}/print/general-consent-treatment', 'Pasien\Pasien\ViewController@generalConsent');
 		Route::get('{id}/print/tindakan-kedokteran', 'Pasien\Pasien\ViewController@tindakanKedokteran');
 		Route::get('{id}/edit', 'Pasien\Pasien\ViewController@edit');
 		Route::post('{id}/edit', 'Pasien\Pasien\PostController@editPasien');
@@ -258,6 +259,15 @@ Route::group(['middleware' => ['check-module']], function () {
 		Route::get("/asesmen/general-consent/print", "Kasus\Asesmen\GeneralConsent\ViewController@print");
 		Route::post("/asesmen/general-consent/delete", "Kasus\Asesmen\GeneralConsent\DeleteController@delete");
 		Route::post("/asesmen/general-consent/add-ttd", "Kasus\Asesmen\GeneralConsent\PostController@addTTD");
+
+		Route::get('/asesmen/general-consent-treatment', 'Kasus\Asesmen\GeneralConsentTreatment\ViewController@create');
+		Route::get("/asesmen/general-consent-treatment/single", "Kasus\Asesmen\GeneralConsentTreatment\ViewController@single");
+		Route::get("/asesmen/general-consent-treatment/form/edit", "Kasus\Asesmen\GeneralConsentTreatment\ViewController@edit");
+		Route::post("/asesmen/general-consent-treatment/form/create", "Kasus\Asesmen\GeneralConsentTreatment\CreateController@create");
+		Route::put("/asesmen/general-consent-treatment/form/edit", "Kasus\Asesmen\GeneralConsentTreatment\EditController@edit");
+		Route::get("/asesmen/general-consent-treatment/print", "Kasus\Asesmen\GeneralConsentTreatment\ViewController@print");
+		Route::post("/asesmen/general-consent-treatment/delete", "Kasus\Asesmen\GeneralConsentTreatment\DeleteController@delete");
+		Route::post("/asesmen/general-consent-treatment/add-ttd", "Kasus\Asesmen\GeneralConsentTreatment\PostController@addTTD");
 	});
 });
 

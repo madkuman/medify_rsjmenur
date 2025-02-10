@@ -102,7 +102,7 @@
 			<td width="50%">
 				<table>
 					<tr>
-						<td width="20%" style="text-align: center;">
+						{{--  <td width="20%" style="text-align: center;">
 							<img src="{{url('')}}/assets/img/pemprov-jatim.png" height="55">
 						</td>
 						<td width="60%" style="text-align: center; font-size: 10px;">
@@ -115,7 +115,7 @@
 						</td>
 						<td width="20%" style="text-align: center;">
 							<img src="{{url('')}}/assets/img/menur.png" height="55">
-						</td>
+						</td>  --}}
 					</tr>
 				</table>
 			</td>

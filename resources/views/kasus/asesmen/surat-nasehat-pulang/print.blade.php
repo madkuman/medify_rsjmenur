@@ -44,7 +44,7 @@
 			</td>
 		</tr>
 	</table>
-	<table class="big">
+	{{--  <table class="big">
 		<tr>
 			<td width="20%" style="text-align: right;">
 				<img src="{{url('')}}/assets/img/pemprov-jatim.png" height="55">
@@ -61,16 +61,20 @@
 				<img src="{{url('')}}/assets/img/menur.png" height="55">
 			</td>
 		</tr>
-	</table>
+	</table>  --}}
+	<table width="100%">
+        <tr>
+            <td align="center" width="100%"><img src="{{ config('app.kop_lg') }}" height="150"></td>
+        </tr>
+    </table>
 	<hr>
-	<br>
-	<table>
+	<table style="margin-top: 10px;">
 		<tr>
 			<td class="centered big"><b>NASEHAT PASIEN PULANG</b></td>
 		</tr>
 	</table>
 	<br>
-	<table cellpadding="5">
+	<table cellpadding="3">
 		<tr>
 			<td width="15%">Nama Pasien</td>
 			<td width="40%">: {{$kasus->pasien->name}}</td>
@@ -100,8 +104,7 @@
 			<td>: {{$item->tanggal_kontrol ? date('j F Y', strtotime($item->tanggal_kontrol)) : '-'}}</td>
 		</tr>
 	</table>
-	<br><br>
-	<table cellpadding="5" class="gap">
+	<table cellpadding="2" class="gap" >
 		<tr>
 			<td width="55%">
 				<b>Obat yang diminum</b> <br>
@@ -115,8 +118,7 @@
 			</td>
 		</tr>
 	</table>
-	<br><br>
-	<table cellpadding="5" class="gap">
+	<table cellpadding="2" class="gap">
 		<tr>
 			<td width="10%"><b>Lain lain</b></td>
 			<td width="1%">:</td>
@@ -152,5 +154,7 @@
 			</td>
 		</tr>
 	</table>
+	<br><br>
+	
 </body>
 </html>

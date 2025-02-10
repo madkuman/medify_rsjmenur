@@ -62,7 +62,7 @@
 			</td>
 		</tr>
 	</table>
-	<table style="margin-top: -20px;">
+	{{--  <table style="margin-top: -20px;">
 		<tr>
 			<td width="50%">
 				<table>
@@ -86,7 +86,7 @@
 			</td>
 			<td width="50%"></td>
 		</tr>
-	</table>
+	</table>  --}}
 	<table style="margin-top: 10px; border-collapse: separate;">
 		<tr>
 			<td width="45%" class="big" style="border: 2px solid black">

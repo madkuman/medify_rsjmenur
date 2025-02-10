@@ -14,5 +14,20 @@
                 </div>
             </a>
         </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/alat-bantu/gizi">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Skrining Gizi Anak</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Skrining Gizi Anak</h5>
+                    <p class="desc">Skrining Gizi Anak</p>
+                </div>
+            </a>
+        </li>
     </ul>
 </div>

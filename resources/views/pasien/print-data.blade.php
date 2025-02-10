@@ -50,19 +50,18 @@ Print Identitas - {{$identitas->name}}
             <div style="border: 1px solid #000;">
                 <table width="100%" cellpadding="5">
                     <tr>
-                        <td width="15%" align="left">
-                            <img src="{{ public_path('assets/img/logo/jer_basuki_mawa_beya.png') }}" height="50">
+                        <td width="15%" align="center">
+                            <img src="{{ public_path('assets/img/logo/jer_basuki_mawa_beya.png') }}" height="60">
                         </td>
-                        <td width="63%" align="center">
+                        <td width="85%" align="center">
                             <p style="font-size: 10px;">PEMERINTAH PROVINSI JAWA TIMUR <br>
-                                RUMAH SAKIT JIWA MENUR <br>
-                                Jln. Menur No. 120, Telp. (031) 5021635, 5021637 <br>
-                                S U R A B A Y A
+                                DINAS KESEHATAN <br>
+                                <b>RUMAH SAKIT JIWA MENUR</b> <br>
+                                Jln. Raya Menur No.120, Gubeng, Kertajaya, Surabaya Jatim  <br>
+                                Telp. (031) 5021635, Laman:rsjmenur.jatimprov.go.id
                             </p>
                         </td>
-                        <td width="17%" align="left">
-                            <img src="{{ public_path('assets/img/logo/rsj_menur_logo.png') }}" height="50">
-                        </td>
+                        
                     </tr> 
                 </table>
             </div>

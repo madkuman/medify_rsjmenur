@@ -36,19 +36,16 @@
 			<td width="60%">
 				<table>
 					<tr>
-						<td width="20%" style="text-align: center;">
-							<img src="{{url('')}}/assets/img/pemprov-jatim.png" height="55">
+						<td width="25%" style="text-align: center;">
+							<img src="{{url('')}}/assets/img/pemprov-jatim.png" height="65">
 						</td>
-						<td width="60%" style="text-align: center; font-size: 10px;">
+						<td width="75%" style="text-align: center; font-size: 10px;">
 							<b>
-								PEMERINTAH PROVINSI JAWA TIMUR<br>
-								RUMAH SAKIT JIWA MENUR<br>
-								Jln Menur No.120, Telp(031)5021635,5021637<br>
-								Surabaya
+								DINAS KESEHATAN <br>
+                                <b>RUMAH SAKIT JIWA MENUR</b> <br>
+                                Jln. Raya Menur No.120, Gubeng, Kertajaya, Surabaya Jatim  <br>
+                                Telp. (031) 5021635, Laman:rsjmenur.jatimprov.go.id
 							</b>
-						</td>
-						<td width="20%" style="text-align: center;">
-							<img src="{{url('')}}/assets/img/menur.png" height="55">
 						</td>
 					</tr>
 					<tr>

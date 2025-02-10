@@ -24,12 +24,12 @@ Surat Keterangan Istirahat / Dirawat / Sakit - {{$kasus->identitas->nama}}
     <header>
         <table class="" align="right">
             <tr>
-                <td><p style="font-size: 18px;"><b>RM. 33</b></p></td>
+                <td><p style="border: 1px solid black; text-align: center; font-size: 18px;" ><b>RM. 33</b></p></td>
             </tr>
         </table>
     </header>
 
-    <table width="80%" align="center">
+    {{--  <table width="80%" align="center">
         <tr>
             <td width="100%" valign="top">
                 <table width="100%" cellpadding="5">
@@ -51,8 +51,13 @@ Surat Keterangan Istirahat / Dirawat / Sakit - {{$kasus->identitas->nama}}
                 <hr style="border: 3px double black">
             </td>
         </tr>
+    </table>  --}}
+    <table width="100%">
+        <tr>
+            <td align="center" width="100%"><img src="{{ config('app.kop_lg') }}" height="165"></td>
+        </tr>
     </table>
-
+	<hr>
     <table width="80%" align="center">
         <tr>
             <td align="center">
