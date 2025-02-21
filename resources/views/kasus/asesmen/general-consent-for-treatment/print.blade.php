@@ -1,7 +1,7 @@
 @extends('layouts.print')
 
 @section('title')
-    Checklist Keselamatan Pasien di Poli Gigi dan Mulut
+    General Consent For Treatment
 @endsection
 
 @section('css')

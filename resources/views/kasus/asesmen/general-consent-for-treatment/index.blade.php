@@ -24,8 +24,8 @@
 
                             <h4>General Consent For Treatment</h4>
                             <hr>
-                            @php $count = count($general_consent) @endphp
-                            @forelse($general_consent as $item)
+                            @php $count = count($general_consent_for_treatment) @endphp
+                            @forelse($general_consent_for_treatment as $item)
                                 @php $data_val = json_decode($item->val); @endphp
                                 @if (session('my_role_' . $kasus->nomor_kasus))
                                     @if ($item->created_by == Auth::user()->id)
