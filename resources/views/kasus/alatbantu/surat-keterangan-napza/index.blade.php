@@ -216,8 +216,8 @@
 
                 // PASIEN
                 $("input[name=nomor]").val(value?.nomor);
-                $("input[name=sip]").val(value?.sip);
-                $("input[name=nip]").val(value?.nip);
+                // $("input[name=sip]").val(value?.sip);
+                // $("input[name=nip]").val(value?.nip);
                 $("input[name=pendidikan]").val(value?.pendidikan);
                 $("input[name=tanggal_pemeriksaan]").val(value?.tanggal_pemeriksaan);
                 $("input[name=jam]").val(value?.jam);

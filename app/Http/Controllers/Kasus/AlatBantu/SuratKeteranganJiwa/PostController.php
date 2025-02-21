@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Kasus\AlatBantu\SuratKeteranganJiwa;
 
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Kasus\AlatBantu;
@@ -102,12 +103,17 @@ class PostController extends Controller
 
     private function formValuesToJson($request, $alatbantu_id = null)
     {
+        $id_user = $request->post('dpjp');
+        $user = User::find($id_user);
+        $sip = $user->sip;
+        $nip = $user->employee->nrp;
+
         $obj = new \stdClass;
         if (!empty($alatbantu_id)) $obj->id = $alatbantu_id;
         $obj->dpjp = $request->post('dpjp');
         $obj->nomor = $request->post('nomor');
-        $obj->sip = $request->post('sip');
-        $obj->nip = $request->post('nip');
+        $obj->sip = $sip;
+        $obj->nip = $nip;
         $obj->pendidikan = $request->post('pendidikan');
         $obj->tanggal_pemeriksaan = $request->post('tanggal_pemeriksaan');
         $obj->syarat = $request->post('syarat');

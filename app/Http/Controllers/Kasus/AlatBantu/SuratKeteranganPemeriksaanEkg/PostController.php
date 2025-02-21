@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Kasus\AlatBantu\SuratKeteranganNapza;
+namespace App\Http\Controllers\Kasus\AlatBantu\SuratKeteranganPemeriksaanEkg;
 
 use App\User;
 use Carbon\Carbon;
@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use App\Models\Kasus\AlatBantu;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\Kasus\Kasus;
-use App\Models\LabPK\Transaksi;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
@@ -24,7 +22,7 @@ class PostController extends Controller
         try {
             $new_alat_bantu = new AlatBantu();
             $new_alat_bantu->kasus_id = $request->post('kasus_id');
-            $new_alat_bantu->type = 'surat-keterangan-napza';
+            $new_alat_bantu->type = 'surat-keterangan-pemeriksaan-ekg';
             $new_alat_bantu->val = $form;
             $new_alat_bantu->created_by = Auth::user()->id;
             $new_alat_bantu->save();
@@ -32,14 +30,14 @@ class PostController extends Controller
             $conn->commit();
 
             $status = 1;
-            $message = 'Surat Keterangan Pemeriksaan Napza berhasil dibuat';
+            $message = 'Surat Keterangan Pemeriksaan EKG berhasil dibuat';
             $title = 'Berhasil!';
         } catch (\Exception $e) {
             $conn->rollBack();
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 
             $status = 0;
-            $message = 'Surat Keterangan Pemeriksaan Napza gagal dibuat';
+            $message = 'Surat Keterangan Pemeriksaan EKG gagal dibuat';
             $title = 'Gagal!';
         }
 
@@ -66,14 +64,14 @@ class PostController extends Controller
             $conn->commit();
 
             $status = 1;
-            $message = 'Surat Keterangan Pemeriksaan Napza berhasil diperbarui';
+            $message = 'Surat Keterangan Pemeriksaan EKG berhasil diperbarui';
             $title = 'Berhasil!';
         } catch (\Exception $e) {
             $conn->rollBack();
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 
             $status = 0;
-            $message = 'Surat Keterangan Pemeriksaan Napza gagal diperbarui';
+            $message = 'Surat Keterangan Pemeriksaan EKG gagal diperbarui';
             $title = 'Gagal!';
         }
 
@@ -88,12 +86,12 @@ class PostController extends Controller
         try {
             AlatBantu::findOrFail($request->post('alatbantu_id'))->delete();
             $status = 1;
-            $message = 'Surat Keterangan Pemeriksaan Napza berhasil dihapus';
+            $message = 'Surat Keterangan Pemeriksaan EKG berhasil dihapus';
             $title = 'Berhasil!';
         } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
             $status = 0;
-            $message = 'Surat Keterangan Pemeriksaan Napza gagal dihapus';
+            $message = 'Surat Keterangan Pemeriksaan EKG gagal dihapus';
             $title = 'Gagal!';
         }
 
@@ -110,29 +108,6 @@ class PostController extends Controller
         $sip = $user->sip;
         $nip = $user->employee->nrp;
 
-        $transaksi_labpk = Transaksi::with('kasus')->where('kasus_id', $request->post('kasus_id'))->get();
-
-        $parameters = [];
-        // Cek dan tambahkan nilai ke array jika checkbox dicentang
-        if ($request->has('metamphethamine')) {
-            $parameters[] = 'Metamphethamine';
-        }
-        if ($request->has('amphetamine')) {
-            $parameters[] = 'Amphetamine';
-        }
-        if ($request->has('morphine_heroin')) {
-            $parameters[] = 'Morphine / Heroin';
-        }
-        if ($request->has('mariyuana_thc')) {
-            $parameters[] = 'Mariyuana / THC';
-        }
-        if ($request->has('benzodiazepine')) {
-            $parameters[] = 'Benzodiazepine';
-        }
-        if ($request->has('coccain')) {
-            $parameters[] = 'Coccain';
-        }
-
         $obj = new \stdClass;
         if (!empty($alatbantu_id)) $obj->id = $alatbantu_id;
         $obj->dpjp = $request->post('dpjp');
@@ -141,8 +116,9 @@ class PostController extends Controller
         $obj->nip = $nip;
         $obj->pendidikan = $request->post('pendidikan');
         $obj->tanggal_pemeriksaan = $request->post('tanggal_pemeriksaan');
-        $obj->jam = $request->post('jam');
-        $obj->parameter = $parameters;
+        $obj->tensi = $request->post('tensi');
+        $obj->heart_rate = $request->post('heart_rate');
+        $obj->bacaan_ekg = $request->post('bacaan_ekg');
         $obj->syarat = $request->post('syarat');
 
         return json_encode($obj);

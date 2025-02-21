@@ -1,10 +1,15 @@
 <input type="hidden" name="alatbantu_id" value="">
 <input type="hidden" name="kasus_id" value="{{ $kasus->id }}">
 
+{{-- <table width="100%">
+    <tr>
+        <td width="100%"><img src="{{ config('app.kop_lg') }}" height="50"></td>
+    </tr>
+</table> --}}
 <table style="width:100%">
     <tr>
         <td class="position-relative" colspan="1" rowspan="1">
-            <h5 style="text-align: center; padding: 20px 0px">SURAT KETERANGAN PEMERIKSAAN NAPZA</h5>
+            <h5 style="text-align: center; padding: 20px 0px">SURAT KETERANGAN PEMERIKSAAN EKG</h5>
         </td>
     </tr>
 </table>
@@ -16,7 +21,7 @@
         <td width="2%" class="position-relative" colspan="1" rowspan="1"><span>:</span></td>
         <td width="6%">400.7 /</td>
         <td width="10%"><input type="number" class="form-control" name="nomor" value=""></td>
-        <td> / 2 / 102.8 / {{ date('Y') }}</td>
+        <td> / 1 / 102.8 / {{ date('Y') }}</td>
     </tr>
 </table>
 <table style="width: 100%">
@@ -103,7 +108,7 @@
 <table style="width:100%">
     <tr>
         <td class="position-relative" colspan="1" rowspan="1">
-            <h6>Pada pemeriksaan tanggal :</h6>
+            <h6>Pada pemeriksaan <i>Elektocardiography (ECG)</i>  tanggal</h6>
         </td>
     </tr>
 </table>
@@ -120,67 +125,44 @@
         </td>
     </tr>
     <tr>
-        <td width="20%" class="position-relative" colspan="1" rowspan="1"><span>Jam</span></td>
+        <td width="20%" class="position-relative" colspan="1" rowspan="1"><span>Tensi</span></td>
         <td width="2%" class="position-relative" colspan="1" rowspan="1"><span>:</span></td>
         <td class="position-relative" colspan="1" rowspan="1">
             <div class="form-group medify-form-genv4-input-container">
-                <input type="time" class="form-control" name="jam" value="">
+                <input type="text" class="form-control" name="tensi" value="">
             </div>
             <div class="form-group medify-form-genv4-view-container">
             </div>
         </td>
+        <td class=" position-relative" colspan="1" rowspan="1"> <span style="padding-left: 10px">mmHg</span>
+        </td>
     </tr>
-</table>
-<table style="width: 100%">
     <tr>
-        <td width="20%" class="position-relative" colspan="1" rowspan="1"><span>Parameter</span></td>
+        <td width="20%" class="position-relative" colspan="1" rowspan="1"><span>Heart Rate</span></td>
         <td width="2%" class="position-relative" colspan="1" rowspan="1"><span>:</span></td>
         <td class="position-relative" colspan="1" rowspan="1">
-            <div class="form-check medify-form-genv4-input-container">
-                <input class="form-check-input" type="checkbox" value="metamphethamine" id="metamphethamine"
-                    name="metamphethamine">
-                <label class="form-check-label" for="metamphethamine">
-                    Metamphethamine
-                </label>
-            </div>
-            <div class="form-check medify-form-genv4-input-container">
-                <input class="form-check-input" type="checkbox" value="amphetamine" id="amphetamine"
-                    name="amphetamine">
-                <label class="form-check-label" for="amphetamine">
-                    Amphetamine
-                </label>
-            </div>
-            <div class="form-check medify-form-genv4-input-container">
-                <input class="form-check-input" type="checkbox" value="morphine_heroin" id="morphine_heroin"
-                    name="morphine_heroin">
-                <label class="form-check-label" for="morphine_heroin">
-                    Morphine / Heroin
-                </label>
-            </div>
-            <div class="form-check medify-form-genv4-input-container">
-                <input class="form-check-input" type="checkbox" value="mariyuana_thc" id="mariyuana_thc"
-                    name="mariyuana_thc">
-                <label class="form-check-label" for="mariyuana_thc">
-                    Mariyuana / THC
-                </label>
-            </div>
-            <div class="form-check medify-form-genv4-input-container">
-                <input class="form-check-input" type="checkbox" value="benzodiazepine" id="benzodiazepine"
-                    name="benzodiazepine">
-                <label class="form-check-label" for="benzodiazepine">
-                    Benzodiazepine
-                </label>
-            </div>
-            <div class="form-check medify-form-genv4-input-container">
-                <input class="form-check-input" type="checkbox" value="coccain" id="coccain" name="coccain">
-                <label class="form-check-label" for="coccain">
-                    Coccain
-                </label>
+            <div class="form-group medify-form-genv4-input-container">
+                <input type="number" class="form-control" name="heart_rate" value="">
             </div>
             <div class="form-group medify-form-genv4-view-container">
             </div>
         </td>
+        <td class=" position-relative" colspan="1" rowspan="1"> <span style="padding-left: 10px">x/menit</span>
+        </td>
     </tr>
+    <tr>
+        <td width="20%" class="position-relative" colspan="1" rowspan="1"><span>Bacaan EKG</span></td>
+        <td width="2%" class="position-relative" colspan="1" rowspan="1"><span>:</span></td>
+        <td class="position-relative" colspan="1" rowspan="1">
+            <div class="form-group medify-form-genv4-input-container">
+                <textarea class="form-control" name="bacaan_ekg" id=""></textarea>
+            </div>
+            <div class="form-group medify-form-genv4-view-container">
+            </div>
+        </td>
+      
+    </tr>
+    
 </table>
 <table style="width: 100%">
     <tr>

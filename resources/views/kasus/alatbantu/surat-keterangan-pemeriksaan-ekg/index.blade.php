@@ -1,7 +1,7 @@
 @extends('kasus.layouts.main')
 
 @section('title')
-    {{ $kasus->judul_kasus }} - Surat Keterangan Fisik
+    {{ $kasus->judul_kasus }} - Surat Keterangan Pemeriksaan EKG
 @endsection
 
 @section('content')
@@ -17,9 +17,9 @@
                             @if (session('my_role_' . $kasus->nomor_kasus))
                                 <button id="create-btn" type="button"
                                     class="btn btn-rounded btn-alt-primary min-width-125 pull-right">
-                                    <i class="fa fa-pencil"></i> Surat Keterangan Fisik Baru
+                                    <i class="fa fa-pencil"></i> Surat Keterangan Pemeriksaan EKG Baru
                                 </button>
-                                <h4>Surat Keterangan Fisik</h4>
+                                <h4>Surat Keterangan Pemeriksaan EKG</h4>
                                 <hr>
                             @endif
 
@@ -60,7 +60,7 @@
                                         </a>
                                     </div>
                                 @endif
-                                <h5 class="mb-5 pl-5">#Surat Keterangan Fisik {{ $loop->iteration }}</h5>
+                                <h5 class="mb-5 pl-5">#Surat Keterangan Pemeriksaan EKG {{ $loop->iteration }}</h5>
                                 <div class="row">
                                     <div class="col-6">
                                         @if (!empty($item->creator->avatar_thumb))
@@ -85,10 +85,10 @@
                                 </div>
                             @empty
                                 <div class="text-center py-50">
-                                    <h4 class="font-w400 mb-5">Belum ada Surat Keterangan Fisik tersedia
+                                    <h4 class="font-w400 mb-5">Belum ada Surat Keterangan Pemeriksaan EKG tersedia
                                     </h4>
-                                    <p>Klik tombol <strong>Surat Keterangan Fisik Baru</strong> untuk melakukan
-                                        pembuatan Surat Keterangan Fisik Baru</p>
+                                    <p>Klik tombol <strong>Surat Keterangan Pemeriksaan EKG Baru</strong> untuk melakukan
+                                        pembuatan Surat Keterangan Pemeriksaan EKG Baru</p>
                                 </div>
                             @endforelse
                         </div>
@@ -106,7 +106,7 @@
                         {{ csrf_field() }}
                         <div class="block block-themed block-transparent mb-0">
                             <div class="block-header">
-                                <h3 class="block-title">Surat Keterangan Sehat Fisik</h3>
+                                <h3 class="block-title">Surat Keterangan Pemeriksaan EKG</h3>
                                 <div class="block-options">
                                     <button type="button" class="btn-block-option" data-dismiss="modal" aria-label="Close">
                                         <i class="si si-close"></i>
@@ -115,7 +115,7 @@
                             </div>
                             <div id="create-edit-modal-content" class="block-content"
                                 style="padding-left: 25px; padding-right: 25px;">
-                                @include('kasus.alatbantu.surat-keterangan-fisik.form')
+                                @include('kasus.alatbantu.surat-keterangan-pemeriksaan-ekg.form')
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -132,7 +132,7 @@
                 </div>
             </div>
         </div>
-        {{-- ./Modal Surat Keterangan Fisik Baru --}}
+        {{-- ./Modal Surat Keterangan Pemeriksaan EKG Baru --}}
 
         {{-- Delete Form --}}
         <form method="POST" action="{{ url()->current() }}/delete" id="form-delete">
@@ -216,15 +216,11 @@
 
                 // PASIEN
                 $("input[name=nomor]").val(value?.nomor);
-                $("input[name=sip]").val(value?.sip);
-                $("input[name=nip]").val(value?.nip);
-                $("input[name=alamat]").val(value?.alamat);
                 $("input[name=pendidikan]").val(value?.pendidikan);
                 $("input[name=tanggal_pemeriksaan]").val(value?.tanggal_pemeriksaan);
                 $("input[name=tensi]").val(value?.tensi);
-                $("input[name=berat_badan]").val(value?.berat_badan);
-                $("input[name=tinggi_badan]").val(value?.tinggi_badan);
-                $("input[name=visus]").val(value?.visus);
+                $("input[name=heart_rate]").val(value?.heart_rate);
+                $("textarea[name=bacaan_ekg]").val(value?.bacaan_ekg);
                 $("textarea[name=syarat]").val(value?.syarat);
             }
         });

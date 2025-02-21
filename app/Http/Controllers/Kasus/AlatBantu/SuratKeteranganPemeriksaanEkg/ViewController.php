@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Kasus\AlatBantu\SuratKeteranganNapza;
+namespace App\Http\Controllers\Kasus\AlatBantu\SuratKeteranganPemeriksaanEkg;
 
 use DOMPDF;
 use App\User;
@@ -24,15 +24,15 @@ class ViewController extends Controller
         $kasus = Kasus::with($eagers)->where("nomor_kasus", $nomor_kasus)->first();
         $data['alat_bantu'] = AlatBantu::query()
             ->where('kasus_id', $kasus->id)
-            ->where('type', 'surat-keterangan-napza')
+            ->where('type', 'surat-keterangan-pemeriksaan-ekg')
             ->get();
 
         $data['kasus'] = $kasus;
-        $user = User::select('id', 'name', 'profesi', 'sip')->get();
+        $user = User::select('id', 'name', 'profesi')->get();
         $data['petugas'] = $user;
         $data['dokter'] = $user->where('profesi', 1);
         $data['sidebar_active'] = 'alat';
-        return view('kasus.alatbantu.surat-keterangan-napza.index', $data);
+        return view('kasus.alatbantu.surat-keterangan-pemeriksaan-ekg.index', $data);
     }
 
     public function print($nomor_kasus, $alatbantu_id)
@@ -43,7 +43,7 @@ class ViewController extends Controller
         $data['alat_bantu'] = $alat_bantu;
         $data['form_data'] = json_decode($alat_bantu->val);
 
-        $pdf = DOMPDF::loadView("kasus.alatbantu.surat-keterangan-napza.print", $data);
+        $pdf = DOMPDF::loadView("kasus.alatbantu.surat-keterangan-pemeriksaan-ekg.print", $data);
         $pdf->setPaper('a4');
         return $pdf->stream("print.pdf");
     }

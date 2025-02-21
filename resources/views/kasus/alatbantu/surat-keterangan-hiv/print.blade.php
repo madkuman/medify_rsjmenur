@@ -1,7 +1,7 @@
 @extends('layouts.print')
 
 @section('title')
-    {{ $kasus->judul_kasus }} - Print Surat Keterangan Pemeriksaan Napza
+    {{ $kasus->judul_kasus }} - Print Surat Keterangan Bebas HIV
 @endsection
 
 @section('css')
@@ -51,8 +51,8 @@
     <table style="width:100%">
         <tr>
             <td>
-                <h2 style="text-align: center; padding-top: 2px"><u>SURAT KETERANGAN PEMERIKSAAN NAPZA</u></h2>
-                <h2 style="text-align: center">NOMOR : 400.7 / {{ $form_data->nomor }} / 2 / 102.8 / {{ date('Y') }}</h2>
+                <h2 style="text-align: center; padding-top: 2px"><u>SURAT KETERANGAN BEBAS HIV</u></h2>
+                <h2 style="text-align: center">NOMOR : 400.7 / {{ $form_data->nomor }} / 1 / 102.8 / {{ date('Y') }}</h2>
             </td>
         </tr>
     </table>
@@ -159,20 +159,26 @@
             </tr>
         </table>
         <br>
-        <p>Pada pemeriksaan tanggal {{ indonesian_date($form_data->tanggal_pemeriksaan) }} jam {{ $form_data->jam }}
-            WIB, dinyatakan <b>BEBAS NARKOBA / NAPZA</b> dengan pemeriksaan laboratorium tidak didapatkan adanya tanda -
-            tanda
-            pemakaian :</p>
-        <br>
+        <p>Pada pemeriksaan laboratorium tanggal {{ indonesian_date($form_data->tanggal_pemeriksaan) }} dengan hasil
+            sebagai berikut:</p>
         <table style="padding-left: 50px;">
-            @foreach ($form_data->parameter as $index => $parameter)
-                <tr>
-                    <td style="width:110px">
-                        <p>{{ chr(97 + $index) }}. {{ $parameter }}</p>
-                    </td>
-                </tr>
-            @endforeach
+            <tr>
+                <td style="width:110px">
+                    <p>HIV (Rapid Test)</p>
+                </td>
+                <td style="width:10px">
+                    <p>: </p>
+                </td>
+                <td>
+                    <p>{{ $form_data->hiv }}</p>
+                </td>
+            </tr>
         </table>
+        <br>
+        <p>Yang bersangkutan dinyatakan:</p>
+        <div class="subheader">
+            <b>BEBAS HIV</b>
+        </div>
         <br>
         <p>Surat keterangan ini dibuat sebagai <b>{{ $form_data->syarat }}</b>.</p>
     </div>

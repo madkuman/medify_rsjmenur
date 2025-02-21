@@ -190,5 +190,50 @@
             </a>
         </li>
 
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{ url()->current() }}/surat-keterangan-hiv">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Surat Keterangan Bebas HIV</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Surat Keterangan Bebas HIV</h5>
+                    <p class="desc">Surat Keterangan Bebas HIV</p>
+                </div>
+            </a>
+        </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{ url()->current() }}/surat-keterangan-pemeriksaan-ekg">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Surat Keterangan Pemeriksaan EKG</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Surat Keterangan Pemeriksaan EKG</h5>
+                    <p class="desc">Surat Keterangan Pemeriksaan EKG</p>
+                </div>
+            </a>
+        </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{ url()->current() }}/surat-pernyataan-menjemput-pasien">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Surat Pernyataan Menjemput Pasien</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Surat Pernyataan Menjemput Pasien</h5>
+                    <p class="desc">Surat Pernyataan Menjemput Pasien</p>
+                </div>
+            </a>
+        </li>
+
     </ul>
 </div>
