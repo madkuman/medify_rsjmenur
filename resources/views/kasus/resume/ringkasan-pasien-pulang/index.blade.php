@@ -40,8 +40,11 @@
 		<i class="fa fa-pencil"></i>
 	</button>
 	@endif
-	<a type="btn" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/ringkasan-pasien-pulang/print/{{$item->id}}" class="btn btn-sm btn-circle btn-outline-secondary mr-5 mb-5 pull-right" target="_blank">
+	<a type="btn" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/ringkasan-pasien-pulang/print/{{$item->id}}" class="btn btn-sm btn-circle btn-outline-secondary mr-5 mb-5 pull-right" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print Format Jiwa">
 		<i class="fa fa-print"></i>
+	</a>
+	<a type="btn" style="color: green" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/ringkasan-pasien-pulang/printnj/{{$item->id}}" class="btn btn-sm btn-circle btn-outline-secondary mr-5 mb-5 pull-right" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print Format Non Jiwa">
+		<i class="fa fa-print" style="color:green"></i>
 	</a>
 	<button  class="btn btn-sm btn-circle btn-outline-primary mr-5 mb-5 pull-right showBtn" data-id="{{$item->id}}" data-index="{{$loop->iteration - 1}}">
 		<i class="fa fa-search"></i>
