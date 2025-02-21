@@ -67,6 +67,7 @@ Route::get("/asesmen/ringkasan-pasien-pulang/", "Kasus\Asesmen\RingkasanPasienPu
 Route::post("/asesmen/ringkasan-pasien-pulang/save", "Kasus\Asesmen\RingkasanPasienPulang\PostController@save");
 Route::post("/asesmen/ringkasan-pasien-pulang/delete", "Kasus\Asesmen\RingkasanPasienPulang\PostController@delete");
 Route::get("/asesmen/ringkasan-pasien-pulang/print/{id}", "Kasus\Asesmen\RingkasanPasienPulang\ViewController@print");
+Route::get("/asesmen/ringkasan-pasien-pulang/printnj/{id}", "Kasus\Asesmen\RingkasanPasienPulang\ViewController@printnj");
 
 
 
@@ -218,6 +219,26 @@ Route::post("/asesmen/checklist-keselamatan-pasien-dipoli-gigi-dan-mulut/delete"
 Route::get("/asesmen/checklist-keselamatan-pasien-dipoli-gigi-dan-mulut/print/{id}", "Kasus\Asesmen\ChecklistKeselamatanPasienDipoliGigiDanMulut\ViewController@print");
 Route::get("/asesmen/checklist-keselamatan-pasien-dipoli-gigi-dan-mulut/search-user", "Kasus\Asesmen\ChecklistKeselamatanPasienDipoliGigiDanMulut\PostController@searchUser");
 
+Route::get("/asesmen/pemberian-informasi-asuhan-dan-tindakan", "Kasus\Asesmen\PemberianInformasiAsuhanDanTindakan\ViewController@index");
+Route::get("/asesmen/pemberian-informasi-asuhan-dan-tindakan/view/{id}", "Kasus\Asesmen\PemberianInformasiAsuhanDanTindakan\ViewController@single");
+Route::get("/asesmen/pemberian-informasi-asuhan-dan-tindakan/create", "Kasus\Asesmen\PemberianInformasiAsuhanDanTindakan\ViewController@create");
+Route::get("/asesmen/pemberian-informasi-asuhan-dan-tindakan/edit/{id}", "Kasus\Asesmen\PemberianInformasiAsuhanDanTindakan\ViewController@edit");
+Route::post("/asesmen/pemberian-informasi-asuhan-dan-tindakan/submit-form", "Kasus\Asesmen\PemberianInformasiAsuhanDanTindakan\PostController@submitForm");
+Route::post("/asesmen/pemberian-informasi-asuhan-dan-tindakan/delete", "Kasus\Asesmen\PemberianInformasiAsuhanDanTindakan\PostController@delete");
+Route::get("/asesmen/pemberian-informasi-asuhan-dan-tindakan/print/{id}", "Kasus\Asesmen\PemberianInformasiAsuhanDanTindakan\ViewController@print");
+Route::get("/asesmen/pemberian-informasi-asuhan-dan-tindakan/search-user", "Kasus\Asesmen\PemberianInformasiAsuhanDanTindakan\PostController@searchUser");
+
+Route::get("/asesmen/checklist-orientasi-pasien-baru", "Kasus\Asesmen\ChecklistOrientasiPasienBaru\ViewController@index");
+Route::get("/asesmen/checklist-orientasi-pasien-baru/view/{id}", "Kasus\Asesmen\ChecklistOrientasiPasienBaru\ViewController@single");
+Route::get("/asesmen/checklist-orientasi-pasien-baru/create", "Kasus\Asesmen\ChecklistOrientasiPasienBaru\ViewController@create");
+Route::get("/asesmen/checklist-orientasi-pasien-baru/edit/{id}", "Kasus\Asesmen\ChecklistOrientasiPasienBaru\ViewController@edit");
+Route::post("/asesmen/checklist-orientasi-pasien-baru/submit-form", "Kasus\Asesmen\ChecklistOrientasiPasienBaru\PostController@submitForm");
+Route::post("/asesmen/checklist-orientasi-pasien-baru/delete", "Kasus\Asesmen\ChecklistOrientasiPasienBaru\PostController@delete");
+Route::get("/asesmen/checklist-orientasi-pasien-baru/print/{id}", "Kasus\Asesmen\ChecklistOrientasiPasienBaru\ViewController@print");
+Route::get("/asesmen/checklist-orientasi-pasien-baru/search-user", "Kasus\Asesmen\ChecklistOrientasiPasienBaru\PostController@searchUser");
+Route::post("/asesmen/checklist-orientasi-pasien-baru/add-ttd", "Kasus\Asesmen\ChecklistOrientasiPasienBaru\PostController@addTTD");
+
+
 Route::get("/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl", "Kasus\Asesmen\AsesmenWajibLaporDanRehabilitasiMedisIpwl\ViewController@index");
 Route::get("/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl/view/{id}", "Kasus\Asesmen\AsesmenWajibLaporDanRehabilitasiMedisIpwl\ViewController@single");
 Route::get("/asesmen/asesmen-wajib-lapor-dan-rehabilitasi-medis-ipwl/create", "Kasus\Asesmen\AsesmenWajibLaporDanRehabilitasiMedisIpwl\ViewController@create");
@@ -287,15 +308,15 @@ Route::put("/asesmen/general-consent/form/edit", "Kasus\Asesmen\GeneralConsent\E
 Route::post("/asesmen/general-consent/delete", "Kasus\Asesmen\GeneralConsent\DeleteController@delete");
 Route::post('/asesmen/general-consent/add-ttd', 'Kasus\Asesmen\GeneralConsent\PostController@addTTD');
 
-Route::get("/asesmen/general-consent-for-treatment", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@index");
-Route::get("/asesmen/general-consent-for-treatment/single", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@single");
-Route::get("/asesmen/general-consent-for-treatment/form", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@create");
-Route::get("/asesmen/general-consent-for-treatment/form/edit", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@edit");
-Route::get("/asesmen/general-consent-for-treatment/print", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@print");
-Route::post("/asesmen/general-consent-for-treatment/form/create", "Kasus\Asesmen\GeneralConsentForTreatment\CreateController@create");
-Route::put("/asesmen/general-consent-for-treatment/form/edit", "Kasus\Asesmen\GeneralConsentForTreatment\EditController@edit");
-Route::post("/asesmen/general-consent-for-treatment/delete", "Kasus\Asesmen\GeneralConsentForTreatment\DeleteController@delete");
-Route::post('/asesmen/general-consent-for-treatment/add-ttd', 'Kasus\Asesmen\GeneralConsentForTreatment\PostController@addTTD');
+Route::get("/asesmen/general-consent-treatment", "Kasus\Asesmen\GeneralConsentTreatment\ViewController@index");
+Route::get("/asesmen/general-consent-treatment/single", "Kasus\Asesmen\GeneralConsentTreatment\ViewController@single");
+Route::get("/asesmen/general-consent-treatment/form", "Kasus\Asesmen\GeneralConsentTreatment\ViewController@create");
+Route::get("/asesmen/general-consent-treatment/form/edit", "Kasus\Asesmen\GeneralConsentTreatment\ViewController@edit");
+Route::get("/asesmen/general-consent-treatment/print", "Kasus\Asesmen\GeneralConsentTreatment\ViewController@print");
+Route::post("/asesmen/general-consent-treatment/form/create", "Kasus\Asesmen\GeneralConsentTreatment\CreateController@create");
+Route::put("/asesmen/general-consent-treatment/form/edit", "Kasus\Asesmen\GeneralConsentTreatment\EditController@edit");
+Route::post("/asesmen/general-consent-treatment/delete", "Kasus\Asesmen\GeneralConsentTreatment\DeleteController@delete");
+Route::post('/asesmen/general-consent-treatment/add-ttd', 'Kasus\Asesmen\GeneralConsentTreatment\PostController@addTTD');
 
 Route::get("/asesmen/surat-pernyataan-kesanggupan-pembiayaan/", "Kasus\Asesmen\SuratPernyataanKesanggupanPembiayaan\ViewController@index");
 Route::post("/asesmen/surat-pernyataan-kesanggupan-pembiayaan/create", "Kasus\Asesmen\SuratPernyataanKesanggupanPembiayaan\PostController@create");

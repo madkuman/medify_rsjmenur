@@ -439,3 +439,21 @@ Route::post('/alat-bantu/surat-keterangan-napza/submit', 'Kasus\AlatBantu\SuratK
 Route::post('/alat-bantu/surat-keterangan-napza/update', 'Kasus\AlatBantu\SuratKeteranganNapza\PostController@update');
 Route::post('/alat-bantu/surat-keterangan-napza/delete', 'Kasus\AlatBantu\SuratKeteranganNapza\PostController@delete');
 Route::get('/alat-bantu/surat-keterangan-napza/print/{id}', 'Kasus\AlatBantu\SuratKeteranganNapza\ViewController@print');
+
+Route::get('/alat-bantu/surat-keterangan-hiv', 'Kasus\AlatBantu\SuratKeteranganHiv\ViewController@index');
+Route::post('/alat-bantu/surat-keterangan-hiv/submit', 'Kasus\AlatBantu\SuratKeteranganHiv\PostController@submit');
+Route::post('/alat-bantu/surat-keterangan-hiv/update', 'Kasus\AlatBantu\SuratKeteranganHiv\PostController@update');
+Route::post('/alat-bantu/surat-keterangan-hiv/delete', 'Kasus\AlatBantu\SuratKeteranganHiv\PostController@delete');
+Route::get('/alat-bantu/surat-keterangan-hiv/print/{id}', 'Kasus\AlatBantu\SuratKeteranganHiv\ViewController@print');
+
+Route::get('/alat-bantu/surat-keterangan-pemeriksaan-ekg', 'Kasus\AlatBantu\SuratKeteranganPemeriksaanEkg\ViewController@index');
+Route::post('/alat-bantu/surat-keterangan-pemeriksaan-ekg/submit', 'Kasus\AlatBantu\SuratKeteranganPemeriksaanEkg\PostController@submit');
+Route::post('/alat-bantu/surat-keterangan-pemeriksaan-ekg/update', 'Kasus\AlatBantu\SuratKeteranganPemeriksaanEkg\PostController@update');
+Route::post('/alat-bantu/surat-keterangan-pemeriksaan-ekg/delete', 'Kasus\AlatBantu\SuratKeteranganPemeriksaanEkg\PostController@delete');
+Route::get('/alat-bantu/surat-keterangan-pemeriksaan-ekg/print/{id}', 'Kasus\AlatBantu\SuratKeteranganPemeriksaanEkg\ViewController@print');
+
+Route::get('/alat-bantu/surat-pernyataan-menjemput-pasien', 'Kasus\AlatBantu\SuratPernyataanMenjemputPasien\ViewController@index');
+Route::post('/alat-bantu/surat-pernyataan-menjemput-pasien/submit', 'Kasus\AlatBantu\SuratPernyataanMenjemputPasien\PostController@submit');
+Route::post('/alat-bantu/surat-pernyataan-menjemput-pasien/update', 'Kasus\AlatBantu\SuratPernyataanMenjemputPasien\PostController@update');
+Route::post('/alat-bantu/surat-pernyataan-menjemput-pasien/delete', 'Kasus\AlatBantu\SuratPernyataanMenjemputPasien\PostController@delete');
+Route::get('/alat-bantu/surat-pernyataan-menjemput-pasien/print/{id}', 'Kasus\AlatBantu\SuratPernyataanMenjemputPasien\ViewController@print');
