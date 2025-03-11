@@ -67,24 +67,24 @@ class PostController extends Controller
                         $data_1['taskid'] = 1;
                         $data_1['waktu'] = $waktu;
 
-                        // dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 1, 'waktu' => $waktu]));
-                        $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data_1);
-                        $returned = json_decode($returned);
-                        $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
-                        if ($metadata->code != "200") {
-                            $data_log['kodebooking'] = $transaksi->id;
-                            $data_log['response'] = json_encode($returned);
+                        dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 1, 'waktu' => $waktu, 'jenisresep' => 'Tidak ada']));
+                        //$returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data_1);
+                        //$returned = json_decode($returned);
+                        //$metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+                        //if ($metadata->code != "200") {
+                        //$data_log['kodebooking'] = $transaksi->id;
+                        //$data_log['response'] = json_encode($returned);
 
-                            app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
-                        } else {
-                            $data_log['kodebooking'] = $transaksi->id;
-                            $data_log['task_id'] = 1;
-                            $data_log['waktu'] = $waktu;
-                            $data_log['response'] = json_encode($returned);
-                            $data_log['request'] = $data_1;
+                        //app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+                        //} else {
+                        //$data_log['kodebooking'] = $transaksi->id;
+                        //$data_log['task_id'] = 1;
+                        //$data_log['waktu'] = $waktu;
+                        //$data_log['response'] = json_encode($returned);
+                        //$data_log['request'] = $data_1;
 
-                            app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
-                        }
+                        //app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+                        //}
                         $transaksi = Transaksi::find($transaksi->id);
                         $transaksi->task_id_jkn = 1;
                         $transaksi->save();
@@ -94,24 +94,24 @@ class PostController extends Controller
                         $data_2['taskid'] = 2;
                         $data_2['waktu'] = $waktu;
 
-                        // dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 2, 'waktu' => $waktu]));
-                        $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data_2);
-                        $returned = json_decode($returned);
-                        $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
-                        if ($metadata->code != "200") {
-                            $data_log['kodebooking'] = $transaksi->id;
-                            $data_log['response'] = json_encode($returned);
+                        dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 2, 'waktu' => $waktu]));
+                        //$returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data_2);
+                        //$returned = json_decode($returned);
+                        //$metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+                        //if ($metadata->code != "200") {
+                        //$data_log['kodebooking'] = $transaksi->id;
+                        //$data_log['response'] = json_encode($returned);
 
-                            app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
-                        } else {
-                            $data_log['kodebooking'] = $transaksi->id;
-                            $data_log['task_id'] = 2;
-                            $data_log['waktu'] = $waktu;
-                            $data_log['response'] = json_encode($returned);
-                            $data_log['request'] = $data_2;
+                        //app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+                        //} else {
+                        //$data_log['kodebooking'] = $transaksi->id;
+                        //$data_log['task_id'] = 2;
+                        //$data_log['waktu'] = $waktu;
+                        //$data_log['response'] = json_encode($returned);
+                        //$data_log['request'] = $data_2;
 
-                            app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
-                        }
+                        //app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+                        //}
                         $transaksi = Transaksi::find($transaksi->id);
                         $transaksi->task_id_jkn = 2;
                         $transaksi->save();
@@ -120,24 +120,24 @@ class PostController extends Controller
                     $data['kodebooking'] = $transaksi->id;
                     $data['taskid'] = 3;
                     $data['waktu'] = $carbon_today;
-                    // dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 3, 'waktu' => $carbon_today]));
-                    $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
-                    $returned = json_decode($returned);
-                    $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
-                    if ($metadata->code != "200") {
-                        $data_log['kodebooking'] = $transaksi->id;
-                        $data_log['response'] = json_encode($returned);
+                    dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 3, 'waktu' => $carbon_today]));
+                    //$returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
+                    //$returned = json_decode($returned);
+                    //$metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+                    //if ($metadata->code != "200") {
+                    //$data_log['kodebooking'] = $transaksi->id;
+                    //$data_log['response'] = json_encode($returned);
 
-                        app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
-                    } else {
-                        $data_log['kodebooking'] = $transaksi->id;
-                        $data_log['task_id'] = 3;
-                        $data_log['waktu'] = $waktu;
-                        $data_log['response'] = json_encode($returned);
-                        $data_log['request'] = $data;
+                    //app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+                    //} else {
+                    //$data_log['kodebooking'] = $transaksi->id;
+                    //$data_log['task_id'] = 3;
+                    //$data_log['waktu'] = $waktu;
+                    //$data_log['response'] = json_encode($returned);
+                    //$data_log['request'] = $data;
 
-                        app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
-                    }
+                    //app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+                    //}
                     $transaksi = Transaksi::find($transaksi->id);
                     $transaksi->task_id_jkn = 3;
                     $transaksi->save();
@@ -608,7 +608,7 @@ class PostController extends Controller
     public function APIPendaftaranPasien(Request $request)
     {
         ini_set('max_memory_limit', '4096M');
-
+        // dd($request->all());
         //if(\Auth::user()->id == 3)         dd($request->all());
         DB::connection('rawatjalan')->beginTransaction();
         DB::connection('igd')->beginTransaction();
@@ -642,6 +642,8 @@ class PostController extends Controller
             $data_retribusi['retribusi'] = $request->input('retribusi');
             $data_transaksi['dokter_id'] = $request->dokter_id;
             $data_transaksi['tanggal_pemesanan'] = $request->tanggal_pemesanan;
+            $data_transaksi['jenis_kunjungan'] = $request->jenis_kunjungan;
+            $data_transaksi['nomor_referensi'] = $request->input('nomor_referensi');
             $transaksi_id = -1;
 
             $asal_rujukan_id = $request->asal_rujukan;
@@ -699,8 +701,7 @@ class PostController extends Controller
                     $sisa_antrian = 0;
                     $data_read['tanggalperiksa'] = Carbon::parse($transaksi->ordered_at);
                     $data_read['jampraktek'] = $jam_text;
-                    $transactions_jkn = app('App\Http\Controllers\ThirdParty\MobileBPJS\Antrean\ReadController')
-                        ->getTransactionByJadwal($data_read, $dokter_jadwal->id, $dokter->id);
+                    $transactions_jkn = app('App\Http\Controllers\ThirdParty\MobileBPJS\Antrean\ReadController')->getTransactionByJadwal($data_read, $dokter_jadwal->id, $dokter->id);
                     foreach ($transactions_jkn as $trans) {
                         if ($trans->status == 0) { // masih antri
                             $sisa_antrian++;
@@ -717,87 +718,65 @@ class PostController extends Controller
                             }
                         }
                     }
-                    // $permintaan_rujuk  = $transaksi->permintaan_rujuk; 
-                    $nomor_rujukan = "";
-                    $jenis_kunjungan = 3;
-                    $nomor_referensi = "";
-
-                    if ($perusahaan->type == 1) {
-                        $req_rujukan = new \Illuminate\Http\Request();
-                        $req_rujukan->replace([
-                            'nomor_kartu' => $pasien_pembayaran->no_asuransi,
-                            'multiple' => 1
-                        ]);
-
-                        if (config('medify.third-party.vclaim.on_v2')) {
-                            $rujukan = app(\App\Http\Controllers\ThirdParty\BPJS\VClaim\Rujukan\ReadController::class)->searchByNomorKartuAll(1, $pasien_pembayaran->no_asuransi);
-                        } else {
-                            $rujukan = app(\App\Http\Controllers\BPJS\API\Rujukan\ReadController::class)->getRujukanKartu($req_rujukan);
-                        }
-
-                        $rujukan = json_decode($rujukan);
-                        // dd($rujukan);
-                        if ($rujukan->metaData->code == 200) {
-                            $rujukan = $rujukan->response->rujukan[0] ?? null;
-                            $nomor_rujukan = $rujukan->noKunjungan ?? "";
-                            $jenis_rujukan = $rujukan->tipe_perujuk ?? "";
-                            $kode_poli_rujukan = $rujukan->poliRujukan->kode ?? "";
-
-                            $get_jumlah_sep = app(\App\Http\Controllers\BPJS\Rujukan\PostController::class)->dataJumlahSepRujukan($jenis_rujukan, $nomor_rujukan);
-                            $get_jumlah_sep = json_decode($get_jumlah_sep);
-                            $jumlah_sep = $get_jumlah_sep->response->jumlahSEP ?? "";
-                            // dd($get_jumlah_sep);
-                            // dd($nomor_rujukan);
-                            if ($jumlah_sep == 0 && $poliklinik->bpjs_id == $kode_poli_rujukan) {
-                                if ($jenis_rujukan == 1) {
-                                    $jenis_kunjungan = 1;
-                                    $nomor_referensi = $nomor_rujukan;
-                                } else {
-                                    $jenis_kunjungan = 4;
-                                    $nomor_referensi = $nomor_rujukan;
-                                }
-                            }
-                            // dd($transaksi->id);
-                            $bulan = date('m');
-                            $tahun = date('Y');
-                            $no_kartu = $pasien_pembayaran->no_asuransi ?? "";
-                            $format_filter = 2;
-                            $get_rencana_kontrol = app(\App\Http\Controllers\ThirdParty\BPJS\VClaim\RencanaKontrol\ReadController::class)->getDataNoKartu($bulan, $tahun, $no_kartu, $format_filter);
-                            $rencana_kontrol = json_decode($get_rencana_kontrol);
-                            // dd($rencana_kontrol);
-                            if ($jumlah_sep >= 1) {
-                                if ($poliklinik->bpjs_id == $kode_poli_rujukan) {
-                                    $jenis_kunjungan = 3;
-                                    $nomor_referensi = $rencana_kontrol->response->list[0]->noSuratKontrol ?? $nomor_rujukan;
-                                    // dd($nomor_referensi);
-                                } else {
-                                    $jenis_kunjungan = 2;
-                                    $nomor_kasus = str_pad($transaksi->kasus_id, 11, "0", STR_PAD_LEFT);
-                                    $nomor_referensi = $rencana_kontrol->response->list[0]->noSuratKontrol ?? $nomor_rujukan;
-                                    // $nomor_referensi = config('app.bpjs_ppk') . $nomor_kasus;
-                                    // dd($transaksi->kasus_id);
-                                }
-                            }
-                        }
+                    $jenis_kunjungan = $data_transaksi['jenis_kunjungan'] ?? "";
+                    $nomor_referensi = $data_transaksi['nomor_referensi'] ?? "";
+                    if ($jenis_kunjungan == 3) {
+                        //Cari surat kontrol
+                        $bulan = date('m');
+                        $tahun = date('Y');
+                        $no_kartu = $pasien_pembayaran->no_asuransi ?? "";
+                        $format_filter = 2;
+                        $get_rencana_kontrol = app(\App\Http\Controllers\ThirdParty\BPJS\VClaim\RencanaKontrol\ReadController::class)->getDataNoKartu($bulan, $tahun, $no_kartu, $format_filter);
+                        $rencana_kontrol = json_decode($get_rencana_kontrol);
+                        // dd($rencana_kontrol);
+                        $nomor_referensi = $rencana_kontrol->response->list[0]->noSuratKontrol ?? $nomor_referensi;
                     }
-                    // dd($jenis_kunjungan, $nomor_referensi);
-                    $no_antrian = (int) preg_replace("/[^0-9]/", "", $transaksi->nomor_antrian);
 
-                    //Penentuan jenis_kunjungan dan nomor_referensi
-                    $response['kodebooking']         = $transaksi->id;
+                    if ($jenis_kunjungan == 2) {
+                        // $nomor_kasus = str_pad($transaksi->kasus_id, 11, "0", STR_PAD_LEFT);
+                        // $nomor_referensi = config('app.bpjs_ppk') . $nomor_kasus;
+
+                        $kode_ppk = config('app.bpjs_ppk');
+                        $kode_booking = (string) $transaksi->id;
+
+                        // Menentukan panjang total yang diinginkan
+                        $total_length = 19;
+
+                        // Menghitung panjang kode
+                        $length_kode_ppk = strlen($kode_ppk);
+
+                        // Menghitung panjang yang tersisa untuk kode booking
+                        $length_kode_booking = $total_length - $length_kode_ppk;
+
+                        // Memformat kode booking agar memiliki panjang yang sesuai dengan menambahkan nol di depan
+                        $kode_booking_padded = str_pad($kode_booking, $length_kode_booking, "0", STR_PAD_LEFT);
+
+                        // Menggabungkan hasilnya
+                        $nomor_referensi = $kode_ppk . $kode_booking_padded;
+                    }
+
+                    if ($jenis_kunjungan == 5) {
+                        $jenis_kunjungan = 1;
+                        $nomor_referensi = "";
+                    }
+
+                    $no_antrian        = (int) preg_replace("/[^0-9]/", "", $transaksi->nomor_antrian);
+
+
+                    $response['kodebooking']         = (string) $transaksi->id;
                     $response['jenispasien']         = $perusahaan->type == 1 ? "JKN" : "NON JKN";
                     $response['nomorkartu']          = $pasien_pembayaran->no_asuransi ?? "";
                     $response['nik']                 = $pasien->no_identitas;
-                    $response['nohp']                 = $pasien->phone;
+                    $response['nohp']                 = preg_replace('/\D/', '', $pasien->phone);
                     $response['kodepoli']             = $dokter->bpjs_poli ?? $poliklinik->bpjs_id;
                     $response['namapoli']             = $dokter->bpjs_poli_text ?? $poliklinik->name;
-                    $response['pasienbaru']          = $pasien->is_baru;
+                    $response['pasienbaru']       = $pasien->is_baru == NULL ? 0 : $pasien->is_baru;
                     $response['norm']                 = $pasien->no_rm;
                     $response['tanggalperiksa']   = Carbon::createFromFormat('Y-m-d H:i:s', $transaksi->ordered_at)->format('Y-m-d');
                     $response['kodedokter']            = $dokter->bpjs_kode_dpjp;
                     $response['namadokter']            = $dokter->name;
                     $response['jampraktek']            = $jam_text;
-                    $response['jeniskunjungan']     = $jenis_kunjungan;
+                    $response['jeniskunjungan']     = (int) $jenis_kunjungan;
                     $response['nomorreferensi']     = $nomor_referensi;
                     $response['nomorantrean']        = $transaksi->nomor_antrian;
                     $response['angkaantrean']        = $no_antrian;
@@ -835,10 +814,9 @@ class PostController extends Controller
                         'kuotanonjkn' => $response['kuotanonjkn'],
                         'keterangan' => $response['keterangan'],
                     ]);
-                    // dd($temp_params);
+
                     $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\CreateController::class)->addAntrean($temp_params);
                     $returned = json_decode($returned);
-
                     $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
 
                     $data_log['kodebooking'] = $transaksi->id;
@@ -858,98 +836,96 @@ class PostController extends Controller
                             $carbon_today = strtotime($carbon_today);
                             if ($pasien->is_baru == 1) {
                                 $waktu = ($carbon_today - (rand(300, 600))) * 1000;
-                                // $data_1['kodebooking'] = $transaksi->id;
-                                // $data_1['taskid'] = 1;
-                                // $data_1['waktu'] = $waktu;
+                                $data_1['kodebooking'] = $transaksi->id;
+                                $data_1['taskid'] = 1;
+                                $data_1['waktu'] = $waktu;
 
-                                // dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 1, 'waktu' => $waktu]));
-                                $data = [
-                                    'kodebooking' => $transaksi->id,
-                                    'taskid' => 1,
-                                    'waktu' => $waktu
-                                ];
-                                $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
-                                $returned = json_decode($returned);
-                                $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
-                                if ($metadata->code != "200") {
-                                    $data_log['kodebooking'] = $transaksi->id;
-                                    $data_log['response'] = json_encode($returned);
+                                dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 1, 'waktu' => $waktu, 'jenisresep' => 'Tidak ada']));
+                                //$data = [
+                                //'kodebooking' => $transaksi->id,
+                                //'taskid' => 1,
+                                //'waktu' => $waktu
+                                //];
+                                //$returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
+                                //$returned = json_decode($returned);
+                                //$metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+                                //if ($metadata->code != "200") {
+                                //$data_log['kodebooking'] = $transaksi->id;
+                                //$data_log['response'] = json_encode($returned);
 
-                                    app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
-                                } else {
-                                    $data_log['kodebooking'] = $transaksi->id;
-                                    $data_log['task_id'] = 1;
-                                    $data_log['waktu'] = $waktu;
-                                    $data_log['response'] = json_encode($returned);
-                                    $data_log['request'] = $data;
+                                //app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+                                //} else {
+                                //$data_log['kodebooking'] = $transaksi->id;
+                                //$data_log['task_id'] = 1;
+                                //$data_log['waktu'] = $waktu;
+                                //$data_log['response'] = json_encode($returned);
+                                //$data_log['request'] = $data;
 
-                                    app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
-                                }
+                                //app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+                                //}
                                 $transaksi = Transaksi::find($transaksi->id);
                                 $transaksi->task_id_jkn = 1;
                                 $transaksi->save();
 
                                 $waktu = ($carbon_today - (rand(60, 300))) * 1000;
-                                // $data_2['kodebooking'] = $transaksi->id;
-                                // $data_2['taskid'] = 2;
-                                // $data_2['waktu'] = $waktu;
+                                $data_2['kodebooking'] = $transaksi->id;
+                                $data_2['taskid'] = 2;
+                                $data_2['waktu'] = $waktu;
 
-                                // dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 2, 'waktu' => $waktu]));
-                                $data = [
-                                    'kodebooking' => $transaksi->id,
-                                    'taskid' => 2,
-                                    'waktu' => $waktu
-                                ];
-                                $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
-                                $returned = json_decode($returned);
-                                $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
-                                if ($metadata->code != "200") {
-                                    $data_log['kodebooking'] = $transaksi->id;
-                                    $data_log['response'] = json_encode($returned);
+                                dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 2, 'waktu' => $waktu]));
+                                //$data = [
+                                //'kodebooking' => $transaksi->id,
+                                //'taskid' => 2,
+                                //'waktu' => $waktu
+                                //];
+                                //$returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
+                                //$returned = json_decode($returned);
+                                //$metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+                                //if ($metadata->code != "200") {
+                                //$data_log['kodebooking'] = $transaksi->id;
+                                //$data_log['response'] = json_encode($returned);
 
-                                    app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
-                                } else {
-                                    $data_log['kodebooking'] = $transaksi->id;
-                                    $data_log['task_id'] = 2;
-                                    $data_log['waktu'] = $waktu;
-                                    $data_log['response'] = json_encode($returned);
-                                    $data_log['request'] = $data;
+                                //app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+                                //} else {
+                                //$data_log['kodebooking'] = $transaksi->id;
+                                //$data_log['task_id'] = 2;
+                                //$data_log['waktu'] = $waktu;
+                                //$data_log['response'] = json_encode($returned);
+                                //$data_log['request'] = $data;
 
-                                    app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
-                                }
+                                //app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+                                //}
                                 $transaksi = Transaksi::find($transaksi->id);
                                 $transaksi->task_id_jkn = 2;
                                 $transaksi->save();
                             }
-
-                            //Pengiriman task id 3 saat klik simpan pendaftaran
                             $carbon_today = $carbon_today * 1000;
-                            // $data['kodebooking'] = $transaksi->id;
-                            // $data['taskid'] = 3;
-                            // $data['waktu'] = $carbon_today;
-                            // dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 3, 'waktu' => $carbon_today]));
-                            $data = [
-                                'kodebooking' => $transaksi->id,
-                                'taskid' => 3,
-                                'waktu' => $carbon_today
-                            ];
-                            $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
-                            $returned = json_decode($returned);
-                            $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
-                            if ($metadata->code != "200") {
-                                $data_log['kodebooking'] = $transaksi->id;
-                                $data_log['response'] = json_encode($returned);
+                            $data['kodebooking'] = $transaksi->id;
+                            $data['taskid'] = 3;
+                            $data['waktu'] = $carbon_today;
+                            dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 3, 'waktu' => $carbon_today]));
+                            //$data = [
+                            //'kodebooking' => $transaksi->id,
+                            //'taskid' => 3,
+                            //'waktu' => $carbon_today
+                            //];
+                            //$returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
+                            //$returned = json_decode($returned);
+                            //$metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+                            //if ($metadata->code != "200") {
+                            //$data_log['kodebooking'] = $transaksi->id;
+                            //$data_log['response'] = json_encode($returned);
 
-                                app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
-                            } else {
-                                $data_log['kodebooking'] = $transaksi->id;
-                                $data_log['task_id'] = 3;
-                                $data_log['waktu'] = $carbon_today;
-                                $data_log['response'] = json_encode($returned);
-                                $data_log['request'] = $data;
+                            //app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+                            //} else {
+                            //$data_log['kodebooking'] = $transaksi->id;
+                            //$data_log['task_id'] = 3;
+                            //$data_log['waktu'] = $carbon_today;
+                            //$data_log['response'] = json_encode($returned);
+                            //$data_log['request'] = $data;
 
-                                app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
-                            }
+                            //app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+                            //}
                             $transaksi = Transaksi::find($transaksi->id);
                             $transaksi->task_id_jkn = 3;
                             $transaksi->save();
@@ -998,7 +974,7 @@ class PostController extends Controller
             $data['is_bpjs'] = $request->input('is_bpjs');
             $data['transaksi_id'] = $transaksi->id;
 
-            // dd('s');
+
 
             DB::connection('rawatjalan')->commit();
             DB::connection('igd')->commit();
