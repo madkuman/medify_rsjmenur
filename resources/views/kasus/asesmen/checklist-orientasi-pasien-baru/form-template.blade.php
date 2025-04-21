@@ -728,45 +728,11 @@
 <br>
 @if ($action != 'view')
 <table style="width:100%;">
+
     <tr>
-        <td style="width: 100%" class=" position-relative text-center" colspan="1" rowspan="1">
-            <div>Nama Dokter DPJP</div>
-            @php $hasil_data_temp = $hasil_data->{'terapis_gigi_dan_mulut_1'} ?? '' @endphp
-            <span>
-                <select class="js-select2 form-control" id="selectTtdTerapisGigiDanMulut1" name="selectTtdTerapisGigiDanMulut1">
-                    @if ($hasil_data_temp != '')
-                    <option selected>{{ $hasil_data_temp ?? '' }}</option>
-                    @endif
-                </select>
-            </span>
-            <span>
-                <input type="hidden" class="form-control" id="terapis_gigi_dan_mulut_1" name="terapis_gigi_dan_mulut_1" value="{{ $hasil_data->{'terapis_gigi_dan_mulut_1'} ?? '' }}">
-                <input type="hidden" class="form-control" id="ttd_terapis_gigi_dan_mulut_1" name="ttd_terapis_gigi_dan_mulut_1" value="{{ $hasil_data->{'ttd_terapis_gigi_dan_mulut_1'} ?? '' }}">
-            </span>
-        </td>
-        {{--  <td style="width: 50%" class=" position-relative text-center" colspan="1" rowspan="1">
-            <div>Terapis Gigi dan Mulut</div>
-            @php $hasil_data_temp = $hasil_data->{'terapis_gigi_dan_mulut_2'} ?? '' @endphp
-            <span>
-                <select class="js-select2 form-control" id="selectTtdTerapisGigiDanMulut2" name="selectTtdTerapisGigiDanMulut2">
-                    @if ($hasil_data_temp != '')
-                    <option selected>{{ $hasil_data_temp ?? '' }}</option>
-                    @endif
-                </select>
-            </span>
-            <span>
-                <input type="hidden" class="form-control" id="terapis_gigi_dan_mulut_2" name="terapis_gigi_dan_mulut_2" value="{{ $hasil_data->{'terapis_gigi_dan_mulut_2'} ?? '' }}">
-                <input type="hidden" class="form-control" id="ttd_terapis_gigi_dan_mulut_2" name="ttd_terapis_gigi_dan_mulut_2" value="{{ $hasil_data->{'ttd_terapis_gigi_dan_mulut_2'} ?? '' }}">
-            </span>
-        </td>  --}}
-    </tr>
-</table>
-@else
-<table style="width:100%;">
-    <tr>
-        <td style="width: 33%" class=" position-relative text-center" colspan="1" rowspan="1">
+        <td style="width: 50%" class=" position-relative text-center" colspan="1" rowspan="1">
             <div>Keluarga/Penanggung Jawab Pasien</div>
-            @if (($hasil_data->{'terapis_gigi_dan_mulut_1'} ?? '') != '')
+            @if (($hasil_data->{'img_ttd'} ?? '') != '')
                 @if (file_exists(((($hasil_data->{'img_ttd'} ?? '') ?? ''))))
                 <div>
                     <img style="max-width: 100%;width:140px;height:80px;object-fit:contain;" src="{{ url('') }}/{{ $hasil_data->{'img_ttd'} }}" alt="Tanda tangan">
@@ -780,9 +746,64 @@
             <br><br><br><br>
             <div>( .................................... )</div>
             @endif
-        </td>
+        </td> 
         
-        <td style="width: 33%" class=" position-relative text-center" colspan="1" rowspan="1">
+        {{--  <td style="width: 33%" class=" position-relative text-center" colspan="1" rowspan="1">
+            <div>Dokter Penanggung Jawab Pasien (DPJP)</div>
+            <br><br><br><br>
+            @php $hasil_data_temp = $hasil_data->{'terapis_gigi_dan_mulut_1'} ?? '' @endphp
+            <span>
+                <select class="js-select2 form-control" id="selectTtdTerapisGigiDanMulut1" name="selectTtdTerapisGigiDanMulut1">
+                    @if ($hasil_data_temp != '')
+                    <option selected>{{ $hasil_data_temp ?? '' }}</option>
+                    @endif
+                </select>
+            </span>
+            <span>
+                <input type="hidden" class="form-control" id="terapis_gigi_dan_mulut_1" name="terapis_gigi_dan_mulut_1" value="{{ $hasil_data->{'terapis_gigi_dan_mulut_1'} ?? '' }}">
+                <input type="hidden" class="form-control" id="ttd_terapis_gigi_dan_mulut_1" name="ttd_terapis_gigi_dan_mulut_1" value="{{ $hasil_data->{'ttd_terapis_gigi_dan_mulut_1'} ?? '' }}">
+            </span>
+        </td>  --}}
+        <td style="width: 50%" class=" position-relative text-center" colspan="1" rowspan="1">
+            <div>Dokter/Tenaga Medis Yang Memberikan Informasi</div>
+            <br><br><br><br>
+            @php $hasil_data_temp = $hasil_data->{'terapis_gigi_dan_mulut_2'} ?? '' @endphp
+            <span>
+                <select class="js-select2 form-control" id="selectTtdTerapisGigiDanMulut2" name="selectTtdTerapisGigiDanMulut2">
+                    @if ($hasil_data_temp != '')
+                    <option selected>{{ $hasil_data_temp ?? '' }}</option>
+                    @endif
+                </select>
+            </span>
+            <span>
+                <input type="hidden" class="form-control" id="terapis_gigi_dan_mulut_2" name="terapis_gigi_dan_mulut_2" value="{{ $hasil_data->{'terapis_gigi_dan_mulut_2'} ?? '' }}">
+                <input type="hidden" class="form-control" id="ttd_terapis_gigi_dan_mulut_2" name="ttd_terapis_gigi_dan_mulut_2" value="{{ $hasil_data->{'ttd_terapis_gigi_dan_mulut_2'} ?? '' }}">
+            </span>
+        </td>
+    </tr>
+</table>
+@else
+<table style="width:100%;">
+    <tr>
+        
+       <td style="width: 50%" class=" position-relative text-center" colspan="1" rowspan="1">
+            <div>Keluarga/Penanggung Jawab Pasien</div>
+            @if (($hasil_data->{'img_ttd'} ?? '') != '')
+                @if (file_exists(((($hasil_data->{'img_ttd'} ?? '') ?? ''))))
+                <div>
+                    <img style="max-width: 100%;width:140px;height:80px;object-fit:contain;" src="{{ url('') }}/{{ $hasil_data->{'img_ttd'} }}" alt="Tanda tangan">
+                </div>
+                @else
+                <br><br><br><br>
+                @endif
+                <br>
+                <div>( <span>{{ $hasil_data->penerima ?? '' }}</span> )</div>
+            @else
+            <br><br><br><br>
+            <div>( .................................... )</div>
+            @endif
+        </td> 
+        {{--  <td style="width: 33%" class=" position-relative text-center" colspan="1" rowspan="1">
             <div>Dokter Penanggung Jawab Pasien</div>
             @if (($hasil_data->{'terapis_gigi_dan_mulut_1'} ?? '') != '')
                 @if (file_exists(((($hasil_data->{'ttd_terapis_gigi_dan_mulut_1'} ?? '') ?? ''))))
@@ -798,11 +819,23 @@
             <br><br><br><br>
             <div>( .................................... )</div>
             @endif
-        </td>
-        <td tyle="width: 33%" class=" position-relative text-center" colspan="1" rowspan="1">
-            <div>Tenaga Medis Yang Memberikan Informasi</div>
+        </td>  --}}
+        <td tyle="width: 50%" class=" position-relative text-center" colspan="1" rowspan="1">
+            <div>Dokter/Tenaga Medis Yang Memberikan Informasi</div>
+             @if (($hasil_data->{'terapis_gigi_dan_mulut_2'} ?? '') != '')
+                @if (file_exists(((($hasil_data->{'ttd_terapis_gigi_dan_mulut_2'} ?? '') ?? ''))))
+                <div>
+                    <img style="max-width: 100%;width:140px;height:80px;object-fit:contain;" src="{{ url('') }}/{{ $hasil_data->{'ttd_terapis_gigi_dan_mulut_2'} }}" alt="Tanda tangan">
+                </div>
+                @else
+                <br><br><br><br>
+                @endif
+                <br>
+                <div>( <span>{{ $hasil_data->{'terapis_gigi_dan_mulut_2'} ?? '' }}</span> )</div>
+            @else
             <br><br><br><br>
-            <div>( <span>{{ $hasil_data->nama_dokter ?? '' }}</span> )</div>
+            <div>( .................................... )</div>
+            @endif
         </td>
     </tr>
 </table>

@@ -72,4 +72,23 @@ class PostController extends Controller
 
         return $returned;
     }
+
+    public function updateTaskId_new(array $data)
+    {
+        // Pastikan jenisresep hanya ditambahkan jika tersedia
+        $requestData = [
+            'kodebooking' => $data['kodebooking'] ?? null,
+            'taskid' => $data['taskid'] ?? null,
+            'waktu' => $data['waktu'] ?? null,
+        ];
+
+        if (!empty($data['jenisresep'])) {
+            $requestData['jenisresep'] = $data['jenisresep'];
+        }
+
+        // Gunakan Request::create() agar lebih sesuai dengan Laravel
+        $request = \Illuminate\Http\Request::create('/', 'POST', $requestData);
+
+        return $this->updateWaktuAntrean($request);
+    }
 }

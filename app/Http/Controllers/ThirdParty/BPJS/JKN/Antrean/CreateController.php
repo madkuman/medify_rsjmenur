@@ -31,7 +31,6 @@ class CreateController extends Controller
             );
 
             $content = $res->getBody()->getContents();
-
             return $content;
         } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);

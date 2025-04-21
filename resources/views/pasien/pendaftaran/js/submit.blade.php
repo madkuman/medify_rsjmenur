@@ -101,10 +101,10 @@
         retribusi = getRetribusi()
         total_harga = $('#total_bayar').text();
         dokter_id = $('#selectDokterElement').val();
-
-
         asal_rujukan = $("#selectRujukan").val();
         rujuk_id = $('#selectRujukanID').val();
+        jenis_kunjungan = $('input[type="radio"][name="jenis_kunjungan"]:checked').val();
+        nomor_referensi = $('#nomor_referensi').val();
 
         var formData = new FormData();
         formData.append('pasien_id', pasienID);
@@ -124,8 +124,9 @@
         formData.append('total_bayar', total_harga);
         formData.append('dokter_id', dokter_id);
         formData.append('sirs_pelayanan_khusus_id', $('#sirs_pelayanan_khusus_id').val());
-        formData.append('asal_rujukan', $('select[name="asal_rujukan"]').val())
-
+        formData.append('asal_rujukan', $('select[name="asal_rujukan"]').val());
+        formData.append('jenis_kunjungan', jenis_kunjungan);
+        formData.append('nomor_referensi', nomor_referensi);
         if (mesin_antrian_data != null) {
             formData.append('mesin_antrian_id', mesin_antrian_id);
             formData.append('mesin_antrian_konfirmasi', 1);

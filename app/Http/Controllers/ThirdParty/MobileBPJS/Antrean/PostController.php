@@ -648,6 +648,7 @@ class PostController extends Controller
 
 	public function getAntrean(Request $request)
 	{
+		// dd($request->all());
 		DB::connection('thirdp')->beginTransaction();
 		DB::connection('rawatjalan')->beginTransaction();
 		DB::connection('igd')->beginTransaction();
@@ -807,10 +808,10 @@ class PostController extends Controller
 			$data['notelp']         = $request->nohp;
 			$data['tanggalperiksa'] = $request->tanggalperiksa;
 			$data['kodepoli']       = $request->kodepoli;
-			$data['nomorreferensi'] = $request->nomorreferensi; //NOMOR REFERENSI (NOMOR RUJUKAN / NOMOR KONTROL)
+			$data['nomor_referensi'] = $request->nomorreferensi; //NOMOR REFERENSI (NOMOR RUJUKAN / NOMOR KONTROL)
 			$data['kodedokter']		= $request->kodedokter;
 			$data['jampraktek']		= $request->jampraktek;
-			$data['jeniskunjungan']	= $request->jeniskunjungan;
+			$data['jenis_kunjungan']	= $request->jeniskunjungan;
 
 			$bayar_id = app('App\Http\Controllers\Pasien\Pasien\ReadController')->metode($pasien->id)
 				->where('no_asuransi', $request->nomorkartu)->first();
@@ -849,6 +850,8 @@ class PostController extends Controller
 			$data_request['is_bpjs']           = 1;
 			$data_request['dokter_jadwal_id']  = $dokter_jadwal->id;
 			$data_request['dokter_id']         = $dokter->id;
+			$data_request['jenis_kunjungan']         = $request->jeniskunjungan;
+			$data_request['nomor_referensi']         = $request->nomorreferensi;
 			$request->merge($data_request);
 			// dd('s');
 			$pendaftaran = app('App\Http\Controllers\Pasien\Pasien\PostController')

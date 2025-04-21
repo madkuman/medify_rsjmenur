@@ -94,9 +94,16 @@
                     @endif
                     @if ($kasus->tipe_ri == 0 && $kasus->tipe_igd == 0 && $kasus->tipe_rj == 1)
                         @if (empty($kasus->rawat_jalan_transaksi_first->selesai_pelayanan_at))
-                            <button id="selesai-btn" data-id="{{ $kasus->rawat_jalan_transaksi_first->id }}"
+                            <form>
+                                <input type="hidden" id="id_transaksi" name="id_transaksi"
+                                    value="{{ $kasus->rawat_jalan_transaksi_first->id }}">
+                                <button class="btn btn-success" style="margin-top: 5px" type="button"
+                                    onclick="updateTaskId5()">Selesaikan
+                                    Pelayanan</button>
+                            </form>
+                            {{-- <button id="selesai-btn" data-id="{{ $kasus->rawat_jalan_transaksi_first->id }}"
                                 class="btn btn-success" style="margin-top: 5px">Selesai
-                                Pelayanan</button>
+                                Pelayanan</button> --}}
                         @else
                             <button class="btn btn-success" style="margin-top: 5px" disabled>Telah Selesai
                                 Pelayanan</button>
@@ -128,6 +135,31 @@
                 success: function(response) {
                     let data = JSON.parse(response);
                     window.open(data.response.url, 'miniWindow', 'width=1200,height=800');
+                }
+            });
+        }
+    </script>
+    <script>
+        function updateTaskId5() {
+            var id_transaksi = $('#id_transaksi').val();
+
+            $.ajax({
+                url: "{{ route('selesai.pelayanan') }}",
+                type: 'POST',
+                data: {
+                    id: id_transaksi
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        swal('Berhasil', response.message, 'success');
+                        // Refresh halaman setelah alert ditutup
+                        location.reload();
+                    } else {
+                        swal("Opps!", response.message);
+                    }
+                },
+                error: function() {
+                    swal("Opps!", response.message, "error");
                 }
             });
         }

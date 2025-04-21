@@ -26,8 +26,8 @@ class CreateController extends Controller
 
 	public function deletePreviousLaporan($data)
 	{
-		$laporan = Laporan::where('slug',$data['slug'])->where('file_name',$data['file_name'])->first();
-		if(!empty($laporan)) {
+		$laporan = Laporan::where('slug', $data['slug'])->where('file_name', $data['file_name'])->first();
+		if (!empty($laporan)) {
 			if ($laporan->zipper != null) {
 				$laporan->zipper->status = -1;
 				$laporan->zipper->save();
@@ -35,5 +35,4 @@ class CreateController extends Controller
 			$laporan->delete();
 		}
 	}
-
 }

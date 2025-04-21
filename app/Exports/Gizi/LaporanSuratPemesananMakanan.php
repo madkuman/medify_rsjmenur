@@ -14,21 +14,19 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class LaporanSuratPemesananMakanan implements FromView, WithEvents
 {
-
     use Exportable;
 
     public function registerEvents(): array
     {
         return [
-            AfterSheet::class    => function(AfterSheet $event) {
+            AfterSheet::class    => function (AfterSheet $event) {
                 $rows = $event->sheet->getDelegate()->toArray();
-                $columns =count($rows[0]) - 2;
+                $columns = count($rows[0]) - 2;
                 $rows = count($rows);
-                $column ='C';
+                $column = 'C';
                 $event->sheet->getColumnDimension('A')->setWidth(7);
                 $event->sheet->getColumnDimension('B')->setWidth(30);
-                for ($i=0;$i<$columns;$i++)
-                {
+                for ($i = 0; $i < $columns; $i++) {
                     $event->sheet->getColumnDimension($column)->setWidth(10);
                     $column++;
                 }
@@ -36,7 +34,7 @@ class LaporanSuratPemesananMakanan implements FromView, WithEvents
                 $this->column = $columns;
 
                 $event->sheet->styleCells(
-                    'A1:'.$column.'6',
+                    'A1:' . $column . '6',
                     [
                         'font' => [
                             'bold' => true
@@ -51,7 +49,7 @@ class LaporanSuratPemesananMakanan implements FromView, WithEvents
                 );
 
                 $event->sheet->styleCells(
-                    'A7:'.$column.'8',
+                    'A7:' . $column . '8',
                     [
                         'font' => [
                             'bold' => true
@@ -65,7 +63,7 @@ class LaporanSuratPemesananMakanan implements FromView, WithEvents
                 );
 
                 $event->sheet->styleCells(
-                    'A9:'.$column.'13',
+                    'A9:' . $column . '13',
                     [
                         'font' => [
                             'bold' => true
@@ -80,7 +78,7 @@ class LaporanSuratPemesananMakanan implements FromView, WithEvents
                 );
 
                 $event->sheet->styleCells(
-                    'A14:B'.$rows,
+                    'A14:B' . $rows,
                     [
                         'alignment' => [
                             'vertical'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
@@ -91,7 +89,7 @@ class LaporanSuratPemesananMakanan implements FromView, WithEvents
                 );
 
                 $event->sheet->styleCells(
-                    'C14:'.$column.$rows,
+                    'C14:' . $column . $rows,
                     [
                         'alignment' => [
                             'vertical'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
@@ -114,5 +112,4 @@ class LaporanSuratPemesananMakanan implements FromView, WithEvents
     {
         return view('gizi.laporan.view.laporan-surat-pemesanan-makanan', $this->data);
     }
-
 }

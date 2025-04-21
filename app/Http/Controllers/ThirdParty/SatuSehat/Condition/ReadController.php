@@ -24,7 +24,7 @@ class ReadController extends Controller
         return $condition;
     }
 
-    public function getByKasus($kasusId) 
+    public function getByKasus($kasusId)
     {
         $condition = Condition::where('kasus_id', $kasusId)->get();
         return $condition;
@@ -40,7 +40,7 @@ class ReadController extends Controller
         $entryData['fullUrl'] = $condition->uuid;
         $entryData['resource'] = $resource;
         $entryData['request'] = [
-            'method'=> 'POST',
+            'method' => 'POST',
             'url'   => 'Condition'
         ];
 

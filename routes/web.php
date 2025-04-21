@@ -43,6 +43,7 @@ Route::get('pasien/api/get-pembayaran', 'Pasien\Pasien\ReadController@APIGetPasi
 Route::post('pasien/api/pendaftaran/baru', 'Pasien\Pasien\PostController@APIPendaftaranPasienMobile');
 Route::post('pasien/api/pendaftaran/batal', 'RawatJalan\Transaksi\PostController@cancel');
 Route::get('pasien/api/poli/antrian/{id}', 'RawatJalan\Poliklinik\ReadController@antrianPoliAPI');
+Route::get('satusehat/bundle', 'ThirdParty\SatuSehat\BundleRequest\BundlePostController@bundle');
 include('modules/public.php');
 include('modules-api/public.php');
 include('modules-api/third-party-medify-online.php');

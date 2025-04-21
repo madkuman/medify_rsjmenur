@@ -13,27 +13,27 @@ class TransaksiObat extends Model
 	use DataLogger;
 	protected $connection = 'farmasi';
 	protected $table = 'transaksi_obat';
-	protected $dates = ['paid_at','dikerjakan_at','lima_benar_at'];
+	protected $dates = ['paid_at', 'dikerjakan_at', 'lima_benar_at'];
 	use SoftDeletes;
 
 	public function pasien_detail()
 	{
-		return $this->hasOne('App\Models\Pasien\Pasien','id', 'pasien_id');
+		return $this->hasOne('App\Models\Pasien\Pasien', 'id', 'pasien_id');
 	}
 
 	public function kasus()
 	{
-		return $this->hasOne('App\Models\Kasus\Kasus','id','kasus_id');
+		return $this->hasOne('App\Models\Kasus\Kasus', 'id', 'kasus_id');
 	}
 
 	public function pembayaran_detail()
 	{
-		return $this->hasOne('App\Models\Pasien\PasienPembayaran','id', 'metode_pembayaran_id')->withTrashed();
+		return $this->hasOne('App\Models\Pasien\PasienPembayaran', 'id', 'metode_pembayaran_id')->withTrashed();
 	}
 
 	public function kasus_detail()
 	{
-		return $this->hasOne('App\Models\Kasus\Kasus','id', 'kasus_id');
+		return $this->hasOne('App\Models\Kasus\Kasus', 'id', 'kasus_id');
 	}
 
 	public function lokasi()
@@ -43,37 +43,37 @@ class TransaksiObat extends Model
 
 	public function sep_detail()
 	{
-		return $this->hasOne('App\Models\Kasus\BPJSSEP','id', 'sep_id');
+		return $this->hasOne('App\Models\Kasus\BPJSSEP', 'id', 'sep_id');
 	}
 
 	public function owner_detail()
 	{
-		return $this->hasOne('App\Models\Farmasi\Farmasi','id', 'farmasi_id')->withTrashed();
+		return $this->hasOne('App\Models\Farmasi\Farmasi', 'id', 'farmasi_id')->withTrashed();
 	}
 
 	public function created_by_detail()
 	{
-		return $this->hasOne('App\User','id', 'created_by');
+		return $this->hasOne('App\User', 'id', 'created_by');
 	}
 
 	public function ori_detail()
 	{
-		return $this->hasOne('App\Models\Farmasi\Resep','id', 'resep_original');
+		return $this->hasOne('App\Models\Farmasi\Resep', 'id', 'resep_original');
 	}
 
 	public function final_detail()
 	{
-		return $this->hasOne('App\Models\Farmasi\Resep','id', 'resep_final');
+		return $this->hasOne('App\Models\Farmasi\Resep', 'id', 'resep_final');
 	}
 
 	public function copy_resep()
 	{
-		return $this->hasMany('App\Models\Farmasi\TransaksiObat','transaksi_asal_id', 'id');
+		return $this->hasMany('App\Models\Farmasi\TransaksiObat', 'transaksi_asal_id', 'id');
 	}
 
 	public function transaksi_asal()
 	{
-		return $this->hasOne('App\Models\Farmasi\TransaksiObat','id', 'transaksi_asal_id');
+		return $this->hasOne('App\Models\Farmasi\TransaksiObat', 'id', 'transaksi_asal_id');
 	}
 
 	public function dokter()
@@ -83,7 +83,7 @@ class TransaksiObat extends Model
 
 	public function farmasi_asal()
 	{
-		return $this->hasOne('App\Models\Farmasi\Farmasi','id','farmasi_id');
+		return $this->hasOne('App\Models\Farmasi\Farmasi', 'id', 'farmasi_id');
 	}
 
 	public function paidBy()
@@ -106,18 +106,19 @@ class TransaksiObat extends Model
 		return $this->hasOne('App\User', 'id', 'dikerjakan_by');
 	}
 
-    public function konfirmasi_penyiapan_creator()
-    {
-        return $this->hasOne('App\User', 'id', 'konfirmasi_penyiapan_by');
-    }
+	public function konfirmasi_penyiapan_creator()
+	{
+		return $this->hasOne('App\User', 'id', 'konfirmasi_penyiapan_by');
+	}
 
-    public function retur()
-    {
-        return $this->hasMany('App\Models\Farmasi\Resep','transaksi_id', 'id')->where('retur','=',1);
-    }
+	public function retur()
+	{
+		return $this->hasMany('App\Models\Farmasi\Resep', 'transaksi_id', 'id')->where('retur', '=', 1);
+	}
 
-	public function piutang(){
-		return $this->hasOne(\App\Models\Keuangan\Piutang::class, 'id','piutang_id');
+	public function piutang()
+	{
+		return $this->hasOne(\App\Models\Keuangan\Piutang::class, 'id', 'piutang_id');
 	}
 
 	public function getEstimasiSelesaiAttribute()
@@ -127,27 +128,28 @@ class TransaksiObat extends Model
 
 	public function loket_antrian()
 	{
-		return $this->hasOne(\App\Models\Farmasi\LoketAntrian::class, 'id','loket_id');
+		return $this->hasOne(\App\Models\Farmasi\LoketAntrian::class, 'id', 'loket_id');
 	}
 
 	function transaksi_obat_telaah_obat_penyiapan()
 	{
-		return $this->hasOne(\App\Models\Farmasi\TransaksiObatTelaahObat::class, 'transaksi_id', 'id')->where('slug', 'penyiapan')->latest();	
+		return $this->hasOne(\App\Models\Farmasi\TransaksiObatTelaahObat::class, 'transaksi_id', 'id')->where('slug', 'penyiapan')->latest();
 	}
 	function transaksi_obat_telaah_obat_pengemasan()
 	{
-		return $this->hasOne(\App\Models\Farmasi\TransaksiObatTelaahObat::class, 'transaksi_id', 'id')->where('slug', 'pengemasan')->latest();	
+		return $this->hasOne(\App\Models\Farmasi\TransaksiObatTelaahObat::class, 'transaksi_id', 'id')->where('slug', 'pengemasan')->latest();
 	}
 	function transaksi_obat_telaah_obat_penyerahan()
 	{
-		return $this->hasOne(\App\Models\Farmasi\TransaksiObatTelaahObat::class, 'transaksi_id', 'id')->where('slug', 'penyerahan')->latest();	
+		return $this->hasOne(\App\Models\Farmasi\TransaksiObatTelaahObat::class, 'transaksi_id', 'id')->where('slug', 'penyerahan')->latest();
 	}
 	function transaksi_obat_telaah_obat_penerimaan_perawat()
 	{
-		return $this->hasOne(\App\Models\Farmasi\TransaksiObatTelaahObat::class, 'transaksi_id', 'id')->where('slug', 'penerimaan_perawat')->latest();	
+		return $this->hasOne(\App\Models\Farmasi\TransaksiObatTelaahObat::class, 'transaksi_id', 'id')->where('slug', 'penerimaan_perawat')->latest();
 	}
 
-	function getAttrIsHarianAttribute() {
+	function getAttrIsHarianAttribute()
+	{
 		return $this->pembayaran_detail && $this->pembayaran_detail->perusahaan->tipe->slug == 'bpjs'  && $this->owner_detail->perharian;
 	}
 }

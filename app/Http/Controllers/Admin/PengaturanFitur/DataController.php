@@ -440,6 +440,55 @@ class DataController extends Controller
             ]
         ];
 
+        $data['apotek_online'] = [
+            'judul' => 'Apotek Online',
+            'deskripsi' => 'Apotek Online Update',
+            'input' => [
+                'on' => [ #key unique dibuat attribute id
+                    'col' => 12, #optional default 4
+                    'type' => 'toggle', #nama file di view admin.pengaturan-fitur.components.form
+                    'judul' => 'Pengaturan On / Off',
+                    'name' => 'on', #samakan dengan yang ada diconfig
+                    'deskripsi' => 'pengaturan on / off fitur ini',
+                    'preview' => url('pasien'), #optional default null, input type url eg: "www.google.com"
+                    'preview_size' => 'medium', #optional default 'small', currently available small,medium
+                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+                ],
+                'url' => [ #key unique dibuat attribute id
+                    'col' => 4, #optional default 4
+                    'type' => 'input', #nama file di view admin.pengaturan-fitur.components.form
+                    'judul' => 'URL Apotek Online',
+                    'name' => 'url', #samakan dengan yang ada diconfig
+                    'deskripsi' =>  '',
+                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+                ],
+                'cons-id' => [ #key unique dibuat attribute id
+                    'col' => 4, #optional default 4
+                    'type' => 'input', #nama file di view admin.pengaturan-fitur.components.form
+                    'judul' => 'CONS ID',
+                    'name' => 'cons_id', #samakan dengan yang ada diconfig
+                    'deskripsi' =>  '',
+                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+                ],
+                'cons-pwd' => [ #key unique dibuat attribute id
+                    'col' => 4, #optional default 4
+                    'type' => 'input', #nama file di view admin.pengaturan-fitur.components.form
+                    'judul' => 'CONS PASSWORD',
+                    'name' => 'cons_pwd', #samakan dengan yang ada diconfig
+                    'deskripsi' =>  '',
+                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+                ],
+                'user-key' => [ #key unique dibuat attribute id
+                    'col' => 4, #optional default 4
+                    'type' => 'input', #nama file di view admin.pengaturan-fitur.components.form
+                    'judul' => 'USER KEY',
+                    'name' => 'user_key', #samakan dengan yang ada diconfig
+                    'deskripsi' =>  '',
+                    'attributes' => [], #assosiative array eg : ['min' => '100'] , list registered attribute type, name, id, value (default value set di config);
+                ],
+            ]
+        ];
+
         return $data;
     }
 

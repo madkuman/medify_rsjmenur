@@ -58,7 +58,7 @@ Route::group(['middleware' => ['check-module']], function () {
 		Route::post('/ruangan/baru', 'RawatJalan\Ruangan\PostController@create');
 		Route::post('/ruangan/hapus', 'RawatJalan\Ruangan\PostController@delete');
 
-		Route::post('/selesai-pelayanan/{id}', 'RawatJalan\Transaksi\PostController@updateSelesaiPelayanan')->name('selesai.pelayanan');
+		Route::post('/selesai-pelayanan', 'RawatJalan\Transaksi\PostController@updateSelesaiPelayanan')->name('selesai.pelayanan');
 	});
 });
 

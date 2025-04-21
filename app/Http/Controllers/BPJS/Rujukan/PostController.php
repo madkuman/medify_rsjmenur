@@ -331,7 +331,7 @@ class PostController extends Controller
 			return json_encode([
 				"metaData" => [
 					"code" => "500",
-					"message" => "Tidak dapat menghubungkan dengan server BPJS, coba lagi."
+					"message" => "GetJumlahSEP: Tidak dapat menghubungkan dengan server BPJS, coba lagi."
 				],
 				"response" => []
 			]);
@@ -339,7 +339,7 @@ class PostController extends Controller
 			return json_encode([
 				"metaData" => [
 					"code" => "500",
-					"message" => "Tidak dapat menghubungkan dengan server BPJS, coba lagi."
+					"message" => "GetJumlahSEP: Tidak dapat menghubungkan dengan server BPJS, coba lagi."
 				],
 				"response" => []
 			]);

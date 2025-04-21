@@ -119,7 +119,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('third-party-sirs:data-tempat-tidur-update')->hourly();
         $schedule->command('third-party-sirs-v3:laporan-covid-19-update')->dailyAt('22:00');
 
-        $schedule->command('thirdparty:jkn-auto-update-task-id-5')->cron('*/5 * * * *');
+        // $schedule->command('thirdparty:jkn-auto-update-task-id-5')->cron('*/5 * * * *');
 
         # bridging satusehat
         if (config('medify.third-party.satusehat.on', 0)) {

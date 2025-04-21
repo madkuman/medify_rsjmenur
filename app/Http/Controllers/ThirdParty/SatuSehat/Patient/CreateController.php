@@ -15,7 +15,7 @@ class CreateController extends Controller
         if (empty($ss_patient)) {
             $identifier = collect($response_data->identifier);
             $ihs = $identifier->where('system', $resource_ihs)->first();
-            
+
             $ss_patient = new Patient();
             $ss_patient->pasien_id = $pasien->id;
             $ss_patient->satusehat_id = $response_data->id ?? null;

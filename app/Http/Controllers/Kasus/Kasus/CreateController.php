@@ -25,12 +25,12 @@ use Carbon\Carbon;
 
 class CreateController extends Controller
 {
-	public function createKasus($judul_kasus,$pasien,$location,$transaksi_lokal_id,$kelas,$bayar_id,$nomor_sep,$id_ibu=null, $asal_rujukan_id=null)
+	public function createKasus($judul_kasus, $pasien, $location, $transaksi_lokal_id, $kelas, $bayar_id, $nomor_sep, $id_ibu = null, $asal_rujukan_id = null)
 	{
-		
+
 		$id = 0;
 
-		$kasus = New Kasus;
+		$kasus = new Kasus;
 		$kasus->judul_kasus = $judul_kasus;
 		$kasus->created_by = $id;
 
@@ -41,8 +41,7 @@ class CreateController extends Controller
 		}
 		$kasus->kelas_id = $kelas;
 		$kasus->pasien_pembayaran_id = $bayar_id;
-		if($id_ibu != null)
-		{
+		if ($id_ibu != null) {
 			$kasus->kasus_id_ibu = $id_ibu;
 		}
 		$kasus->sep_id = $nomor_sep; // bisa kosong
@@ -53,39 +52,33 @@ class CreateController extends Controller
 		$kasus->save();
 
 
-		if ($bayar_id!=null) {
+		if ($bayar_id != null) {
 			$pasien_pembayaran = PasienPembayaran::find($bayar_id);
-		}
-		else {
+		} else {
 			$pasien_pembayaran = null;
 		}
-		$lokasi = $this->insertLokasi($kasus->id,$location);
-		if($transaksi_lokal_id != null)
-		{
-			$collaborator = $this->beCollaborator($kasus->id,$transaksi_lokal_id); //bisa kosong
+		$lokasi = $this->insertLokasi($kasus->id, $location);
+		if ($transaksi_lokal_id != null) {
+			$collaborator = $this->beCollaborator($kasus->id, $transaksi_lokal_id); //bisa kosong
 		}
-		$identitas = $this->insertIdentitas($kasus->id,$pasien, $pasien_pembayaran);
+		$identitas = $this->insertIdentitas($kasus->id, $pasien, $pasien_pembayaran);
 		$tagihan = $this->insertTagihan($kasus->id);
 		if (!empty($pasien_pembayaran)) {
 			// dd($kasus->lokasi);
 			$total_plafon = 0;
-			if(!empty($kasus->lokasi->lokasi))
-			{
+			if (!empty($kasus->lokasi->lokasi)) {
 				if ($kasus->lokasi->lokasi->departemen->id == 2)
-					if($transaksi_lokal_id != null)
-					{
+					if ($transaksi_lokal_id != null) {
 						$total_plafon = $this->getPoliPlafon($transaksi_lokal_id); //bisa kosong
-					}	
-			}
-			else
+					}
+			} else
 				$total_plafon = 0;
 
-			if($pasien_pembayaran->perusahaan->tipe->id == 1)
-			{
+			if ($pasien_pembayaran->perusahaan->tipe->id == 1) {
 				$request = new \Illuminate\Http\Request();
 				$request['custom_sep'] = $nomor_sep;
 				$request['total_plafon'] = $total_plafon;
-				$kasus=app('App\Http\Controllers\Kasus\Identitas\PostController')->editSEPKasus($request,$kasus->nomor_kasus);
+				$kasus = app('App\Http\Controllers\Kasus\Identitas\PostController')->editSEPKasus($request, $kasus->nomor_kasus);
 			}
 
 			# CREATE ENCOUNTER SATUSEHAT
@@ -99,7 +92,8 @@ class CreateController extends Controller
 		return $kasus;
 	}
 
-	public function setCreateKasus($request){
+	public function setCreateKasus($request)
+	{
 		$id = 0;
 
 		$judul_kasus        = $request->judul_kasus ?? null;
@@ -111,19 +105,18 @@ class CreateController extends Controller
 		$nomor_sep          = $request->nomor_sep ?? null;
 		$id_ibu             = $request->id_ibu ?? null;
 
-		$kasus = New Kasus;
+		$kasus = new Kasus;
 		$kasus->judul_kasus = $judul_kasus;
 		$kasus->created_by = $id;
 
 		$kasus->asal_rujukan_id = $request->asal_rujukan_id ?? null;
-		
+
 		if (!empty($pasien->id)) {
 			$kasus->pasien_id = $pasien->id;
 		}
 		$kasus->kelas_id = $kelas;
 		$kasus->pasien_pembayaran_id = $bayar_id;
-		if($id_ibu != null)
-		{
+		if ($id_ibu != null) {
 			$kasus->kasus_id_ibu = $id_ibu;
 		}
 		$kasus->sep_id = $nomor_sep; // bisa kosong
@@ -135,39 +128,33 @@ class CreateController extends Controller
 		$kasus->save();
 
 
-		if ($bayar_id!=null) {
+		if ($bayar_id != null) {
 			$pasien_pembayaran = PasienPembayaran::find($bayar_id);
-		}
-		else {
+		} else {
 			$pasien_pembayaran = null;
 		}
-		$lokasi = $this->insertLokasi($kasus->id,$location);
-		if($transaksi_lokal_id != null)
-		{
-			$collaborator = $this->beCollaborator($kasus->id,$transaksi_lokal_id); //bisa kosong
+		$lokasi = $this->insertLokasi($kasus->id, $location);
+		if ($transaksi_lokal_id != null) {
+			$collaborator = $this->beCollaborator($kasus->id, $transaksi_lokal_id); //bisa kosong
 		}
-		$identitas = $this->insertIdentitas($kasus->id,$pasien, $pasien_pembayaran);
+		$identitas = $this->insertIdentitas($kasus->id, $pasien, $pasien_pembayaran);
 		$tagihan = $this->insertTagihan($kasus->id);
 		if (!empty($pasien_pembayaran)) {
 			// dd($kasus->lokasi);
 			$total_plafon = 0;
-			if(!empty($kasus->lokasi->lokasi))
-			{
+			if (!empty($kasus->lokasi->lokasi)) {
 				if ($kasus->lokasi->lokasi->departemen->id == 2)
-					if($transaksi_lokal_id != null)
-					{
+					if ($transaksi_lokal_id != null) {
 						$total_plafon = $this->getPoliPlafon($transaksi_lokal_id); //bisa kosong
-					}	
-			}
-			else
+					}
+			} else
 				$total_plafon = 0;
 
-			if($pasien_pembayaran->perusahaan->tipe->id == 1)
-			{
+			if ($pasien_pembayaran->perusahaan->tipe->id == 1) {
 				$request = new \Illuminate\Http\Request();
 				$request['custom_sep'] = $nomor_sep;
 				$request['total_plafon'] = $total_plafon;
-				app('App\Http\Controllers\Kasus\Identitas\PostController')->editSEPKasus($request,$kasus->nomor_kasus);
+				app('App\Http\Controllers\Kasus\Identitas\PostController')->editSEPKasus($request, $kasus->nomor_kasus);
 			}
 		}
 		return $kasus;
@@ -175,29 +162,30 @@ class CreateController extends Controller
 
 	private function generateNomorKasus($id)
 	{
-		$last_kasus = 10000000000+$id;
-		$slug_kasus = 'med'.substr($last_kasus, 1);
+		$last_kasus = 10000000000 + $id;
+		$slug_kasus = 'med' . substr($last_kasus, 1);
 
 		return $slug_kasus;
 	}
 
-	private function beCollaborator($kasus_id,$transaksi_lokal_id){
+	private function beCollaborator($kasus_id, $transaksi_lokal_id)
+	{
 
 		$id = Auth::user()->id;
 		$id_user = $id;
 		$user = User::find($id);
 		$profesi = $user->profesi;
 
-		if($profesi == 1) $role = '2';
-		elseif($profesi == 2) $role = '6';
-		elseif($profesi == 3) $role = '10';
-		elseif($profesi == 4) $role = '13';
-		elseif($profesi == 5) $role = '17';
-		elseif($profesi == 8) $role = '4';
-		elseif($profesi == 12) $role = '15';
-		elseif($profesi == 16) $role = '14';
-		elseif($profesi == 19) $role = '18';
-		elseif($profesi == 20) $role = '11';
+		if ($profesi == 1) $role = '2';
+		elseif ($profesi == 2) $role = '6';
+		elseif ($profesi == 3) $role = '10';
+		elseif ($profesi == 4) $role = '13';
+		elseif ($profesi == 5) $role = '17';
+		elseif ($profesi == 8) $role = '4';
+		elseif ($profesi == 12) $role = '15';
+		elseif ($profesi == 16) $role = '14';
+		elseif ($profesi == 19) $role = '18';
+		elseif ($profesi == 20) $role = '11';
 		else $role = '0';
 
 		$data = new Kolaborator;
@@ -212,27 +200,25 @@ class CreateController extends Controller
 		//undangan perawat
 		if ($kasus->lokasi->lokasi_departemen_id == 2) {
 			//rawatjalan
-			$undangan = $this->undangPerawatJalan($kasus_id,$transaksi_lokal_id);
-		}
-		elseif ($kasus->lokasi->lokasi_departemen_id == 1) {
+			$undangan = $this->undangPerawatJalan($kasus_id, $transaksi_lokal_id);
+		} elseif ($kasus->lokasi->lokasi_departemen_id == 1) {
 			//igd	
-			$undangan = $this->undangPerawatIGD($kasus_id,$transaksi_lokal_id);
+			$undangan = $this->undangPerawatIGD($kasus_id, $transaksi_lokal_id);
 		}
-
 	}
 
-	public function undangPerawatJalan($kasus_id,$transaksi_lokal_id)
+	public function undangPerawatJalan($kasus_id, $transaksi_lokal_id)
 	{
 		$kasus = Kasus::find($kasus_id);
-		$kolaborator = Kolaborator::where('kasus_id',$kasus_id)->pluck('user_id')->toArray();
+		$kolaborator = Kolaborator::where('kasus_id', $kasus_id)->pluck('user_id')->toArray();
 		$transaksi = TransaksiRawatJalan::with('poliklinik')->find($transaksi_lokal_id);
 		$group_id = $transaksi->poliklinik->group_id;
-		$member = UserGroup::where('group_id',$group_id)->get();
+		$member = UserGroup::where('group_id', $group_id)->get();
 		if (!empty($member)) {
 			foreach ($member as $item) {
 				$user = User::find($item->users_id);
-				if(!empty($user->profesi)){
-					if($user->profesi=='2' && !in_array($user->id, $kolaborator)){
+				if (!empty($user->profesi)) {
+					if ($user->profesi == '2' && !in_array($user->id, $kolaborator)) {
 						$data = new Kolaborator;
 						$data->kasus_id = $kasus_id;
 						$data->user_id = $item->users_id;
@@ -241,24 +227,24 @@ class CreateController extends Controller
 						$data->created_by = Auth::user()->id;
 						$data->save();
 
-						$notif = app('App\Http\Controllers\Users\Notification\CreateController')->create($user->id, Auth::user()->id, Auth::user()->name.' mengundang anda pada Kasus', 'kasus/'.$kasus->nomor_kasus);
+						$notif = app('App\Http\Controllers\Users\Notification\CreateController')->create($user->id, Auth::user()->id, Auth::user()->name . ' mengundang anda pada Kasus', 'kasus/' . $kasus->nomor_kasus);
 					}
-				}						
+				}
 			}
 		}
 	}
 
-	public function undangPerawatInap($kasus_id,$transaksi_lokal_id)
+	public function undangPerawatInap($kasus_id, $transaksi_lokal_id)
 	{
 		$kasus = Kasus::find($kasus_id);
-		$kolaborator = Kolaborator::where('kasus_id',$kasus_id)->pluck('user_id')->toArray();
+		$kolaborator = Kolaborator::where('kasus_id', $kasus_id)->pluck('user_id')->toArray();
 		$transaksi = TransaksiInap::with('tempat_tidur.ruangan.bangsal')->find($transaksi_lokal_id);
 		$group_id = $transaksi->tempat_tidur->ruangan->bangsal->group_id;
-		$member = UserGroup::where('group_id',$group_id)->get();
+		$member = UserGroup::where('group_id', $group_id)->get();
 		if (!empty($member)) {
 			foreach ($member as $item) {
 				$user = User::find($item->users_id);
-				if($user->profesi=='2' && !in_array($user->id, $kolaborator)){
+				if ($user->profesi == '2' && !in_array($user->id, $kolaborator)) {
 					$data = new Kolaborator;
 					$data->kasus_id = $kasus_id;
 					$data->user_id = $item->users_id;
@@ -267,25 +253,25 @@ class CreateController extends Controller
 					$data->created_by = Auth::user()->id;
 					$data->save();
 
-					$notif = app('App\Http\Controllers\Users\Notification\CreateController')->create($user->id, Auth::user()->id, Auth::user()->name.' mengundang anda pada Kasus', 'kasus/'.$kasus->nomor_kasus);
-				}						
+					$notif = app('App\Http\Controllers\Users\Notification\CreateController')->create($user->id, Auth::user()->id, Auth::user()->name . ' mengundang anda pada Kasus', 'kasus/' . $kasus->nomor_kasus);
+				}
 			}
 		}
 	}
 
-	public function undangPerawatIGD($kasus_id,$transaksi_lokal_id)
+	public function undangPerawatIGD($kasus_id, $transaksi_lokal_id)
 	{
 		$kasus = Kasus::find($kasus_id);
-		$kolaborator = Kolaborator::where('kasus_id',$kasus_id)->pluck('user_id')->toArray();
+		$kolaborator = Kolaborator::where('kasus_id', $kasus_id)->pluck('user_id')->toArray();
 		$transaksi = TransaksiIGD::with('ruangan')->find($transaksi_lokal_id);
 		$group_id = $transaksi->ruangan->group_id;
-		$member = UserGroup::where('group_id',$group_id)->get();
+		$member = UserGroup::where('group_id', $group_id)->get();
 		if (!empty($member)) {
 			foreach ($member as $item) {
 				$user = User::find($item->users_id);
-				if(!isset($user))
+				if (!isset($user))
 					continue;
-				if($user->profesi=='2' && !in_array($user->id, $kolaborator)){
+				if ($user->profesi == '2' && !in_array($user->id, $kolaborator)) {
 					$data = new Kolaborator;
 					$data->kasus_id = $kasus_id;
 					$data->user_id = $item->users_id;
@@ -294,13 +280,14 @@ class CreateController extends Controller
 					$data->created_by = Auth::user()->id;
 					$data->save();
 
-					$notif = app('App\Http\Controllers\Users\Notification\CreateController')->create($user->id, Auth::user()->id, Auth::user()->name.' mengundang anda pada Kasus', 'kasus/'.$kasus->nomor_kasus);
-				}						
+					$notif = app('App\Http\Controllers\Users\Notification\CreateController')->create($user->id, Auth::user()->id, Auth::user()->name . ' mengundang anda pada Kasus', 'kasus/' . $kasus->nomor_kasus);
+				}
 			}
 		}
 	}
 
-	public function insertLokasi($kasus_id,$lokasi){
+	public function insertLokasi($kasus_id, $lokasi)
+	{
 
 		$data = new Lokasi;
 		$data->kasus_id = $kasus_id;
@@ -311,10 +298,10 @@ class CreateController extends Controller
 		return 1;
 	}
 
-	private function insertIdentitas($kasus_id,$patient,$pasien_pembayaran)
+	private function insertIdentitas($kasus_id, $patient, $pasien_pembayaran)
 	{
 		$id_user = Auth::user()->id;
-		if($patient->gender == 1) $gender = 'L';
+		if ($patient->gender == 1) $gender = 'L';
 		else $gender = 'P';
 		$data = new Identitas;
 		$data->nama = $patient->name;
@@ -350,9 +337,8 @@ class CreateController extends Controller
 			$usia_masuk = $patient->getAgeDayAttribute(Carbon::today()->toDateString());
 			$data->usia_masuk = $usia_masuk;
 		}
-		
-		$data->save();
 
+		$data->save();
 	}
 
 	private function insertTagihan($kasus_id)
@@ -361,7 +347,7 @@ class CreateController extends Controller
 		$tagihan = new Tagihan;
 		$tagihan->kasus_id = $kasus_id;
 		$tagihan->total_bill = 0;
-		$tagihan->total_paid =0;
+		$tagihan->total_paid = 0;
 		$tagihan->is_paid = 0;
 		$tagihan->created_by = Auth::user()->id;
 		$tagihan->save();

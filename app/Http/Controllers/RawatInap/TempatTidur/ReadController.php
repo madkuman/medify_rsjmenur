@@ -109,10 +109,10 @@ class ReadController extends Controller
 
 
       $query = Bangsal::orderBy('id', 'asc')->where('nama', 'like', '%' . $keyword . '%');
-      // if ($is_bayi)
-      //   $query = Bangsal::where('bayi', 1);
-      // else
-      //   $query = Bangsal::orderBy('id', 'asc');
+      if ($is_bayi)
+        $query = Bangsal::where('bayi', 1);
+      else
+        $query = Bangsal::orderBy('id', 'asc');
 
       // if ($is_intensif)
       //   $query = $query->where('intensif', 1);

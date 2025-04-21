@@ -67,11 +67,11 @@ class BundleEncounterCondition extends Command
         $threshold_retry = Carbon::now()->subMinutes($wait_th)->toDateTimeString();
 
         $kasus_query = Kasus::with([
-                'satusehat_encounter',
-                'kolaborator_admin.user',
-                'lokasi.lokasi',
-                'pasien'
-            ])
+            'satusehat_encounter',
+            'kolaborator_admin.user',
+            'lokasi.lokasi',
+            'pasien'
+        ])
             ->whereHas('kolaborator_admin')
             ->whereHas('satusehat_encounter', function ($q) use ($_db, $threshold_retry, $retry) {
                 $q->from($_db . '_third_party_satusehat.encounter');
@@ -99,7 +99,6 @@ class BundleEncounterCondition extends Command
         }
 
         $result = $kasus_query->get();
-
         $count_kasus = count($result ?? []);
         echo "sending " . $count_kasus . " kasus\n";
 
@@ -115,7 +114,7 @@ class BundleEncounterCondition extends Command
                 $subject = (new \App\Http\Controllers\ThirdParty\SatuSehat\Patient\ReadController)->getPatient($kasus->pasien);
                 if (empty($subject)) {
                     $message = "Data Pasien tidak ditemukan di data SatuSehat";
-                    echo $message."\n";
+                    echo $message . "\n";
 
                     $encounter->status = -1;
                     $encounter->save();
@@ -128,7 +127,7 @@ class BundleEncounterCondition extends Command
                 $participant = (new \App\Http\Controllers\ThirdParty\SatuSehat\Practitioner\ReadController)->getPractitioner($kasus->kolaborator_admin->user ?? null);
                 if (empty($participant)) {
                     $message = "Data DPJP tidak ditemukan di data SatuSehat";
-                    echo $message."\n";
+                    echo $message . "\n";
 
                     $encounter->status = -1;
                     $encounter->save();
@@ -158,7 +157,7 @@ class BundleEncounterCondition extends Command
         $send = (new \App\Http\Controllers\ThirdParty\SatuSehat\BundleRequest\PostController)->generate($budle_request);
         if ($send instanceof JsonResponse) {
             $send = json_decode($send->getContent());
-            echo ($send->message ?? "Terjadi kesalahan")."\n";
+            echo ($send->message ?? "Terjadi kesalahan") . "\n";
         };
 
         if ($send->code == 200) {

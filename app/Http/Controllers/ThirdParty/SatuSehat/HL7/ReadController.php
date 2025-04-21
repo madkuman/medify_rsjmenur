@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 
 class ReadController extends Controller
 {
-    public function getActCode() 
+    public function getActCode()
     {
         $data = [
             (object) [
@@ -30,7 +30,7 @@ class ReadController extends Controller
         return collect($data);
     }
 
-    public function getParticipationType() 
+    public function getParticipationType()
     {
         $data = [
             (object) [
@@ -86,6 +86,19 @@ class ReadController extends Controller
                 'system'    => 'http://terminology.hl7.org/CodeSystem/condition-category',
                 'code'      => 'encounter-diagnosis',
                 'display'   => 'Encounter Diagnosis'
+            ]
+        ];
+
+        return collect($data);
+    }
+
+    public function getObservationCategory()
+    {
+        $data = [
+            (object) [
+                'system'    => 'http://terminology.hl7.org/CodeSystem/observation-category',
+                'code'      => 'vital-signs',
+                'display'   => 'Vital Signs'
             ]
         ];
 

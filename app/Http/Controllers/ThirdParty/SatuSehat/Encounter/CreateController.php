@@ -69,7 +69,7 @@ class CreateController extends Controller
         $resource_param["id"] = $getHistoryResponse['id'] ?? '';
         $resource_param["status"] = $request->status;
         $resource_param["statusHistory"] = $getStatusHistory;
-        
+
         $resource_param["period"] = [
             "start" => $request->waktu_start
         ];
@@ -86,7 +86,8 @@ class CreateController extends Controller
         return $resource_param;
     }
 
-    private function defaultResourceParams($request) {
+    private function defaultResourceParams($request)
+    {
         $get_org = app(\App\Http\Controllers\ThirdParty\SatuSehat\Organization\PostController::class)->getById($request);
         $get_org = json_decode($get_org, true);
 
@@ -131,7 +132,7 @@ class CreateController extends Controller
                 ]
             ],
             "serviceProvider" => [
-                "reference" => "Organization/".($get_org['id'] ?? "")
+                "reference" => "Organization/" . ($get_org['id'] ?? "")
             ]
         ];
 

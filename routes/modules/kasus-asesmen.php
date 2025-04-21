@@ -227,6 +227,17 @@ Route::post("/asesmen/pemberian-informasi-asuhan-dan-tindakan/submit-form", "Kas
 Route::post("/asesmen/pemberian-informasi-asuhan-dan-tindakan/delete", "Kasus\Asesmen\PemberianInformasiAsuhanDanTindakan\PostController@delete");
 Route::get("/asesmen/pemberian-informasi-asuhan-dan-tindakan/print/{id}", "Kasus\Asesmen\PemberianInformasiAsuhanDanTindakan\ViewController@print");
 Route::get("/asesmen/pemberian-informasi-asuhan-dan-tindakan/search-user", "Kasus\Asesmen\PemberianInformasiAsuhanDanTindakan\PostController@searchUser");
+Route::post("/asesmen/pemberian-informasi-asuhan-dan-tindakan/add-ttd", "Kasus\Asesmen\PemberianInformasiAsuhanDanTindakan\PostController@addTTD");
+
+Route::get("/asesmen/permintaan-pelayanan-rohani", "Kasus\Asesmen\PermintaanPelayananRohani\ViewController@index");
+Route::get("/asesmen/permintaan-pelayanan-rohani/view/{id}", "Kasus\Asesmen\PermintaanPelayananRohani\ViewController@single");
+Route::get("/asesmen/permintaan-pelayanan-rohani/create", "Kasus\Asesmen\PermintaanPelayananRohani\ViewController@create");
+Route::get("/asesmen/permintaan-pelayanan-rohani/edit/{id}", "Kasus\Asesmen\PermintaanPelayananRohani\ViewController@edit");
+Route::post("/asesmen/permintaan-pelayanan-rohani/submit-form", "Kasus\Asesmen\PermintaanPelayananRohani\PostController@submitForm");
+Route::post("/asesmen/permintaan-pelayanan-rohani/delete", "Kasus\Asesmen\PermintaanPelayananRohani\PostController@delete");
+Route::get("/asesmen/permintaan-pelayanan-rohani/print/{id}", "Kasus\Asesmen\PermintaanPelayananRohani\ViewController@print");
+Route::get("/asesmen/permintaan-pelayanan-rohani/search-user", "Kasus\Asesmen\PermintaanPelayananRohani\PostController@searchUser");
+Route::post("/asesmen/permintaan-pelayanan-rohani/add-ttd", "Kasus\Asesmen\PermintaanPelayananRohani\PostController@addTTD");
 
 Route::get("/asesmen/checklist-orientasi-pasien-baru", "Kasus\Asesmen\ChecklistOrientasiPasienBaru\ViewController@index");
 Route::get("/asesmen/checklist-orientasi-pasien-baru/view/{id}", "Kasus\Asesmen\ChecklistOrientasiPasienBaru\ViewController@single");
@@ -381,3 +392,78 @@ Route::get('/asesmen/asesmen-identitikasi-bayi', 'Kasus\Asesmen\IdentifikasiBayi
 Route::post('/asesmen/asesmen-identitikasi-bayi/save', 'Kasus\Asesmen\IdentifikasiBayi\PostController@save');
 Route::post('/asesmen/asesmen-identitikasi-bayi/delete', 'Kasus\Asesmen\IdentifikasiBayi\PostController@delete');
 Route::get('/asesmen/asesmen-identitikasi-bayi/print/{id}', 'Kasus\Asesmen\IdentifikasiBayi\ViewController@print');
+
+#resume MCU Haji
+Route::get("/asesmen/resume-mcu-haji", "Kasus\Asesmen\ResumeMcuHaji\ViewController@index");
+Route::get("/asesmen/resume-mcu-haji/view/{id}", "Kasus\Asesmen\ResumeMcuHaji\ViewController@single");
+Route::get("/asesmen/resume-mcu-haji/create", "Kasus\Asesmen\ResumeMcuHaji\ViewController@create");
+Route::get("/asesmen/resume-mcu-haji/edit/{id}", "Kasus\Asesmen\ResumeMcuHaji\ViewController@edit");
+Route::post("/asesmen/resume-mcu-haji/submit-form", "Kasus\Asesmen\ResumeMcuHaji\PostController@submitForm");
+Route::post("/asesmen/resume-mcu-haji/delete", "Kasus\Asesmen\ResumeMcuHaji\PostController@delete");
+Route::get("/asesmen/resume-mcu-haji/print/{id}", "Kasus\Asesmen\ResumeMcuHaji\ViewController@print");
+Route::get("/asesmen/resume-mcu-haji/search-user-dokter-umum", "Kasus\Asesmen\ResumeMcuHaji\PostController@searchUser");
+Route::get("/asesmen/resume-mcu-haji/search-user-dokter-sppd", "Kasus\Asesmen\ResumeMcuHaji\PostController@searchUser");
+Route::get("/asesmen/resume-mcu-haji/search-user-psikolog", "Kasus\Asesmen\ResumeMcuHaji\PostController@searchUserPsikolog");
+Route::post("/asesmen/resume-mcu-haji/add-ttd", "Kasus\Asesmen\ResumeMcuHaji\PostController@addTTD");
+
+#amt
+Route::get("/asesmen/abbreviated-mental-test", "Kasus\Asesmen\AbbreviatedMentalTest\ViewController@index");
+Route::get("/asesmen/abbreviated-mental-test/view/{id}", "Kasus\Asesmen\AbbreviatedMentalTest\ViewController@single");
+Route::get("/asesmen/abbreviated-mental-test/create", "Kasus\Asesmen\AbbreviatedMentalTest\ViewController@create");
+Route::get("/asesmen/abbreviated-mental-test/edit/{id}", "Kasus\Asesmen\AbbreviatedMentalTest\ViewController@edit");
+Route::post("/asesmen/abbreviated-mental-test/submit-form", "Kasus\Asesmen\AbbreviatedMentalTest\PostController@submitForm");
+Route::post("/asesmen/abbreviated-mental-test/delete", "Kasus\Asesmen\AbbreviatedMentalTest\PostController@delete");
+Route::get("/asesmen/abbreviated-mental-test/print/{id}", "Kasus\Asesmen\AbbreviatedMentalTest\ViewController@print");
+Route::get("/asesmen/abbreviated-mental-test/search-user", "Kasus\Asesmen\AbbreviatedMentalTest\PostController@searchUser");
+Route::post("/asesmen/abbreviated-mental-test/add-ttd", "Kasus\Asesmen\AbbreviatedMentalTest\PostController@addTTD");
+
+#bartel
+Route::get("/asesmen/barthel-index", "Kasus\Asesmen\BarthelIndex\ViewController@index");
+Route::get("/asesmen/barthel-index/view/{id}", "Kasus\Asesmen\BarthelIndex\ViewController@single");
+Route::get("/asesmen/barthel-index/create", "Kasus\Asesmen\BarthelIndex\ViewController@create");
+Route::get("/asesmen/barthel-index/edit/{id}", "Kasus\Asesmen\BarthelIndex\ViewController@edit");
+Route::post("/asesmen/barthel-index/submit-form", "Kasus\Asesmen\BarthelIndex\PostController@submitForm");
+Route::post("/asesmen/barthel-index/delete", "Kasus\Asesmen\BarthelIndex\PostController@delete");
+Route::get("/asesmen/barthel-index/print/{id}", "Kasus\Asesmen\BarthelIndex\ViewController@print");
+Route::get("/asesmen/barthel-index/search-user", "Kasus\Asesmen\BarthelIndex\PostController@searchUser");
+Route::post("/asesmen/barthel-index/add-ttd", "Kasus\Asesmen\BarthelIndex\PostController@addTTD");
+
+Route::get("/asesmen/checklist-autisme-toddler", "Kasus\Asesmen\ChecklistAutismeToddler\ViewController@index");
+Route::get("/asesmen/checklist-autisme-toddler/view/{id}", "Kasus\Asesmen\ChecklistAutismeToddler\ViewController@single");
+Route::get("/asesmen/checklist-autisme-toddler/create", "Kasus\Asesmen\ChecklistAutismeToddler\ViewController@create");
+Route::get("/asesmen/checklist-autisme-toddler/edit/{id}", "Kasus\Asesmen\ChecklistAutismeToddler\ViewController@edit");
+Route::post("/asesmen/checklist-autisme-toddler/submit-form", "Kasus\Asesmen\ChecklistAutismeToddler\PostController@submitForm");
+Route::post("/asesmen/checklist-autisme-toddler/delete", "Kasus\Asesmen\ChecklistAutismeToddler\PostController@delete");
+Route::get("/asesmen/checklist-autisme-toddler/print/{id}", "Kasus\Asesmen\ChecklistAutismeToddler\ViewController@print");
+Route::get("/asesmen/checklist-autisme-toddler/search-user", "Kasus\Asesmen\ChecklistAutismeToddler\PostController@searchUser");
+Route::post("/asesmen/checklist-autisme-toddler/add-ttd", "Kasus\Asesmen\ChecklistAutismeToddler\PostController@addTTD");
+
+Route::get("/asesmen/self-harm-inventory", "Kasus\Asesmen\SelfHarmInventory\ViewController@index");
+Route::get("/asesmen/self-harm-inventory/view/{id}", "Kasus\Asesmen\SelfHarmInventory\ViewController@single");
+Route::get("/asesmen/self-harm-inventory/create", "Kasus\Asesmen\SelfHarmInventory\ViewController@create");
+Route::get("/asesmen/self-harm-inventory/edit/{id}", "Kasus\Asesmen\SelfHarmInventory\ViewController@edit");
+Route::post("/asesmen/self-harm-inventory/submit-form", "Kasus\Asesmen\SelfHarmInventory\PostController@submitForm");
+Route::post("/asesmen/self-harm-inventory/delete", "Kasus\Asesmen\SelfHarmInventory\PostController@delete");
+Route::get("/asesmen/self-harm-inventory/print/{id}", "Kasus\Asesmen\SelfHarmInventory\ViewController@print");
+Route::get("/asesmen/self-harm-inventory/search-user", "Kasus\Asesmen\SelfHarmInventory\PostController@searchUser");
+Route::post("/asesmen/self-harm-inventory/add-ttd", "Kasus\Asesmen\SelfHarmInventory\PostController@addTTD");
+
+Route::get("/asesmen/childhood-autism-rating-scale", "Kasus\Asesmen\ChildhoodAutismRatingScale\ViewController@index");
+Route::get("/asesmen/childhood-autism-rating-scale/view/{id}", "Kasus\Asesmen\ChildhoodAutismRatingScale\ViewController@single");
+Route::get("/asesmen/childhood-autism-rating-scale/create", "Kasus\Asesmen\ChildhoodAutismRatingScale\ViewController@create");
+Route::get("/asesmen/childhood-autism-rating-scale/edit/{id}", "Kasus\Asesmen\ChildhoodAutismRatingScale\ViewController@edit");
+Route::post("/asesmen/childhood-autism-rating-scale/submit-form", "Kasus\Asesmen\ChildhoodAutismRatingScale\PostController@submitForm");
+Route::post("/asesmen/childhood-autism-rating-scale/delete", "Kasus\Asesmen\ChildhoodAutismRatingScale\PostController@delete");
+Route::get("/asesmen/childhood-autism-rating-scale/print/{id}", "Kasus\Asesmen\ChildhoodAutismRatingScale\ViewController@print");
+Route::get("/asesmen/childhood-autism-rating-scale/search-user", "Kasus\Asesmen\ChildhoodAutismRatingScale\PostController@searchUser");
+Route::post("/asesmen/childhood-autism-rating-scale/add-ttd", "Kasus\Asesmen\ChildhoodAutismRatingScale\PostController@addTTD");
+
+Route::get("/asesmen/ucla-3", "Kasus\Asesmen\Ucla3\ViewController@index");
+Route::get("/asesmen/ucla-3/view/{id}", "Kasus\Asesmen\Ucla3\ViewController@single");
+Route::get("/asesmen/ucla-3/create", "Kasus\Asesmen\Ucla3\ViewController@create");
+Route::get("/asesmen/ucla-3/edit/{id}", "Kasus\Asesmen\Ucla3\ViewController@edit");
+Route::post("/asesmen/ucla-3/submit-form", "Kasus\Asesmen\Ucla3\PostController@submitForm");
+Route::post("/asesmen/ucla-3/delete", "Kasus\Asesmen\Ucla3\PostController@delete");
+Route::get("/asesmen/ucla-3/print/{id}", "Kasus\Asesmen\Ucla3\ViewController@print");
+Route::get("/asesmen/ucla-3/search-user", "Kasus\Asesmen\Ucla3\PostController@searchUser");
+Route::post("/asesmen/ucla-3/add-ttd", "Kasus\Asesmen\Ucla3\PostController@addTTD");

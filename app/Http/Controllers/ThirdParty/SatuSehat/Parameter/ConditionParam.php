@@ -81,7 +81,7 @@ class ConditionParam extends Controller
         $kunjungan_date = indonesian_date($kasus->created_at);
 
         $reference = $encounter->uuid;
-        $display = 'Kunjungan '.$kasus->pasien->name.' di tanggal '.$kunjungan_date;
+        $display = 'Kunjungan ' . $kasus->pasien->name . ' di tanggal ' . $kunjungan_date;
 
         $this->condition['encounter']['reference'] = $reference;
         $this->condition['encounter']['display'] = $display;

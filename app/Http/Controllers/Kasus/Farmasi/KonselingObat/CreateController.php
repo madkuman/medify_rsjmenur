@@ -14,14 +14,14 @@ use Auth;
 
 class CreateController extends Controller
 {
-	public function create(Request $request, $kasus)
+    public function create(Request $request, $kasus)
     {
         try {
             $input = $request->all();
             foreach ($input as $key => $value) {
-                if($key == '_token')	continue;
-                if($key == 'kasus')	continue;
-                if($key == 'id')	continue;
+                if ($key == '_token')    continue;
+                if ($key == 'kasus')    continue;
+                if ($key == 'id')    continue;
                 $hasil[$key] = $value;
             }
             $alatBantu = new AlatBantu();
@@ -32,9 +32,9 @@ class CreateController extends Controller
             $alatBantu->save();
 
             return back()
-            ->with('status', 1)
-            ->with('title', 'Sukses')
-            ->with('message', 'Konseling Obat Baru Berhasil di Simpan');
+                ->with('status', 1)
+                ->with('title', 'Sukses')
+                ->with('message', 'Konseling Obat Baru Berhasil di Simpan');
         } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
         }

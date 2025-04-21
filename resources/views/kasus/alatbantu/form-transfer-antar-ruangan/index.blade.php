@@ -20,13 +20,15 @@
                                     <i class="fa fa-pencil"></i> Form Transfer Antar Ruangan Baru
                                 </button>
                                 <h4>Form Transfer Antar Ruangan</h4>
-						        <hr>
+                                <hr>
                             @endif
 
                             {{-- store the converted json string --}}
-                            @php 
-                            $formJson = [];
-                            $kolaborator_user_ids = !empty($kasus->kolaborator) ? $kasus->kolaborator->pluck('user_id')->toArray() : [];
+                            @php
+                                $formJson = [];
+                                $kolaborator_user_ids = !empty($kasus->kolaborator)
+                                    ? $kasus->kolaborator->pluck('user_id')->toArray()
+                                    : [];
                             @endphp
 
                             @forelse ($alat_bantu as $item)
@@ -165,7 +167,7 @@
 @endsection
 
 @section('js')
-    <script src="{{url("")}}/assets/js/plugins/jquery-masked-inputs/jquery.mask.min.js"></script>
+    <script src="{{ url('') }}/assets/js/plugins/jquery-masked-inputs/jquery.mask.min.js"></script>
     <script type="text/javascript">
         var createEditModal = $("#create-edit-modal");
         var createEditForm = $("#create-edit-form");
@@ -177,7 +179,11 @@
         $(document).ready(function() {
             $(`input[name="transfer_sebelum"]`).mask("00:00");
             $(`input[name="transfer_sesudah"]`).mask("00:00");
-            $('.input-tags').tagsInput({'height': '40px', 'width': '100%', 'defaultText': ''});
+            $('.input-tags').tagsInput({
+                'height': '40px',
+                'width': '100%',
+                'defaultText': ''
+            });
 
             $("#create-btn").click(function(e) {
                 setValueForFormEdit(null);
@@ -225,10 +231,10 @@
                 if (value?.dpjp) {
                     $("select[name=dpjp]").val(value.dpjp).trigger('change');
                 } else {
-                    @if($kasus->dpjp->user->id ?? null)
-                    $("select[name=dpjp]").val({{ $kasus->dpjp->user->id }}).trigger('change');
+                    @if ($kasus->dpjp->user->id ?? null)
+                        $("select[name=dpjp]").val({{ $kasus->dpjp->user->id }}).trigger('change');
                     @else
-                    $("select[name=dpjp]").val(null).trigger('change');
+                        $("select[name=dpjp]").val(null).trigger('change');
                     @endif
                 }
 
@@ -239,7 +245,8 @@
                 if (value?.tgl_mrs) {
                     $("input[name=tgl_mrs]").val(value.tgl_mrs);
                 } else {
-                    $("input[name=tgl_mrs]").val("{{ !empty($kasus->mrs_at) ? date('Y-m-d', strtotime($kasus->mrs_at)) : '' }}");
+                    $("input[name=tgl_mrs]").val(
+                        "{{ !empty($kasus->mrs_at) ? date('Y-m-d', strtotime($kasus->mrs_at)) : '' }}");
                 }
                 $("input[name=tgl_pindah]").val(value?.tgl_pindah);
 
@@ -248,7 +255,7 @@
 
                 if (value?.alergi) $("input[name=alergi]").importTags(value.alergi);
                 else $("input[name=alergi]").importTags("{{ $kasus->identitas->alergi_obat ?? '' }}");
-                
+
                 $("input[name=alasan_admisi]").val(value?.alasan_admisi);
 
                 // RINGKASAN RIWAYAT PASIEN

@@ -44,7 +44,8 @@
     <tr>
         <td class="position-relative" colspan="1" rowspan="1"><span>Tgl lahir / umur</span></td>
         <td class="position-relative" colspan="1" rowspan="1"><span>:</span></td>
-        <td class="position-relative" colspan="1" rowspan="1"> {{ indonesian_date($kasus->pasien->date_of_birth) }} / {{ $kasus->identitas->age }} </td>
+        <td class="position-relative" colspan="1" rowspan="1">
+            {{ indonesian_date($kasus->pasien->date_of_birth) }} / {{ $kasus->identitas->age }} </td>
     </tr>
     <tr>
         <td class="position-relative" colspan="1" rowspan="1"><span>Jenis kelamin</span></td>
@@ -395,8 +396,7 @@
         <td class=" position-relative" colspan="1" rowspan="1"> <span>:</span> </td>
         <td class=" position-relative" colspan="1" rowspan="1">
             <div class="form-group medify-form-genv4-input-container">
-                <input type="text" class="form-control"
-                    name="tensi_sebelum" value="">
+                <input type="text" class="form-control" name="tensi_sebelum" value="">
             </div>
             <div class="form-group medify-form-genv4-view-container">
             </div>
@@ -408,8 +408,7 @@
         <td class=" position-relative" colspan="1" rowspan="1"> <span>:</span> </td>
         <td class=" position-relative" colspan="1" rowspan="1">
             <div class="form-group medify-form-genv4-input-container">
-                <input type="text" class="form-control"
-                    name="tensi_sesudah" value="">
+                <input type="text" class="form-control" name="tensi_sesudah" value="">
             </div>
             <div class="form-group medify-form-genv4-view-container">
             </div>

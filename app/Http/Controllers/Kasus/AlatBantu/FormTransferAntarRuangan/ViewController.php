@@ -13,9 +13,15 @@ class ViewController extends Controller
     public function index($nomor_kasus)
     {
         $eagers = [
-            "lokasi.lokasi.departemen", "identitas",
-            "pembayaran.perusahaan.tipe", "pasien", "kelas", "end_by_creator",
-            "TransaksiRawatInap", "myInvitation", 'diagnosis.icd10'
+            "lokasi.lokasi.departemen",
+            "identitas",
+            "pembayaran.perusahaan.tipe",
+            "pasien",
+            "kelas",
+            "end_by_creator",
+            "TransaksiRawatInap",
+            "myInvitation",
+            'diagnosis.icd10'
         ];
         $kasus = Kasus::with($eagers)->where("nomor_kasus", $nomor_kasus)->first();
         $data['alat_bantu'] = AlatBantu::query()

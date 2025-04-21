@@ -338,7 +338,7 @@
 
             $('.asal-rujukan-select').select2({
                 tags: true,
-                placeholder: 'Masukkan Nomor Rujukan',
+                placeholder: 'Masukkan Asal Rujukan',
                 minimumInputLength: 2,
                 ajax: {
                     type: "POST",

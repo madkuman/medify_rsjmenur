@@ -10,7 +10,7 @@ class ReadController extends Controller
     public function getPatient($pasien)
     {
         $ss_patient = $pasien->satusehat_patient ?? null;
-        
+
         # auto sync patient
         if (empty($ss_patient)) {
             $request_search_pasien = new Request([

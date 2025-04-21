@@ -1,403 +1,415 @@
 @extends('pasien.layouts.main')
 
 @section('title')
-Pasien - Medify
+    Pasien - Medify
 @endsection
 
 @section('subtitle')
-Pendaftaran Pasien Baru
+    Pendaftaran Pasien Baru
 @endsection
 
 @section('css')
-<style type="text/css">
-    .labl {
-        display : block;
-        width: 100%;
-    }
-    .labl > input{ /* HIDE RADIO */
-        visibility: hidden; /* Makes input not-clickable */
-        position: absolute; /* Remove input from document flow */
-    }
-    .labl > input + div{ /* DIV STYLES */
-        cursor:pointer;
-        border:2px solid transparent;
-    }
-    .labl > input:checked + div{ /* (RADIO CHECKED) DIV STYLES */
-        border: 4px solid #42a5f5;
-    }
-    .labl p
-    {
-        font-size: 12px;
-    }
+    <style type="text/css">
+        .labl {
+            display: block;
+            width: 100%;
+        }
 
-    .custom-tabbable .custom-nav-tabs {
-       overflow-x: auto;
-       overflow-y:hidden;
-       flex-wrap: nowrap;
-    }
+        .labl>input {
+            /* HIDE RADIO */
+            visibility: hidden;
+            /* Makes input not-clickable */
+            position: absolute;
+            /* Remove input from document flow */
+        }
 
-    .modal-full {
-        min-width: 100%;
-        margin: 0;
-    }
-    .modal-full .modal-content {
-        min-height: 100vh;
-    }
-</style>
+        .labl>input+div {
+            /* DIV STYLES */
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .labl>input:checked+div {
+            /* (RADIO CHECKED) DIV STYLES */
+            border: 4px solid #42a5f5;
+        }
+
+        .labl p {
+            font-size: 12px;
+        }
+
+        .custom-tabbable .custom-nav-tabs {
+            overflow-x: auto;
+            overflow-y: hidden;
+            flex-wrap: nowrap;
+        }
+
+        .modal-full {
+            min-width: 100%;
+            margin: 0;
+        }
+
+        .modal-full .modal-content {
+            min-height: 100vh;
+        }
+    </style>
 @endsection
 
 @section('content')
-<main id="main-container">
-    @include('pasien.layouts.navbar')
-    <div class="container">
-        <div class="">
-            <div class="block-content">
-                <h4 class="mb-0">Pendaftaran Pasien ke Pelayanan</h4>
-                Anda akan mendaftarkan pasien ke salah satu pelayanan di rumah sakit
-                <br><br>
-                <form id="pasienSubmit">
-                    <input type="text" name="inputKasusID" id="selectKasus" value="0" style="display: none">
-                    <input type="text" name="rujukan_id" id="selectRujukanID" value="0" style="display: none">
-                    <input type="text" name="antrian_id" id="antrian_id" value="{{$antrian->id}}" style="display: none">
-                    <input type="text" name="nomor_antrian" id="nomor_antrian" value="{{$antrian->jumlah_antrian}}" style="display: none">
-                    <div class="block rounded" id="dataJenis">
-                        <div class="block-content">
-                            <h5 class="uppercase">Form Pendaftaran Layanan 
-                                <hr>
-                            </h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    @include('pasien.halaman-konfirmasi.content.layanan-utama')
+    <main id="main-container">
+        @include('pasien.layouts.navbar')
+        <div class="container">
+            <div class="">
+                <div class="block-content">
+                    <h4 class="mb-0">Pendaftaran Pasien ke Pelayanan</h4>
+                    Anda akan mendaftarkan pasien ke salah satu pelayanan di rumah sakit
+                    <br><br>
+                    <form id="pasienSubmit">
+                        <input type="text" name="inputKasusID" id="selectKasus" value="0" style="display: none">
+                        <input type="text" name="rujukan_id" id="selectRujukanID" value="0" style="display: none">
+                        <input type="text" name="antrian_id" id="antrian_id" value="{{ $antrian->id }}"
+                            style="display: none">
+                        <input type="text" name="nomor_antrian" id="nomor_antrian" value="{{ $antrian->jumlah_antrian }}"
+                            style="display: none">
+                        <div class="block rounded" id="dataJenis">
+                            <div class="block-content">
+                                <h5 class="uppercase">Form Pendaftaran Layanan
                                     <hr>
-                                    @include('pasien.halaman-konfirmasi.content.pilih-poli')
-                                    {{-- @include('pasien.halaman-konfirmasi.content.pilih-igd')
+                                </h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @include('pasien.halaman-konfirmasi.content.layanan-utama')
+                                        <hr>
+                                        @include('pasien.halaman-konfirmasi.content.pilih-poli')
+                                        {{-- @include('pasien.halaman-konfirmasi.content.pilih-igd')
                                     @include('pasien.halaman-konfirmasi.content.pilih-urikkes') --}}
-                                    <hr>
-                                    @include('pasien.halaman-konfirmasi.content.metode-bayar')
-                                    <hr>
-                                    @include('pasien.halaman-konfirmasi.content.retribusi')
-                                </div>
-                                <div class="col-md-6">
-                                    @include('pasien.halaman-konfirmasi.content.my-rujuk-poli')
-                                    @include('pasien.halaman-konfirmasi.content.urikkes-paket-custom')
+                                        <hr>
+                                        @include('pasien.halaman-konfirmasi.content.metode-bayar')
+                                        <hr>
+                                        @include('pasien.halaman-konfirmasi.content.retribusi')
+                                    </div>
+                                    <div class="col-md-6">
+                                        @include('pasien.halaman-konfirmasi.content.my-rujuk-poli')
+                                        @include('pasien.halaman-konfirmasi.content.urikkes-paket-custom')
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="py-10 text-center font-w600 bg-danger text-white mb-20 align-middle" id="error-wrapper" style="display: none;">
-                            <i class="fa fa-exclamation-circle mr-5"></i>
-                            <span></span>
-                        </div>
-                        <input type="hidden" id="cek-pesanan-duplicate" value="0">
-                        <input type="hidden" id="cek-pesanan-duplicate-text" value="text">
-                        <div class="col-12">
-                            @if(count($kasus_krs_today) > 0 || count($kasus_masih_ranap) > 0)
-                            <div class="alert alert-warning alert-dismissable" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                                <h3 class="alert-heading font-size-h4 font-w400">Perhatian!</h3>
-                                @if(count($kasus_masih_ranap) > 0)
-                                <p class="mb-0">Pasien masih menjalani Rawat Inap. Pastikan anda yakin ingin melanjutkan pendaftaran.</p>
-                                @else
-                                <p class="mb-0">Pasien baru saja KRS hari ini. Pastikan anda yakin ingin melanjutkan pendaftaran.</p>
+                            <div class="py-10 text-center font-w600 bg-danger text-white mb-20 align-middle"
+                                id="error-wrapper" style="display: none;">
+                                <i class="fa fa-exclamation-circle mr-5"></i>
+                                <span></span>
+                            </div>
+                            <input type="hidden" id="cek-pesanan-duplicate" value="0">
+                            <input type="hidden" id="cek-pesanan-duplicate-text" value="text">
+                            <div class="col-12">
+                                @if (count($kasus_krs_today) > 0 || count($kasus_masih_ranap) > 0)
+                                    <div class="alert alert-warning alert-dismissable" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                        <h3 class="alert-heading font-size-h4 font-w400">Perhatian!</h3>
+                                        @if (count($kasus_masih_ranap) > 0)
+                                            <p class="mb-0">Pasien masih menjalani Rawat Inap. Pastikan anda yakin ingin
+                                                melanjutkan pendaftaran.</p>
+                                        @else
+                                            <p class="mb-0">Pasien baru saja KRS hari ini. Pastikan anda yakin ingin
+                                                melanjutkan pendaftaran.</p>
+                                        @endif
+                                    </div>
                                 @endif
-                            </div>
-                            @endif
-                            <div class="row flex-row-reverse">
-                                <button class="btn btn-success btn-hero col-lg-2 col-12" type="button" id="buttonSubmit"><i class="fa fa-check"></i> Simpan</button>
-                                <button class="btn btn-alt-success btn-hero col-lg-2 col-12" style="display: none;" type="button"  id="buttonLoading">
-                                    <i class="fa fa-asterisk fa-spin"></i> Loading
-                                </button>  
+                                <div class="row flex-row-reverse">
+                                    <button class="btn btn-success btn-hero col-lg-2 col-12" type="button"
+                                        id="buttonSubmit"><i class="fa fa-check"></i> Simpan</button>
+                                    <button class="btn btn-alt-success btn-hero col-lg-2 col-12" style="display: none;"
+                                        type="button" id="buttonLoading">
+                                        <i class="fa fa-asterisk fa-spin"></i> Loading
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-</main>
-@include('pasien.pendaftaran.content.modal.paket-info')
-@include('pasien.pendaftaran.content.modal.urikkes-paket-custom')
+    </main>
+    @include('pasien.pendaftaran.content.modal.paket-info')
+    @include('pasien.pendaftaran.content.modal.urikkes-paket-custom')
 @endsection
 
 
 @section('js')
-<script type="text/javascript">
-    var totalBayar = 0;
-    var clickPasienBaru = 0;
-    var clickIGD = 0;
-    var clickKartu = 0;
-    var clickPoli = 0;
-    var clickFile = 0;
-    var clickBiayaBPJS = 0;
-    var valLayanan = $('input[type="radio"][name="radioname"]:checked').val();
-    var data_rujukan;
-    var nomor_kartu = '';
-    var is_bpjs = 0;
-    var is_igd = 0;
-    var pasien_id = {{$pasien->id}};
-    var new_sep_url = "{{url('')}}/bpjs/sep/create?window=true&pasien_id={{$pasien->id}}&pasien_name={{$pasien->name}}";
-    var online_id = 0;
-    @isset($online_id)
-        online_id = '{{ $online_id }}';
-    @endisset
-</script>
+    <script type="text/javascript">
+        var totalBayar = 0;
+        var clickPasienBaru = 0;
+        var clickIGD = 0;
+        var clickKartu = 0;
+        var clickPoli = 0;
+        var clickFile = 0;
+        var clickBiayaBPJS = 0;
+        var valLayanan = $('input[type="radio"][name="radioname"]:checked').val();
+        var data_rujukan;
+        var nomor_kartu = '';
+        var is_bpjs = 0;
+        var is_igd = 0;
+        var pasien_id = {{ $pasien->id }};
+        var new_sep_url =
+            "{{ url('') }}/bpjs/sep/create?window=true&pasien_id={{ $pasien->id }}&pasien_name={{ $pasien->name }}";
+        var online_id = 0;
+        @isset($online_id)
+            online_id = '{{ $online_id }}';
+        @endisset
+    </script>
 
-@include('pasien.halaman-konfirmasi.js.metode_pembayaran')
-@include('pasien.halaman-konfirmasi.js.rujukan_bpjs')
-@include('pasien.halaman-konfirmasi.js.permintaan_rujuk')
-@include('pasien.halaman-konfirmasi.js.pilih_pelayanan')
-@include('pasien.halaman-konfirmasi.js.retribusi')
-@include('pasien.halaman-konfirmasi.js.submit_bpjs')
-@include('pasien.halaman-konfirmasi.js.submit')
-@include('pasien.halaman-konfirmasi.js.bpjs_window')
-@include('pasien.halaman-konfirmasi.js.urikkes')
+    @include('pasien.halaman-konfirmasi.js.metode_pembayaran')
+    @include('pasien.halaman-konfirmasi.js.rujukan_bpjs')
+    @include('pasien.halaman-konfirmasi.js.permintaan_rujuk')
+    @include('pasien.halaman-konfirmasi.js.pilih_pelayanan')
+    @include('pasien.halaman-konfirmasi.js.retribusi')
+    @include('pasien.halaman-konfirmasi.js.submit_bpjs')
+    @include('pasien.halaman-konfirmasi.js.submit')
+    @include('pasien.halaman-konfirmasi.js.bpjs_window')
+    @include('pasien.halaman-konfirmasi.js.urikkes')
 
-<script type="text/javascript">
+    <script type="text/javascript">
+        changeDaftar(valLayanan);
 
-    changeDaftar(valLayanan);
-
-    $('#select').select2();
-    $('.js-select2').select2();
-    $('#selectPoli').select2();
-    $('#selectPaket').select2({
-        placeholder: "Pilih Paket", 
-    });
-    $('.select-igd').select2();
-    $('#selectPembayaran').select2();
-    $('#selectRujukan').select2({
-      "language": {
-            "noResults": function(){
-                return "Asal rujukan tidak ditemukan. Buat asal rujukan baru? <button id='tambahRujukan' class='btn btn-primary' onclick='mintaRujukan()'>Buat Asal Rujukan</button>";
-            }
-      },
-      escapeMarkup: function (markup) {
-          return markup;
-      }
-    });
-
-
-    function mintaRujukan()
-    {   
-        var rujukan = $(".select2-search__field").val();
-        var formData = new FormData();
-        formData.append('nama_rujukan',rujukan);
-        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-        $.ajax({
-            type:'POST',
-             url: API_URL + "/pasien/rujukan/baru",
-            contentType: false,
-            processData: false,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: formData,
-            success: function (response) {
-                $('#selectRujukan').append(`<option value="`+response.id+`" data-self="`+response.self+`">`+response.nama+`</option>`)
-                //$("#selectRujukan").select2("destroy").select2();
-                callSwal('success','Berhasil Ditambah','Asal Rujukan Berhasil Ditambah',0);
-                //$('#selectRujukan').select2('data',{id : response.id, text : response.nama});
-                //$("#tambahRujukan").hide();
-            },
-            error: function () {
-                
-            }
+        $('#select').select2();
+        $('.js-select2').select2();
+        $('#selectPoli').select2();
+        $('#selectPaket').select2({
+            placeholder: "Pilih Paket",
         });
-    }
-
-    $('.block-link-pop').click(function() {
-        $(this).siblings().removeClass('active')
-        $(this).addClass('active');
-    });
-
-    $("#tanggal_laka").datepicker( {
-        format: "dd-mm-yyyy",
-    });
-
-    $('input[type="radio"][name="radioname"]').on('click change', function() {
-        changeDaftar($(this).val());
-    });
-
-    $('#laka_wrap').change(function() {
-        if ($('#laka')[0].checked) {
-            $('#form_laka').show();
-        } else {
-            $('#form_laka').hide();   
-        }
-    });
-
-     $('#suplesi_wrap').change(function() {
-        if ($('#suplesi')[0].checked) {
-            $('#sep_suplesi_wrap').show();
-        } else {
-            $('#sep_suplesi_wrap').hide();   
-        }
-    });
-
-    $('#selectNoRujukan').on('select2:select', function (e) {
-        if($(e.currentTarget).find("option:selected").val() != -1){
-            data_rujukan = JSON.parse($(e.currentTarget).find("option:selected").val());
-            if(data_rujukan && data_rujukan !== 'null' && data_rujukan !== 'undefined'){
-                $('#preview_bpjs_modal_diagnosis')
-                    .text(data_rujukan.diagnosa.kode+" - "+data_rujukan.diagnosa.nama || "-");
-                $('#preview_bpjs_modal_pelayanan').text(data_rujukan.pelayanan.nama || "-");
-                $('#preview_bpjs_modal_perujuk')
-                    .text(data_rujukan.provPerujuk.kode+" - "+data_rujukan.provPerujuk.nama || "-");
-                $('#preview_bpjs_modal_poli').text(data_rujukan.poliRujukan.nama || "-");
-                $('#preview_bpjs_modal_keluhan').text(data_rujukan.keluhan || "-");
-                $('#preview_bpjs_modal_cob_nama').text(data_rujukan.peserta.cob.nmAsuransi || "-");
-                $('#preview_bpjs_modal_cob_nomor').text(data_rujukan.peserta.cob.noAsuransi || "-");
-                var perujuk = data_rujukan.provPerujuk;
-                $('#selectRujukan > option').each(function() {
-                   if($(this).data('kode') == perujuk.kode){
-                        $(this).prop('selected', true);
-                        $('#selectRujukan').trigger('change');
-                        return false;
-                   }
-                });
-                $('#selectRujukan').prop('disabled', true);
-                if($('#selectRujukan :selected').data('kode') != perujuk.kode){
-                    //kasi ajax untuk buat asal rujukan baru trus diselect
+        $('.select-igd').select2();
+        $('#selectPembayaran').select2();
+        $('#selectRujukan').select2({
+            "language": {
+                "noResults": function() {
+                    return "Asal rujukan tidak ditemukan. Buat asal rujukan baru? <button id='tambahRujukan' class='btn btn-primary' onclick='mintaRujukan()'>Buat Asal Rujukan</button>";
                 }
-            }else{
-                resetBPJSModalPreview();
+            },
+            escapeMarkup: function(markup) {
+                return markup;
             }
-        }else{
-            data_rujukan = null;
-           $('#selectRujukan').prop('disabled', false);
+        });
+
+
+        function mintaRujukan() {
+            var rujukan = $(".select2-search__field").val();
+            var formData = new FormData();
+            formData.append('nama_rujukan', rujukan);
+            var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+                type: 'POST',
+                url: API_URL + "/pasien/rujukan/baru",
+                contentType: false,
+                processData: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: formData,
+                success: function(response) {
+                    $('#selectRujukan').append(`<option value="` + response.id + `" data-self="` + response
+                        .self + `">` + response.nama + `</option>`)
+                    //$("#selectRujukan").select2("destroy").select2();
+                    callSwal('success', 'Berhasil Ditambah', 'Asal Rujukan Berhasil Ditambah', 0);
+                    //$('#selectRujukan').select2('data',{id : response.id, text : response.nama});
+                    //$("#tambahRujukan").hide();
+                },
+                error: function() {
+
+                }
+            });
         }
-        $('#error-wrapper').hide();
-    });
 
-    $('#provinsi_laka').on("select2:select", function(arg) {
-        getKabupaten($('#provinsi_laka').val());
-    });
+        $('.block-link-pop').click(function() {
+            $(this).siblings().removeClass('active')
+            $(this).addClass('active');
+        });
 
-    $('#kota_laka').on("select2:select", function(arg) {
-        getKecamatan($('#kota_laka').val());
-    });
+        $("#tanggal_laka").datepicker({
+            format: "dd-mm-yyyy",
+        });
 
-    var is_video = "0";
-    var select_poli = "0";
-    $(document).ready(function() {
-        @if(count($kasus_krs_today) > 0 || count($kasus_masih_ranap) > 0)
-        swal({
-            type: 'warning',
-            title: 'Perhatian!',
-            @if(count($kasus_masih_ranap) > 0)
-            text: "Pasien masih menjalani Rawat Inap. Pastikan anda yakin ingin melanjutkan pendaftaran"
-            @else
-            text: "Pasien baru saja KRS hari ini. Pastikan anda yakin ingin melanjutkan pendaftaran"
+        $('input[type="radio"][name="radioname"]').on('click change', function() {
+            changeDaftar($(this).val());
+        });
+
+        $('#laka_wrap').change(function() {
+            if ($('#laka')[0].checked) {
+                $('#form_laka').show();
+            } else {
+                $('#form_laka').hide();
+            }
+        });
+
+        $('#suplesi_wrap').change(function() {
+            if ($('#suplesi')[0].checked) {
+                $('#sep_suplesi_wrap').show();
+            } else {
+                $('#sep_suplesi_wrap').hide();
+            }
+        });
+
+        $('#selectNoRujukan').on('select2:select', function(e) {
+            if ($(e.currentTarget).find("option:selected").val() != -1) {
+                data_rujukan = JSON.parse($(e.currentTarget).find("option:selected").val());
+                if (data_rujukan && data_rujukan !== 'null' && data_rujukan !== 'undefined') {
+                    $('#preview_bpjs_modal_diagnosis')
+                        .text(data_rujukan.diagnosa.kode + " - " + data_rujukan.diagnosa.nama || "-");
+                    $('#preview_bpjs_modal_pelayanan').text(data_rujukan.pelayanan.nama || "-");
+                    $('#preview_bpjs_modal_perujuk')
+                        .text(data_rujukan.provPerujuk.kode + " - " + data_rujukan.provPerujuk.nama || "-");
+                    $('#preview_bpjs_modal_poli').text(data_rujukan.poliRujukan.nama || "-");
+                    $('#preview_bpjs_modal_keluhan').text(data_rujukan.keluhan || "-");
+                    $('#preview_bpjs_modal_cob_nama').text(data_rujukan.peserta.cob.nmAsuransi || "-");
+                    $('#preview_bpjs_modal_cob_nomor').text(data_rujukan.peserta.cob.noAsuransi || "-");
+                    var perujuk = data_rujukan.provPerujuk;
+                    $('#selectRujukan > option').each(function() {
+                        if ($(this).data('kode') == perujuk.kode) {
+                            $(this).prop('selected', true);
+                            $('#selectRujukan').trigger('change');
+                            return false;
+                        }
+                    });
+                    $('#selectRujukan').prop('disabled', true);
+                    if ($('#selectRujukan :selected').data('kode') != perujuk.kode) {
+                        //kasi ajax untuk buat asal rujukan baru trus diselect
+                    }
+                } else {
+                    resetBPJSModalPreview();
+                }
+            } else {
+                data_rujukan = null;
+                $('#selectRujukan').prop('disabled', false);
+            }
+            $('#error-wrapper').hide();
+        });
+
+        $('#provinsi_laka').on("select2:select", function(arg) {
+            getKabupaten($('#provinsi_laka').val());
+        });
+
+        $('#kota_laka').on("select2:select", function(arg) {
+            getKecamatan($('#kota_laka').val());
+        });
+
+        var is_video = "0";
+        var select_poli = "0";
+        $(document).ready(function() {
+            @if (count($kasus_krs_today) > 0 || count($kasus_masih_ranap) > 0)
+                swal({
+                    type: 'warning',
+                    title: 'Perhatian!',
+                    @if (count($kasus_masih_ranap) > 0)
+                        text: "Pasien masih menjalani Rawat Inap. Pastikan anda yakin ingin melanjutkan pendaftaran"
+                    @else
+                        text: "Pasien baru saja KRS hari ini. Pastikan anda yakin ingin melanjutkan pendaftaran"
+                    @endif
+                });
             @endif
-        });
-        @endif
-        
-        
-        getPropinsi();
-        $('#selectPoli').on("select2:select", function(e) { 
-            removeRujukan();
 
-            id = $('#selectPoli').val();
-            select_poli = $('#selectPoli').val();
-            if(id != null)
-            {   
-                $('#check-pesanan-duplicate').val(0);
-                lihatRuangVideo(id,is_video)
-                cekHistoriPoli(id)
-            }
-        });
 
-        $('#selectKelasAntrian').on("select2:select", function(e) { 
-
-            if(select_poli!="0"){
+            getPropinsi();
+            $('#selectPoli').on("select2:select", function(e) {
                 removeRujukan();
-            }
 
-            id = $('#selectKelasAntrian').val()
-            if(id == "5"){
-                is_video="1";
-                console.log("pakai video");
-            }
-            else{
-                is_video="0";
-                console.log("tidak pakai video");
-            }
-            if(id != null && select_poli!="0")
-            {   
-                $('#check-pesanan-duplicate').val(0);
-                lihatRuangVideo(select_poli,is_video)
-                cekHistoriPoli(select_poli)
-            }
-        });
+                id = $('#selectPoli').val();
+                select_poli = $('#selectPoli').val();
+                if (id != null) {
+                    $('#check-pesanan-duplicate').val(0);
+                    lihatRuangVideo(id, is_video)
+                    cekHistoriPoli(id)
+                }
+            });
 
-        pembayaran_id = $('#selectPembayaran').val()
-        lihatMetode(pembayaran_id)
-        $('#selectPembayaran').on("select2:select", function(e) { 
-            //removeRujukan()
+            $('#selectKelasAntrian').on("select2:select", function(e) {
+
+                if (select_poli != "0") {
+                    removeRujukan();
+                }
+
+                id = $('#selectKelasAntrian').val()
+                if (id == "5") {
+                    is_video = "1";
+                    console.log("pakai video");
+                } else {
+                    is_video = "0";
+                    console.log("tidak pakai video");
+                }
+                if (id != null && select_poli != "0") {
+                    $('#check-pesanan-duplicate').val(0);
+                    lihatRuangVideo(select_poli, is_video)
+                    cekHistoriPoli(select_poli)
+                }
+            });
+
             pembayaran_id = $('#selectPembayaran').val()
+            lihatMetode(pembayaran_id)
+            $('#selectPembayaran').on("select2:select", function(e) {
+                //removeRujukan()
+                pembayaran_id = $('#selectPembayaran').val()
                 lihatMetode(pembayaran_id);
-                if ($(this).find(':selected').data('bpjs')=="yes"){
+                if ($(this).find(':selected').data('bpjs') == "yes") {
                     $('#form-no-sep').show();
                     $('#selectRujukan').prop('disabled', false);
                     is_bpjs = 1;
-                }
-                else {
+                } else {
                     $('#form-no-sep').hide();
                     $('#selectRujukan').prop('disabled', false);
                     is_bpjs = 0;
                 };
             });
 
-        $("#total_bayar").html(`<span class="control-label font-w700" >`+totalBayar+`</span>`);
+            $("#total_bayar").html(`<span class="control-label font-w700" >` + totalBayar + `</span>`);
 
-        $('.select-igd').on("select2:select", function(e) { 
-            removeRujukan();
-            if ($(this).attr('id') == 'selectIGDTriage') {
-                $('#selectKasus').val($(this).val());
-            }
-        });
-        setOpsiIGD();
-        $('input[name="opsi_igd"]').change(function() {
-            setOpsiIGD();
-        })
-
-        $('#helpPaket').popover();
-
-        $('#selectNoRujukan').select2({
-            "language": {
-                "noResults": function(){
-                    return "Nomor Rujukan Tidak Ditemukan. Ajukan SEP Baru? <button class='btn btn-primary' onclick='mintaSEP'>Pengajuan SEP</button>";
+            $('.select-igd').on("select2:select", function(e) {
+                removeRujukan();
+                if ($(this).attr('id') == 'selectIGDTriage') {
+                    $('#selectKasus').val($(this).val());
                 }
-            },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
+            });
+            setOpsiIGD();
+            $('input[name="opsi_igd"]').change(function() {
+                setOpsiIGD();
+            })
+
+            $('#helpPaket').popover();
+
+            $('#selectNoRujukan').select2({
+                "language": {
+                    "noResults": function() {
+                        return "Nomor Rujukan Tidak Ditemukan. Ajukan SEP Baru? <button class='btn btn-primary' onclick='mintaSEP'>Pengajuan SEP</button>";
+                    }
+                },
+                escapeMarkup: function(markup) {
+                    return markup;
+                }
+            });
         });
-    });
 
-    function setOpsiIGD() {
-        if ($('input[name="opsi_igd"]:checked').val() == 1) {
-            $('.igd-ruang').hide();
-            $('.igd-triage').show();
-            $("#selectIGDRuang").val('').change();
-        } else {
-            $('.igd-ruang').show();
-            $('.igd-triage').hide();
-            $('#selectKasus').val(0);
-            $("#selectIGDTriage").val('').change();
+        function setOpsiIGD() {
+            if ($('input[name="opsi_igd"]:checked').val() == 1) {
+                $('.igd-ruang').hide();
+                $('.igd-triage').show();
+                $("#selectIGDRuang").val('').change();
+            } else {
+                $('.igd-ruang').show();
+                $('.igd-triage').hide();
+                $('#selectKasus').val(0);
+                $("#selectIGDTriage").val('').change();
+            }
         }
-    }
 
-    function resetBPJSModalPreview(){
-        $('#preview_bpjs_modal_diagnosis').text("-");
-        $('#preview_bpjs_modal_pelayanan').text("-");
-        $('#preview_bpjs_modal_perujuk').text("-");
-        $('#preview_bpjs_modal_poli').text("-");
-        $('#preview_bpjs_modal_keluhan').text("-");
-        $('#preview_bpjs_modal_cob_nama').text("-");
-        $('#preview_bpjs_modal_cob_nomor').text("-");
-    }
-</script>
+        function resetBPJSModalPreview() {
+            $('#preview_bpjs_modal_diagnosis').text("-");
+            $('#preview_bpjs_modal_pelayanan').text("-");
+            $('#preview_bpjs_modal_perujuk').text("-");
+            $('#preview_bpjs_modal_poli').text("-");
+            $('#preview_bpjs_modal_keluhan').text("-");
+            $('#preview_bpjs_modal_cob_nama').text("-");
+            $('#preview_bpjs_modal_cob_nomor').text("-");
+        }
+    </script>
 @endsection
 
 {{-- @extends('pasien.layouts.main')
@@ -441,10 +453,10 @@ Halaman Konfirmasi
                             <div class="col-8">
                                 <label for="be-contact-name">Pembayaran Utama</label>
                                 <select class="form-control" data-size="5" id="identitas-edit-asuransi" name="pembayaran_utama_id" style="width: 100%;" disabled >
-                                    @foreach($metode as $item)
+                                    @foreach ($metode as $item)
                                     <option value="{{$item->id}}"
                                         @if (isset($pasien))
-                                            @if($item->id == $pasien->pembayaranUtama->id) selected="selected" @endif
+                                            @if ($item->id == $pasien->pembayaranUtama->id) selected="selected" @endif
                                         @endif
                                         data-type = "{{$item->perusahaan->tipe->slug}}"
                                         >
@@ -562,7 +574,7 @@ Halaman Konfirmasi
                                             <th>Jenis Layanan</th>
                                             <td>:</td>
                                             @php $jenis_layanan = $pasien->kasusFirst->active_sep->jenis_pelayanan ?? '' @endphp
-                                            <td> @if($jenis_layanan == 1) Rawat Inap @else Rawat Jalan @endif</td>
+                                            <td> @if ($jenis_layanan == 1) Rawat Inap @else Rawat Jalan @endif</td>
                                         </tr>
                                         <tr>
                                             <th>Nomor SEP</th>
@@ -580,10 +592,10 @@ Halaman Konfirmasi
                                             <div class="input-group ">
                                                 <select name="no_sep" class="form-control js-select2" id="sep_select" data-placeholder="Nomor SEP Pasien" style="width: 80%">
                                                     <option value=""></option>
-                                                    @foreach($sep as $item)
-                                                    @if(isset($item->no_sep))
-                                                    <option value="{{json_encode($item)}}" @if(isset($nomor_sep_aktif) && $nomor_sep_aktif == $item->no_sep) selected="" @endif>
-                                                        {{$item->no_sep}} - @if($item->jenis_pelayanan == 1) Rawat Inap @else Rawat Jalan @endif - {{indonesian_date($item->created_at)}}
+                                                    @foreach ($sep as $item)
+                                                    @if (isset($item->no_sep))
+                                                    <option value="{{json_encode($item)}}" @if (isset($nomor_sep_aktif) && $nomor_sep_aktif == $item->no_sep) selected="" @endif>
+                                                        {{$item->no_sep}} - @if ($item->jenis_pelayanan == 1) Rawat Inap @else Rawat Jalan @endif - {{indonesian_date($item->created_at)}}
                                                     </option>
                                                     @endif
                                                     @endforeach

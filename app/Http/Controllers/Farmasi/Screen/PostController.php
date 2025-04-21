@@ -149,9 +149,9 @@ class PostController extends Controller
                 $kode = $jenis_antrian->kode;
                 $transaksi_today = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getByDateNow($kode);
 
-                $nomor = $transaksi_today->count() + 1;
-                $nomor = 1000 + $nomor;
-                $nomor = substr($nomor, 1);
+                $nomor1 = $transaksi_today->count() + 1;
+                $nomor2 = 1000 + $nomor1;
+                $nomor = substr($nomor2, 1);
 
                 $nomor_antrian = $kode . $nomor;
 
@@ -175,19 +175,28 @@ class PostController extends Controller
                     $temp_params->replace([
                         'kodebooking' => (string) $transaksi_rawat_jalan->id ?? '',
                         'jenisresep' => $jenis_resep_text,
-                        'nomorantrean' => $transaksi->nomor_antrian,
+                        'nomorantrean' => $nomor1,
                         'keterangan' => 'Bila resep selesai diproses kami akan mengirimkan pemberitahuan melalui pesan whatsapp di nomor yang terdaftar.',
                     ]);
                     // dd($jenis_resep);
 
                     $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\CreateController::class)->addAntreanFarmasi($temp_params);
                     $returned = json_decode($returned);
+
+                    // $data_log['kodebooking'] = (string) $transaksi_rawat_jalan->id ?? '';
+                    // $data_log['response'] = json_encode($returned);
+                    // $data_log['request'] = $temp_params->all();
+                    // $data_log['task_id'] = 'Antrean Farmasi';
+                    // $data_log['jenisresep'] = $jenis_resep_text;
+
+                    app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
                 }
                 //End tambah antrean farmasi BPJS
 
                 $result['status'] = 1;
                 $result['nomor_resep'] = $transaksi->final_detail->nomor_resep;
                 $result['estimasi_waktu'] = $waktu_tunggu;
+                $result['jenis_resep'] = ucfirst($jenis_resep_text);
             } else {
                 $result['status'] = 0;
                 $result['message'] = 'Data kode antrean tidak ditemukan, silahkan hubungi admin';

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Farmasi\Transaksi;
 
 use App\Models\Farmasi\TransaksiObat;
@@ -31,7 +32,7 @@ class CommandGenerateFileController
         $this->logger = $logger;
     }
 
-    function setLoggerData($data) 
+    function setLoggerData($data)
     {
         $logger_data = $this->logger_data;
         array_push($logger_data, $data);
@@ -160,7 +161,7 @@ class CommandGenerateFileController
                 }
 
             endforeach;
-//            dd($result_zip);
+            //            dd($result_zip);
             $save_pdf_merge = '';
             if ($jumlah_data > 0) {
                 if ($one) {
@@ -214,7 +215,7 @@ class CommandGenerateFileController
             $message = 'Silahkan Hidupkan salah 1 fitur Pemberkasan One / Detail';
             dd($message);
         }
-        
+
         $pdf_merge = new PdfMerger;
         // $pdf_merge =  PdfMerger::init();
 
@@ -268,7 +269,7 @@ class CommandGenerateFileController
             $zip = $list_file_download['zip'];
             $pdf_merge = $list_file_download['pdf_merge'];
             $arr_image_to_pdf = $list_file_download['arr_image_to_pdf'];
-            if($arr_image_to_pdf != null)
+            if ($arr_image_to_pdf != null)
                 array_push($arr_image_to_pdf, $arr_image_to_pdf_full_page);
         }
 
@@ -276,7 +277,7 @@ class CommandGenerateFileController
             //penamaan file didalam zip bila setting satu file
             $zip['pdf_merge'] = $pdf_merge;
             $zip['arr_image_to_pdf'] = $arr_image_to_pdf;
-            $filename = date('my').'-'."TRANSOBAT#$file_name.pdf";
+            $filename = date('my') . '-' . "TRANSOBAT#$file_name.pdf";
             $pdf_merge->merge('file', $path . $filename);
             // $zip['zip']->addFile($path . $filename, $filename);
             copy($path . $filename, $filename);
@@ -299,7 +300,7 @@ class CommandGenerateFileController
         $urutan_ke,
         $file_select #file yang mau didownload yang mana,
     ) {
-        if($kasus == null) return;
+        if ($kasus == null) return;
         if ($file_select == 'billing') {
             $tagihan_id = $transaksi->kasus->daftarTagihanLatest->id;
             $filename = "$urutan_ke. Tagihan_Billing_Kasus_$tagihan_id.pdf";
@@ -314,7 +315,7 @@ class CommandGenerateFileController
                     $filename = (new \App\Http\Controllers\Kasus\Tagihan\ViewController())->print($request, $kasus->nomor_kasus, $tagihan_id, $param_download);
                 }
 
-                
+
                 if ($one) {
                     $pdf_merge = $pdf_merge->addPDF($path . $filename, 'all');
                 }
@@ -323,12 +324,10 @@ class CommandGenerateFileController
                     // $zip['zip']->addFile($path . $filename, $zip['path'] . $filename);
                     copy($path . $filename, $zip['path'] . $filename); #copy
                 }
-                
             } else {
                 $filename = (new \App\Http\Controllers\Kasus\Tagihan\ViewController())->print($request, $kasus->nomor_kasus, $tagihan_id, $param_download);
             }
-        }
-        else if ($file_select == 'resep') {
+        } else if ($file_select == 'resep') {
             if (!is_null($transaksi->final_detail)) :
                 $id = $transaksi->final_detail->id;
                 $farmasi = $transaksi->owner_detail;
@@ -342,14 +341,14 @@ class CommandGenerateFileController
                             'dokter-jenis' => NULL,
                         ]);
 
-                        
+
                         $filename = (new \App\Http\Controllers\Farmasi\Transaksi\ViewController())->printResep($request, $farmasi, $transaksi->slug, $param_download);
                     endif;
-                    
+
                     if ($one) {
                         $pdf_merge = $pdf_merge->addPDF($path . $filename, 'all');
                     }
-                    
+
                     if ($detail && $zip['zip'] != null) {
                         // $zip['zip']->addFile($path . $filename, $zip['path'] . $filename);
                         copy($path . $filename, $zip['path'] . $filename); #copy
@@ -359,8 +358,7 @@ class CommandGenerateFileController
                     $filename = (new \App\Http\Controllers\Farmasi\Transaksi\ViewController())->printResep($request, $farmasi, $transaksi->slug, $param_download);
                 }
             endif;
-        }
-        else if ($file_select == 'profil') {
+        } else if ($file_select == 'profil') {
             if (!is_null($transaksi->final_detail)) :
                 $pasien_id = $transaksi->pasien_detail->id;
                 $filename = "$urutan_ke. Print_Profil_$pasien_id.pdf";
@@ -374,7 +372,7 @@ class CommandGenerateFileController
                     if ($one) {
                         $pdf_merge = $pdf_merge->addPDF($path . $filename, 'all');
                     }
-                    
+
                     if ($detail && $zip['zip'] != null) {
                         // $zip['zip']->addFile($path . $filename, $zip['path'] . $filename);
                         copy($path . $filename, $zip['path'] . $filename); #copy
@@ -384,14 +382,15 @@ class CommandGenerateFileController
                     $filename = (new \App\Http\Controllers\Pasien\Pasien\ViewController())->printprofile($pasien_id, $param_download);
                 }
             endif;
-        }
-        else if ($file_select == 'lab-pa') {
+        } else if ($file_select == 'lab-pa') {
             #skip dulu
             #belum dipakai karena ada kelas
             if (isset($transaksi->kasus->tagihan) && $transaksi->kasus->tagihan->hasPenunjang('labpa')) :
                 $labpa = $kasus->penunjangLabPA;
                 foreach ($labpa as $key => $value) {
-                    if($value->status == -1){ continue; } //jika batal trx tidak perlu generate
+                    if ($value->status == -1) {
+                        continue;
+                    } //jika batal trx tidak perlu generate
                     $filename = "$urutan_ke. LABPA_Permintaan_" . $value->id . '.pdf';
                     $param_download['filename'] = $filename;
                     if (count($zip) > 0) {
@@ -402,11 +401,11 @@ class CommandGenerateFileController
                             $get_extention = explode('.', $value_dokumen->file);
                             $extention     = end($get_extention);
                             $path_dokumen_labpa = public_path($value_dokumen->file);
-                            if(empty($extention)) $extention = 'html';
+                            if (empty($extention)) $extention = 'html';
                             $judul = str_replace(' ', '_', $value_dokumen->title ?? '');
                             $judul = str_replace('/', '_', $judul ?? '');
                             $filename =  "$urutan_ke. LABPA_Hasil_" . $transaksi->id . '_' . $judul . '_' . $value_dokumen->id . '.' . $extention;
-                            
+
                             if (file_exists($path_dokumen_labpa)) {
                                 //sanitize judul penunjang
                                 if ($one) {
@@ -416,7 +415,7 @@ class CommandGenerateFileController
                                         $pdf_blank = \App::make('dompdf.wrapper');
                                         $pdf_blank->loadHTML($html);
                                         $filename =  "$urutan_ke. LABPA_Hasil_" . $transaksi->id . '_' . $judul . '_' . $value_dokumen->id . '.pdf';
-                                        
+
                                         $pdf_blank->save($param_download['path'] . $filename);
                                         $pdf_merge = $pdf_merge->addPDF($param_download['path'] . $filename, 'all');
                                     } else {
@@ -426,7 +425,7 @@ class CommandGenerateFileController
                                 }
 
                                 if ($detail && $zip['zip'] != null) {
-                                    copy($path_dokumen_labpa, $param_download['path']. $filename);
+                                    copy($path_dokumen_labpa, $param_download['path'] . $filename);
                                     // $zip['zip']->addFile($path_dokumen_labpa, $zip['path'] . $filename);
                                     copy($path_dokumen_labpa, $zip['path'] . $filename); #copy
                                 }
@@ -435,15 +434,15 @@ class CommandGenerateFileController
                     } else {
                         app(\App\Http\Controllers\LabPA\Transaction\ViewController::class)->cetakPermintaan($value->slug, $param_download);
                     }
-
                 }
             endif;
-        } 
-        else if ($file_select == 'hasil-lab') {
+        } else if ($file_select == 'hasil-lab') {
             if (isset($transaksi->kasus->tagihan) && $transaksi->kasus->tagihan->hasPenunjang('labpk')) :
                 $labpk = $kasus->penunjang_labpk;
                 foreach ($labpk as $key => $value) {
-                    if($value->status == -1){ continue; } //jika batal trx tidak perlu generate
+                    if ($value->status == -1) {
+                        continue;
+                    } //jika batal trx tidak perlu generate
                     $filename = "$urutan_ke. LABPK_Permintaan_" . $value->id . '.pdf';
                     $param_download['filename'] = $filename;
 
@@ -457,11 +456,11 @@ class CommandGenerateFileController
                             $get_extention = explode('.', $value_dokumen->path);
                             $extention     = end($get_extention);
                             $path_dokumen_labpk = public_path($value_dokumen->path);
-                            if(empty($extention)) $extention = 'html';
+                            if (empty($extention)) $extention = 'html';
                             $judul = str_replace(' ', '_', $value_dokumen->title ?? '');
                             $judul = str_replace('/', '_', $judul ?? '');
                             $filename =  "$urutan_ke. LABPK_Hasil_" . $transaksi->id . '_' . $judul . '_' . $value_dokumen->id . '.' . $extention;
-                            
+
                             if (file_exists($path_dokumen_labpk)) {
                                 //sanitize judul penunjang
                                 if ($one) {
@@ -471,7 +470,7 @@ class CommandGenerateFileController
                                         $pdf_blank = \App::make('dompdf.wrapper');
                                         $pdf_blank->loadHTML($html);
                                         $filename =  "$urutan_ke. LABPK_Hasil_" . $transaksi->id . '_' . $judul . '_' . $value_dokumen->id . '.pdf';
-                                        
+
                                         $pdf_blank->save($param_download['path'] . $filename);
                                         $pdf_merge = $pdf_merge->addPDF($param_download['path'] . $filename, 'all');
                                     } else {
@@ -481,7 +480,7 @@ class CommandGenerateFileController
                                 }
 
                                 if ($detail && $zip['zip'] != null) {
-                                    copy($path_dokumen_labpk, $param_download['path']. $filename);
+                                    copy($path_dokumen_labpk, $param_download['path'] . $filename);
                                     // $zip['zip']->addFile($path_dokumen_labpk, $zip['path'] . $filename);
                                     copy($path_dokumen_labpk, $zip['path'] . $filename); #copy
                                 }
@@ -492,13 +491,12 @@ class CommandGenerateFileController
                     }
                 }
             endif;
-        }
-        else if ($file_select == 'sep') {
+        } else if ($file_select == 'sep') {
             if (isset($kasus->sep) && $kasus->pembayaran->perusahaan->type == 1) :
 
                 $sep = $kasus->sep;
                 $bpjs_real = json_decode(app(\App\Http\Controllers\BPJS\API\Sep\ReadController::class)->get($sep->no_sep));
-                if (($bpjs_real->metaData->code ?? null)== 200) {
+                if (($bpjs_real->metaData->code ?? null) == 200) {
                     $filename = "$urutan_ke. Print_SEP_" . $sep->no_sep . '.pdf';
                     $param_download['filename'] = $filename;
 
@@ -522,13 +520,12 @@ class CommandGenerateFileController
                 }
 
             endif;
-        }
-        else if ($file_select == 'identitas') {
+        } else if ($file_select == 'identitas') {
             if (count($zip) > 0) {
                 if (!empty($transaksi->pasien_detail)) {
                     $pasien = $transaksi->pasien_detail;
 
-                    if(!is_null($pasien->ktp)){
+                    if (!is_null($pasien->ktp)) {
 
                         $get_extention = explode('.', $pasien->ktp);
                         $extention     = end($get_extention);
@@ -536,7 +533,7 @@ class CommandGenerateFileController
                         $filename = "$urutan_ke. KTP_$pasien->no_rm.$extention";
                         // dd($get_extention, $extention, $path_dokumen_ktp);
                         if (file_exists($path_dokumen_ktp)) {
-    
+
                             #jika ektensionnya pdf
                             if ($extention == 'pdf') {
                                 if ($one) {
@@ -565,8 +562,7 @@ class CommandGenerateFileController
                     }
                 }
             }
-        }
-        else {
+        } else {
             return 'Not FOUND';
         }
 
@@ -580,7 +576,8 @@ class CommandGenerateFileController
 
     protected $time_start = null;
     protected $last_checkpoint = null;
-    function timeLogStart() {
+    function timeLogStart()
+    {
         $this->time_start = microtime(true);
         $this->last_checkpoint = microtime(true);
     }
@@ -590,7 +587,7 @@ class CommandGenerateFileController
         $this->last_checkpoint = microtime(true);
         $diff_checkpoint = number_format($this->last_checkpoint - $last_checkpoint, 2, ".", "");
         $diff_elapsed = number_format($this->last_checkpoint - $this->time_start, 2, ".", "");
-        echo "\n" .now()->format('H:i'). " " .$diff_checkpoint. " ".$diff_elapsed. " | ". $string;
+        echo "\n" . now()->format('H:i') . " " . $diff_checkpoint . " " . $diff_elapsed . " | " . $string;
     }
 
     function invokeZipper($zipper, $param = [])
@@ -603,11 +600,11 @@ class CommandGenerateFileController
             $this->initLogger($params);
             $limit = $param->limit ?? 500;
             $zipper_detail = $zipper->zipper_detail()->where('status', 0)->limit($limit)->get();
-            
+
             $continue = true;
             $count_pending = $zipper_detail->count();
             if ($count_pending != 0) {
-                $this->timeLogStamp('loaded '. $count_pending);
+                $this->timeLogStamp('loaded ' . $count_pending);
                 $dest_dir = null;
                 $one = 0;
                 $detail = 0;
@@ -624,25 +621,25 @@ class CommandGenerateFileController
 
                 if (!empty($zipper->path)) {
                     $zipname = $zipper->filename;
-                    $zip_path = public_path().$zipper->path;
+                    $zip_path = public_path() . $zipper->path;
                 } else {
-                    $base_path = '/zipfile/zipper-'.$zipper->id.'/';
+                    $base_path = '/zipfile/zipper-' . $zipper->id . '/';
 
                     $tgl = indonesian_date($date_min) . '-' . indonesian_date($date_max);
                     $zipname = $tgl . '.zip';
                     $public_zip_path = public_path() . $base_path;
-        
+
                     #make directori
                     if (!file_exists($public_zip_path))
                         mkdir($public_zip_path, 0777, true);
-        
+
                     $zip_path = $public_zip_path . $zipname;
 
                     $zipper->filename = $zipname;
-                    $zipper->path = $base_path.$zipname;
+                    $zipper->path = $base_path . $zipname;
                     $zipper->save();
                 }
-                
+
                 $zip = new \ZipArchive;
                 if (file_exists($zip_path)) {
                     chmod($zip_path, 0777);
@@ -652,19 +649,19 @@ class CommandGenerateFileController
                     $this->timeLogStamp('zip open');
                     # script aneh gk jelas
                     $asuransi_tipe_id = $params['asuransi_tipe_id'];
-                    $perusahaan_tipe = PembayaranPerusahaan::with(['tipe' => function ($q) use ($asuransi_tipe_id){
+                    $perusahaan_tipe = PembayaranPerusahaan::with(['tipe' => function ($q) use ($asuransi_tipe_id) {
                         $q->where('id', $asuransi_tipe_id);
                     }])
-                    ->pluck('id');
+                        ->pluck('id');
                     $eager = [
                         'pembayaran_detail' => function ($q) use ($perusahaan_tipe) {
                             $q->whereIn('perusahaan_id', $perusahaan_tipe);
-                        }, 
-                        'kasus', 
+                        },
+                        'kasus',
                         'final_detail'
                     ];
                     $data_transaksi = TransaksiObat::with($eager)->whereIn('id', $zipper_detail->pluck('referensi_id')->toArray())->get()->keyBy('id');
-                    $this->timeLogStamp('data loaded '. $data_transaksi->count());
+                    $this->timeLogStamp('data loaded ' . $data_transaksi->count());
                     $number = 1;
                     foreach ($zipper_detail as $item) :
                         $value = $data_transaksi[$item->referensi_id];
@@ -701,7 +698,7 @@ class CommandGenerateFileController
                         if ($one) {
                             $path_folder_zip = '';
                         }
-                        $path_folder_zip = public_path('zipfile/zipper-'.$zipper->id."/file_list/".$path_folder_zip);
+                        $path_folder_zip = public_path('zipfile/zipper-' . $zipper->id . "/file_list/" . $path_folder_zip);
                         if (!file_exists($path_save)) mkdir($path_save, 0777, true);
                         if (!file_exists($path_folder_zip)) mkdir($path_folder_zip, 0777, true);
 
@@ -712,7 +709,7 @@ class CommandGenerateFileController
 
                         $result_zip = $this->printFiletransaksiEachFile($value, $path_save, $zipping, $one, $detail, $file_list, $nama_folder);
                         $zip = $result_zip['zip'];
-                        $this->timeLogStamp(($number++). "|".$item->referensi_id);
+                        $this->timeLogStamp(($number++) . "|" . $item->referensi_id);
 
                     endforeach;
                     // $zip->close();
@@ -725,7 +722,7 @@ class CommandGenerateFileController
                     $count_all = $zipper->zipper_detail()->count([DB::raw(1)]);
                     $zipper->percentage = $count_done / $count_all  * 100;
                     $zipper->save();
-                    
+
                     $count_pending = $count_all - $count_done;
                     $this->timeLogStamp('status update');
                 } else {
@@ -787,9 +784,9 @@ class CommandGenerateFileController
         $date_max = $params['date_max'];
         if (!empty($zipper->path)) {
             $zipname = $zipper->filename;
-            $zip_path = public_path().$zipper->path;
+            $zip_path = public_path() . $zipper->path;
         } else {
-            $base_path = '/zipfile/zipper-'.$zipper->id.'/';
+            $base_path = '/zipfile/zipper-' . $zipper->id . '/';
 
             $tgl = indonesian_date($date_min) . '-' . indonesian_date($date_max);
             $zipname = $tgl . '.zip';
@@ -802,34 +799,30 @@ class CommandGenerateFileController
             $zip_path = $public_zip_path . $zipname;
 
             $zipper->filename = $zipname;
-            $zipper->path = $base_path.$zipname;
+            $zipper->path = $base_path . $zipname;
             $zipper->save();
         }
-        
+
         $zip = new \ZipArchive;
         if (file_exists($zip_path)) {
             chmod($zip_path, 0777);
         }
 
         if ($zip->open($zip_path, \ZipArchive::CREATE)) {
-            $source = public_path("zipfile/zipper-".$zipper->id."/file_list");
+            $source = public_path("zipfile/zipper-" . $zipper->id . "/file_list");
             $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
-            foreach ($files as $file)
-            {
+            foreach ($files as $file) {
                 $file = str_replace('\\', '/', $file);
 
                 // Ignore "." and ".." folders
-                if( in_array(substr($file, strrpos($file, '/')+1), array('.', '..')) )
+                if (in_array(substr($file, strrpos($file, '/') + 1), array('.', '..')))
                     continue;
 
                 $file = realpath($file);
 
-                if (is_dir($file) === true)
-                {
+                if (is_dir($file) === true) {
                     $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
-                }
-                else if (is_file($file) === true)
-                {
+                } else if (is_file($file) === true) {
                     $zip->addFile($file, str_replace($source . '/', '', $file));
                 }
             }

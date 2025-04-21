@@ -13,7 +13,7 @@ use stdClass;
 
 class ReadController extends Controller
 {
-    public function getById($encounterId) 
+    public function getById($encounterId)
     {
         $encounter = Encounter::find($encounterId);
         return $encounter;
@@ -34,14 +34,14 @@ class ReadController extends Controller
         $entryData['fullUrl'] = $encounter->uuid;
         $entryData['resource'] = $resource;
         $entryData['request'] = [
-            'method'=> 'POST',
+            'method' => 'POST',
             'url'   => 'Encounter'
         ];
 
         return $entryData;
     }
 
-    public function entryData(&$encounter) 
+    public function entryData(&$encounter)
     {
         #UPDATE JIKA BELUM PUNYA UUID
         if (empty($encounter->uuid)) {
@@ -53,7 +53,7 @@ class ReadController extends Controller
         $kasusId = $encounter->kasus_id;
         $kasus = Kasus::find($kasusId);
         $dpjp = $kasus->kolaborator_admin->user ?? null;
-        
+
         $resource = new EncounterParam();
         $resource->setStatusHistory($kasus);
         $resource->setClass($kasus);

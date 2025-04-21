@@ -19,11 +19,12 @@ class ReadController extends Controller
     {
         $header_array = $this->requestController->getHeader();
 
-        if ($multi)
+        if ($multi) {
             $url = $this->requestController->getUrl() . '/Rujukan/RS/List/Peserta/' . $nomor_kartu;
-        else
+        } else {
             $url = $this->requestController->getUrl() . '/Rujukan/RS/Peserta/' . $nomor_kartu;
-
+        }
+        // dd($url);
         try {
             $timestamp = $header_array['X-timestamp'];
             $client = new Client(['headers' => $header_array]);
@@ -61,11 +62,14 @@ class ReadController extends Controller
     public function searchByNomorKartuPKM($multi, $nomor_kartu)
     {
         $header_array = $this->requestController->getHeader();
-
-        if ($multi)
+        $url = $this->requestController->getUrl() . '/Rujukan/List/Peserta/' . $nomor_kartu;
+        // dd($url);
+        if ($multi) {
             $url = $this->requestController->getUrl() . '/Rujukan/List/Peserta/' . $nomor_kartu;
-        else
+        } else {
             $url = $this->requestController->getUrl() . '/Rujukan/Peserta/' . $nomor_kartu;
+        }
+        // dd($url);
         try {
             $timestamp = $header_array['X-timestamp'];
             $client = new Client(['headers' => $header_array]);
@@ -106,7 +110,7 @@ class ReadController extends Controller
         $rujukPKM = json_decode($this->searchByNomorKartuPKM($multi, $nomor_kartu));
         $rujuk_res = [];
         $status = 200;
-        // dd($rujukRS, $rujukPKM);
+        // dd($rujukRS);
 
         if ($rujukRS->metaData->code == 200) {
             if ($multi) {

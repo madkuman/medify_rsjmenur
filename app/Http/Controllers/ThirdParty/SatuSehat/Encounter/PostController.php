@@ -23,7 +23,7 @@ class PostController extends Controller
         $this->helper = (new \App\Http\Controllers\ThirdParty\SatuSehat\HelperController());
     }
 
-    private function prepareData(Request $request, $with_check_ss_data = true) 
+    private function prepareData(Request $request, $with_check_ss_data = true)
     {
         $log_id = $request->log_id; // satusehat.log_encounter_condition.id
         $pasien = $request->pasien; // model collecion pasien.pasien
@@ -40,7 +40,7 @@ class PostController extends Controller
         $log_data->hospital_lokasi_id = $lokasi->id;
         $log_data->response = null;
         $log_data->status = -1;
-        
+
         if (empty($user_dokter_dpjp))
             $log_data->response = ['error' => 'Data User Dokter tidak ditemukan'];
 
@@ -51,7 +51,7 @@ class PostController extends Controller
         $ss_location = $lokasi->satusehat_location ?? null;
         $waktu_start = Carbon::parse($waktu_start)->setTimezone('Asia/Jakarta')->toIso8601String();
         $waktu_end = !empty($waktu_end) ? Carbon::parse($waktu_end)->setTimezone('Asia/Jakarta')->toIso8601String() : null;
-        
+
         if ($with_check_ss_data) {
             # auto sync lokasi
             if (empty($ss_location)) {
@@ -64,7 +64,7 @@ class PostController extends Controller
             # auto sync dokter
             if (empty($ss_practitioner) && !empty($user_dokter_dpjp->employee) && !empty($user_dokter_dpjp->dokter)) {
                 $nik_user = ($user_dokter_dpjp->employee->identity_card ?? '');
-                if(config('medify.third-party.satusehat.sumber_nik_user', 'kepegawaian') == 'user') {
+                if (config('medify.third-party.satusehat.sumber_nik_user', 'kepegawaian') == 'user') {
                     $nik_user = ($user_dokter_dpjp->nik ?? '');
                 }
                 $request_search_dokter = new Request([
@@ -107,7 +107,7 @@ class PostController extends Controller
     {
         $kasus = $request->kasus; // model collecion kasus.kasus
         $tipe_pelayanan = $request->tipe_pelayanan; // enum RJ, IGD, RI
-        
+
         $prepareData = $this->prepareData($request);
         $log_data = $prepareData['log_data'];
 
@@ -130,7 +130,7 @@ class PostController extends Controller
         $params = new Request($get_params);
 
         try {
-            $url = $this->request->getBaseUrl().'/Encounter';
+            $url = $this->request->getBaseUrl() . '/Encounter';
             $send = $this->request->send('POST', $url, \GuzzleHttp\RequestOptions::JSON, $params->all());
             $send = json_decode($send);
 
@@ -143,14 +143,14 @@ class PostController extends Controller
 
             $log_data->response = $send->response;
             $this->log->encounterCondition($log_data, $params->all());
-            
+
             return $log_data;
         } catch (\Exception $e) {
             $log_data->response = ['error' => $e->getMessage()];
             $this->log->encounterCondition($log_data, $params->all());
 
             return $log_data;
-        } 
+        }
     }
 
     public function pelayananInProgress(Request $request)
@@ -200,7 +200,7 @@ class PostController extends Controller
         } catch (\Exception $e) {
             $log_data->response = ['error' => $e->getMessage()];
             $this->log->encounterCondition($log_data, $params->all());
-            
+
             return $log_data;
         }
     }
@@ -254,12 +254,12 @@ class PostController extends Controller
 
             $log_data->response = $send->response;
             $this->log->encounterCondition($log_data, $params->all());
-            
+
             return $log_data;
         } catch (\Exception $e) {
             $log_data->response = ['error' => $e->getMessage()];
             $this->log->encounterCondition($log_data, $params->all());
-            
+
             return $log_data;
         }
     }

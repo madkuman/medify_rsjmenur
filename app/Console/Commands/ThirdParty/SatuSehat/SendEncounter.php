@@ -66,35 +66,35 @@ class SendEncounter extends Command
         $threshold_retry = Carbon::now()->subMinutes($wait_th)->toDateTimeString();
 
         $kasus_query = Kasus::with([
-            'satusehat_encounter_log', 
+            'satusehat_encounter_log',
             'kolaborator_admin.user',
             'lokasi.lokasi',
             'pasien'
         ])
-        ->whereHas('kolaborator_admin')
-        ->whereHas('satusehat_encounter_log', function ($q) use ($_db, $explode_kasus_id, $start_date, $default_date, $threshold_retry, $retry) {
-            //where sesuai threshold retry
-            $q->from($_db . '_third_party_satusehat.log_encounter_condition');
-            $q->where('updated_at', '<=', $threshold_retry);
+            ->whereHas('kolaborator_admin')
+            ->whereHas('satusehat_encounter_log', function ($q) use ($_db, $explode_kasus_id, $start_date, $default_date, $threshold_retry, $retry) {
+                //where sesuai threshold retry
+                $q->from($_db . '_third_party_satusehat.log_encounter_condition');
+                $q->where('updated_at', '<=', $threshold_retry);
 
-            if (!$retry) {
-                $q->where('status', 0)->orWhereNull('status');
-            } else {
-                $q->where(function ($q1) {
-                    $q1->whereIn('status', [-1, 0])->orWhereNull('status');
-                });
-            }
-            if (empty($explode_kasus_id)) {
-                $q->whereBetween('created_at', [$start_date, $default_date]);
-            }
-        });
-        
+                if (!$retry) {
+                    $q->where('status', 0)->orWhereNull('status');
+                } else {
+                    $q->where(function ($q1) {
+                        $q1->whereIn('status', [-1, 0])->orWhereNull('status');
+                    });
+                }
+                if (empty($explode_kasus_id)) {
+                    $q->whereBetween('created_at', [$start_date, $default_date]);
+                }
+            });
+
         if (!empty($explode_kasus_id)) {
             $kasus_query->whereIn('id', $explode_kasus_id);
         }
 
         $kasus_query->orderBy('id', 'desc');
-        
+
         if ($jumlah > 0) {
             $kasus_query->take($jumlah);
         }
@@ -103,7 +103,7 @@ class SendEncounter extends Command
 
         $count_kasus = count($result ?? []);
         echo "sending " . $count_kasus . " kasus\n";
-        
+
         if ($count_kasus > 0) {
             foreach ($result as $kasus) {
                 $encounters = $kasus->satusehat_encounter_log;
@@ -120,18 +120,17 @@ class SendEncounter extends Command
             echo "Tidak ada yang di RUN\n";
         }
     }
-    
+
     #untuk running by log
-    public function _invokeSendEncounterByLog($kasus, $encounter_log) {
+    public function _invokeSendEncounterByLog($kasus, $encounter_log)
+    {
         if ($kasus->tipe_igd == 1) {
             $tipe_pelayanan = 'IGD';
-        } 
-        else if ($kasus->tipe_ri == 1) {
+        } else if ($kasus->tipe_ri == 1) {
             $tipe_pelayanan = 'RI';
-        } 
-        else {
+        } else {
             $tipe_pelayanan = 'RJ';
-        } 
+        }
 
         $request_send = new Request([
             'log_id' => $encounter_log->id,
@@ -147,16 +146,14 @@ class SendEncounter extends Command
                 'waktu_start' => $encounter_log->encounter_waktu_start,
             ]);
             $log_data = (new \App\Http\Controllers\ThirdParty\SatuSehat\Encounter\PostController())->pelayananArrived($request_send);
-        } 
-        else if ($encounter_log->encounter_status == 'in-progress') {
+        } else if ($encounter_log->encounter_status == 'in-progress') {
             $request_send = $request_send->merge([
                 'encounter_id' => $encounter_log->encounter_id,
                 'encounter_satusehat_id' => $encounter_log->encounter->satusehat_id,
                 'waktu_start' => $encounter_log->encounter_waktu_start,
             ]);
             $log_data = (new \App\Http\Controllers\ThirdParty\SatuSehat\Encounter\PostController())->pelayananInProgress($request_send);
-        }
-        else if ($encounter_log->encounter_status == 'finished') {
+        } else if ($encounter_log->encounter_status == 'finished') {
             $request_send = $request_send->merge([
                 'encounter_id' => $encounter_log->encounter_id,
                 'encounter_satusehat_id' => $encounter_log->encounter->satusehat_id,
@@ -164,8 +161,7 @@ class SendEncounter extends Command
                 'waktu_end' => $encounter_log->encounter_waktu_end,
             ]);
             $log_data = (new \App\Http\Controllers\ThirdParty\SatuSehat\Encounter\PostController())->pelayananFinished($request_send);
-        }
-        else if ($encounter_log->encounter_status == 'discharge') {
+        } else if ($encounter_log->encounter_status == 'discharge') {
             $request_send = $request_send->merge([
                 'encounter_id' => $encounter_log->encounter_id,
                 'encounter_satusehat_id' => $encounter_log->encounter->satusehat_id,
@@ -181,12 +177,13 @@ class SendEncounter extends Command
         }
     }
 
-    public function _invokeTryCatchEncounterByLog($kasus, $encounter_log) {
+    public function _invokeTryCatchEncounterByLog($kasus, $encounter_log)
+    {
         try {
             $encounter_log->status = 0;
             $encounter_log->save();
             echo "Start Run Encounter id : $encounter_log->id, kasus id : $encounter_log->kasus_id\n";
-            
+
             $this->_invokeSendEncounterByLog($kasus, $encounter_log);
             echo "Berhasil \n";
         } catch (\Throwable $th) {

@@ -103,7 +103,8 @@ class EditController extends Controller
             if (is_null($transaction->waktu_check_in)) {
                 $req = new Request();
                 $req->transaksi_id = $transaction->id;
-                app('App\Http\Controllers\Farmasi\Screen\PostController')->confirm($req);
+                $result = app('App\Http\Controllers\Farmasi\Screen\PostController')->confirm($req);
+                $result = json_decode($result);
             }
             if (config('medify.third-party.jkn_online.on') && !empty($transaction->kasus_id)) {
                 $kasus = app(\App\Http\Controllers\Kasus\Kasus\ReadController::class)->get($transaction->kasus->nomor_kasus);
@@ -114,32 +115,7 @@ class EditController extends Controller
                     $data['kodebooking'] = $transaksi->id;
                     $data['taskid'] = 6;
                     $data['waktu'] = $carbon_today;
-                    dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 6, 'waktu' => $carbon_today]));
-                    // $data = [
-                    // 	'kodebooking' => $transaksi->id,
-                    // 	'taskid' => 6,
-                    // 	'waktu' => $carbon_today
-                    // ];
-                    // $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
-                    // $returned = json_decode($returned);
-                    // $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
-                    // if ($metadata->code != "200") {
-                    //     $data_log['kodebooking'] = $transaksi->id;
-                    //     $data_log['response'] = json_encode($returned);
-
-                    //     app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
-                    // } else {
-                    //     $data_log['kodebooking'] = $transaksi->id;
-                    //     $data_log['task_id'] = 6;
-                    //     $data_log['waktu'] = $carbon_today;
-                    //     $data_log['response'] = json_encode($returned);
-                    //     $data_log['request'] = $data;
-
-                    //     app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
-                    // }
-                    // $transaksi = Transaksi::find($transaksi->id);
-                    // $transaksi->task_id_jkn = 6;
-                    // $transaksi->save();
+                    dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 6, 'waktu' => $carbon_today, 'jenisresep' => $result->jenis_resep]));
                 }
             }
             DB::connection('farmasi')->commit();

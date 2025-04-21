@@ -910,6 +910,25 @@
             </a>
         </li>
 
+        {{-- Permintaan Pelayanan Rohani --}}
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed"
+                href="{{ url('kasus') }}/{{ $kasus->nomor_kasus }}/asesmen/permintaan-pelayanan-rohani">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Formulir Permintaan Pelayanan Rohani
+                    </h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Formulir Permintaan Pelayanan Rohani
+                    </h5>
+                    <p class="desc">Formulir Permintaan Pelayanan Rohani</p>
+                </div>
+            </a>
+        </li>
+
         {{-- Asesmen Wajib Lapor dan Rehabilitasi Medis IPWL --}}
         <li class="col-md-4 text-center">
             <a class="block block-link-pop block-themed"
@@ -1132,6 +1151,116 @@
                     <p class="desc">Form Identifikasi Bayi.</p>
                 </div>
             </a>
+        </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed"
+                href="{{ url('kasus/' . $kasus->nomor_kasus . '/asesmen/resume-mcu-haji') }}">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Resume MCU Haji</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Resume MCU Haji</h5>
+                    <p class="desc">Resume MCU Haji.</p>
+                </div>
+            </a>
+        </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed"
+                href="{{ url('kasus') }}/{{ $kasus->nomor_kasus }}/asesmen/abbreviated-mental-test">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">The Abbreviated Mental Test (AMT)</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Abbreviated Mental Test (AMT)</h5>
+                    <p class="desc">Abbreviated Mental Test (AMT)</p>
+                </div>
+            </a>
+
+        </li>
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed"
+                href="{{ url('kasus') }}/{{ $kasus->nomor_kasus }}/asesmen/barthel-index">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Barthel Index</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Barthel Index</h5>
+                    <p class="desc">Barthel Index</p>
+                </div>
+            </a>
+        </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed"
+                href="{{ url('kasus') }}/{{ $kasus->nomor_kasus }}/asesmen/checklist-autisme-toddler">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">CHAT (Checklist for Autisme in Toddler)</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">CHAT (Checklist for Autisme in Toddler)</h5>
+                    <p class="desc">CHAT (Checklist for Autisme in Toddler)</p>
+                </div>
+            </a>
+        </li>
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed"
+                href="{{ url('kasus') }}/{{ $kasus->nomor_kasus }}/asesmen/childhood-autism-rating-scale">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">CARS (Childhood Autism Rating Scale)</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">CARS (Childhood Autism Rating Scale)</h5>
+                    <p class="desc">CARS (Childhood Autism Rating Scale)</p>
+                </div>
+            </a>
+        </li>
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed"
+                href="{{ url('kasus') }}/{{ $kasus->nomor_kasus }}/asesmen/self-harm-inventory">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">SHI (Self Harm Inventory)</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">SHI (Self Harm Inventory)</h5>
+                    <p class="desc">SHI (Self Harm Inventory)</p>
+                </div>
+            </a>
+        </li>
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed"
+                href="{{ url('kasus') }}/{{ $kasus->nomor_kasus }}/asesmen/ucla-3">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">UCLA-3</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">UCLA-3</h5>
+                    <p class="desc">UCLA-3</p>
+                </div>
+            </a>
+            
         </li>
 
     </ul>

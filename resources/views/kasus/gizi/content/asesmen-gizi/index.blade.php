@@ -1,7 +1,8 @@
 <div class="mt-10">
     <ul class="list row row-deck">
         <li class="col-md-4 text-center">
-            <a class="block block-link-pop block-themed" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/alat-bantu/skrinning-ulang-gizi">
+            <a class="block block-link-pop block-themed"
+                href="{{ url('kasus') }}/{{ $kasus->nomor_kasus }}/alat-bantu/skrinning-ulang-gizi">
                 <div class="block-header bg-primary">
                     <h3 class="block-title">Skrining Gizi Lanjutan</h3>
                 </div>

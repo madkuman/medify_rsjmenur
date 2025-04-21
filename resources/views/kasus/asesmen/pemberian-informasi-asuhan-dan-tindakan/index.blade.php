@@ -25,7 +25,7 @@
 						<hr>
 						@php $count = count($hasil) @endphp
 						@forelse($hasil as $hasil_item)
-
+						@php $data_val = json_decode($hasil_item->val); @endphp
 						@if(session("my_role_".$kasus->nomor_kasus))
 						{{-- @if($hasil_item->created_by == Auth::user()->id) --}}
 						<button  class="btn btn-sm btn-circle btn-outline-danger mr-5 mb-5 pull-right deleteBtn" data-id="{{$hasil_item->id}}">
@@ -35,6 +35,11 @@
 							<i class="fa fa-pencil"></i>
 						</a>
 						{{-- @endif --}}
+						@if(empty($data_val->img_ttd))					
+    					<button  class="btn btn-sm btn-circle btn-outline-primary mr-5 mb-5 pull-right btn-add-ttd" data-toggle="modal" data-id="{{$hasil_item->id}}" data-pasien_id="{{$id}}" data-url="{{ url('') }}/kasus/{{ $kasus->nomor_kasus }}/asesmen/{{$form->slug}}/add-ttd">
+        				<i class="fa fa-signature"></i>
+    					</button>
+    					@endif
 						@endif
 
 						<a type="btn" href="{{ url('') }}/kasus/{{ $kasus->nomor_kasus }}/asesmen/{{$form->slug}}/print/{{ $hasil_item->id }}" class="btn btn-sm btn-circle btn-outline-secondary mr-5 mb-5 pull-right" target="_blank">
@@ -84,8 +89,10 @@
 	<input name="id" type="hidden" id="deleteInputId">
 
 </form>
+@include('kasus.asesmen.pemberian-informasi-asuhan-dan-tindakan.modal-ttd')
 @endsection
 @section("js")
+@include('kasus.asesmen.pemberian-informasi-asuhan-dan-tindakan.js-ttd')
 <script type="text/javascript">
 	$(".deleteBtn").click(function(e){
 		e.preventDefault();

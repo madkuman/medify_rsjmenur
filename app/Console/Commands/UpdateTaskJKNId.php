@@ -43,11 +43,15 @@ class UpdateTaskJKNId extends Command
         $kodebooking = $this->argument('kodebooking');
         $taskid = $this->argument('taskid');
         $waktu = $this->argument('waktu');
+        // $jenis_resep = $this->argument('jenisresep') ?? null;
         $data = [
             'kodebooking' => $kodebooking,
             'taskid' => $taskid,
             'waktu' => $waktu
         ];
+        // if (!empty($jenis_resep)) { // Gunakan empty() untuk cek null/empty string
+        //     $data['jenisresep'] = $jenis_resep;
+        // }
         $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
         $returned = json_decode($returned);
         $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;

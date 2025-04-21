@@ -43,14 +43,13 @@ class EncounterParam extends Controller
                 $statusHistoryInProgress['status'] = 'in-progress';
                 $statusHistoryInProgress['period']['start'] = Carbon::parse($rawatjalan_transaksi->waktu_pemeriksaan)->toIso8601String();
             }
-        } 
-        else if ($kasus->tipe_ri == 1) { # CASE RAWATINAP
+        } else if ($kasus->tipe_ri == 1) { # CASE RAWATINAP
             $rawatinap_transaksi = $kasus->rawat_inap_transaksi_first;
             $arrived_at = $kasus->mrs_at;
 
             $this->encounter['status'] = 'arrived';
             $this->encounter['period']['start'] = Carbon::parse($arrived_at)->toIso8601String();
-            
+
             $statusHistoryArrived['status'] = 'arrived';
             $statusHistoryArrived['period']['start'] = Carbon::parse($arrived_at)->toIso8601String();
 
@@ -62,8 +61,7 @@ class EncounterParam extends Controller
                 $statusHistoryInProgress['status'] = 'in-progress';
                 $statusHistoryInProgress['period']['start'] = Carbon::parse($rawatinap_transaksi->kedatangan_at)->toIso8601String();
             }
-        } 
-        else if ($kasus->tipe_igd == 1 && $kasus->tipe_rj == 0 && $kasus->tipe_ri == 0) { # CASE IGD
+        } else if ($kasus->tipe_igd == 1 && $kasus->tipe_rj == 0 && $kasus->tipe_ri == 0) { # CASE IGD
             $arrived_at = $kasus->created_at;
             $in_progress_at = $kasus->created_at;
 
@@ -83,11 +81,10 @@ class EncounterParam extends Controller
             $this->encounter['period']['end'] = Carbon::parse($kasus->krs_at)->toIso8601String();
 
             $statusHistoryInProgress['period']['end'] = Carbon::parse($kasus->krs_at)->toIso8601String();
-            
+
             $statusHistoryFinished['status'] = 'finished';
             $statusHistoryFinished['period']['start'] = Carbon::parse($kasus->krs_at)->toIso8601String();
             $statusHistoryFinished['period']['end'] = Carbon::parse($kasus->krs_at)->toIso8601String();
-
         }
 
         // Add all statusHistory
@@ -107,14 +104,12 @@ class EncounterParam extends Controller
 
         if ($kasus->tipe_rj == 1 && $kasus->tipe_ri == 0) { # CASE RAWATJALAN
             $encounter_class = $encounter_class_hl7->where('code', 'SS')->first();
-        }
-        else if ($kasus->tipe_ri == 1) { # CASE RAWATINAP
+        } else if ($kasus->tipe_ri == 1) { # CASE RAWATINAP
             $encounter_class = $encounter_class_hl7->where('code', 'IMP')->first();
-        }
-        else if ($kasus->tipe_igd == 1 && $kasus->tipe_rj == 0 && $kasus->tipe_ri == 0) { # CASE IGD
+        } else if ($kasus->tipe_igd == 1 && $kasus->tipe_rj == 0 && $kasus->tipe_ri == 0) { # CASE IGD
             $encounter_class = $encounter_class_hl7->where('code', 'AMB')->first();
         }
-        
+
         $this->encounter['class'] = $encounter_class;
     }
 
@@ -122,7 +117,7 @@ class EncounterParam extends Controller
     {
         $ss_patient = (new \App\Http\Controllers\ThirdParty\SatuSehat\Patient\ReadController)->getPatient($pasien);
         if (empty($ss_patient)) return $this->returnError('Pasien tidak ditemukan');
-        
+
         $this->encounter['subject']['reference'] = 'Patient/' . ($ss_patient->ihs_number ?? 0);
         $this->encounter['subject']['display'] = ($ss_patient->name ?? $pasien->name);
     }
@@ -138,7 +133,7 @@ class EncounterParam extends Controller
 
         $participantId = ($ss_practitioner->his_number ?? 0);
         $participantName = ($ss_practitioner->name ?? $dokter->name ?? $user_dpjp->name);
-        
+
         $participant['individual']['reference'] = 'Practitioner/' . $participantId;
         $participant['individual']['display'] = $participantName;
         $participant['type'][]['coding'] = [
@@ -156,7 +151,7 @@ class EncounterParam extends Controller
 
         foreach ($kasus->lokasiAll as $item) {
             $ss_location = $item->lokasi->satusehat_location ?? null;
-            
+
             # auto sync location
             if (empty($ss_location)) {
                 $request_set_lokasi = new Request([
@@ -168,10 +163,10 @@ class EncounterParam extends Controller
 
             $locationId = ($ss_location->satusehat_id ?? 0);
             $locationName = ($ss_location->description ?? $item->lokasi->name);
-            
+
             $location['location']['reference'] = 'Location/' . $locationId;
             $location['location']['display'] = $locationName;
-            
+
             $this->encounter['location'][] = $location;
         }
     }
@@ -184,9 +179,9 @@ class EncounterParam extends Controller
         $diagnosis_object = [];
         foreach ($diagnosis as $index => $item) {
             if (empty($item->icd10)) continue;
-            
+
             $condition = $item->satusehat_condition;
-            
+
             # SATUSEHAT CREATE CONDITION
             if (empty($condition) || empty($condition->uuid)) {
                 $condition_data = new Request([
@@ -195,7 +190,7 @@ class EncounterParam extends Controller
                 ]);
                 $condition = (new \App\Http\Controllers\ThirdParty\SatuSehat\Condition\CreateController)->saveByDiagnosis($condition_data);
             }
-            
+
             switch ($item->type) {
                 case 'komplikasi':
                     $dx_code = 'CM';
@@ -235,7 +230,7 @@ class EncounterParam extends Controller
         $get_org = json_decode($get_org, true);
 
         $orgId = ($get_org['id'] ?? "");
-        $this->encounter['serviceProvider']['reference'] = 'Organization/'.$orgId;
+        $this->encounter['serviceProvider']['reference'] = 'Organization/' . $orgId;
     }
 
     public function setIdentifier($kasus)
@@ -244,7 +239,7 @@ class EncounterParam extends Controller
         $get_org = (new \App\Http\Controllers\ThirdParty\SatuSehat\Organization\ReadController)->getOrganization();
         $get_org = json_decode($get_org, true);
 
-        $identifier = 'http://sys-ids.kemkes.go.id/encounter/'.($get_org['id'] ?? "");
+        $identifier = 'http://sys-ids.kemkes.go.id/encounter/' . ($get_org['id'] ?? "");
 
         $this->encounter['identifier'][] = [
             'system' => $identifier,

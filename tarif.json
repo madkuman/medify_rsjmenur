@@ -1,0 +1,39 @@
+{
+    "metadata": {
+        "code": 200,
+        "message": "OK"
+    },
+    "response" : {
+        "dinas" : "DR. SOETOMO",
+        "data" : [
+            {
+                "jenis" : "RETRIBUSI JASA UMUM",
+                "pelayanan" : "RETRIBUSI PELAYANAN KESEHATAN",
+                "kelompok_obyek" : "PELAYANAN MEDIS RAWAT JALAN",
+                "uraian_1" : "RAWAT JALAN REGULER",
+                "uraian_2" : "ABI",
+                "uraian_3" : "",
+                "tarif" : "63000",
+                "satuan" : "per tindakan",
+                "tarif_overtime" : "",
+                "satuan_overtime" : "",
+                "rekening_pokok" : "Retribusi Pelayanan Kesehatan",
+                "rekening_denda" : "Pendapatan Denda - Retribusi Pelayanan Kesehatan"
+            },
+            {
+                "jenis" : "RETRIBUSI JASA UMUM",
+                "pelayanan" : "RETRIBUSI PELAYANAN KESEHATAN",
+                "kelompok_obyek" : "PELAYANAN MEDIS RAWAT JALAN",
+                "uraian_1" : "RAWAT JALAN VIP",
+                "uraian_2" : "ABI",
+                "uraian_3" : "",
+                "tarif" : "150000",
+                "satuan" : "per tindakan",
+                "tarif_overtime" : "",
+                "satuan_overtime" : "",
+                "rekening_pokok" : "Retribusi Pelayanan Kesehatan",
+                "rekening_denda" : "Pendapatan Denda - Retribusi Pelayanan Kesehatan"
+            }
+        ]
+    }
+}

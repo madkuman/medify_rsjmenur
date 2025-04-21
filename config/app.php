@@ -209,6 +209,7 @@ $config = [
         Jenssegers\Date\DateServiceProvider::class,
         App\Providers\DuskServiceProvider::class,
         LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
+        Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
     ],
 
     /*
