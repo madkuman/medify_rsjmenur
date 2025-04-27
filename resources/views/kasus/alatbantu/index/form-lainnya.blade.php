@@ -38,7 +38,8 @@
         </li>
 
         {{-- <li class="col-md-4 text-center">
-            <a class="block block-link-pop block-themed" data-toggle="modal" data-target="#modal-sk-terbang" href="javascript:void(0)">
+            <a class="block block-link-pop block-themed" data-toggle="modal" data-target="#modal-sk-terbang"
+                href="javascript:void(0)">
                 <div class="block-header bg-primary">
                     <h3 class="block-title">Surat Keterangan Izin Terbang</h3>
                 </div>
@@ -221,7 +222,8 @@
         </li>
 
         <li class="col-md-4 text-center">
-            <a class="block block-link-pop block-themed" href="{{ url()->current() }}/surat-pernyataan-menjemput-pasien">
+            <a class="block block-link-pop block-themed"
+                href="{{ url()->current() }}/surat-pernyataan-menjemput-pasien">
                 <div class="block-header bg-primary">
                     <h3 class="block-title">Surat Pernyataan Menjemput Pasien</h3>
                 </div>
@@ -231,6 +233,21 @@
                     </p>
                     <h5 class="mb-5 title">Surat Pernyataan Menjemput Pasien</h5>
                     <p class="desc">Surat Pernyataan Menjemput Pasien</p>
+                </div>
+            </a>
+        </li>
+
+        <li class="col-md-4 text-center">
+            <a class="block block-link-pop block-themed" href="{{ url()->current() }}/hasil-pengujian-kesehatan">
+                <div class="block-header bg-primary">
+                    <h3 class="block-title">Hasil Pengujian Kesehatan</h3>
+                </div>
+                <div class="block-content">
+                    <p class="mt-5 mb-10">
+                        <i class="fa fa-calculator fa-4x "></i>
+                    </p>
+                    <h5 class="mb-5 title">Hasil Pengujian Kesehatan</h5>
+                    <p class="desc">Hasil Pengujian Kesehatan</p>
                 </div>
             </a>
         </li>

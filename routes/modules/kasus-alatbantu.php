@@ -457,3 +457,9 @@ Route::post('/alat-bantu/surat-pernyataan-menjemput-pasien/submit', 'Kasus\AlatB
 Route::post('/alat-bantu/surat-pernyataan-menjemput-pasien/update', 'Kasus\AlatBantu\SuratPernyataanMenjemputPasien\PostController@update');
 Route::post('/alat-bantu/surat-pernyataan-menjemput-pasien/delete', 'Kasus\AlatBantu\SuratPernyataanMenjemputPasien\PostController@delete');
 Route::get('/alat-bantu/surat-pernyataan-menjemput-pasien/print/{id}', 'Kasus\AlatBantu\SuratPernyataanMenjemputPasien\ViewController@print');
+
+Route::get('/alat-bantu/hasil-pengujian-kesehatan', 'Kasus\AlatBantu\HasilPengujianKesehatan\ViewController@index');
+Route::post('/alat-bantu/hasil-pengujian-kesehatan/submit', 'Kasus\AlatBantu\HasilPengujianKesehatan\PostController@submit');
+Route::post('/alat-bantu/hasil-pengujian-kesehatan/update', 'Kasus\AlatBantu\HasilPengujianKesehatan\PostController@update');
+Route::post('/alat-bantu/hasil-pengujian-kesehatan/delete', 'Kasus\AlatBantu\HasilPengujianKesehatan\PostController@delete');
+Route::get('/alat-bantu/hasil-pengujian-kesehatan/print/{id}', 'Kasus\AlatBantu\HasilPengujianKesehatan\ViewController@print');
