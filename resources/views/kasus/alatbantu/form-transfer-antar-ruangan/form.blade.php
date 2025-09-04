@@ -527,7 +527,7 @@
     <tr>
         <td class=" position-relative" colspan="1" rowspan="1"> <span>Petugas yang menyerahkan</span> </td>
         <td width="5%"></td>
-        <td class=" position-relative" colspan="1" rowspan="1"> <span>Petugas yang menyerahkan</span> </td>
+        <td class=" position-relative" colspan="1" rowspan="1"> <span>Petugas yang menerima</span> </td>
     </tr>
     <tr>
         <td class=" position-relative" colspan="1" rowspan="1">

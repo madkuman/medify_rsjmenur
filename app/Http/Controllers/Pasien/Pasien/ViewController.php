@@ -36,10 +36,12 @@ class ViewController extends Controller
         return view('pasien.baru',$data);
     }
 
+    /*
     public function profile($id, Request $request)
     {
         $data = app('App\Http\Controllers\Pasien\Pasien\ReadController')->profile($id, $request->dokter, $request->lokasi);
         $last_kasus = Kasus::where('pasien_id', $id)->orderby('id', 'desc')->first();
+        
         $query = AlatBantu::with(["creator"]);
         if (!empty($last_kasus)) {
             $query->where("kasus_id",$last_kasus->id);
@@ -50,7 +52,66 @@ class ViewController extends Controller
         $this->checkToAbort($data['identitas']);
         $data['id']=$id;
         $data['general_consent'] = $general_consent;
+
+
+        $general_consent_treatment = AlatBantu::with(['creator'])
+            ->when($last_kasus, function ($q) use ($last_kasus) {
+                $q->where('kasus_id', $last_kasus->id);
+            }, function ($q) use ($id) {
+                $q->whereRaw('JSON_EXTRACT(alat_bantu.val, "$.pasien_id") = ?', [$id]);
+            })
+            ->where('type', 'general-consent-treatment')
+            ->orderBy('id','asc')
+            ->get();
+        
+        $data['general_consent_treatment'] = $general_consent;
+        $data['treatmentCount'] = $general_consent->count(); // jumlah item
+        
         return view('pasien.profile',$data);
+    }
+    */
+    
+    public function profile($id, Request $request)
+    {
+    // Ambil profile pasien
+    $data = app('App\Http\Controllers\Pasien\Pasien\ReadController')
+        ->profile($id, $request->dokter, $request->lokasi);
+
+    // Ambil kasus terakhir pasien
+    $last_kasus = Kasus::where('pasien_id', $id)
+        ->orderBy('id', 'desc')
+        ->first();
+
+    // Base query alat bantu
+    $baseQuery = AlatBantu::with(['creator']);
+    if (!empty($last_kasus)) {
+        $baseQuery->where('kasus_id', $last_kasus->id);
+    } else {
+        $baseQuery->whereRaw('JSON_EXTRACT(alat_bantu.val, "$.pasien_id") = ?', [$id]);
+    }
+
+    // General consent umum
+    $general_consent = (clone $baseQuery)
+        ->where('type', 'general-consent')
+        ->orderBy('id', 'asc')
+        ->get();
+
+    // General consent for treatment
+    $general_consent_treatment = (clone $baseQuery)
+        ->where('type', 'general-consent-for-treatment')
+        ->orderBy('id', 'asc')
+        ->get();
+
+    // Cek data identitas pasien
+    $this->checkToAbort($data['identitas']);
+
+    // Tambahkan data ke array untuk view
+    $data['id'] = $id;
+    $data['general_consent'] = $general_consent;
+    $data['general_consent_treatment'] = $general_consent_treatment;
+    $data['treatmentcount'] = $general_consent_treatment->count();
+
+    return view('pasien.profile', $data);
     }
 
     public function edit($id)

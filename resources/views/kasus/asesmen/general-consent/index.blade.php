@@ -19,6 +19,17 @@
 						@if(session("my_role_".$kasus->nomor_kasus))
 
 						<a href="{{url('')}}/kasus/{{ $kasus->nomor_kasus }}/asesmen/general-consent/form" class="btn btn-rounded btn-alt-primary min-width-125 float-right"><i class="fa fa-pencil"></i> General Consent </a>
+						
+						<!--<div class="btn-group float-right">
+  							<button type="button" class="btn btn-primary btn-rounded dropdown-toggle" data-toggle="dropdown">
+    						Tambah Consent
+  							</button>
+  							<div class="dropdown-menu">
+    							<a class="dropdown-item" href="{{url('')}}/kasus/{{ $kasus->nomor_kasus }}/asesmen/general-consent/form">General Consent</a>
+    							<a class="dropdown-item" href="{{url('')}}/kasus/{{ $kasus->nomor_kasus }}/asesmen/general-consent-for-treatment/form">General Consent for Treatment</a>
+  							</div>
+						</div>-->
+
 						@endif
 
 						<h4>General Consent</h4>
@@ -34,6 +45,15 @@
 						<a href="{{ url('') }}/kasus/{{ $kasus->nomor_kasus }}/asesmen/general-consent/form/edit?id={{$item->id}}" class="btn btn-sm btn-circle btn-outline-warning mr-5 mb-5 pull-right editBtn" data-id="{{$item->id}}" data-index="{{$loop->iteration - 1}}">
 							<i class="fa fa-pencil"></i>
 						</a>
+						<!--<div class="btn-group float-right">
+  							<button type="button" class="btn btn-primary btn-rounded dropdown-toggle" data-toggle="dropdown">
+    						Tambah Consent
+  							</button>
+  							<div class="dropdown-menu">
+    							<a class="dropdown-item" href="{{url('')}}/kasus/{{ $kasus->nomor_kasus }}/asesmen/general-consent/form">General Consent</a>
+    							<a class="dropdown-item" href="{{url('')}}/kasus/{{ $kasus->nomor_kasus }}/asesmen/general-consent-for-treatment/form">General Consent for Treatment</a>
+  							</div>
+						</div>-->
 						@if(empty($data_val->img_ttd))					
 						<button  class="btn btn-sm btn-circle btn-outline-primary mr-5 mb-5 pull-right btn-add-ttd" data-toggle="modal" data-id="{{$item->id}}" data-pasien_id="{{$kasus->pasien->id}}" data-url="{{ url('') }}/kasus/{{ $kasus->nomor_kasus }}/asesmen/general-consent/add-ttd">
 							<i class="fa fa-signature"></i>

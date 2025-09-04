@@ -258,6 +258,16 @@ Route::group(['middleware' => ['check-module']], function () {
 		Route::get("/asesmen/general-consent/print", "Kasus\Asesmen\GeneralConsent\ViewController@print");
 		Route::post("/asesmen/general-consent/delete", "Kasus\Asesmen\GeneralConsent\DeleteController@delete");
 		Route::post("/asesmen/general-consent/add-ttd", "Kasus\Asesmen\GeneralConsent\PostController@addTTD");
+
+		Route::get('/asesmen/general-consent-for-treatment', 'Kasus\Asesmen\GeneralConsentForTreatment\ViewController@create');
+		Route::get('/asesmen/general-consent-for-treatment/single', 'Kasus\Asesmen\GeneralConsentForTreatment\ViewController@single');
+		Route::get('/asesmen/general-consent-for-treatment/form/edit', 'Kasus\Asesmen\GeneralConsentForTreatment\ViewController@edit');
+		Route::post('/asesmen/general-consent-for-treatment/form/create', 'Kasus\Asesmen\GeneralConsentForTreatment\CreateController@create');
+		Route::put('/asesmen/general-consent-for-treatment/form/edit', 'Kasus\Asesmen\GeneralConsentForTreatment\EditController@edit');
+		Route::get('/asesmen/general-consent-for-treatment/print', 'Kasus\Asesmen\GeneralConsentForTreatment\ViewController@print');
+		Route::post('/asesmen/general-consent-for-treatment/delete', 'Kasus\Asesmen\GeneralConsentForTreatment\DeleteController@delete');
+		Route::post('/asesmen/general-consent-for-treatment/add-ttd', 'Kasus\Asesmen\GeneralConsentForTreatment\PostController@addTTD');
+
 	});
 });
 
