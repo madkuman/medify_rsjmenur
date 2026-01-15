@@ -28,7 +28,17 @@ class LaporanResponseTimeHarianController extends Controller
                 });
             });
 
-		$data = $transaksi->with('pasien_detail','final_detail.resep_detail','lokasi')->get();
+        $eager = [
+            'pasien_detail',
+            'analisa_resep_creator',
+            'final_detail.resep_detail',
+            'lokasi',
+            'transaksi_obat_telaah_obat_penyiapan',
+            'transaksi_obat_telaah_obat_pengemasan',
+            'transaksi_obat_telaah_obat_penyerahan',
+            'transaksi_obat_telaah_obat_penerimaan_perawat',
+        ];
+		$data = $transaksi->with($eager)->get();
 		
 		return $data;
 	}

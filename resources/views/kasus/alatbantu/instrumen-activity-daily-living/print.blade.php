@@ -90,7 +90,7 @@ Print Instrumen Activity Daily Living
     </table>
 
     @php 
-        $checked = '<div style="font-family: ZapfDingbats, sans-serif;">4</div>' 
+        $checked = '<div style="font-family: ZapfDingbats, sans-serif;">4</div>';
     @endphp
 
     <table class="bordered" width="100%" style="margin-top: 5px;" cellpadding="3">
@@ -102,7 +102,10 @@ Print Instrumen Activity Daily Living
             <th colspan="{{count($instrumen_activity_daily_living)}}" width="34%" align="center">Nilai Skor</th>
         </tr>
         <tr bgcolor="#d9d9d9">
-        	@foreach($instrumen_activity_daily_living as $item)
+        	@foreach($instrumen_activity_daily_living as $i=> $item)
+            @php
+                $total_skor[$i] = 0;
+            @endphp
             <th align="center">{{!is_null($item->tanggal) ? date('d/m/Y', strtotime($item->tanggal)) : 'Tgl'}}</th>
             @endforeach
         </tr>
@@ -112,23 +115,41 @@ Print Instrumen Activity Daily Living
             <td rowspan="3" valign="top">Mengendalikan rangsang pembuangan tinja</td>
             <td align="center">0</td>
             <td>Tak terkendali/tak teratur (perlu pencahar)</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->mengendalikan_rangsang_pembuangan_tinja == 'Tak terkendali atau tak teratur (perlu pencahar)' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->mengendalikan_rangsang_pembuangan_tinja == 'Tak terkendali atau tak teratur (perlu pencahar)')
+                    {!! $checked !!}
+                @endif
+            </td>
             @endforeach
 
         </tr>
         <tr>
             <td align="center">1</td>
             <td>Kadang-kadang tak terkendali (1x seminggu)</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->mengendalikan_rangsang_pembuangan_tinja == 'Kadang-kadang tak terkendali (1x seminggu)' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->mengendalikan_rangsang_pembuangan_tinja == 'Kadang-kadang tak terkendali (1x seminggu)')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 1;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">2</td>
             <td>Terkendali teratur</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->mengendalikan_rangsang_pembuangan_tinja == 'Terkendali teratur' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->mengendalikan_rangsang_pembuangan_tinja == 'Terkendali teratur')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 2;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
 
@@ -138,21 +159,39 @@ Print Instrumen Activity Daily Living
             <td align="center">0</td>
             <td>Tak terkendali/pakai kateter</td>
             @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->mengendalikan_rangsang_berkemih == 'Tak terkendali / pakai kateter' ? $checked : '' !!}</td>
+            <td align="center">
+                @if($item->mengendalikan_rangsang_berkemih == 'Tak terkendali / pakai kateter')
+                    {!! $checked !!}
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">1</td>
             <td>Kadang-kadang tak terkendali (hanya 1x/24 jam)</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->mengendalikan_rangsang_berkemih == 'Kadang-kadang tak terkendali (hanya 1x/24 jam)' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->mengendalikan_rangsang_berkemih == 'Kadang-kadang tak terkendali (hanya 1x/24 jam)')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 1;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">2</td>
             <td>Mandiri</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->mengendalikan_rangsang_berkemih == 'Mandiri' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->mengendalikan_rangsang_berkemih == 'Mandiri')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 2;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
 
@@ -162,14 +201,25 @@ Print Instrumen Activity Daily Living
             <td align="center">0</td>
             <td>Butuh pertolongan orang lain</td>
             @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->membersihkan_diri == 'Butuh pertolongan orang lain' ? $checked : '' !!}</td>
+            <td align="center">
+                @if($item->membersihkan_diri == 'Butuh pertolongan orang lain')
+                    {!! $checked !!}
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">1</td>
             <td>Mandiri</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->membersihkan_diri == 'Mandiri' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->membersihkan_diri == 'Mandiri')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 1;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
 
@@ -179,21 +229,39 @@ Print Instrumen Activity Daily Living
             <td align="center">0</td>
             <td>Tergantung pertolongan orang lain</td>
             @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->penggunaan_jamban == 'Tergantung pertolongan orang lain' ? $checked : '' !!}</td>
+            <td align="center">
+                @if($item->penggunaan_jamban == 'Tergantung pertolongan orang lain')
+                    {!! $checked !!}
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">1</td>
             <td>Perlu pertolongan pada beberapa kegiatan tetapi dapat mengerjakan sendiri beberapa kegiatan lain</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->penggunaan_jamban == 'Perlu pertolongan pada beberapa kegiatan tetapi dapat mengerjakan sendiri beberapa kegiatan lain' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->penggunaan_jamban == 'Perlu pertolongan pada beberapa kegiatan tetapi dapat mengerjakan sendiri beberapa kegiatan lain')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 1;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">2</td>
             <td>Mandiri</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->penggunaan_jamban == 'Mandiri' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->penggunaan_jamban == 'Mandiri')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 2;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
 
@@ -203,21 +271,39 @@ Print Instrumen Activity Daily Living
             <td align="center">0</td>
             <td>Tidak mampu</td>
             @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->makan == 'Tidak mampu' ? $checked : '' !!}</td>
+            <td align="center">
+                @if($item->makan == 'Tidak mampu')
+                    {!! $checked !!}
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">1</td>
             <td>Perlu ditolong memotong makanan</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->makan == 'Perlu ditolong memotong makanan' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->makan == 'Perlu ditolong memotong makanan')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 1;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">2</td>
             <td>Mandiri</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->makan == 'Mandiri' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->makan == 'Mandiri')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 2;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
 
@@ -227,28 +313,53 @@ Print Instrumen Activity Daily Living
             <td align="center">0</td>
             <td>Tidak mampu</td>
             @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->berubah_sikap == 'idak mampu' ? $checked : '' !!}</td>
+            <td align="center">
+                @if($item->berubah_sikap == 'Tidak mampu')
+                    {!! $checked !!}
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">1</td>
             <td>Perlu banyak bantuan untuk bisa duduk (2 orang)</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->berubah_sikap == 'Perlu banyak bantuan untuk bisa duduk (2 orang)' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->berubah_sikap == 'Perlu banyak bantuan untuk bisa duduk (2 orang)')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 1;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">2</td>
             <td>Bantuan minimal satu orang</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->berubah_sikap == 'Bantuan minimal satu orang' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->berubah_sikap == 'Bantuan minimal satu orang')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 2;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">3</td>
             <td>Mandiri</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->berubah_sikap == 'Mandiri' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->berubah_sikap == 'Mandiri')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 3;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
 
@@ -258,28 +369,53 @@ Print Instrumen Activity Daily Living
             <td align="center">0</td>
             <td>Tidak mampu</td>
             @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->berpindah_atau_berjalan == 'Tidak mampu' ? $checked : '' !!}</td>
+            <td align="center">
+                @if($item->berpindah_atau_berjalan == 'Berpindah/berjalan')
+                    {!! $checked !!}
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">1</td>
             <td>Bisa pindah dengan kursi roda</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->berpindah_atau_berjalan == 'Bisa pindah dengan kursi roda' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->berpindah_atau_berjalan == 'Bisa pindah dengan kursi roda')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 1;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">2</td>
             <td>Berjalan dengan bantuan 1 orang</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->berpindah_atau_berjalan == 'Berjalan dengan bantuan 1 orang' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->berpindah_atau_berjalan == 'Berjalan dengan bantuan 1 orang')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 2;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">3</td>
             <td>Mandiri</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->berpindah_atau_berjalan == 'Mandiri' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->berpindah_atau_berjalan == 'Mandiri')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 3;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
@@ -288,21 +424,39 @@ Print Instrumen Activity Daily Living
             <td align="center">0</td>
             <td>Tergantung orang lain</td>
             @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->memakai_baju == 'Tergantung orang lain' ? $checked : '' !!}</td>
+            <td align="center">
+                @if($item->memakai_baju == 'Tergantung orang lain')
+                    {!! $checked !!}
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">1</td>
             <td>Sebagian dibantu (misalnya mengancing baju)</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->memakai_baju == 'Sebagian dibantu (misalnya mengancing baju)' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->memakai_baju == 'Sebagian dibantu (misalnya mengancing baju)')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 1;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">2</td>
             <td>Mandiri</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->memakai_baju == 'Mandiri' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->memakai_baju == 'Mandiri')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 2;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
 
@@ -312,21 +466,39 @@ Print Instrumen Activity Daily Living
             <td align="center">0</td>
             <td>Tidak mampu</td>
             @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->naik_turun_tangga == 'Tidak mampu' ? $checked : '' !!}</td>
+            <td align="center">
+                @if($item->naik_turun_tangga == 'Tidak mampu')
+                    {!! $checked !!}
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">1</td>
             <td>Butuh pertolongan</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->naik_turun_tangga == 'Butuh pertolongan' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->naik_turun_tangga == 'Butuh pertolongan')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 1;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">2</td>
             <td>Mandiri</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->naik_turun_tangga == 'Mandiri' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->naik_turun_tangga == 'Mandiri')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 2;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
 
@@ -336,22 +508,34 @@ Print Instrumen Activity Daily Living
             <td align="center">0</td>
             <td>Tergantung orang lain</td>
             @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->mandi == 'Tergantung orang lain' ? $checked : '' !!}</td>
+            <td align="center">
+                @if($item->mandi == 'Tergantung orang lain')
+                    {!! $checked !!}
+                @endif
+            </td>
             @endforeach
         </tr>
         <tr>
             <td align="center">1</td>
             <td>Mandiri</td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{!! $item->mandi == 'Mandiri' ? $checked : '' !!}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+            <td align="center">
+                @if($item->mandi == 'Mandiri')
+                    {!! $checked !!}
+                    @php
+                        $total_skor[$i] += 1;
+                    @endphp
+                @endif
+            </td>
             @endforeach
         </tr>
 
         <tr bgcolor="#d9d9d9">
             <td colspan="4" align="center"><b>TOTAL SKOR</b></td>
-            @foreach($instrumen_activity_daily_living as $item)
-            <td align="center">{{ $item->total_skor }}</td>
+            @foreach($instrumen_activity_daily_living as $i => $item)
+                <td align="center">{{ $total_skor[$i] }}</td>
             @endforeach
+            {{-- <td align="center">{{ $total_skor }}</td> --}}
         </tr>
     </table>
 
@@ -378,7 +562,15 @@ Print Instrumen Activity Daily Living
             <th align="left">Ketergantungan sedang</th>
             <th>Total</th>
             <th>:</th>
-            <th align="left">25</th>
+            <th align="left">
+                @php
+                    $total = 0;
+                    foreach($total_skor as $skor) {
+                        $total += $skor;
+                    }
+                @endphp
+                {{ $total }}
+            </th>
         </tr>
     </table>
 @endsection

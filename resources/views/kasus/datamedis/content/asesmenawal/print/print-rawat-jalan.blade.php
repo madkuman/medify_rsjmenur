@@ -925,6 +925,32 @@
 		<tr class="submenu">
 			<td colspan="2" class="align-top border-bottom"><b>SKRINING GIZI AWAL</b></td>
 		</tr>
+		@if($kasus->identitas->umur < 19)
+		<tr>
+			<td class="align-top border-bottom">Anak Tampak Kurus</td>
+			<td class="align-top border-bottom">: {{$asesmen['gizi_anak_tampak_kurus'] ?? '-'}}</td>
+		</tr>
+		<tr>
+			<td class="align-top border-bottom">Ada penurunan BB dalam 1 bulan terakhir</td>
+			<td class="align-top border-bottom">: {{$asesmen['gizi_ada_turun_bb_1_bln'] ?? '-'}}</td>
+		</tr>
+		<tr>
+			<td class="align-top border-bottom">Ada salah satu kondisi (diare >= 5x/hari,muntah 3x/hari dalam seminggu terakhir, makan berkurang dalam 1 minggu terakhir)</td>
+			<td class="align-top border-bottom">: {{$asesmen['gizi_ada_salah_satu_kondisi'] ?? '-'}}</td>
+		</tr>
+		<tr>
+			<td class="align-top border-bottom">Ada penyakit / keadaan yang mengakibatkan malnutrisi</td>
+			<td class="align-top border-bottom">: {{$asesmen['gizi_ada_penyakit_malnutrisi'] ?? '-'}}</td>
+		</tr>
+		<tr>
+			<td class="align-top border-bottom">Skor Akhir</td>
+			<td class="align-top border-bottom">: {{$asesmen['gizi_skor_akhir'] ?? '-'}}</td>
+		</tr>
+		<tr>
+			<td class="align-top border-bottom">Resiko</td>
+			<td class="align-top border-bottom">: {{$asesmen['gizi_hasil_resiko'] ?? '-'}}</td>
+		</tr>
+		@else
 		<tr>
 			<td class="align-top border-bottom">Gizi 6 bulan terakhir BB turun</td>
 			<td class="align-top border-bottom">: {{$asesmen['gizi_enam_bulan'] ?? '-'}}</td>
@@ -937,6 +963,7 @@
 			<td class="align-top border-bottom">Pasien kondisi khusus</td>
 			<td class="align-top border-bottom">: {{$asesmen['pasien_kondisi_khusus'] ?? '-'}}</td>
 		</tr>
+		@endif
 	</table>
 	<br>
 	<table width="100%" class="content">
@@ -1060,7 +1087,8 @@
 			<td width="40%" class="centered">PERAWAT</td>
 		</tr>
 		<tr>
-			<td colspan="2"><br><br><br><br></td>
+			<td></td>
+			<td class="centered"><img src="{{$asesmen['creator']['ttd']}}" style="max-width: 90px"></td>
 		</tr>
 		<tr>
 			<td></td>

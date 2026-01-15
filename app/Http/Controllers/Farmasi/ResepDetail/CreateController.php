@@ -91,6 +91,7 @@ class CreateController extends Controller
 		$new_log = new ResepDetail;
 		$new_log->resep_id = $resep_id;
 		$new_log->detail_asal_id = $input->detail_asal_id ?? null;
+		$new_log->resep_detail_ori_id = $input->resep_detail_ori_id ?? null;
 		$new_log->jumlah = $jumlah;
 		$new_log->jumlah_awal = $jumlah;
 		$new_log->roman = app('App\Http\Controllers\Functions\DateFormatter')->numberToRoman((int)ceil($jumlah));
@@ -233,6 +234,7 @@ class CreateController extends Controller
         $new_resep_detail = $old_resep_detail->map(function ($item)use ($new_resep_id) {
             $new = collect($item)->except(['id','resep_id', 'created_at', 'updated_at','deleted_at','obat_detail'])->toArray();
             $new['resep_id']= $new_resep_id;
+			$new['resep_detail_retur_id'] = $item->id;
             return $new;
         });
         DB::connection('farmasi')->table('resep_detail')->insert($new_resep_detail->toArray());

@@ -136,6 +136,21 @@
                         </button>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="block block-bordered text-center">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan Rekapitulasi Mutasi Barang</h3>
+                    </div>
+                    <div class="block-content">
+                        <p>Laporan Rekapitulasi Mutasi Barang</p>
+                    </div>
+                    <div class="block-content block-content-full">
+                        <button class="btn btn-hero btn-sm btn-noborder btn-secondary" data-toggle="modal" data-target="#modal-laporan-rekapitulasi-mutasi-barang">
+                            Buat Laporan
+                        </button>
+                    </div>
+                </div>
             </div><!-- 
             <div class="col-md-6 col-xl-3">
                 <div class="block block-bordered text-center">
@@ -276,10 +291,10 @@
             <div class="col-md-6 col-xl-3">
                 <div class="block block-bordered text-center">
                     <div class="block-header">
-                        <h3 class="block-title">Laporan Penerimaan Barang Habis Pakai</h3>
+                        <h3 class="block-title">Laporan Penerimaan Barang</h3>
                     </div>
                     <div class="block-content">
-                        <p>Laporan Penerimaan Barang Habis Pakai</p>
+                        <p>Laporan Penerimaan Barang</p>
                     </div>
                     <div class="block-content block-content-full">
                         <button class="btn btn-hero btn-sm btn-noborder btn-secondary" data-toggle="modal" data-target="#modal-penerimaan-barang-habis-pakai">
@@ -348,7 +363,114 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="block block-bordered text-center">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan Rekap Pendapatan Farmasi</h3>
+                    </div>
+                    <div class="block-content">
+                        <p>Laporan Pendapatan Bruto Per Bulan</p>
+                    </div>
+                    <div class="block-content block-content-full">
+                        <a class="btn btn-hero btn-sm btn-noborder btn-secondary" href="{{url('laporan/farmasi/laporan-rekap-pendapatan-farmasi')}}" target="_blank">
+                            Buat Laporan
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="block block-bordered text-center">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan Pendapatan Farmasi</h3>
+                    </div>
+                    <div class="block-content">
+                        <p>Laporan Pendapatan Nett Per Bulan</p>
+                    </div>
+                    <div class="block-content block-content-full">
+                        <a class="btn btn-hero btn-sm btn-noborder btn-secondary" href="{{url('laporan/farmasi/laporan-pendapatan-nett-farmasi')}}" target="_blank">
+                            Buat Laporan
+                        </a>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="col-md-6 col-xl-3">
+                <div class="block block-bordered text-center">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan Penghapusan Barang</h3>
+                    </div>
+                    <div class="block-content">
+                        <p>Laporan berdasarkan transaksi di menu penghapusan barang</p>
+                    </div>
+                    <div class="block-content block-content-full">
+                        <button class="btn btn-hero btn-sm btn-noborder btn-secondary" data-toggle="modal" data-target="#modal-laporan-penghapusan-barang">
+                            Buat Laporan
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="block block-bordered text-center">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan Transaksi Farmasi</h3>
+                    </div>
+                    <div class="block-content">
+                        <p>Laporan transaksi per transaksi BPJS & UMUM</p>
+                    </div>
+                    <div class="block-content block-content-full">
+                        <button class="btn btn-hero btn-sm btn-noborder btn-secondary" data-toggle="modal" data-target="#modal-laporan-transaksi-farmasi">
+                            Buat Laporan
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="block block-bordered text-center">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan Realisasi</h3>
+                    </div>
+                    <div class="block-content">
+                        <p>Laporan realisasi penerimaan pengadaan</p>
+                    </div>
+                    <div class="block-content block-content-full">
+                        <button class="btn btn-hero btn-sm btn-noborder btn-secondary" data-toggle="modal" data-target="#modal-laporan-realisasi-pengadaan">
+                            Buat Laporan
+                         </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="block block-bordered text-center">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan Berita Acara Pemeriksaan</h3>
+                    </div>
+                    <div class="block-content">
+                        <p>Laporan Berita Acara Pemeriksaan</p>
+                    </div>
+                    <div class="block-content block-content-full">
+                        <button class="btn btn-hero btn-sm btn-noborder btn-secondary" data-toggle="modal" data-target="#modal-laporan-berita-acara-pemeriksaan">
+                            Buat Laporan
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
+        <div class="col-md-6 col-xl-3">
+                <div class="block block-bordered text-center">
+                    <div class="block-header">
+                        <h3 class="block-title">Laporan E-Resep Kolektif</h3>
+                    </div>
+                    <div class="block-content">
+                        <p>Laporan E-Resep Kolektif</p>
+                    </div>
+                    <div class="block-content block-content-full">
+                        <a class="btn btn-hero btn-sm btn-noborder btn-secondary" href="{{url('laporan/farmasi/laporan-eresep-kolektif')}}" target="_blank">
+                            Buat Laporan
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         <hr>
         {{--
         <div class="row row-deck">

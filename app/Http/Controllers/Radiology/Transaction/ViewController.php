@@ -22,6 +22,7 @@ class ViewController extends Controller
     static protected $alasan_direject = ['Duplikasi Printing', 'Ukuran Salah', 'Salah/ Tanpa Identitas/ Marker', 'Densitas Tidak Sesuai'];
     static protected $ukuran_film = ['20x25cm', '28x35cm', '35x43cm', '35x35cm'];
     static protected $alasan_ulang = ['Terpotong Gambarnya', 'Kabur Gambarnya', 'Artefak', 'Salah Posisi'];
+    protected $readController;
 
     public function __construct()
     {
@@ -81,6 +82,7 @@ class ViewController extends Controller
         $data['ukuran'] = self::$ukuran_film;
         $data['alasan_ulang'] = self::$alasan_ulang;
         $data['alasan_direject'] = self::$alasan_direject;
+        $data['bmhp'] = $this->readController->getBmhp($transaction_patient->id);
         $data['template'] = app('App\Http\Controllers\Radiology\Pengaturan\ReadController')->getAllTemplate();
         app('App\Http\Controllers\Radiology\Transaction\EditController')->startPemeriksaan($transaction_patient);
         return view('radiolog.transaksi.pemeriksaan',$data);
@@ -117,6 +119,8 @@ class ViewController extends Controller
         $data['alasan_ulang'] = self::$alasan_ulang;
         $data['alasan_direject'] = self::$alasan_direject;
         $data['template'] = app('App\Http\Controllers\Radiology\Pengaturan\ReadController')->getAllTemplate();
+        
+        $data['bmhp'] = $this->readController->getBmhp($transaction_patient->id);
         return view('radiolog.transaksi.edit', $data);
     }
 
@@ -125,13 +129,17 @@ class ViewController extends Controller
         $data['header'] = "transaksi";
         $transaction_patient = $this->readController->getPatientService($slug);
         if(is_null($transaction_patient) || $transaction_patient->status == -1)   abort(404);
+        $photos_penunjang = $this->readController->getPhotosPenunjang($transaction_patient->id);
+        $photos = $this->readController->getPhotos($transaction_patient->id)->where('penunjang_id', null);
 
-        $photos = $this->readController->getPhotosPenunjang($transaction_patient->id);
+        $files = $photos_penunjang->merge($photos);
+
         $data['transaksi'] = $transaction_patient;
         $data['pasien'] = $transaction_patient;
-        $data['photos'] = $photos;
+        $data['photos'] = $files;
         $data['link'] = self::$link;
         $data['is_dokter'] = Auth::user()->profesi == config('const.profesi_dokter');
+        $data['bmhp'] = $this->readController->getBmhp($transaction_patient->id);
         if(!is_null($transaction_patient->kasus))
         {
             $data['kasus'] = $transaction_patient->kasus;

@@ -49,14 +49,12 @@ class TambahTagihanKamar extends Command
      */
     public function handle()
     {
-        try
-        {
+        try {
             DB::connection('kasus')->beginTransaction();
             Auth::loginUsingId(1);
-            $transaksi = Transaksi::whereNull('waktu_keluar')->whereNotNull('kedatangan_at')->whereIn('status',[1,2])->get();
-            foreach($transaksi as $item)
-            {
-                $tipe_default = TarifTipe::where('slug','default')->first();
+            $transaksi = Transaksi::whereNull('waktu_keluar')->whereNotNull('kedatangan_at')->whereIn('status', [1, 2])->get();
+            foreach ($transaksi as $item) {
+                $tipe_default = TarifTipe::where('slug', 'default')->first();
                 $kasus = $item->kasus;
                 $this->addTagihan($kasus, $item->tempat_tidur->ruangan->tarif, $tipe_default);
                 $tarif_lain = $item->tempat_tidur->ruangan->tarif_lain;
@@ -65,14 +63,10 @@ class TambahTagihanKamar extends Command
                 }
             }
             DB::connection('kasus')->commit();
-
-
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::connection('kasus')->rollback();
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
         }
-
     }
 
     public function addTagihan($kasus, $tarif, $tipe_default)
@@ -87,7 +81,7 @@ class TambahTagihanKamar extends Command
         $data['qty'] = 1;
         $data['daftar_harga_id'] = null;
         $data['tarif_id'] = $tarif->id;
-        if(!empty($kasus->active_sep))
+        if (!empty($kasus->active_sep))
             $data['sep_id'] = $kasus->active_sep->id;
         else
             $data['sep_id'] = null;

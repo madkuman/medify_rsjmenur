@@ -168,4 +168,20 @@
             wrapper.remove();
         });
     }
+    // Pengaturan Farmasi - Embalase
+    $(document).on('click', '.btn-remove-embalase', function () {
+        let parent = $(this).parents('tr');
+        parent.remove();
+    });
+
+    $(document).on('click', '.btn-add-embalase', function () {
+        let button = $(this);
+        let index = button.data('index');
+        
+        let html = `@include('farmasi.layouts.components.setting-aturan-embalase-row', ['index' => '\${index}', 'item' => null])`;
+        let element = $(html).appendTo('#farmasi-pengaturan-embalase tbody');
+        element.find('.js-select2').select2();
+        index ++ ;
+        button.data('index', index);
+    });
 </script>

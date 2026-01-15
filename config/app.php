@@ -1,24 +1,22 @@
 <?php
 
 
-if(file_exists(base_path('/settings/settings.json'))){
+if (file_exists(base_path('/settings/settings.json'))) {
     $hospital_data_string = file_get_contents(base_path('/settings/settings.json'));
-    if(isJson($hospital_data_string))
+    if (isJson($hospital_data_string))
         $hospital_data = json_decode($hospital_data_string);
     else
         $hospital_data = new stdClass;
-}
-else
+} else
     $hospital_data = new stdClass;
 
-if(file_exists(base_path('/settings/medify/kepegawaian.json'))){
+if (file_exists(base_path('/settings/medify/kepegawaian.json'))) {
     $kepegawaian_data_string = file_get_contents(base_path('/settings/medify/kepegawaian.json'));
-    if(isJson($kepegawaian_data_string))
+    if (isJson($kepegawaian_data_string))
         $kepegawaian_data = json_decode($kepegawaian_data_string);
     else
         $kepegawaian_data = new stdClass;
-}
-else
+} else
     $kepegawaian_data = new stdClass;
 
 $config = [
@@ -210,7 +208,8 @@ $config = [
         UxWeb\SweetAlert\SweetAlertServiceProvider::class,
         Jenssegers\Date\DateServiceProvider::class,
         App\Providers\DuskServiceProvider::class,
-       // LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
+        LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
+        Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
     ],
 
     /*
@@ -251,7 +250,7 @@ $config = [
         'Mail' => Illuminate\Support\Facades\Mail::class,
         'Notification' => Illuminate\Support\Facades\Notification::class,
         'Password' => Illuminate\Support\Facades\Password::class,
-        //'PdfMerger' => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
+        'PdfMerger' => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
         'Queue' => Illuminate\Support\Facades\Queue::class,
         'Redirect' => Illuminate\Support\Facades\Redirect::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,
@@ -313,6 +312,9 @@ $config = [
     'applicare_cons_id' => ($hospital_data->applicare_cons_id ?? ''),
     'applicare_secret' => ($hospital_data->applicare_secret ?? ''),
 
+    'longitude' => ($hospital_data->longitude ?? null),
+    'latitude' => ($hospital_data->latitude ?? null),
+
     'bpjs_enable' => ($hospital_data->bpjs_enable ?? false),
     'bpjs_stage' => ($hospital_data->bpjs_stage ?? 'development'),
     'inacbg_url' => ($hospital_data->inacbg_url ?? 'http://belajarkoding-inacbg.com/E-Klaim/ws.php?mode=debug'),
@@ -330,8 +332,10 @@ $config = [
 
     'kepegawaian_cuti_min_pengajuan_hari' => ($kepegawaian_data->cuti_min_pengajuan_hari ?? 30),
     'kepegawaian_cuti_max_pengajuan_hari' => ($kepegawaian_data->cuti_max_pengajuan_hari ?? 90),
+
+    'fitur_kasus_resep_kategori' => env('FITUR_KASUS_RESEP_KATEGORI', 0),
 ];
 
-if(($hospital_data->debug ?? false))
+if (($hospital_data->debug ?? false))
     array_push($config['providers'], Barryvdh\Debugbar\ServiceProvider::class);
 return $config;

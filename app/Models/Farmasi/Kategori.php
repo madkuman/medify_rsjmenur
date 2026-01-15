@@ -19,6 +19,11 @@ class Kategori extends Model
 		return $this->hasMany('App\Models\Farmasi\ItemsKategori','kategori_id', 'id');
 	}
 
+	public function sumber_dana()
+	{
+		return $this->hasMany('App\Models\Farmasi\SumberDana','kategori_id', 'id');
+	}
+
 	public function created_by_detail()
 	{
 		return $this->hasOne('App\User','id', 'created_by');

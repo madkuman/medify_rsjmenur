@@ -43,7 +43,8 @@ class ViewController extends Controller
             $data['tanggal'] = $date->format('d-m-Y');
             $date_start = $date->copy()->startOfDay();
             $date_end = $date->copy()->endOfDay();
-            $transactions = $this->readController->getUnread($date_start,$date_end);
+            //$transactions = $this->readController->getUnread($date_start,$date_end);
+	$transactions = $this->readController->getUnread();
         } else {
             $date = Carbon::createFromFormat('d-m-Y', $date);
             $data['tanggal'] = $date->format('d-m-Y');
@@ -223,7 +224,7 @@ class ViewController extends Controller
         return view('labpk.transaksi.verifikasi',$data);        
     }
 
-    public function cetakPermintaan($slug)
+    public function cetakPermintaan($slug, $param_download = [])
     {
         $dept = 'lab-pk';
         $data['all_transaksi'] = app('App\Http\Controllers\Keuangan\TarifMaster\ReadController')->getFromLabPrint($dept);
@@ -248,6 +249,13 @@ class ViewController extends Controller
         if(is_null($data['transaksi']))   abort(404);       
         
         $pdf = DOMPDF::loadView('layouts.components2.lab.cetak.permintaan',$data);
+        if (($param_download['is_download'] ?? null) != null) {
+            $filename = $param_download['filename'] ?? 'Print_Permintaan_Lab_PK_.'.$data['transaksi']->id.'.pdf';
+            if (file_exists($param_download['path'] . $filename)) 
+                unlink($param_download['path'] . $filename);
+            $pdf->save($param_download['path'] . $filename);
+            return $filename;
+        }
         return $pdf->stream('permintaan.pdf');
     }
 

@@ -22,6 +22,7 @@
 								<div class="row">
 									<div class="col-12">
 										<button type="button" class="btn-alt btn-primary min-width-125 pull-right openFormBtn" data-id="" data-method="create"><i class="fa fa-pencil mr-5"></i>Form Rekonsiliasi Obat Baru</button>
+										<span data-toggle="modal" data-target="#addTTDPasien"><button type="button" class="btn-alt btn-primary min-width-125" data-id=""><i class="fa fa-signature"></i>Tanda Tangan Pasien</button></span>
 										<a href="{{url()->current()}}/print" type="button" class="btn-alt btn-secondary min-width-125 pull-right" target="_blank"><i class="fa fa-print mr-5"></i>Print Rekonsiliasi Obat</a>
 									</div>
 								</div>
@@ -77,6 +78,7 @@
 </form>
 @include('kasus.farmasi.modal.rekonsiliasi-form')
 @include('kasus.farmasi.modal.rekonsiliasi-view')
+@include('kasus.farmasi.modal.rekonsiliasi-ttd-pasien')
 @endsection
 
 
@@ -217,7 +219,8 @@
 			obat_id:"", 
 			dosis:"", 
 			jumlah:"", 
-			rute:"", 
+			rute:"",
+			kategori_sediaan:"",
 			aturan_pakai:"", 
 			diteruskan_dosis:"", 
 			diteruskan_aturan_pakai:"", 
@@ -240,6 +243,7 @@
 				<td>`+data.dosis+`</td>
 				<td>`+data.jumlah+`</td>
 				<td>`+data.rute+`</td>
+				<td>`+data.kategori_sediaan+`</td>
 				<td>`+data.aturan_pakai+`</td>
 				<td>`+data.diteruskan_dosis+`</td>
 				<td>`+data.diteruskan_aturan_pakai+`</td>
@@ -280,6 +284,11 @@
 				<td>
 					<div class="col-12 px-0">
 						<input type="text" name="rute[]" class="form-control" value="`+data.rute+`" required>
+					</div>
+				</td>
+				<td>
+					<div class="col-12 px-0">
+						<input type="text" name="kategori_sediaan[]" class="form-control" value="`+data.kategori_sediaan+`" required>
 					</div>
 				</td>
 				<td>
@@ -414,6 +423,7 @@
 	    		dosis : "{{$detail->dosis}}",
 	    		jumlah : "{{$detail->jumlah}}",
 	    		rute : "{{$detail->rute}}",
+	    		kategori_sediaan : "{{$detail->kategori_sediaan}}",
 	    		aturan_pakai : `{{$detail->aturan_pakai}}`,
 	    		diteruskan_dosis : "{{$detail->diteruskan_dosis}}",
 	    		diteruskan_aturan_pakai : "{{$detail->diteruskan_aturan_pakai}}",
@@ -434,13 +444,14 @@
 	    		tanggal : "{{Carbon\Carbon::parse($detail->created_at)->format('d-m-Y')}}",
 	    		obat_nama : "{{$detail->obat_name}}",
 	    		obat_id : "{{$detail->obat_id}}",
-	    		dosis : "-",
+	    		dosis : "{{ $detail->item_template->kekuatan_sediaan ?? '' }} {{ $detail->item_template->satuan_kekuatan->nama ?? '' }}",
 	    		jumlah : "{{$detail->jumlah}}",
-	    		rute : "{{$detail->type}}",
+	    		rute : "{{ $detail->item_template->rute->nama ?? '' }}",
+	    		kategori_sediaan : "{{ $detail->item_template->satuan ?? '' }}",
 	    		aturan_pakai : `{{$detail->aturan}}`,
-	    		diteruskan_dosis : "",
+	    		diteruskan_dosis : "{{ $detail->item_template->kekuatan_sediaan ?? '' }} {{ $detail->item_template->satuan_kekuatan->nama ?? '' }}",
 	    		diteruskan_aturan_pakai : "",
-	    		dihentikan : "",
+	    		dihentikan : "-",
 	    		asal_obat : "Rumah Sakit"
 	    	}
 	    	resep_histori_data.push(detail_temp);
@@ -454,13 +465,14 @@
 	    		tanggal : "{{Carbon\Carbon::parse($detail->created_at)->format('d-m-Y')}}",
 	    		obat_nama : "{{$detail->obat_name}}",
 	    		obat_id : "{{$detail->obat_id}}",
-	    		dosis : "-",
+	    		dosis : "{{ $detail->item_template->kekuatan_sediaan ?? '' }} {{ $detail->item_template->satuan_kekuatan->nama ?? '' }}",
 	    		jumlah : "{{$detail->jumlah}}",
-	    		rute : "{{$detail->type}}",
+	    		rute : "{{ $detail->item_template->rute->nama ?? '' }}",
+	    		kategori_sediaan : "{{ $detail->item_template->satuan ?? '' }}",
 	    		aturan_pakai : `{{$detail->aturan_pakai}}`,
-	    		diteruskan_dosis : "",
+	    		diteruskan_dosis : "{{ $detail->item_template->kekuatan_sediaan ?? '' }} {{ $detail->item_template->satuan_kekuatan->nama ?? '' }}",
 	    		diteruskan_aturan_pakai : "",
-	    		dihentikan : "",
+	    		dihentikan : "-",
 	    		asal_obat : "Rumah Sakit"
 	    	}
 	    	resep_pulang_data.push(detail_temp);
@@ -469,10 +481,143 @@
 
 
 	}
+</script>
 
+<script type="text/javascript">
+	// Canvas TTD Pasien
 
+	var canvas, ctx, flag = false,
+		prevX = 0,
+		currX = 0,
+		prevY = 0,
+		currY = 0,
+		pos = {};
 
+	var lineColor = "black",
+		lineWidth = 2;
 
+	function initCanvas() {
+		canvas = document.getElementById('canvas');
+		canvas.style.touchAction = "none";
+		ctx = canvas.getContext("2d");
+		w = canvas.width;
+		h = canvas.height;
+
+		canvas.addEventListener("pointermove", function (e) {
+			e.preventDefault();
+			findXY('move', e)
+		}, false);
+		canvas.addEventListener("pointerdown", function (e) {
+			e.preventDefault();
+			findXY('down', e)
+		}, false);
+		canvas.addEventListener("pointerup", function (e) {
+			e.preventDefault();
+			findXY('up', e)
+		}, false);
+	}
+
+	// draw line
+	function draw() {
+		ctx.beginPath();
+		ctx.strokeStyle = lineColor;
+		ctx.lineWidth = lineWidth;
+		ctx.moveTo(prevX, prevY);
+		ctx.lineTo(currX, currY);
+		ctx.closePath();
+		ctx.stroke();
+	}
+
+	// clear canvas
+	function clearCanvas() {
+		// use the identity matrix while clearing the canvas
+    	ctx.setTransform(1, 0, 0, 1, 0, 0);
+		ctx.clearRect(0, 0, w, h);
+	}
+
+	function saveImg() {
+		var dataURL = canvas.toDataURL();
+		return dataURL;
+	}
+
+	function getMousePos(canvas, evt) {
+		var rect = canvas.getBoundingClientRect();
+		return {
+			x: (evt.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+			y: (evt.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+		};
+	}
+
+	function findXY(res, e) {
+		pos = getMousePos(canvas, e);
+		prevX = currX;
+		prevY = currY;
+		currX = pos.x;
+		currY = pos.y;
+		
+		if (res == 'down') {
+			flag = true;
+		}
+		if (res == 'up') {
+			flag = false;
+		}
+		if (res == 'move') {
+			if (flag) {
+				draw();
+			}
+		}
+	}
+
+	$(document).ready(function() {
+        initCanvas();
+        $(".clearCanvas").click(function(e){
+			clearCanvas();
+		});
+    });	
+</script>
+
+<script type="text/javascript">
+	// Submit TTD Pasien
+	
+	function ajaxSubmit(){
+		// var id = $('#edukasi-id').val();
+    	var nama = $('#nama-pasien').val();
+    	var imgUrl = saveImg();
+
+    	$('#buttonSubmit').hide();
+        $('#buttonLoading').show();
+
+    	var formData = new FormData();
+    	// formData.append('id', id);
+    	formData.append('nama', nama);
+    	formData.append('imgBase64', imgUrl);
+
+    	$.ajax({
+            type: "POST",
+            url: API_URL + "/kasus/{{$kasus->nomor_kasus}}/farmasi/rekonsiliasi/ttd/save",
+            dataType: "json",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+
+            success: function (data) {
+               callSwal(data.type,data.title,data.text,data.url);
+               $('#buttonSubmit').show();
+               $('#buttonLoading').hide();
+    			clearCanvas();
+
+            },
+            error: function () {
+                callSwal('error','Transaksi Gagal','Silahkan Coba Lagi',0);
+                $('#buttonSubmit').show();
+                $('#buttonLoading').hide();
+            }
+        });
+	}
 </script>
 
 

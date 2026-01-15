@@ -43,23 +43,34 @@ class UpdateTaskJKNId extends Command
         $kodebooking = $this->argument('kodebooking');
         $taskid = $this->argument('taskid');
         $waktu = $this->argument('waktu');
+        // $jenis_resep = $this->argument('jenisresep') ?? null;
         $data = [
             'kodebooking' => $kodebooking,
             'taskid' => $taskid,
-            'waktu' => $waktu,
+            'waktu' => $waktu
         ];
+        // if (!empty($jenis_resep)) { // Gunakan empty() untuk cek null/empty string
+        //     $data['jenisresep'] = $jenis_resep;
+        // }
         $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
         $returned = json_decode($returned);
         $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
-        if($metadata->code != "200"){
+        if ($metadata->code != "200") {
             $data_log['kodebooking'] = $kodebooking;
             $data_log['response'] = json_encode($returned);
 
             app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+        } else {
+            $data_log['kodebooking'] = $kodebooking;
+            $data_log['task_id'] = $taskid;
+            $data_log['waktu'] = $waktu;
+            $data_log['response'] = json_encode($returned);
+            $data_log['request'] = $data;
+
+            app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
         }
         $transaksi = Transaksi::find($kodebooking);
         $transaksi->task_id_jkn = $taskid;
         $transaksi->save();
-        
     }
 }

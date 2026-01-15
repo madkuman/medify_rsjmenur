@@ -4,6 +4,7 @@
         <button type="button" class="btn btn-primary min-width-125 pull-right ml-10" data-toggle="modal" data-target="#uploadPenunjang"><i class="fa fa-pencil"></i> Tambah Penunjang</button>
         @endif
         <button onclick="historiGaleriPermintaan()" class="btn btn-warning min-width-125 float-right ml-10">Histori Galeri Penunjang</button>
+        <button type="button" class="btn btn-info min-width-125 float-right ml-10 " data-toggle="modal" data-target="#modalLihatHistoriLab">Lihat Histori Lab</button>
     </div>
 </div>
 <div class="row" style="padding-top: 5%; padding-bottom: 5%">

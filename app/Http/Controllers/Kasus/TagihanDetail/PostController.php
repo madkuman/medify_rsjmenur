@@ -14,14 +14,13 @@ use Bugsnag;
 
 class PostController extends Controller
 {
-    public function create(Request $request,$nomor_kasus)
+    public function create(Request $request, $nomor_kasus)
     {
         // dd($request);
         DB::connection('kasus')->beginTransaction();
         DB::connection('mysql')->beginTransaction();
-        try
-        {
-            $kasus = Kasus::where('nomor_kasus',$nomor_kasus)->first();
+        try {
+            $kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
             $data['kasus_id'] = $request->kasus_id;
             $data['tarif_id'] = $request->tarif_id;
             $data['tarif_tipe_id'] = $request->tarif_tipe_id;
@@ -40,8 +39,8 @@ class PostController extends Controller
             $tgl = $request->tanggal_transaksi ?? Carbon::now()->format('d-m-Y');
             $jam = $request->jam ?? Carbon::now()->format('H');
             $menit = $request->menit ?? Carbon::now()->format('i');
-            $format = $tgl.' '.$jam.':'.$menit;
-            $data['created_at'] = Carbon::createFromFormat('d-m-Y H:i',$format);
+            $format = $tgl . ' ' . $jam . ':' . $menit;
+            $data['created_at'] = Carbon::createFromFormat('d-m-Y H:i', $format);
 
             $createDetail = app('App\Http\Controllers\Kasus\TagihanDetail\CreateController')->create($data);
 
@@ -49,32 +48,29 @@ class PostController extends Controller
             $message = 'Tagihan berhasil ditambahkan';
             $title = 'Berhasil!';
 
-            
+
             DB::connection('kasus')->commit();
             DB::connection('mysql')->commit();
             return back()
-            ->with('message', $message)
-            ->with('title',$title)
-            ->with('status', $status);
-
+                ->with('message', $message)
+                ->with('title', $title)
+                ->with('status', $status);
         } catch (\Exception $e) {
-           
+
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 
             DB::connection('kasus')->rollback();
             DB::connection('mysql')->rollback();
-            
         }
     }
 
-    public function edit(Request $request,$nomor_kasus)
+    public function edit(Request $request, $nomor_kasus)
     {
         // dd($request);
         DB::connection('kasus')->beginTransaction();
         DB::connection('mysql')->beginTransaction();
-        try
-        {
-            $kasus = Kasus::where('nomor_kasus',$nomor_kasus)->first();
+        try {
+            $kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
             $data['id'] = $request->id;
             $data['kasus_id'] = $request->kasus_id;
             $data['desc'] = $request->desc;
@@ -91,8 +87,8 @@ class PostController extends Controller
             $tgl = $request->tanggal_transaksi ?? Carbon::now()->format('d-m-Y');
             $jam = $request->jam ?? Carbon::now()->format('H');
             $menit = $request->menit ?? Carbon::now()->format('i');
-            $format = $tgl.' '.$jam.':'.$menit;
-            $data['created_at'] = Carbon::createFromFormat('d-m-Y H:i',$format);
+            $format = $tgl . ' ' . $jam . ':' . $menit;
+            $data['created_at'] = Carbon::createFromFormat('d-m-Y H:i', $format);
 
             $editDetail = app('App\Http\Controllers\Kasus\TagihanDetail\EditController')->edit($data);
 
@@ -103,26 +99,23 @@ class PostController extends Controller
             DB::connection('kasus')->commit();
             DB::connection('mysql')->commit();
             return back()
-            ->with('message', $message)
-            ->with('title',$title)
-            ->with('status', $status);
-
+                ->with('message', $message)
+                ->with('title', $title)
+                ->with('status', $status);
         } catch (\Exception $e) {
-           
+
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 
             DB::connection('kasus')->rollback();
             DB::connection('mysql')->rollback();
-            
         }
     }
 
-    public function delete($nomor_kasus,Request $request)
+    public function delete($nomor_kasus, Request $request)
     {
         DB::connection('kasus')->beginTransaction();
         DB::connection('mysql')->beginTransaction();
-        try
-        {
+        try {
             $tagihan = TagihanDetail::find($request->id);
             $kasus = Tagihan::find($tagihan->kasus_tagihan_id);
             $kasusId = $kasus->kasus_id;
@@ -134,36 +127,31 @@ class PostController extends Controller
             $message = 'Tagihan berhasil dihapus!';
             $title = 'Berhasil!';
 
-            $tagihan = app('App\Http\Controllers\Kasus\Tagihan\EditController')->delete_bill($tagihan->kasus_tagihan_id,$new_nominal);
+            $tagihan = app('App\Http\Controllers\Kasus\Tagihan\EditController')->delete_bill($tagihan->kasus_tagihan_id, $new_nominal);
 
 
             $log = app('App\Http\Controllers\Kasus\Log\CreateController')
-            ->create($kasusId,'delete','tagihan',$tagihanId);
+                ->create($kasusId, 'delete', 'tagihan', $tagihanId);
 
             DB::connection('kasus')->commit();
             DB::connection('mysql')->commit();
-            if(!empty($request->operasi_id))
-            {
-                return redirect('/kamaroperasi/pelaksanaan/'.$request->operasi_id.'#tagihan')
-                ->with('message', $message)
-                ->with('title',$title)
-                ->with('status', $status);    
-            }
-            else
-            {
+            if (!empty($request->operasi_id)) {
+                return redirect('/kamaroperasi/pelaksanaan/' . $request->operasi_id . '#tagihan')
+                    ->with('message', $message)
+                    ->with('title', $title)
+                    ->with('status', $status);
+            } else {
                 return back()
-                ->with('message', $message)
-                ->with('title',$title)
-                ->with('status', $status);
+                    ->with('message', $message)
+                    ->with('title', $title)
+                    ->with('status', $status);
             }
-
         } catch (\Exception $e) {
-           
+
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 
             DB::connection('kasus')->rollback();
             DB::connection('mysql')->rollback();
-            
         }
     }
 
@@ -201,4 +189,27 @@ class PostController extends Controller
         }
     }
 
+    public function flagIpwl($nomor_kasus, $tagihan_detail_id)
+    {
+        DB::connection('kasus')->beginTransaction();
+        try {
+            app('App\Http\Controllers\Kasus\TagihanDetail\EditController')->flagIpwl($tagihan_detail_id);
+
+            $status = 1;
+            $message = 'Tagihan berhasil ditandai sebagai klaim IPWL';
+            $title = 'Berhasil!';
+            DB::connection('kasus')->commit();
+        } catch (\Exception $e) {
+            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+            DB::connection('kasus')->rollback();
+            $status = -1;
+            $message = "Gagal ditandai karena kesalahan server.";
+            $title = 'Gagal!';
+        }
+
+        return back()
+            ->with('message', $message)
+            ->with('title', $title)
+            ->with('status', $status);
+    }
 }

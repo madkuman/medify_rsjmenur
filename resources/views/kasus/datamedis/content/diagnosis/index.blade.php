@@ -5,9 +5,11 @@
             @if($allow_crud)
             <button type="button" class="btn-alt btn-primary min-width-125 float-right" data-toggle="modal" data-target="#modal-create-diagnosis"><i class="fa fa-pencil"></i> Buat Diagnosis</button>
             <button type="button" onclick="historiDiagnosis()" class="btn-alt btn-info  min-width-125 float-right" ><i class="fa fa-loop"></i> Histori Diagnosis</button>
-                @if(isset($kasus->active_sep->no_sep))
-                    <button type="button" class="btn-alt btn-info min-width-125 float-right update-plafon"><i class="fa fa-paper-plane"></i> Update Plafon</button>
-                @endif
+                @if(isset($kasus->active_sep->no_sep))                   
+{{-- 		
+	<button type="button" class="btn-alt btn-info min-width-125 float-right update-plafon"><i class="fa fa-paper-plane"></i> Update Plafon</button>
+--}}    
+            @endif
             @endif
         </div>
         <form id="update_plafon">

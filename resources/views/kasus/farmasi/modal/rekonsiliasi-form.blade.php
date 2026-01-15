@@ -55,6 +55,7 @@
 									<th rowspan="2">Dosis</th>
 									<th rowspan="2">Jumlah</th>
 									<th rowspan="2">Rute</th>
+									<th rowspan="2">Kategori Sediaan</th>
 									<th rowspan="2">Aturan Pakai</th>
 									<th colspan="2" class="text-center" style="border-bottom: 1px solid gainsboro">Diteruskan</th>
 									<th rowspan="2">Dihentikan</th>

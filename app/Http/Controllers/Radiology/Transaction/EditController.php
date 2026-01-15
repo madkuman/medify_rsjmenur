@@ -33,7 +33,6 @@ class EditController extends Controller
     public function updateResult(Request $req)
     {
         try {
-            //dd($req);
             DB::connection('kasus')->beginTransaction();
             DB::connection('radiology')->beginTransaction();
             DB::connection('keuangan')->beginTransaction();
@@ -62,6 +61,7 @@ class EditController extends Controller
             $transaction->is_checkout = 1;
             $transaction->save();
             $this->updatePhotosPenunjang($transaction);
+            app('App\Http\Controllers\Radiology\TransaksiBmhp\CreateController')->addData($req->bmhp,$transaction->id);
             DB::connection('kasus')->commit();
             DB::connection('radiology')->commit();
             DB::connection('keuangan')->commit();
@@ -93,7 +93,7 @@ class EditController extends Controller
             $detail->ukuran_film = (int)$req['ukuran_film'][$row];
             $detail->foto_ulang = (int)$req['foto_ulang'][$row];
             $detail->alasan_foto_ulang = $req['alasan_ulang'][$row];
-            $detail->alasan_film_direject = $req['alasan_film_direject'][$row];                
+            $detail->alasan_film_direject = $req['alasan_film_direject'][$row] ?? '';                
             $detail->kontras_dipakai = (int)$req['kontras_dipakai'][$row];
             $detail->kontras_dikembalikan = (int)$req['kontras_dikembalikan'][$row];
             $detail->hasil_baca = $req['hasil_baca'][$row];

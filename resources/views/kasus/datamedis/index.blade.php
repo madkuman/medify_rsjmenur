@@ -219,11 +219,13 @@
 @include('kasus.datamedis.content.cppt.adime-modal')
 @include('kasus.datamedis.content.cppt.edit-modal')
 @include('kasus.datamedis.content.cppt.delete-modal')
+@include('kasus.datamedis.content.cppt.deletefile-modal')
 @include('kasus.datamedis.content.cppt.override-modal')
 @include('kasus.datamedis.content.cppt.review-cppt-modal')
 @include('kasus.datamedis.content.cppt.components.modal-covid-form')
 @include('kasus.datamedis.content.cppt.components.modal-covid-histori')
 @include('kasus.datamedis.content.cppt.histori-modal')
+@include('kasus.datamedis.content.cppt.components.modal-readback')
 
 @elseif($active_nav == 'diagnosis')
 @include('kasus.datamedis.content.diagnosis.create-modal')
@@ -266,6 +268,10 @@
 @include('kasus.datamedis.content.asesmenawal.form.form-dokter-gawat-darurat')
 @include('kasus.datamedis.content.asesmenawal.form.form-dokter-rawat-jalan')
 @include('kasus.datamedis.content.asesmenawal.form.form-dokter-rawat-inap')
+@include('kasus.datamedis.content.asesmenawal.form.form-triage')
+@include('kasus.datamedis.content.asesmenawal.non-jiwa.form.form-dokter-gawat-darurat-non-jiwa')
+@include('kasus.datamedis.content.asesmenawal.non-jiwa.form.form-dokter-rawat-jalan-non-jiwa')
+@include('kasus.datamedis.content.asesmenawal.non-jiwa.form.form-dokter-rawat-inap-non-jiwa')
 @endif
 
 
@@ -286,7 +292,7 @@
 }
 .modal-full {
     min-width: 100%;
-    margin: 0;
+    margin: 0 !important;
 }
 .modal-full .modal-content {
     min-height: 100vh;
@@ -362,12 +368,17 @@
 @include('kasus.datamedis.content.js.resep-edit')
 @include('kasus.datamedis.content.js.resep-paket')
 @include('farmasi.js-features.histori-resep.js')
+@if (config('app.fitur_kasus_resep_kategori'))
+@include('kasus.datamedis.content.js.js-kategori-resep')
+@endif
 
 @elseif($active_nav == 'gizi')
 @include('kasus.datamedis.content.js.gizi')
 @elseif($active_nav == 'asesmenawal')
 @include('kasus.datamedis.content.js.asesmen-awal')
+@include('kasus.datamedis.content.js.asesmen-awal-non-jiwa')
 @include('kasus.datamedis.content.js.rapt')
+@include('kasus.datamedis.content.js.asesmen-awal-alatbantu')
 @endif
 
 

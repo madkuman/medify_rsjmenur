@@ -121,7 +121,7 @@
 			<td width="50%" class="centered">Manifestasi</td>
 		</tr>
 		<tr>
-			<td>&nbsp;</td>
+			<td>{{ $alergi_obat ?? '' }}</td>
 			<td>&nbsp;</td>
 		</tr>
 		<tr>
@@ -221,12 +221,18 @@
 	<br><br><br>
 	<table>
 		<tr>
-			<td class="centered" width="40%">(_______________________)</td>
+			@if (!empty($ttd_path))
+			<td class="centered" width="40%">
+				<img src="{{asset($ttd_path)}}" style="width: 100px; max-width: 100px; display: inline;" alt="ttd-petugas">
+			</td>
+			@else
+			<td class="centered" width="40%" style="vertical-align: bottom">(_______________________)</td>
+			@endif
 			<td width="20%"></td>
-			<td class="centered" width="40%">(_______________________)</td>
+			<td class="centered" width="40%" style="vertical-align: bottom">(_______________________)</td>
 		</tr>
 		<tr>
-			<td class="centered">Nama Terang</td>
+			<td class="centered">{{ $ttd_name ?? '' }}</td>
 			<td></td>
 			<td class="centered">Nama Terang</td>
 		</tr>
@@ -242,8 +248,16 @@
 		<tr>
 			<td><b>II. PASIEN TRANSFER RUANGAN</b></td>
 		</tr>
-	</table>
+	</table>	
+	<!-- pasien transfer ruangan -->
+	@foreach($rekonsiliasi as $item)
+	@if($item->jenis == 'transfer')
 	<br>
+	<table>
+		<tr>
+			<td>Transfer {{ $item->judul ?? '' }}</td>
+		</tr>
+	</table>
 	<table>
 		<tr>
 			<td width="50%" style="padding-right: 10px;">
@@ -261,8 +275,8 @@
 						<td>Regimen</td>
 						<td>Jumlah</td>
 					</tr>
-					@foreach($rekonsiliasi as $item)
-					@if($item->jenis == 'transfer')
+					{{-- @foreach($rekonsiliasi as $item)
+					@if($item->jenis == 'transfer') --}}
 					@foreach($item->details as $detail)
 					@if($detail->dihentikan != '1')
 					<tr>
@@ -273,8 +287,8 @@
 					</tr>
 					@endif
 					@endforeach
-					@endif
-					@endforeach
+					{{-- @endif
+					@endforeach --}}
 				</table>
 			</td>
 			<td width="50%" style="padding-left: 10px;">
@@ -292,8 +306,8 @@
 						<td>Regimen</td>
 						<td>Jumlah</td>
 					</tr>
-					@foreach($rekonsiliasi as $item)
-					@if($item->jenis == 'transfer')
+					{{-- @foreach($rekonsiliasi as $item)
+					@if($item->jenis == 'transfer') --}}
 					@foreach($item->details as $detail)
 					@if($detail->dihentikan == '1')
 					<tr>
@@ -304,8 +318,8 @@
 					</tr>
 					@endif
 					@endforeach
-					@endif
-					@endforeach
+					{{-- @endif
+					@endforeach --}}
 				</table>
 			</td>
 		</tr>
@@ -318,19 +332,34 @@
 			<td class="centered" width="40%">Petugas Ruang Rujukan</td>
 		</tr>
 	</table>
-	<br><br><br>
+	<br>
 	<table>
 		<tr>
-			<td class="centered" width="40%">(_______________________)</td>
+			@if (!empty($item->kasus->creator->ttd))
+			<td class="centered" width="40%">
+				<img src="{{asset($item->kasus->creator->ttd)}}" style="width: 100px; max-width: 100px; display: inline;" alt="ttd-petugas">
+			</td>
+			@else
+			<td class="centered" width="40%" style="vertical-align: bottom">(_______________________)</td>
+			@endif
 			<td width="20%"></td>
-			<td class="centered" width="40%">(_______________________)</td>
+			@if (!empty($item->creator->ttd))
+			<td class="centered" width="40%">
+				<img src="{{asset($item->creator->ttd)}}" style="width: 100px; max-width: 100px; display: inline;" alt="ttd-petugas">
+			</td>
+			@else
+			<td class="centered" width="40%" style="vertical-align: bottom">(_______________________)</td>
+			@endif
 		</tr>
 		<tr>
-			<td class="centered">Nama Terang</td>
+			<td class="centered">{{ $item->kasus->creator->name ?? '' }}</td>
 			<td></td>
-			<td class="centered">Nama Terang</td>
+			<td class="centered">{{ $item->creator->name ?? '' }}</td>
 		</tr>
 	</table>
+	@endif
+	@endforeach
+	<!-- pasien transfer ruangan -->
 	<br>
 	<table>
 		<tr>
@@ -380,6 +409,7 @@
 			<td>Indikasi</td>
 			<td>Jumlah</td>
 			<td>Aturan Pakai</td>
+			<td>Rute Pemakaian</td>
 			<td>Keterangan</td>
 		</tr>
 		@foreach($rekonsiliasi as $item)
@@ -389,9 +419,10 @@
 		<tr>
 			<td>{{date('d/m/y', strtotime($detail->tanggal))}}</td>
 			<td>{{$detail->obat_nama}}</td>
-			<td>-</td>
+			<td>{{$detail->item_template->kelas_terapi->nama ?? ''}}</td>
+			<td>{{$detail->jumlah ?? ''}}</td>
 			<td>{{$detail->diteruskan_aturan_pakai}}</td>
-			<td>{{$detail->jumlah}}</td>
+			<td>{{$detail->rute ?? ''}}</td>
 			<td>-</td>
 		</tr>
 		@endif
@@ -420,12 +451,18 @@
 	<br><br><br>
 	<table>
 		<tr>
-			<td class="centered" width="40%">(_______________________)</td>
+			@if (!empty($ttd_path))
+			<td class="centered" width="40%">
+				<img src="{{asset($ttd_path)}}" style="width: 100px; max-width: 100px; display: inline;" alt="ttd-petugas">
+			</td>
+			@else
+			<td class="centered" width="40%" style="vertical-align: bottom">(_______________________)</td>
+			@endif
 			<td width="20%"></td>
-			<td class="centered" width="40%">(_______________________)</td>
+			<td class="centered" width="40%" style="vertical-align: bottom">(_______________________)</td>
 		</tr>
 		<tr>
-			<td class="centered">Nama Terang</td>
+			<td class="centered">{{ $ttd_name ?? '' }}</td>
 			<td></td>
 			<td class="centered">Nama Terang</td>
 		</tr>

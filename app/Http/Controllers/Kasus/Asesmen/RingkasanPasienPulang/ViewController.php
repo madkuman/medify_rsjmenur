@@ -47,4 +47,16 @@ class ViewController extends Controller
         $pdf = DOMPDF::loadView("kasus.asesmen.ringkasan-pasien-pulang.print", $data);
         return $pdf->stream("print.pdf");
     }
+    function printnj(Request $request, $nomor_kasus, $id){
+        $kasus = Kasus::with(relasi)->where("nomor_kasus",$nomor_kasus)->first();
+        $data["kasus"] = $kasus;
+        $ringkasan_pasien_pulang = RingkasanPasienPulang::with(["creator"])->where("kasus_id",$kasus->id)->where("id",$id)
+                ->orderBy("id","desc")->first();
+
+        $data["item"] = $ringkasan_pasien_pulang;
+        $data["sidebar_active"] = "alat";
+
+        $pdf = DOMPDF::loadView("kasus.asesmen.ringkasan-pasien-pulang.printnj", $data);
+        return $pdf->stream("print.pdf");
+    }
 }

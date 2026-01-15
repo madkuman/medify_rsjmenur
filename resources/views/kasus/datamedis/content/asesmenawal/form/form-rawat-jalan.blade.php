@@ -371,7 +371,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row mb-5">
-                                    <label class="col-12">Yang menemani pasien di RS</label>
+                                    {{--<label class="col-12">Yang menemani pasien di RS</label>--}}
                                     <div class="col-12">
                                         <input type="text" class="form-control" name="yang_menemani_pasien_di_rs">
                                     </div>
@@ -382,7 +382,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row mb-5">
-                                    <label class="col-12">Saat ini apakah pasien membutuhkan pelayanan rohani?</label>
+                                    {{--<label class="col-12">Saat ini apakah pasien membutuhkan pelayanan rohani?</label>--}}
                                     <div class="col-12">
                                         <input type="text" class="form-control" name="kebutuhan_pelayanan_rohani_pasien">
                                     </div>
@@ -393,7 +393,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row mb-5">
-                                    <label class="col-12">Penanggung jawab biaya perawatan pasien</label>
+                                    {{--<label class="col-12">Penanggung jawab biaya perawatan pasien</label>--}}
                                     <div class="col-12">
                                         <input type="text" class="form-control" name="penanggung_jawab_biaya_perawatan_pasien">
                                     </div>
@@ -1068,7 +1068,7 @@
                             </div>
                             <div class="col-12"><hr></div>
                             <div class="col-12">
-                                <h5 class="mb-5 mt-10">Asesmen Awal Resiko Jatuh</h5>
+                                <h5 class="mb-5 mt-10">Skrining Risiko Jatuh</h5>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group mb-5">
@@ -1353,6 +1353,74 @@
                             <div class="col-12">
                                 <h5 class="mb-5 mt-10">Skrining Gizi Awal</h5>
                             </div>
+                            @if($kasus->identitas->umur < 19)
+                        </div>
+                        <div class="row form-single-wrapper">
+                            <div class="col-md-2">
+                                <div class="form-group row mb-5">
+                                    <label class="col-12">Anak Tampak Kurus</label>
+                                    <div class="col-12">
+                                        <select class="form-control" style="width: 100%;" name="gizi_anak_tampak_kurus" onchange="calculateSelect(this, 'skrining_gizi')">
+                                            <option data-skor="0" value="Tidak">Tidak</option>
+                                            <option data-skor="1" value="Ya">Ya</option>
+                                        </select>
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row mb-5">
+                                    <label class="col-12">Ada penurunan BB dalam 1 bulan terakhir</label>
+                                    <div class="col-12">
+                                        <select class="form-control" style="width: 100%;" name="gizi_ada_turun_bb_1_bln" onchange="calculateSelect(this, 'skrining_gizi')">
+                                            <option data-skor="0" value="Tidak">Tidak</option>
+                                            <option data-skor="1" value="Ya">Ya</option>
+                                        </select>
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class="col-md-7">
+                                <div class="form-group row mb-5">
+                                    <label class="col-12">Ada salah satu kondisi (diare >= 5x/hari,muntah 3x/hari dalam seminggu terakhir, makan berkurang dalam 1 minggu terakhir)</label>
+                                    <div class="col-12">
+                                        <select class="form-control" style="width: 100%;" name="gizi_ada_salah_satu_kondisi" onchange="calculateSelect(this, 'skrining_gizi')">
+                                            <option data-skor="0" value="Tidak">Tidak</option>
+                                            <option data-skor="1" value="Ya">Ya</option>
+                                        </select>
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group row mb-5">
+                                    <label class="col-12">Ada penyakit / keadaan yang mengakibatkan malnutrisi</label>
+                                    <div class="col-12">
+                                        <select class="form-control" style="width: 100%;" name="gizi_ada_penyakit_malnutrisi" onchange="calculateSelect(this, 'skrining_gizi')">
+                                            <option data-skor="0" value="Tidak">Tidak</option>
+                                            <option data-skor="2" value="Ya">Ya</option>
+                                        </select>
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row mb-5">
+                                    <label class="col-12">Skor Akhir</label>
+                                    <div class="col-12">
+                                        <input type="text" name="gizi_skor_akhir" class="form-control input-skor-skrining_gizi" id="" readonly>
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group row mb-5">
+                                    <label class="col-12">Resiko</label>
+                                    <div class="col-12">
+                                        <select class="form-control hasil-resiko-skrining_gizi" name="gizi_hasil_resiko" readonly>
+                                            <option value="Rendah (0)">Rendah (0)</option>
+                                            <option value="Sedang (1-3)">Sedang (1-3)</option>
+                                            <option value="Berat (4-5)">Berat (4-5)</option>
+                                        </select>
+                                    </div>
+                                </div>  
+                            </div>
+                            @else
                             <div class="col-md-3">
                                 <div class="form-group row mb-5">
                                     <label class="col-12">Penurunan Berat Badan 6 Bulan Terakhir</label>
@@ -1388,6 +1456,7 @@
                                     </div>
                                 </div>  
                             </div>
+                            @endif
                             <hr class="col-11">
                             <div class="col-12">
                                 <h5 class="mb-5 mt-10">Perencanaan Pulang Pasien</h5>
@@ -1449,7 +1518,7 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="form-group row mb-5">
-                                    <label class="col-12">Masalah Keperawatan</label>
+                                    <label class="col-12">Kebutuhan Edukasi</label>
                                     <div class="col-12">
                                         <textarea class="form-control" name="masalah_keperawatan"></textarea>
                                     </div>

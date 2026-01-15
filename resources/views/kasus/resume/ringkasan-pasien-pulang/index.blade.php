@@ -1,4 +1,16 @@
 <div class="block-content">
+	@php $count = count($ringkasan_pasien_pulang) @endphp
+	{{-- @if(!empty($kasus->active_sep))
+	<button class="btn-alt btn-info min-width-125" onclick="printSEP()">Print SEP</button>
+	@endif
+	@if($count > 0)
+		<a href="resume/bukti-pelayanan" class="btn btn-primary mb-5 mr-5"
+			@empty($kasus->pasien) disabled="disabled" data-toggle="tooltip" title="Data Pasien belum terhubung!" @endempty
+			target="_blank">
+			<i class="fa fa-print mr-5"></i> Bukti Pelayanan
+		</a>
+	@endif --}}
+	<hr>
 	@if(session("my_role_".$kasus->nomor_kasus))
 	<button type="button" class="btn btn-primary min-width-125 float-right editBtn" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus"></i> Ringkasan Pasien Pulang Baru</button>
 	@endif
@@ -19,9 +31,7 @@
 
 	<h4>Ringkasan Pasien Pulang</h4>
 	<hr>
-	@php $count = count($ringkasan_pasien_pulang) @endphp
 	@forelse($ringkasan_pasien_pulang as $item)
-
 	@if($item->created_by == Auth::user()->id)
 	<button  class="btn btn-sm btn-circle btn-outline-danger mr-5 mb-5 pull-right deleteBtn" data-id="{{$item->id}}">
 		<i class="fa fa-trash"></i>
@@ -30,8 +40,11 @@
 		<i class="fa fa-pencil"></i>
 	</button>
 	@endif
-	<a type="btn" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/ringkasan-pasien-pulang/print/{{$item->id}}" class="btn btn-sm btn-circle btn-outline-secondary mr-5 mb-5 pull-right" target="_blank">
+	<a type="btn" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/ringkasan-pasien-pulang/print/{{$item->id}}" class="btn btn-sm btn-circle btn-outline-secondary mr-5 mb-5 pull-right" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print Format Jiwa">
 		<i class="fa fa-print"></i>
+	</a>
+	<a type="btn" style="color: green" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/asesmen/ringkasan-pasien-pulang/printnj/{{$item->id}}" class="btn btn-sm btn-circle btn-outline-secondary mr-5 mb-5 pull-right" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print Format Non Jiwa">
+		<i class="fa fa-print" style="color:green"></i>
 	</a>
 	<button  class="btn btn-sm btn-circle btn-outline-primary mr-5 mb-5 pull-right showBtn" data-id="{{$item->id}}" data-index="{{$loop->iteration - 1}}">
 		<i class="fa fa-search"></i>

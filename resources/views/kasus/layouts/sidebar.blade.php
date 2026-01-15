@@ -26,17 +26,17 @@
                 </a>
                 @endif
 
-                {{-- <a class="list-group-item list-group-item-action justify-content-between align-items-center svg @if($sidebar_active == 'operasi') active @endif" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/operasi">
+                <a class="list-group-item list-group-item-action justify-content-between align-items-center svg @if($sidebar_active == 'operasi') active @endif" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/operasi">
                     <img src="{{url('assets/icons/24/026-scalpel.png')}}">
                     <span class="title">Operasi</span>
-                </a> --}}
+                </a>
 
                 <a class="list-group-item list-group-item-action justify-content-between align-items-center svg @if($sidebar_active == 'gizi') active @endif" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/gizi">
                     <img src="{{url('assets/icons/24/064-medicine-1.png')}}">
                     <span class="title">Gizi</span>
                 </a>
 
-                <a class="list-group-item list-group-item-action justify-content-between align-items-center svg @if($sidebar_active == 'Farmasi') active @endif" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/farmasi/pengobatan-pasien">
+                <a class="list-group-item list-group-item-action justify-content-between align-items-center svg @if($sidebar_active == 'farmasi') active @endif" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/farmasi/pengobatan-pasien">
                     <img src="{{url('assets/icons/24/012-pills.png')}}">
                     <span class="title">Farmasi</span>
                 </a>
@@ -55,6 +55,11 @@
                 <a class="list-group-item list-group-item-action justify-content-between align-items-center svg @if($sidebar_active == 'alat') active @endif" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/alat-bantu">
                     <img src="{{url('assets/icons/24/051-heart-rate.png')}}">
                     <span class="title">Asesmen Lanjutan</span>
+                </a>
+
+                <a class="list-group-item list-group-item-action justify-content-between align-items-center svg @if($sidebar_active == 'daycare') active @endif" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/daycare">
+                    <img src="{{url('assets/icons/24/013-medical-history.png')}}">
+                    <span class="title">Day Care Rehabilitasi Psikososial</span>
                 </a>
 
                 <a class="list-group-item list-group-item-action justify-content-between align-items-center svg @if($sidebar_active == 'psikologi') active @endif" href="{{url('kasus')}}/{{$kasus->nomor_kasus}}/psikologi">

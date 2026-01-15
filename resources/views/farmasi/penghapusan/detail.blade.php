@@ -30,8 +30,34 @@ Farmasi Detail Penghapusan
             <div class="block block-transparent">
                 <div class="row">
                     <div class="col">
-                        <label>TANGGAL TRANSAKSI</label>
-                        <h5>{{ date('d F Y', strtotime($penghapusan->created_at)) }}</h5>
+                        <label>JENIS PENGHAPUSAN</label>
+                        <p>{{$penghapusan->penghapusan_jenis->nama ?? ''}}</p>
+                    </div>
+                    <div class="col">
+                        <label>SURAT PERINTAH</label>
+                        <p>{{$penghapusan->surat_perintah}}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label>TANGGAL PENGELUARAN</label>
+                        <p>
+                            @if(!empty($penghapusan->tgl_pengeluaran))
+                            {{ indonesian_date($penghapusan->tgl_pengeluaran) }}
+                            @else
+                            {{ indonesian_date($penghapusan->created_at) }}
+                            @endif
+                        </p>
+                    </div>
+                    <div class="col">
+                        <label>NO PENGELUARAN</label>
+                        <p>{{$penghapusan->no_pengeluaran}}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label>PENYEDIA</label>
+                        <p>{{$penghapusan->penyedia->nama ?? ''}}</p>
                     </div>
                     <div class="col">
                         <label>KETERANGAN</label>
@@ -64,7 +90,8 @@ Farmasi Detail Penghapusan
 
             <div class="mt-50">
                 <label>DI BUAT OLEH</label>
-                <h5 class="text-primary">{{$penghapusan->created_by_detail->name}}</h5>
+                <p>{{$penghapusan->created_by_detail->name}}, {{ indonesian_date($penghapusan->created_at) }}</p>
+                
             </div>
         </div>
     </div>
@@ -80,11 +107,45 @@ Farmasi Detail Penghapusan
                             <h3 class="block-title">Ubah Penghapusan</h3>
                         </div>
                         <div class="block-content">
-                            <div class="row">
-                                <div class="col-md-12">
+
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <label>JENIS PENGHAPUSAN</label>
+                                    <select class="form-control js-select2" name="jenis_penghapusan_id" style="width: 100%;">
+                                        @foreach($penghapusan_jenis as $item)
+                                        <option value="{{$item->id}}" @if($item->id == $penghapusan->penghapusan_jenis_id) selected @endif>{{$item->nama}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>SURAT PERINTAH</label>
+                                    <input type="text" class="form-control" name="surat_perintah" value="{{$penghapusan->surat_perintah ?? ''}}">
+                                </div>
+                            </div>
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <label>TANGGAL PENGELUARAN</label>
+                                    <input type="text" class="js-datepicker form-control tanggal-datepicker" data-date-format='dd-mm-yyyy' name="tgl_pengeluaran" placeholder="Masukkan Tanggal Penerimaan" autocomplete="off" value="{{!empty($penghapusan->tgl_pengeluaran) ? $penghapusan->tgl_pengeluaran->format('d-m-Y') : $penghapusan->created_at->format('d-m-Y')}}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>NO PENGELUARAN</label>
+                                    <input type="text" class="form-control" name="no_pengeluaran" value="{{$penghapusan->no_pengeluaran ?? ''}}">
+                                </div>
+                            </div>
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <label>PENYEDIA</label>
+                                    <select class="form-control js-select2" name="penyedia_id" style="width: 100%;">
+                                        <option value="">-</option>
+                                        @foreach($supplier as $supp)
+                                        <option value="{{$supp->id}}" @if($supp->id == $penghapusan->penyedia_id) selected @endif>{{$supp->nama}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="penyedia">Keterangan <small>(Opsional)</small></label>
-                                        <input type="text" class="form-control" name="keterangan" placeholder="Berikan Informasi Lebih" value="{{$penghapusan->keterangan}}">
+                                        <label for="penyedia">KETERANGAN <small>(Opsional)</small></label>
+                                        <input type="text" class="form-control" name="keterangan" placeholder="Berikan Informasi Lebih" value="{{$penghapusan->keterangan ?? ''}}">
                                     </div>
                                 </div>
                             </div>

@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Farmasi\Farmasi;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Farmasi\AturanEmbalase;
 use App\Models\Farmasi\Farmasi;
 use App\Models\Farmasi\AturanHarga;
 use App\Models\Farmasi\AturanShift;
+use App\Models\Farmasi\TipeRacikan;
 use DB;
 use Bugsnag;
 use Image;
@@ -127,6 +129,45 @@ class EditController extends Controller
 					} else continue;
 				}
 
+			// #Start Pengaturan Embalase
+			$embalase = $request->input('embalase') ?? [];
+			$aturan_embalase_ids = [];
+			foreach ($embalase as $item_embalase) {
+				$item_embalase = (object) $item_embalase;
+	
+				if ($item_embalase->harga != null) {
+					$aturan_embalase = $pharmacy->aturan_embalase
+						->where('perusahaan_tipe_id', $item_embalase->perusahaan_tipe_id)
+						->where('tipe_racikan_id', $item_embalase->tipe_racikan_id)->first();
+					if ($aturan_embalase == null) {
+						$aturan_embalase = new AturanEmbalase;
+					}
+	
+					$aturan_embalase->farmasi_id         = $pharmacy->id;
+					// $aturan_embalase->tipe_obat_id = $item_embalase->tipe_obat_id;
+					$aturan_embalase->perusahaan_tipe_id = $item_embalase->perusahaan_tipe_id;
+					// $aturan_embalase->harga_generik      = $item_embalase->harga_generik;
+					// $aturan_embalase->harga_racikan      = $item_embalase->harga_racikan;
+					$aturan_embalase->tipe_racikan_id = $item_embalase->tipe_racikan_id;
+					$aturan_embalase->jenis_embalase = $item_embalase->jenis_embalase;
+					$aturan_embalase->harga = $item_embalase->harga;
+					$aturan_embalase->save();
+	
+					$aturan_embalase_ids[] = $aturan_embalase->id;
+				}
+			}
+			AturanEmbalase::where('farmasi_id', $pharmacy->id)->whereNotIn('id', $aturan_embalase_ids)->delete();
+			// #End Pengaturan Embalase
+
+			# pengaturan tipe racikan beyond use date
+            $success_update_tipe_racikan = 0;
+			foreach ($request->tipe_racikan as $id => $beyond_use_date) {
+				$update_tipe_racikan = TipeRacikan::where('id', $id)->update([
+					'beyond_use_date' => $beyond_use_date,
+				]);
+                if ($update_tipe_racikan) $success_update_tipe_racikan++;
+			}
+			# end pengaturan tipe racikan beyond use date
 
 			$name ='Farmasi - '.$pharmacy->nama;
 			$lokasi = app('App\Http\Controllers\Hospital\Lokasi\EditController')->edit($pharmacy->lokasi_id,$name);
@@ -134,6 +175,11 @@ class EditController extends Controller
 			DB::connection('keuangan')->commit();
 			DB::connection('mysql')->commit();
 			DB::connection('farmasi')->commit();
+
+            if ($success_update_tipe_racikan > 0) {
+                session()->forget('temp_data_tipe_racikan');
+            }
+
 			return back()
 					->with('message', 'Pengaturan Farmasi berhasil diubah')
 	            	->with('status', 1)

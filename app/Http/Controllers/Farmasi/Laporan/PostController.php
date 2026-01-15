@@ -37,6 +37,15 @@ use App\Exports\Farmasi\LaporanRealisasi;
 use App\Exports\Farmasi\LaporanBpkSumberDana;
 use App\Exports\Farmasi\LaporanBPKPenerimaan;
 use App\Exports\Farmasi\LaporanBPKPemakaian;
+use App\Exports\Farmasi\LaporanPenghapusanBarangExcel;
+use App\Exports\General\TemplateGeneralExcel;
+use App\Models\Farmasi\SumberDana;
+use App\Models\Pasien\PembayaranPerusahaanType;
+use App\Exports\Farmasi\LaporanBeritaAcaraPemeriksaaanFormatBA;
+use App\Exports\Farmasi\LaporanBeritaAcaraPemeriksaanFormatLampiran;
+use App\Exports\Farmasi\LaporanRekapitulasiMutasiBarang;
+use App\Models\Farmasi\LogPengadaan;
+use App\Models\Farmasi\MasterKodeBidang;
 
 class PostController extends Controller
 {
@@ -135,6 +144,10 @@ class PostController extends Controller
 
     public function laporanResponseTimeHarian($farmasi_slug, Request $request)
     {
+        ini_set('max_execution_time', 400);
+        ini_set('memory_limit', '3048M');
+        ini_set("pcre.backtrack_limit", "5000000");
+
         try {
             $date_start = Carbon::createFromFormat('d/m/Y', $request->tanggal_awal)->startOfDay();
             $date_end = Carbon::createFromFormat('d/m/Y', $request->tanggal_akhir)->endOfDay();
@@ -192,18 +205,30 @@ class PostController extends Controller
 
     public function laporanResponseTimeTahunan($farmasi_slug, Request $request)
     {
+        ini_set('max_execution_time', 400);
+        ini_set('memory_limit', '3048M');
+        ini_set("pcre.backtrack_limit", "5000000");
+        
     	$date_start = Carbon::createFromFormat('d/m/Y', '01/01/'.$request->tahun)->startOfDay();
 		$date_end = Carbon::createFromFormat('d/m/Y', '31/12/'.$request->tahun)->endOfDay();
-
         $get_data = $this->getFarmasiIdsFromFilterFarmasi($request->farmasi_kriteria,$request->farmasi_ids);
         $farmasi_names = $get_data['farmasi_names'];
         $farmasi_ids = $get_data['farmasi_ids'];
+        $lokasi_id = $request->lokasi_id;
+        $lokasi_id_array = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\HelperDataController')->processLokasi($lokasi_id);
 
-		$data['data'] = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanResponseTimeTahunanController')->get($date_start,$date_end,$farmasi_ids);
+        if($lokasi_id == 'all') $lokasi_text = 'Semua';
+        else if($lokasi_id == 'all-rj') $lokasi_text = 'Rawat Jalan';
+        else if($lokasi_id == 'all-igd') $lokasi_text = 'IGD';
+        else if($lokasi_id == 'all-ri') $lokasi_text = 'Rawat Inap';
+        else $lokasi_text = '--';
+
+		$data['data'] = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanResponseTimeTahunanController')->get($date_start,$date_end,$farmasi_ids,$lokasi_id_array);
 
 		$filename = 'Laporan Response Time Tahunan__'.$farmasi_names.'__'.$date_start->format('d-m-Y').'__'.$date_end->format('d-m-Y');
 		$data['farmasi'] = $farmasi_names;
 		$data['tahun'] = $request->tahun;
+        $data['lokasi_text'] = $lokasi_text;
 		return (new LaporanResponseTimeTahunanExcel($data))->download($filename.'.xlsx');
     }
 
@@ -255,7 +280,7 @@ class PostController extends Controller
 		$date_end = Carbon::createFromFormat('d/m/Y', $request->tanggal_akhir)->endOfDay();
 		$jenis_resep = $request->jenis_resep;
 
-		$data['data'] = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanKesesuaianDokterFornasHarianController')->get($date_start,$date_end);
+		$data['data'] = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanKesesuaianDokterFornasHarianController')->get($date_start,$date_end, $jenis_resep);
 
         if($jenis_resep == 'fornas') $jenis_resep = 'Fornas';
         else $jenis_resep= 'Formularium RS';
@@ -375,6 +400,88 @@ class PostController extends Controller
         $data['kategori_names'] = $kategori_names;
 
 		return (new LaporanPerbekalanFarmasiExcel($data))->download($filename.'.xlsx');
+    }
+
+    public function laporanRekapitulasiMutasiBarang($farmasi_slug, Request $request)
+    {
+		$date_start = Carbon::createFromFormat('d/m/Y', $request->tanggal_awal)->startOfDay();
+		$date_end = Carbon::createFromFormat('d/m/Y', $request->tanggal_akhir)->endOfDay();
+        $master_kode_bidang_parent_ids = MasterKodeBidang::with([])
+            ->where(function ($query) use ($request) {
+                $query->whereIn('id', $request->master_kode_bidang_ids)
+                    ->whereNotNull('parent_id');
+            })
+            ->get(['parent_id'])->pluck('parent_id')->toArray();
+        $master_kode_bidang = MasterKodeBidang::with([])
+            ->where(function ($query) use ($request, $master_kode_bidang_parent_ids) {
+                $query->whereIn('id', array_unique(array_merge($request->master_kode_bidang_ids, $master_kode_bidang_parent_ids)));
+            })
+            ->get();
+        $item_template = ItemsTemplate::with([])
+            ->when(!empty($request->master_kode_bidang_ids), function ($query) use ($request) {
+                $query->whereIn('kode_bidang_id', $request->master_kode_bidang_ids);
+            })
+            ->when(!empty($request->master_kode_rekening_ids), function ($query) use ($request) {
+                $query->whereIn('kode_rekening_id', $request->master_kode_rekening_ids);
+            })
+            ->get();
+        $params['date_start'] = $date_start;
+        $params['date_end'] = $date_end;
+        $params['item_template_ids'] = $item_template->pluck('id')->toArray();;
+        $params['farmasi_ids'] = $request->farmasi_ids;
+        $params['sumber_dana_id'] = $request->sumber_dana_ids;
+        $params['sumber_dana_id'] = $request->sumber_dana_ids;
+        $params['katalog_id'] = $request->katalog_idss;
+
+		$data_laporan = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanPerbekalanFarmasiController')->get($params);
+        
+        # adjust column
+        $data_log_pengadaan = LogPengadaan::with('pengadaan')->whereIn('item_id', array_pluck($data_laporan, 'item_id'))->get();
+        $data_laporan = collect($data_laporan);
+        $sumber_dana_apbd_id = [4];
+        foreach ($data_laporan->whereIn('item_id', $data_log_pengadaan->pluck('item_id')) as $item) {
+            $item->log_pengadaan = $data_log_pengadaan->where('item_id', $item->item_id)->first();
+            $item->item_template = $item_template->where('id', $item->item_template_id)->first();
+            $item->kode_bidang_id = $item->item_template->kode_bidang_id;
+            $item->sumber_dana_id = $item->log_pengadaan->pengadaan->sumber_dana_id;
+            $item->katalog_id = $item->log_pengadaan->pengadaan->katalog_id;
+
+            # perhitungan
+            $item->keadaan_awal_jumlah = $item->stok_awal;
+            $item->keadaan_awal_subtotal = $item->keadaan_awal_jumlah * $item->harga;
+
+            $item->bertambah_apbd_jumlah = 0;
+            $item->bertambah_non_apbd_jumlah = 0;
+            if (in_array($item->sumber_dana_id, $sumber_dana_apbd_id)) {
+                $item->bertambah_apbd_jumlah += $item->penerimaan;
+            } else {
+                $item->bertambah_non_apbd_jumlah += $item->penerimaan;
+                if ($item->penyesuaian > 0) {
+                    $item->bertambah_non_apbd_jumlah += $item->penyesuaian;
+                }
+            }
+            $item->bertambah_apbd_subtotal = $item->bertambah_apbd_jumlah * $item->harga;
+            $item->bertambah_non_apbd_subtotal = $item->bertambah_non_apbd_jumlah * $item->harga;
+
+            $item->berkurang_jumlah = $item->pemakaian;
+            if ($item->penyesuaian < 0) {
+                $item->berkurang_jumlah += abs($item->penyesuaian);
+            }
+            $item->berkurang_subtotal = $item->berkurang_jumlah * $item->harga;
+
+            $item->keadaan_akhir_jumlah = $item->stok_akhir;
+            $item->keadaan_akhir_subtotal = $item->keadaan_akhir_jumlah * $item->harga;
+        }
+        $data['data'] = $data_laporan;
+
+		$filename = 'Laporan Rekapitulasi Mutasi Barang '.$date_start->format('d-m-Y').'__'.$date_end->format('d-m-Y');
+        $data['request'] = $request->all();
+        $data['master_kode_bidang'] = $master_kode_bidang;
+        $data['date_start'] = $date_start;
+        $data['date_end'] = $date_end;
+        $data['farmasi_list'] = Farmasi::find($request->farmasi_ids);
+
+		return (new LaporanRekapitulasiMutasiBarang($data))->download($filename.'.xlsx');
     }
 
     public function mutasiStokEmergensi($farmasi_slug, Request $request)
@@ -570,7 +677,13 @@ class PostController extends Controller
         $farmasi_names = $get_data['farmasi_names'];
         $farmasi_ids = $get_data['farmasi_ids'];
 
-		$data['data'] = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanBarangTelahExpiredController')->get($farmasi_ids);
+        $temp_data = $this->getTemplateIdsFromFilterKategori("inklusi",$request->kategori);
+        $item_template_ids = $temp_data['item_template_ids'];
+        $produsen_ids = $request->produsen_ids ?? [];
+        $supplier_ids = $request->supplier_ids ?? [];
+        $sumber_dana_ids = $request->sumber_dana_ids ?? [];
+        
+		$data['data'] = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanBarangTelahExpiredController')->get($farmasi_ids,$item_template_ids,$produsen_ids,$supplier_ids,$sumber_dana_ids);
 
 		$filename = 'Laporan Barang Telah Expired__'.$farmasi_names.'__'.$today;
         $data['farmasi_names'] = $farmasi_names;
@@ -587,7 +700,13 @@ class PostController extends Controller
 
 		$batas_hari = $request->batas_hari;
 
-		$data = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanBarangMendekatiExpiredController')->get($farmasi_ids,$batas_hari);
+        $temp_data = $this->getTemplateIdsFromFilterKategori("inklusi",$request->kategori);
+        $item_template_ids = $temp_data['item_template_ids'];
+        $produsen_ids = $request->produsen_ids ?? [];
+        $supplier_ids = $request->supplier_ids ?? [];
+        $sumber_dana_ids = $request->sumber_dana_ids ?? [];
+
+		$data = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanBarangMendekatiExpiredController')->get($farmasi_ids,$batas_hari,$item_template_ids,$produsen_ids,$supplier_ids,$sumber_dana_ids);
 
 		$filename = 'Laporan Barang Mendekati Expired__'.$farmasi_names.'__'.$today;
         $data['farmasi_names'] = $farmasi_names;
@@ -793,9 +912,181 @@ class PostController extends Controller
         }
     }
 
+    public function laporanPenghapusanBarang($farmasi_slug, Request $request)
+    {
+		$tanggal_awal = Carbon::createFromFormat('d/m/Y', $request->tanggal_awal)->startOfDay();
+		$tanggal_akhir = Carbon::createFromFormat('d/m/Y', $request->tanggal_akhir)->endOfDay();
+
+        $get_data = $this->getFarmasiIdsFromFilterFarmasi($request->farmasi_kriteria,$request->farmasi_ids);
+        $farmasi_names = $get_data['farmasi_names'];
+        $farmasi_ids = $get_data['farmasi_ids'];
+
+        $temp_data = $this->getTemplateIdsFromFilterKategori("inklusi",$request->kategori);
+        $item_template_ids = $temp_data['item_template_ids'];
+        $produsen_ids = $request->produsen_ids ?? [];
+        $supplier_ids = $request->supplier_ids ?? [];
+        $sumber_dana_ids = $request->sumber_dana_ids ?? [];
+
+        $date_start = $tanggal_awal->copy()->format('Ymd');
+        $date_end = $tanggal_akhir->copy()->format('Ymd');
+
+		$data['data'] = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanPenghapusanBarangController')->get($tanggal_awal,$tanggal_akhir,$farmasi_ids,$item_template_ids,$produsen_ids,$supplier_ids,$sumber_dana_ids);
+		$filename = 'Laporan Penghapusan Barang__'.$farmasi_names.'__'.$date_start.'-'.$date_end;
+        $data['farmasi_names'] = $farmasi_names;
+        $data['date_start'] = $tanggal_awal;
+        $data['date_end'] = $tanggal_akhir;
+
+		return (new LaporanPenghapusanBarangExcel($data))->download($filename.'.xlsx');
+    }
+
+    public function laporanTransaksiFarmasi($farmasi_slug, Request $request)
+    {
+        $data['tanggal_awal'] = Carbon::createFromFormat('d/m/Y', $request->tanggal_awal)->startOfDay();
+		$data['tanggal_akhir'] = Carbon::createFromFormat('d/m/Y', $request->tanggal_akhir)->endOfDay();
 
 
+        $get_data = $this->getFarmasiIdsFromFilterFarmasi('inklusi',$request->farmasi_ids);
+        $data['farmasi_names'] = $get_data['farmasi_names'];
+        $data['farmasi_ids'] = $get_data['farmasi_ids'];
+        
+        $temp_data = $this->getTemplateIdsFromFilterKategori("inklusi",$request->kategori);
+        $data['item_template_ids'] = $temp_data['item_template_ids'];
+        $data['kategori_names'] = $temp_data['kategori_names'];
 
+        $tipe_laporan = $request->tipe_laporan;
+        
+        $lokasi_id = $request->lokasi_id;
+        $data['lokasi_ids'] = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\HelperDataController')->processLokasi($lokasi_id);
+        if($lokasi_id == 'all') $data['lokasi_names'] = "Semua";
+        else if($lokasi_id == 'all-rj') $data['lokasi_names'] = "Semua Rawat Jalan";
+        else if($lokasi_id == 'all-ri') $data['lokasi_names'] = "Semua Rawat Inap";
+        else if($lokasi_id == 'all-igd') $data['lokasi_names'] = "Semua IGD";
+
+        $jenis_resep = $request->jenis_resep;
+        $data['jenis_resep'] = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\HelperDataController')->processResepJenis($jenis_resep);
+        if($jenis_resep == '0') $data['jenis_resep_name'] = 'Non Racikan';
+        else if($jenis_resep == '1') $data['jenis_resep_name'] = 'Racikan';
+        else $data['jenis_resep_name'] = 'Semua';
+
+        $no_rm = $request->no_rm;
+        $data['no_rm'] = $no_rm;
+
+        // $sumber_dana_id = $request->sumber_dana_ids ?? [];
+        // if(empty($sumber_dana_id)) $sumber_dana_ids = SumberDana::get()->pluck('id')->toArray();
+        // else $sumber_dana_ids = $sumber_dana_id;
+        // $data['sumber_dana_ids'] = $sumber_dana_ids;
+
+        $asuransi_ids = $request->asuransi_ids;
+        $asuransi_tipe_id = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\HelperDataController')->processAsuransi($asuransi_ids);
+        $data['asuransi_tipe_id'] = $asuransi_tipe_id;
+        $asuransi_names = PembayaranPerusahaanType::whereIn('id',$asuransi_tipe_id)->get()->pluck('nama')->toArray();
+        $data['asuransi_names'] = implode(',',$asuransi_names);
+
+        $data['data'] = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanTransaksiFarmasiController')->getData($data);
+        $date_start = $data['tanggal_awal']->copy()->format('Ymd');
+        $date_end = $data['tanggal_akhir']->copy()->format('Ymd');
+        $filename = 'Laporan Transaksi Farmasi__'.$data['farmasi_names'].'__'.$date_start.'-'.$date_end;
+        $data['farmasi_names'] = $data['farmasi_names'];
+        
+        $alphabet = range('A', 'Z');
+        if($tipe_laporan == 'bpjs'){
+            $data['view'] = 'farmasi.laporan.laporan-transaksi-farmasi-bpjs-excel';
+            $max_col_number = 24;
+            
+        }
+        else{
+            $max_col_number = 16;
+            $data['view'] = 'farmasi.laporan.laporan-transaksi-farmasi-umum-excel';
+        }
+        $max_column = $alphabet[$max_col_number];
+
+        $max_row = count($data['data'])+11;
+        $data['cellBorder'][] = "A10:".$max_column.$max_row;
+        $data['cellCenterTextVertical'][] = "A10:".$max_column.$max_row;
+        $data['cellCenterText'][] = "A1:".$max_column."11";
+        
+
+        for ($i = 0; $i <= $max_col_number; $i++) {
+            if ($i > 6) $data['numberFormat'][] = $alphabet[$i];
+            if ($i == 0) $array['width'] = 6;
+            else if ($i == 1) $array['width'] = 22;
+            else if ($i == 2) $array['width'] = 10;
+            else if ($i > 5) $array['width'] = 8;
+            else if ($i > 2) $array['width'] = 14;
+            $array['col'] = $alphabet[$i];
+            $data['cellWidth'][] = $array;
+        }
+
+		return (new TemplateGeneralExcel($data))->download($filename.'.xlsx');
+    }
+
+    public function laporanRealisasiPengadaan($farmasi_slug, Request $request)
+    {
+        $data['tanggal_awal'] = Carbon::createFromFormat('d/m/Y', $request->tanggal_awal)->startOfDay();
+		$data['tanggal_akhir'] = Carbon::createFromFormat('d/m/Y', $request->tanggal_akhir)->endOfDay();
+        
+        $temp_data = $this->getTemplateIdsFromFilterKategori("inklusi",$request->kategori);
+        $data['item_template_ids'] = $temp_data['item_template_ids'];
+        $data['kategori_names'] = $temp_data['kategori_names'];
+
+        $data['data'] = app('App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanRealisaiPengadaanController')->getData($data);
+        
+        $date_start = $data['tanggal_awal']->copy()->format('Ymd');
+        $date_end = $data['tanggal_akhir']->copy()->format('Ymd');
+
+
+        $kategori_generik = app(\App\Http\Controllers\Farmasi\Kategori\ReadController::class)->getSingle('generik')->id;
+        $kategori_formularium = app(\App\Http\Controllers\Farmasi\Kategori\ReadController::class)->getSingle('formularium-rs')->id;
+        $kategori_ekatalog = app(\App\Http\Controllers\Farmasi\Kategori\ReadController::class)->getSingle('e-katalog')->id ?? 0;
+       
+        $data['array_formularium_rs'] = app(\App\Http\Controllers\Farmasi\Kategori\ReadController::class)->getItemTemplateIdByItemKategori($kategori_formularium);
+        $data['array_generik'] = app(\App\Http\Controllers\Farmasi\Kategori\ReadController::class)->getItemTemplateIdByItemKategori($kategori_generik);
+        $data['array_ekatalog'] = app(\App\Http\Controllers\Farmasi\Kategori\ReadController::class)->getItemTemplateIdByItemKategori($kategori_ekatalog);
+       
+        $filename = 'Laporan Realisasi Pengadan__'.$date_start.'-'.$date_end;
+        $data['view'] = 'farmasi.laporan.laporan-realisasi-pengadaan';
+        $max_column = "N";
+        $max_row = count($data['data'])+6;
+
+        $data['cellBorder'][] = "A5:".$max_column.$max_row;
+        $data['cellCenterTextVertical'][] = "A1:".$max_column.$max_row;
+        $data['cellCenterText'][] = "A1:".$max_column."6";
+        $data['cellCenterText'][] = "A1:A".$max_row;
+        $temp_array['width'] = 14;
+        $temp_array['col'] = "B";
+        $data['cellWidth'][] = $temp_array;
+
+
+		return (new TemplateGeneralExcel($data))->download($filename.'.xlsx');
+
+    }
+
+  
+    public function laporanBeritaAcaraPemeriksaan(Request $request)
+    {
+        $data['sumber_dana_id'] = $request->sumber_dana_id;
+        $data['kode_rekening_id'] = $request->kode_rekening_id;
+        $data['katalog_id'] = $request->katalog_id;
+        $data['kode_bidang_id'] = $request->kode_bidang_id;
+        $data['no_berita_acara'] = $request->no_berita_acara;
+        $data_temp = $this->getFarmasiIdsFromFilterFarmasi($request->farmasi_kriteria,$request->farmasi_ids);
+        $data['farmasi_ids'] = $data_temp['farmasi_ids'];
+        $data['farmasi_names'] = $data_temp['farmasi_names'];
+
+        $data['tanggal'] = Carbon::createFromFormat('d/m/Y',$request->tanggal)->endOfDay();
+        $data['jenis_dokumen'] = $request->jenis_dokumen;
+
+        $data['data'] = app(\App\Http\Controllers\Farmasi\Laporan\LaporanController\LaporanBeritaAcaraPemeriksaanController::class)->get($data);
+        
+        $filename = 'Laporan Berita Acara Pemeriksaan__'.$data['jenis_dokumen'].'__'.$data['tanggal']->copy()->format('dmY');
+        
+        if($data['jenis_dokumen'] == 'berita-acara')
+            return (new LaporanBeritaAcaraPemeriksaaanFormatBA($data))->download($filename.'.xlsx');
+        else
+            return (new LaporanBeritaAcaraPemeriksaanFormatLampiran($data))->download($filename.'.xlsx');
+            
+
+    }
 
 
 

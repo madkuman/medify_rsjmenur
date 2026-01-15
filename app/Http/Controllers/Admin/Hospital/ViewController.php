@@ -49,6 +49,8 @@ class ViewController extends Controller
         $data['opentok_api_key'] = config('app.opentok_api_key');
         $data['opentok_api_secret'] = config('app.opentok_api_secret');
 		$data['logo_header_rsonline'] = config('app.logo_header_rsonline');
+		$data['longitude'] = config('app.longitude');
+		$data['latitude'] = config('app.latitude');
 		return view('admin.hospital.index', $data);
 	}
 }

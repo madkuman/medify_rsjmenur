@@ -2,24 +2,22 @@
 
 namespace App\Http\Controllers\Kasus\Farmasi\CatatanPengobatanPasien;
 
-use App\Models\Kasus\Resep;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Kasus\Kasus;
 use App\Models\Kasus\CatatanPengobatanPasien;
 use App\Models\Kasus\CatatanPengobatanPasienDetail;
-use App\Exports\Kasus\CatatanPengobatanPasienExcel;
 use Carbon\Carbon;
 use DB;
 use MPDF;
+use DOMPDF;
 
 class ViewController extends Controller
 {
-
 	public function print($nomor_kasus)
-    {
-		$kasus = Kasus::where('nomor_kasus',$nomor_kasus)->first();
-		
+	{
+		$kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
+
 
 		$data = $this->getData($kasus);
 		$data['kasus'] = $kasus;
@@ -28,93 +26,105 @@ class ViewController extends Controller
 			'mode' => 'utf-8',
 			'format' => 'A4'
 		]);
-		$filename = $kasus->pasien->no_rm.'-pemberian-obat-pasien-'.$kasus->id.'.pdf';
+		$filename = $kasus->pasien->no_rm . '-pemberian-obat-pasien-' . $kasus->id . '.pdf';
 
 		return $pdf->stream($filename);
+	}
 
-    }
-
-    public function excel($nomor_kasus)
-    {
-		$kasus = Kasus::where('nomor_kasus',$nomor_kasus)->first();
-		$pengobatan = CatatanPengobatanPasien::with(['item_master','details.verifikator_1','details.verifikator_2'])->where('kasus_id',$kasus->id)->orderBy('id','desc')->get();
-		
-		$pengobatan_id = $pengobatan->pluck('id')->toArray();
-
-		$riwayat = CatatanPengobatanPasienDetail::whereIn('catatan_pengobatan_pasien_id',$pengobatan_id)->orderBy('pemberian_at','asc')->get();
-        $obat = Resep::select(DB::Raw('IFNULL(obat_name,racikan) as nama_obat, aturan,sum(jumlah) as jumlah'))->join('resep_detail','resep.id','=','resep_detail.kasus_resep_id')->where('kasus_id',$kasus->id)->whereHas('transaksi_farmasi',function ($query){
-            $query->from(config('app.db_name').'_farmasi.transaksi_obat');
-            $query->where('status',1);
-        })->groupby('nama_obat','aturan')->get();
-        $new_obat=[];
-        foreach ($obat as $item){
-            $new_obat[$item->nama_obat][$item->aturan] = $item->jumlah;
-        }
-		$riwayat_date = [];
-		$riwayat_date_count = [];
-
-		if(count($riwayat) > 0){
-			$start = Carbon::parse($riwayat[0]->pemberian_at);
-			$end = Carbon::parse($riwayat[count($riwayat)-1]->pemberian_at);
-			$current = Carbon::parse($riwayat[0]->pemberian_at);
-
-			while($current <= $end)
-			{
-				$riwayat_date[] = $current->startOfDay()->copy();
-				$current->addDay();
-			}
-		}
-		$riwayat_date = array_unique($riwayat_date);
-
-		foreach($riwayat_date as $item)
-		{
-			$start = $item->copy()->startOfDay();
-			$end = $item->copy()->endOfDay();
-
-			$count = CatatanPengobatanPasienDetail::select(DB::raw('count(1) as total'))->whereIn('catatan_pengobatan_pasien_id',$pengobatan_id)->whereBetween('pemberian_at',[$start,$end])->groupBy('catatan_pengobatan_pasien_id')->orderBy('total','desc')->first();
-			if(!empty($count)) $total = $count->total;
-			else $total = 0;
-
-			if($total < 6) $total = 6;
-
-			$riwayat_date_count[$item->format('d F Y')] = $total;
-		}
-
+	public function cetakRiwayatPemberianObat(Request $request, $nomor_kasus)
+	{
+		$kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
 		$data['kasus'] = $kasus;
-		$data['pengobatan'] = $pengobatan;
-		$data['riwayat'] = $riwayat;
-		$data['riwayat_date'] = $riwayat_date;
-		$data['riwayat_date_count'] = $riwayat_date_count;
-        $data['obat_resep'] = $new_obat;
+		$data['data'] = [];
+		$data['carbon_tanggal'] = $carbon_tanggal = Carbon::createFromFormat('d/m/Y', $request->tanggal);
+		$data['format'] = $request->format ?? 'dengan_telaah_obat';
+		$list_pemberian_obat = [];
 
-		$filename = $kasus->pasien->no_rm.'-pemberian-obat-pasien-'.$kasus->id;
+		$eager = [
+			'farmasi_resep_detail.resep.transaksi.transaksi_obat_telaah_obat_penyiapan',
+			'farmasi_resep_detail.resep.transaksi.transaksi_obat_telaah_obat_pengemasan',
+			'farmasi_resep_detail.resep.transaksi.transaksi_obat_telaah_obat_penyerahan',
+			'farmasi_resep_detail.resep.transaksi.transaksi_obat_telaah_obat_penerimaan_perawat',
+			'details' => function ($query) use ($carbon_tanggal) {
+				$query->whereBetween('pemberian_at', [$carbon_tanggal->copy()->startOfDay(), $carbon_tanggal->copy()->endOfDay()]);
+			}
+		];
+		$catatan_pengobatan_pasien = CatatanPengobatanPasien::with($eager)
+			->where('kasus_id', $kasus->id)
+			->whereHas('details', function ($query) use ($carbon_tanggal) {
+				$query->whereBetween('pemberian_at', [$carbon_tanggal->copy()->startOfDay(), $carbon_tanggal->copy()->endOfDay()]);
+			})
+			->get();
+		foreach ($catatan_pengobatan_pasien as $item) {
+			$item_pemberian_obat['catatan_pengobatan_pasien'] = $item;
+			$item_pemberian_obat['total_obat'] = $item->farmasi_resep_detail->sum('jumlah');
 
-		return (new CatatanPengobatanPasienExcel($data))->download($filename.'.xlsx');
-    }
+			$item_pemberian_obat['aturan_pakai_1'] = [
+				'catatan_pengobatan_pasien_detail' => null,
+				'resep_detail' => [],
+			];
+			$item_pemberian_obat['aturan_pakai_2'] = [
+				'catatan_pengobatan_pasien_detail' => null,
+				'resep_detail' => [],
+			];
+			$item_pemberian_obat['aturan_pakai_3'] = [
+				'catatan_pengobatan_pasien_detail' => null,
+				'resep_detail' => [],
+			];
+			$item_pemberian_obat['aturan_pakai_4'] = [
+				'catatan_pengobatan_pasien_detail' => null,
+				'resep_detail' => [],
+			];
+			$item_pemberian_obat['aturan_pakai_5'] = [
+				'catatan_pengobatan_pasien_detail' => null,
+				'resep_detail' => [],
+			];
+			foreach ($item->details as $detail) {
+				$jam = $detail->pemberian_at->format('H');
+				$aturan_pakai = '';
+				if ($jam <= 7) {
+					$aturan_pakai = "5";
+				} else if ($jam >= 21) {
+					$aturan_pakai = "4";
+				} else if ($jam >= 19) {
+					$aturan_pakai = "3";
+				} else if ($jam >= 13) {
+					$aturan_pakai = "2";
+				} else if ($jam >= 7) {
+					$aturan_pakai = "1";
+				}
+				$item_pemberian_obat['aturan_pakai_' . $aturan_pakai]['catatan_pengobatan_pasien_detail'] = $detail;
+				$item_pemberian_obat['aturan_pakai_' . $aturan_pakai]['resep_detail'][] = $item->farmasi_resep_detail->where('id', $detail->farmasi_resep_detail_id)->first();
+			}
+			$list_pemberian_obat[] = $item_pemberian_obat;
+		}
+		$data['list_pemberian_obat'] = $list_pemberian_obat;
+		$pdf = DOMPDF::loadView('kasus.farmasi.printout.cetak-riwayat-pemberian-obat', $data)->setPaper('legal', 'landscape');
+		return $pdf->stream('cetak riwayat pemberian obat.pdf');
+	}
 
-    public function getData($kasus)
-    {
-    	$obat = CatatanPengobatanPasien::with('details')->where('kasus_id',$kasus->id)->orderBy('id','desc')->get();
+	public function getData($kasus)
+	{
+		$obat = CatatanPengobatanPasien::with('details')->where('kasus_id', $kasus->id)->orderBy('id', 'desc')->get();
 
 		$data_pemberian = [];
 		$data_obat = [];
 
-		foreach($obat as $obat_item){
+		foreach ($obat as $obat_item) {
 			$last_date = '';
-			$data_obat[$obat_item->id]= $obat_item;
-			foreach($obat_item->details as $pemberian)
-			{
-				$current_date = Carbon::parse($pemberian->pemberian_at)->format('d-m-Y');
-				if($last_date != $current_date) {
+			$data_obat[$obat_item->id] = $obat_item;
+			foreach ($obat_item->details as $pemberian) {
+				$current_date = date('d-m-Y', strtotime($pemberian->pemberian_at));
+				if ($last_date != $current_date) {
 					$i = 1;
 					$last_date = $current_date;
 				}
-				$data_pemberian[$obat_item->id][$current_date][$i++] = Carbon::parse($pemberian->pemberian_at)->format('H:i');
+				$data_pemberian[$obat_item->id][$current_date][$i++] = date('H:i', strtotime($pemberian->pemberian_at));;
 			}
 		}
 		$data['data'] = $data_pemberian;
 		$data['obat'] = $data_obat;
 
 		return $data;
-    }
+	}
 }

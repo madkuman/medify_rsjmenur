@@ -137,7 +137,7 @@
 		var item = data[$(this).data("index")];
 		if (item != "" && item != undefined) {
 			$("#id").val(item.id);
-			@include("kasus.asesmen.asesmen-pendidikan-pasien-dan-keluarga.js-form-edit")
+			@include("kasus.asesmen.asesmen-pendidikan-pasien-dan-keluarga.js-form-edit");
 		} else {
 			$("#id").val(0);
 			@include("kasus.asesmen.asesmen-pendidikan-pasien-dan-keluarga.js-form-create")
@@ -183,6 +183,8 @@
 		id = $(this).data("id");
 
 		var item = data[$(this).data("index")];
+		// console.log(item.hambatan);
+		
 		var agama_pasien = item.agama_pasien ? item.agama_pasien : "-";
 		var keyakinan_pasien_pantangan_pemeriksaan_hari_tertentu = item.keyakinan_pasien_pantangan_pemeriksaan_hari_tertentu ? "✔️" : "-";
 		var keyakinan_pasien_pantangan_masuk_keluar_rs_hari_tertentu = item.keyakinan_pasien_pantangan_masuk_keluar_rs_hari_tertentu ? "✔️" : "-";
@@ -261,6 +263,69 @@
 		var kebutuhan_edukasi_keluarga_general_consent = item.kebutuhan_edukasi_keluarga_general_consent ? "✔️" : "-";
 		var rencana_edukasi_keluarga_tanggal = item.rencana_edukasi_keluarga_tanggal ? formatDate(item.rencana_edukasi_keluarga_tanggal) : "-";
 		var agama_keluarga_pasien = item.agama_keluarga_pasien ? item.agama_keluarga_pasien : "-";
+
+		if (item.hambatan != null) {
+			var data_hambatan = item.hambatan.split(",");
+			var data_hambatan2 = [];
+			$.each(data_hambatan,function(i, value){
+				var value = value.trim();
+				data_hambatan2.push(value);
+			});
+			var hambatan_pendengaran = data_hambatan2.includes("Pendengaran") ? munculkanHambatan("Pendengaran") : "-";
+			var hambatan_penglihatan = data_hambatan2.includes("Penglihatan") ? munculkanHambatan("Penglihatan") : "-";
+			var hambatan_kognitif = data_hambatan2.includes("Kognitif") ? munculkanHambatan("Kognitif"): "-";
+			var hambatan_Fisik = data_hambatan2.includes("Fisik") ? munculkanHambatan("Fisik") : "-";
+			var hambatan_Budaya = data_hambatan2.includes("Budaya") ? munculkanHambatan("Budaya") : "-";
+			var hambatan_Agama = data_hambatan2.includes("Agama") ? munculkanHambatan("Agama") : "-";
+			var hambatan_Emosi = data_hambatan2.includes("Emosi") ? munculkanHambatan("Emosi") : "-";
+			var hambatan_Bahasa = data_hambatan2.includes("Bahasa") ? munculkanHambatan("Bahasa") : "-";
+			function munculkanHambatan(string){
+				index = data_hambatan2.findIndex(item => item == string);
+				data_hambatan2.splice(index, 1);  
+				return "✔️";
+			};
+			var hambatan_lain = data_hambatan2.join( );
+		} else {
+			var hambatan_pendengaran =  "-";
+			var hambatan_penglihatan =  "-";
+			var hambatan_kognitif = "-";
+			var hambatan_Fisik =  "-";
+			var hambatan_Budaya = "-";
+			var hambatan_Agama = "-";
+			var hambatan_Emosi = "-";
+			var hambatan_Bahasa ="-";
+			var hambatan_lain = "-";
+		}
+		var penerjemah = item.penerjemah ?? '-';
+	
+		if (item.pembelajaran !=null) {		
+			var data_pembelajaran = item.pembelajaran.split(",");
+			var data_pembelajaran2 = [];
+			$.each(data_pembelajaran,function(i, value2){
+				var value2 = value2.trim();
+				data_pembelajaran2.push(value2);
+			});
+			var kebutuhan_diagnosa = data_pembelajaran2.includes("Diagnosa & Manajemen") ? munculkanKebutuhan("Diagnosa & Manajemen"): "-";
+			var kebutuhan_manajemen = data_pembelajaran2.includes("Manajemen Nyeri") ? munculkanKebutuhan("Manajemen Nyeri"): "-";
+			var kebutuhan_obat = data_pembelajaran2.includes("Obat-obatan") ? munculkanKebutuhan("Obat-obatan"): "-";
+			var kebutuhan_diet = data_pembelajaran2.includes("Diet dan Nutrisi") ? munculkanKebutuhan("Diet dan Nutrisi"): "-";
+			var kebutuhan_perawatan = data_pembelajaran2.includes("Perawatan Luka") ? munculkanKebutuhan("Perawatan Luka"): "-";
+			var kebutuhan_rehabilitas = data_pembelajaran2.includes("Rehabilitas") ? munculkanKebutuhan("Rehabilitas"): "-";
+			function munculkanKebutuhan(string){
+				index = data_pembelajaran2.findIndex(item => item == string);
+				data_pembelajaran2.splice(index, 1);  
+				return "✔️";
+			};
+			var kebutuhan_lain = data_pembelajaran2.join( );
+		} else {
+			var kebutuhan_diagnosa =  "-";
+			var kebutuhan_manajemen =  "-";
+			var kebutuhan_obat =  "-";
+			var kebutuhan_diet = "-";
+			var kebutuhan_perawatan = "-";
+			var kebutuhan_rehabilitas = "-";
+			var kebutuhan_lain = "-";
+		};
 		
 		var hasil = `@include("kasus.asesmen.asesmen-pendidikan-pasien-dan-keluarga.hasil")`;
 		$("#showModalHasil #myModalBody").html(hasil);

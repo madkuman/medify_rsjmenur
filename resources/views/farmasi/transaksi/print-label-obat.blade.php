@@ -68,7 +68,7 @@
 		<div style="margin-top: 0px;">
 			<table class="tiny" width="100%">
 				<tr>
-					<td width="34%">No: {{$transaksi->final_detail->nomor_resep}}</td>
+					<td width="34%">No: {{$transaksi->nomor_antrian }}</td>
 					<td width="33%">Tgl: {{ date('d M Y') }}</td>
 					<td width="33%">Tgl lhr: {{$transaksi->pasien_detail ? date("d/m/Y", strtotime($transaksi->pasien_detail->date_of_birth)) : '-'}}</td>
 				</tr>

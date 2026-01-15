@@ -20,13 +20,16 @@ use Illuminate\Http\Request;
 use App\User;
 use Auth;
 use App\Http\Controllers\Controller;
+use App\Kasus\Readback;
+use App\Models\Gizi\BentukMakanan;
+use App\Models\Gizi\WaktuMakan;
 use App\Models\Pasien\JenisPekerjaan;
 use App\Models\Keuangan\TarifTipe;
 use DOMPDF;
 use Session;
 
 define('relasi', ['pasien', 'end_by_creator', 
-    'TransaksiRawatInap', 'myInvitation.user', ]);
+    'TransaksiRawatInap', 'myInvitation.user', 'kolaborator']);
 
 class ViewController extends Controller
 {
@@ -120,6 +123,9 @@ class ViewController extends Controller
         $data['sidebar_active'] = 'datamedis';
         $data['nomor_kasus'] = $nomorKasus;
         $data['active_nav'] = 'cppt';
+        $data['unread_readback'] = Readback::whereHas('cppt', function ($query) use ($kasus) {
+            $query->where('kasus_id', $kasus->id);
+        })->whereNull('verified_at')->where('dokter_id', auth()->id())->count() ?? 0;
         $data['last_asesmen_awal'] = $last_asesmen_awal;
 
         $log = app('App\Http\Controllers\Kasus\Log\CreateController')
@@ -231,15 +237,29 @@ class ViewController extends Controller
     {
         $kasus = Kasus::where('nomor_kasus', $nomorKasus)->with(relasi)->first();
         $data['kasus'] = $kasus;
-        $data['orders'] = Pemesanan::with(['diet', 'pembuat'])->where('kasus_id', $kasus->id)->orderBy('jadwal_pengantaran','desc')->get();
+        $data['fitur_header'] = '';
+        $fitur_alergi = config('medify.kasus.header_alergi.on');
+        if($fitur_alergi == 1 ) {
+            $data['fitur_header'] = $fitur_alergi;
+        }
+        $data['dpjp_name'] = '';
+        if(!empty($data['kasus']->Dpjp->user_id)) {
+           $data['dpjp_name'] = User::where('id', $data['kasus']->Dpjp->user_id)->pluck('name')->first();
+        }
+        $data['waktu_makan'] = WaktuMakan::all();
+        $data['orders'] = Pemesanan::with(['pemesanan_detail.diet', 'pembuat'])->where('kasus_id', $kasus->id)->orderBy('id','desc')->get();
+        $data['permintaan'] = app(\App\Http\Controllers\Kasus\Gizi\ReadController::class)->getByKasus($kasus->id)->keyBy('id')->sortByDesc('batch');
+        $data['permintaan_group'] = $data['permintaan']->groupBy('batch');
         $data['skrining'] = app('App\Http\Controllers\Kasus\AlatBantu\Gizi\ViewController')->getData($kasus->id);
 
-        $data['asesmen'] = AlatBantu::with(['creator'])->where('kasus_id',$kasus->id)
-                ->where('type', 'Asuhan Gizi')->orderBy('id','desc')->get();
+        $data['asesmen'] = AlatBantu::with(['creator'])->where('kasus_id',$kasus->id)->where('type', 'Asuhan Gizi')->orderBy('id','desc')->get();
 
-        $data['diet'] = app('App\Http\Controllers\Gizi\Pemesanan\ReadController')->getDiet();
+        $data['lokasi_ruangan']=Ruangan::with('lokasi')->get();
+        $data['diet'] = app('App\Http\Controllers\Gizi\Pengaturan\Diet\ReadController')->getAll();
+        $data['bentuk'] = BentukMakanan::all();
         $data['jenis_makanan_utama'] = JenisMakanan::where('utama',JenisMakanan::UTAMA)->get();
         $data['jenis_makanan_tambahan'] = JenisMakanan::where('utama',JenisMakanan::TAMBAHAN)->get();
+        
 
         $active_nav = Session('active_nav') ?? 'skrining-ulang';
 
@@ -284,6 +304,16 @@ class ViewController extends Controller
         $asesmen3 = AsesmenAwal3::whereIn('id', $asesmen2_ids)->orderBy('id', 'desc')
         ->get()
         ->keyBy('id');
+        $data['form_triage'] = AlatBantu::where('kasus_id', $kasus->id)->where('type', 'rsj-menur-rm-04-1-form-triage')->orderBy('created_at', 'desc')->get()->keyBy('id');
+        $data['asesmen_non_jiwa'] = AlatBantu::where('kasus_id', $kasus->id)
+                                    ->where(function($q){
+                                        $q->where('type', 'rsj-menur-asesmen-awal-dokter-gawat-darurat-non-jiwa')
+                                          ->orWhere('type', 'rsj-menur-asesmen-awal-dokter-rawat-jalan-non-jiwa')
+                                          ->orWhere('type', 'rsj-menur-asesmen-awal-dokter-rawat-inap-non-jiwa');
+                                     })
+                                     ->orderBy('created_at', 'desc')
+                                     ->get()
+                                     ->keyBy('id');
         $asesmen2 =$asesmen2->toArray();
         $asesmen =$asesmen->toArray();
         $asesmen3 =$asesmen3->toArray();
@@ -308,6 +338,7 @@ class ViewController extends Controller
         $data['nomor_kasus'] = $nomorKasus;
         $data['active_nav'] = 'asesmenawal';
         $data['icd_10'] = ICD10::SELECT('id','code_icd')->get()->keyBy('id')->toArray();
+    
         return view('kasus.datamedis.index', $data);
     }
 

@@ -72,6 +72,7 @@
         <td rowspan="2">Stok Awal</td>
         <td rowspan="2">Jumlah Penerimaan</td>
         <td colspan="3">Jumlah Penggunaan</td>
+        <td rowspan="2">Sisa Stok</td>
         <td rowspan="2">Harga Per Item</td>
         <td rowspan="2">Total Harga</td>
     </tr>
@@ -103,6 +104,7 @@
                 <td>{{$item['rj']}}</td>
                 <td>{{$item['ri']}}</td>
                 <td>=SUM(H{{$row}}:I{{$row}})</td>
+                <td>=F{{$row}}+G{{$row}}-J{{$row}}</td>
                 <td>{{$item['harga']}}</td>
                 <td>=J{{$row}}*K{{$row}}</td>
         </tr>

@@ -11,6 +11,7 @@ class Penghapusan extends Model
 	use DataLogger;
 	protected $connection = 'farmasi';
 	protected $table = 'penghapusan';
+	protected $dates = ['tgl_pengeluaran'];
 	
 	use SoftDeletes;
 
@@ -22,6 +23,17 @@ class Penghapusan extends Model
 	public function created_by_detail()
 	{
 		return $this->hasOne('App\User','id', 'created_by');
+	}
+
+	
+	public function penyedia()
+	{
+		return $this->hasOne('App\Models\Keuangan\Perusahaan','id', 'penyedia_id')->withTrashed();
+	}
+
+	public function penghapusan_jenis()
+	{
+		return $this->hasOne('App\Models\Farmasi\PenghapusanJenis','id', 'penghapusan_jenis_id');
 	}
 
 	public function log()

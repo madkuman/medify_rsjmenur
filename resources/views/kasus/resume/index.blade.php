@@ -76,7 +76,6 @@
 
 
 @section('js')
-
 @if($active_nav == 'ringkasan_pasien_pulang' || empty($active_nav))
 @include("kasus.asesmen.ringkasan-pasien-pulang.js-index")
 

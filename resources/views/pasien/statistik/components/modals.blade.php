@@ -1595,3 +1595,39 @@
         </div>
     </div>
 </div>
+
+<div id="modal-sensus-harian-ranap-ruangan" class="modal fade " role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content ">
+            <div class="modal-body">
+                <div name="modal-title" class="font-size-lg font-w600 mb-3">Laporan Sensus Rawat Inap Ruangan</div>
+                <nav>
+                    <div class="nav nav-pills" id="nav-tab" role="tablist">
+                      <a class="nav-link active" id="nav-list-tab" data-toggle="tab" href="#nav-list-ruangan" role="tab" aria-controls="nav-list" aria-selected="true">Daftar Laporan</a>
+                      <a class="nav-link" id="nav-add-tab" data-toggle="tab" href="#nav-add-ruangan" role="tab" aria-controls="nav-add" aria-selected="false">Tambah Laporan baru</a>
+                    </div>
+                  </nav>
+                  <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active pt-3" id="nav-list-ruangan" role="tabpanel" aria-labelledby="nav-list-tab">
+                        <table class="table table-hover table-bordered table-sm" style="width: 100%" id="table-laporan-sensus-rawat-inap-ruangan"></table>
+                    </div>
+                    <div class="tab-pane fade pt-3 px-3" id="nav-add-ruangan" role="tabpanel" aria-labelledby="nav-add-tab">
+                        <form method="post" action="{{url('pasien/laporan/printlaporan/laporan-sensus-rawat-inap-ruangan')}}" target="_blank" class="js-validation-be-contact">
+                            {{ csrf_field() }}
+                                @include('pasien.statistik.components.form-date-month')
+                                <div class="form-group">
+                                    <select name="ruangan" id="sensus-ruangan" class="js-select2" style="width: 100%" required>
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            <button class="btn btn-primary btn-submit">Submit</button>
+                        </form>
+                    </div>
+                  </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

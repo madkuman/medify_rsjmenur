@@ -49,10 +49,11 @@
 				<td class="align-top border-bottom">:</td>
 				<td class="align-top border-bottom">{{$item['dokter_pengirim'] ?? '-'}}</td>
 			</tr>
-			<tr>
+{{--			
+<tr>
 				<td colspan="3" class="align-top border-bottom"><b>TRIAGE</b></td>
-			</tr>
-			<tr>
+			</tr>		
+	<tr>
 				<td class="align-top border-bottom">Triage</td>
 				<td class="align-top border-bottom">:</td>
 				<td class="align-top border-bottom">{{$item['resultisasi'] ?? '-'}}</td>
@@ -72,7 +73,8 @@
 				<td class="align-top border-bottom">:</td>
 				<td class="align-top border-bottom">{{$item['yang_melakukan_triage'] ?? '-'}}</td>
 			</tr>
-			<tr>
+--}}			
+<tr>
 				<td colspan="3" class="align-top border-bottom"><b>ASESMEN KEPERAWATAN</b></td>
 			</tr>
 			<tr>
@@ -252,7 +254,7 @@
 				<td colspan="3" class="align-top border-bottom"><b>STATUS SOSIAL</b></td>
 			</tr>
 			<tr>
-				<td class="align-top border-bottom">Yang menemani pasien di rs</td>
+				{{--<td class="align-top border-bottom">Yang menemani pasien di rs</td>--}}
 				<td class="align-top border-bottom">:</td>
 				<td class="align-top border-bottom">{{$item['yang_menemani_pasien_di_rs'] ?? '-'}}</td>
 			</tr>
@@ -260,7 +262,7 @@
 				<td colspan="3" class="align-top border-bottom"><b>SPIRITUAL</b></td>
 			</tr>
 			<tr>
-				<td class="align-top border-bottom">Saat ini apakah pasien membutuhkan pelayanan rohani?</td>
+				{{--<td class="align-top border-bottom">Saat ini apakah pasien membutuhkan pelayanan rohani?</td>--}}
 				<td class="align-top border-bottom">:</td>
 				<td class="align-top border-bottom">{{$item['kebutuhan_pelayanan_rohani_pasien'] ?? '-'}}</td>
 			</tr>
@@ -268,7 +270,7 @@
 				<td colspan="3" class="align-top border-bottom"><b>STATUS EKONOMI</b></td>
 			</tr>
 			<tr>
-				<td class="align-top border-bottom">Penanggung jawab biaya perawatan pasien</td>
+				{{--<td class="align-top border-bottom">Penanggung jawab biaya perawatan pasien</td>--}}
 				<td class="align-top border-bottom">:</td>
 				<td class="align-top border-bottom">{{$item['penanggung_jawab_biaya_perawatan_pasien'] ?? '-'}}</td>
 			</tr>
@@ -694,7 +696,7 @@
 				<td class="align-top border-bottom">{{$item['nyeri_karakteristik'] ?? '-'}}</td>
 			</tr>
 			<tr>
-				<td colspan="3" class="align-top border-bottom"><b>ASESMEN AWAL RESIKO JATUH</b></td>
+				<td colspan="3" class="align-top border-bottom"><b>SKRINING RISIKO JATUH</b></td>
 			</tr>
 			<tr>
 				<td class="align-top border-bottom">Pasien tampak tidak seimbang</td>
@@ -868,7 +870,7 @@
 				<td class="align-top border-bottom">{{$item['motorik_berjalan_lain_lain'] ?? '-'}}</td>
 			</tr>
 			<tr>
-				<td colspan="3" class="align-top border-bottom"><b>SKRINING GIZI AWAL</b></td>
+				<td colspan="3" class="align-top border-bottom"><b>RISIKO NUTRITIONAL</b></td>
 			</tr>
 			<tr>
 				<td class="align-top border-bottom">Gizi 6 bulan terakhir BB turun</td>
@@ -930,7 +932,7 @@
 				<td colspan="3" class="align-top border-bottom"><b>KEPERAWATAN</b></td>
 			</tr>
 			<tr>
-				<td class="align-top border-bottom">Masalah keperawatan</td>
+				<td class="align-top border-bottom">Kebutuhan Edukasi</td>
 				<td class="align-top border-bottom">:</td>
 				<td class="align-top border-bottom">{!! nl2br($item['masalah_keperawatan'] ?? '-') !!}</td>
 			</tr>

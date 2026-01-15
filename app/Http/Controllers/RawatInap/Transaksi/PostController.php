@@ -4,6 +4,7 @@ namespace App\Http\Controllers\RawatInap\Transaksi;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Farmasi\TransaksiObatTelaahObat;
 use App\Models\RawatInap\Transaksi;
 use App\Models\RawatInap\Bangsal;
 use App\Models\RawatInap\TempatTidur;
@@ -556,4 +557,54 @@ class PostController extends Controller
     	->with('status', $status);
     	return back();
     }
+
+	public function serahTerimaObat(Request $request, $transaksi_id) {
+		
+		try {
+			if (!is_countable($request->transaksi_farmasi_id) || count($request->transaksi_farmasi_id) == 0) {
+				return back()->with([
+					'status' => -1,
+					'title' => 'Gagal',
+					'message' => 'Pilih Transaksi Farmasi terlebih dahulu',
+				]);
+			}
+			DB::connection('farmasi')->beginTransaction();
+			foreach ($request->transaksi_farmasi_id as $transaksi_farmasi_id) {
+				$transaksi_obat_telaah_obat = TransaksiObatTelaahObat::where('slug', 'penerimaan_perawat')->where('transaksi_id', $transaksi_farmasi_id)->first();
+				if ($transaksi_obat_telaah_obat == null) {
+					$transaksi_obat_telaah_obat = new TransaksiObatTelaahObat;
+					$transaksi_obat_telaah_obat->transaksi_id = $transaksi_farmasi_id;
+					$transaksi_obat_telaah_obat->slug = 'penerimaan_perawat';
+					foreach ($request->telaah['penerimaan_perawat'] ?? [] as $key => $value) {
+						$transaksi_obat_telaah_obat->$key = $value;
+					}
+					$transaksi_obat_telaah_obat->telaah_at = now()->toDateTimeString();
+					$transaksi_obat_telaah_obat->telaah_by = auth()->id();
+				}
+				$serah_terima_aturan = json_decode($transaksi_obat_telaah_obat->serah_terima_aturan, true) ?? [];
+				$serah_terima_aturan[] = [
+					'tanggal' => Carbon::createFromFormat('d/m/Y', $request->tanggal_serah)->toDateString(),
+					'timestamp' => now()->toDateTimeString(),
+					'aturan_pakai' => array_values($request->aturan_pakai),
+				];
+				$transaksi_obat_telaah_obat->serah_terima_aturan = json_encode($serah_terima_aturan);
+				
+				$transaksi_obat_telaah_obat->save();
+			}
+			DB::connection('farmasi')->commit();
+
+			return back()->with([
+				'window_close' => true,
+			]);
+		} catch (\Exception $e) {
+			DB::connection('farmasi')->rollback();
+			app(\App\Http\Controllers\Error\Handler::class)->bugsnag($e);
+
+			return back()->with([
+				'status' => -1,
+				'title' => 'Gagal!',
+				'message' => 'Terjadi Kesalahan Server',
+			]);
+		}
+	}
 }

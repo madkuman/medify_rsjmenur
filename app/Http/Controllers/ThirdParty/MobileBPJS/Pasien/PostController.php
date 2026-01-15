@@ -22,81 +22,81 @@ class PostController extends Controller
             app('debugbar')->disable();
             $headers['token'] = $request->header('x-token');
             $headers['username'] = $request->header('x-username');
-			$user_token = app('App\Http\Controllers\ThirdParty\MobileBPJS\ReadController')->cekUserToken($headers);
-			if (empty($user_token)) {
-				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')->errorAuth();
-			}
+            $user_token = app('App\Http\Controllers\ThirdParty\MobileBPJS\ReadController')->cekUserToken($headers);
+            if (empty($user_token)) {
+                return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')->errorAuth();
+            }
 
             /** validator */
-			$rules =  [
-				'kodebooking' => 'required',
-				'waktu'	=> 'required',
-			];
-			$alert = [
-				'required' => ':attribute harus diisi',
-			];
-			$validator = Validator::make($request->all(), $rules, $alert);
+            $rules =  [
+                'kodebooking' => 'required',
+                'waktu'    => 'required',
+            ];
+            $alert = [
+                'required' => ':attribute harus diisi',
+            ];
+            $validator = Validator::make($request->all(), $rules, $alert);
 
-			if (!$validator->passes()) {
-				$message = $validator->errors()->all();
-				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-					->error(null, 201, $message);
-			}
-			/** end validator */
+            if (!$validator->passes()) {
+                $message = $validator->errors()->all();
+                return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+                    ->error(null, 201, $message);
+            }
+            /** end validator */
 
             $data = [
                 'kodebooking' => $request->kodebooking,
                 'waktu' => $request->waktu
             ];
 
-			$transaksi = Transaksi::where('id', $data['kodebooking'])->where('status', '!=', -1)->first();
-			if (empty($transaksi)) {
-				$message = 'Transaksi dengan kodebooking '.$data['kodebooking'].' tidak ditemukan';
-				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-					->error(null, 201, $message);
-			}
-            
-			if ($transaksi->status == -1) {
-				$message = 'Transaksi dengan kodebooking '.$data['kodebooking'].' telah dibatalkan sebelumnya';
-				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-					->error(null, 201, $message);
-			}
-            
+            $transaksi = Transaksi::where('id', $data['kodebooking'])->where('status', '!=', -1)->first();
+            if (empty($transaksi)) {
+                $message = 'Transaksi dengan kodebooking ' . $data['kodebooking'] . ' tidak ditemukan';
+                return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+                    ->error(null, 201, $message);
+            }
 
-			// $waktu_start = Carbon::createFromTimestamp($data['waktu'] / 1000)->toDateTimeString();
-			// $waktu_end = Carbon::parse($waktu_start)->endOfDay()->toDateTimeString();
-			// $waktu_transaksi = Transaksi::where('id', $transaksi->id)
-			// 					->whereBetween('ordered_at', [$waktu_start, $waktu_end])
-			// 					->first();
+            if ($transaksi->status == -1) {
+                $message = 'Transaksi dengan kodebooking ' . $data['kodebooking'] . ' telah dibatalkan sebelumnya';
+                return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+                    ->error(null, 201, $message);
+            }
 
-			// if (empty($waktu_transaksi)) {
-			// 	$message = 'Transaksi antara waktu '.$waktu_start.' sampai '.$waktu_end.' tidak ditemukan';
-			// 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-			// 		->error(null, 201, $message);
-			// }
 
-			$response = [];
-			$log = [
-				'url'           => 'pasien/check-in',
-				'jenis_request' => 'post',
-				'param'         => json_encode($data),
-				'response'      => json_encode($response),
-				'created_by'    => $user_token->created_by,
-			];
-			app('App\Http\Controllers\ThirdParty\MobileBPJS\CreateController')->createLog($log);
-			DB::connection('thirdp')->commit();
+            // $waktu_start = Carbon::createFromTimestamp($data['waktu'] / 1000)->toDateTimeString();
+            // $waktu_end = Carbon::parse($waktu_start)->endOfDay()->toDateTimeString();
+            // $waktu_transaksi = Transaksi::where('id', $transaksi->id)
+            // 					->whereBetween('ordered_at', [$waktu_start, $waktu_end])
+            // 					->first();
+
+            // if (empty($waktu_transaksi)) {
+            // 	$message = 'Transaksi antara waktu '.$waktu_start.' sampai '.$waktu_end.' tidak ditemukan';
+            // 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+            // 		->error(null, 201, $message);
+            // }
+
+            $response = [];
+            $log = [
+                'url'           => 'pasien/check-in',
+                'jenis_request' => 'post',
+                'param'         => json_encode($data),
+                'response'      => json_encode($response),
+                'created_by'    => $user_token->created_by,
+            ];
+            app('App\Http\Controllers\ThirdParty\MobileBPJS\CreateController')->createLog($log);
+            DB::connection('thirdp')->commit();
             $message = 'OK, mohon ke loket daftar online';
-			return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-					->error($response, 200, $message);
+            return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+                ->error($response, 200, $message);
         } catch (\Exception $e) {
             DB::connection('thirdp')->rollback();
-			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 
-			return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-				->error();
+            return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+                ->error();
         }
     }
-    
+
     public function pasienBaru(Request $request)
     {
         DB::connection('thirdp')->beginTransaction();
@@ -105,13 +105,13 @@ class PostController extends Controller
             app('debugbar')->disable();
             $headers['token'] = $request->header('x-token');
             $headers['username'] = $request->header('x-username');
-			$user_token = app('App\Http\Controllers\ThirdParty\MobileBPJS\ReadController')->cekUserToken($headers);
-			if (empty($user_token)) {
-				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')->errorAuth();
-			}
+            $user_token = app('App\Http\Controllers\ThirdParty\MobileBPJS\ReadController')->cekUserToken($headers);
+            if (empty($user_token)) {
+                return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')->errorAuth();
+            }
 
             /** validator */
-			$rules =  [
+            $rules =  [
                 'nomorkartu' => 'required|min:5',
                 'nik' => 'required|min:5',
                 'nomorkk' => 'required',
@@ -130,22 +130,22 @@ class PostController extends Controller
                 'namakel' => 'required',
                 'rw' => 'required',
                 'rt' => 'required',
-			];
-			$alert = [
-				'required' => ':attribute harus diisi',
+            ];
+            $alert = [
+                'required' => ':attribute harus diisi',
                 'in' => ':attribute tidak sesuai',
-				'date_format' => ':attribute format harus Y-m-d',
-			];
-			$validator = Validator::make($request->all(), $rules, $alert);
+                'date_format' => ':attribute format harus Y-m-d',
+            ];
+            $validator = Validator::make($request->all(), $rules, $alert);
 
-			if (!$validator->passes()) {
-				$message = $validator->errors()->all();
-                if(count($message))
+            if (!$validator->passes()) {
+                $message = $validator->errors()->all();
+                if (count($message))
                     $message = $message[0];
-				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-					->error(null, 201, $message);
-			}
-			/** end validator */
+                return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+                    ->error(null, 201, $message);
+            }
+            /** end validator */
 
             $today = Carbon::now();
             $tanggal_lahir = Carbon::parse($request->tanggallahir);
@@ -192,25 +192,25 @@ class PostController extends Controller
             // cek pasien berdasarkan nik
             $cek_nik = Pasien::where('no_identitas', $request->nik)->first();
             if (!empty($cek_nik)) {
-                $message = 'Pasien dengan nik '.$request->nik.' sudah terdaftar';
-				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-					->error(null, 201, $message);
+                $message = 'Pasien dengan nik ' . $request->nik . ' sudah terdaftar';
+                return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+                    ->error(null, 201, $message);
             }
 
             // cek kartu bpjs sudah pernah daftar atau belum
             // $cek_no_bpjs = PasienPembayaran::where('no_asuransi', $request->nomorkartu)->first();
             // if (!empty($cek_no_bpjs)) {
             //     $message = 'Pasien dengan nomor kartu '.$request->nomorkartu.' sudah pernah daftar';
-			// 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-			// 		->error(null, 201, $message);
+            // 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+            // 		->error(null, 201, $message);
             // }
 
             // cek provinsi
             $prov = app('App\Http\Controllers\Pasien\AlamatProvinsi\ReadController')->getProvinsiByNama($request->namaprop);
             // if (empty($prov)) {
             //     $message = 'Provinsi dengan kode '.$request->kodeprop.' dan nama '.$request->namaprop.' tidak ditemukan';
-			// 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-			// 		->error(null, 201, $message);
+            // 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+            // 		->error(null, 201, $message);
             // }
 
             // cek kota / kabupaten
@@ -218,24 +218,24 @@ class PostController extends Controller
             $kota = app('App\Http\Controllers\Pasien\AlamatKota\ReadController')->getKotaByNama($request->namadati2);
             // if (empty($kota)) {
             //     $message = 'Kota/kabupaten dengan kode '.$request->kodedati2.' dan nama '.$request->namadati2.' tidak ditemukan';
-			// 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-			// 		->error(null, 201, $message);
+            // 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+            // 		->error(null, 201, $message);
             // }
 
             // cek kecamatan
             $kec = app('App\Http\Controllers\Pasien\AlamatKecamatan\ReadController')->getKecamatanByNama($request->namakec);
             // if (empty($kec)) {
             //     $message = 'Kecamatan dengan kode '.$request->kodekec.' tidak ditemukan';
-			// 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-			// 		->error(null, 201, $message);
+            // 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+            // 		->error(null, 201, $message);
             // }
 
             // cek kelurahan
             $kel = app('App\Http\Controllers\Pasien\AlamatKelurahan\ReadController')->getKelurahanByNama($request->namakel);
             // if (empty($kel)) {
             //     $message = 'Kelurahan dengan kode '.$request->kodekel.' tidak ditemukan';
-			// 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-			// 		->error(null, 201, $message);
+            // 	return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+            // 		->error(null, 201, $message);
             // }
 
             $merge = [
@@ -247,40 +247,40 @@ class PostController extends Controller
             $pasien = $this->APICreatePasien($request);
             if (!$pasien) {
                 $message = ['Gagal menambah pasien. kesalahan server, silahkan hubungi admin'];
-				return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-					->error(null, 201, $message);
+                return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+                    ->error(null, 201, $message);
             }
 
             $message = "Harap datang ke admisi untuk melengkapi data rekam medis";
-			$response = [
-				'norm' => $pasien['pasien']->no_rm
-			];
-			$log = [
-				'url'           => 'pasien/baru',
-				'jenis_request' => 'post',
-				'param'         => json_encode($data),
-				'response'      => json_encode($response),
-				'created_by'    => $user_token->created_by,
-			];
-			app('App\Http\Controllers\ThirdParty\MobileBPJS\CreateController')->createLog($log);
-			DB::connection('thirdp')->commit();
-			DB::connection('patients')->commit();
+            $response = [
+                'norm' => $pasien['pasien']->no_rm
+            ];
+            $log = [
+                'url'           => 'pasien/baru',
+                'jenis_request' => 'post',
+                'param'         => json_encode($data),
+                'response'      => json_encode($response),
+                'created_by'    => $user_token->created_by,
+            ];
+            app('App\Http\Controllers\ThirdParty\MobileBPJS\CreateController')->createLog($log);
+            DB::connection('thirdp')->commit();
+            DB::connection('patients')->commit();
 
-			return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-				->success($response, $message);
+            return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+                ->success($response, $message);
         } catch (\Exception $e) {
             DB::connection('thirdp')->rollback();
             DB::connection('patients')->rollback();
-			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 
-			return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
-				->error();
+            return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')
+                ->error();
         }
     }
 
     private function APICreatePasien($request)
     {
-        try{
+        try {
             $pasien = [
                 'jenis_kartu_identitas_id' => 1,
                 'nomor_identitas' => $request->nik,
@@ -304,8 +304,8 @@ class PostController extends Controller
                 'nama_ibu' => NULL,
                 'nama_suami' => NULL,
                 'nama_istri' => NULL,
-                'identity' =>NULL,
-                'identity_thumb' =>NULL,
+                'identity' => NULL,
+                'identity_thumb' => NULL,
                 'pendidikan' => NULL,
                 'is_anggota' => NULL,
                 'tni_nrp' => NULL,
@@ -324,30 +324,30 @@ class PostController extends Controller
             ];
 
             $kerabat = [
-                'ktp' => NULL, 
-                'name' => NULL, 
-                'gender' => NULL, 
-                'birthplace' => NULL, 
-                'birthdate' => NULL, 
-                'address' => NULL, 
-                'city' => NULL, 
+                'ktp' => NULL,
+                'name' => NULL,
+                'gender' => NULL,
+                'birthplace' => NULL,
+                'birthdate' => NULL,
+                'address' => NULL,
+                'city' => NULL,
                 'district' => NULL,
-                'kelurahan' => NULL, 
+                'kelurahan' => NULL,
                 'phone' => NULL,
                 'relative' => NULL,
-                'is_anggota' => NULL, 
-                'tni_nama_kerabat' => NULL, 
-                'tni_nrp_kerabat' => NULL, 
-                'tni_keanggotaan_kerabat' => NULL, 
-                'tni_pangkat_kerabat' => NULL, 
-                'tni_kotama_kerabat' => NULL, 
-                'tni_satker_kerabat' => NULL, 
-                'tni_relative_kerabat' => NULL, 
+                'is_anggota' => NULL,
+                'tni_nama_kerabat' => NULL,
+                'tni_nrp_kerabat' => NULL,
+                'tni_keanggotaan_kerabat' => NULL,
+                'tni_pangkat_kerabat' => NULL,
+                'tni_kotama_kerabat' => NULL,
+                'tni_satker_kerabat' => NULL,
+                'tni_relative_kerabat' => NULL,
             ];
 
             $new_pasien = app('App\Http\Controllers\Pasien\Pasien\CreateController')->create($pasien);
             $new_kerabat = app('App\Http\Controllers\Pasien\PasienWali\CreateController')->create($kerabat);
-           
+
             $pasien_rel = Pasien::find($new_pasien['pasien']['id']);
             $pasien_rel->relatives_id = $new_kerabat['kerabat']['id'];
             $pasien_rel->relatives_type = NULL;
@@ -365,9 +365,8 @@ class PostController extends Controller
             app('App\Http\Controllers\Pasien\PasienPembayaran\CreateController')->create($param);
 
             $perusahaan_pembayaran = PembayaranPerusahaan::find($perusahaan_pembayaran_id);
-            if($perusahaan_pembayaran->tipe->slug != 'tunai')
-            {
-                $tunai_tipe = PembayaranPerusahaanType::where('slug','tunai')->first();
+            if ($perusahaan_pembayaran->tipe->slug != 'tunai') {
+                $tunai_tipe = PembayaranPerusahaanType::where('slug', 'tunai')->first();
                 $perusahaan_tunai = PembayaranPerusahaan::where('type', $tunai_tipe->id)->first();
                 $param['no_asuransi'] = '';
                 $param['perusahaan_id'] = $perusahaan_tunai->id;
@@ -376,13 +375,11 @@ class PostController extends Controller
 
             // save pembayran untuk tunai
             app('App\Http\Controllers\Pasien\PasienPembayaran\CreateController')->create($param);
-            
-            return $new_pasien;
-        }
 
-        catch (\Exception $e) {
+            return $new_pasien;
+        } catch (\Exception $e) {
             $return['status'] = -1;
-            
+
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
         }
 

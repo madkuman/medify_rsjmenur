@@ -23,7 +23,7 @@ Print Surat Persetujuan Dirawat
 @section('content')
     <table class="bordered" align="right" cellpadding="3">
         <tr>
-            <td align="center" class="has-border">RM. 18</td>
+            <td align="center" class="has-border">RM. 16</td>
         </tr>
         <tr>
             <td align="center">Halaman 1/1</td>
@@ -142,12 +142,16 @@ Print Surat Persetujuan Dirawat
                 		<td align="center">Dokter pemeriksa</td>
                 		<td align="center">Yang memberi pernyataan</td>
                 	</tr>
+			<tr>
+				<td align="center"><img src="{{url('')}}/{{$kasus->admin->user->ttd}}" style="max-width: 90px"></td>
+				<td></td>
+			</tr>
                 	<tr>
                 		<td align="center">
-                			<p style="margin-top: 50px;">({{$kasus->admin->user->name ?? '.........................................'}})</p>
+                			<p style="margin-top: 10px;">({{$kasus->admin->user->name ?? '.........................................'}})</p>
                 		</td>
                 		<td align="center">
-                			<p style="margin-top: 50px;">({{$surat_persetujuan_dirawat->nama ?? '.........................................'}})</p>
+                			<p style="margin-top: 10px;">({{$surat_persetujuan_dirawat->nama ?? '.........................................'}})</p>
                 		</td>
                 	</tr>
                 </table>

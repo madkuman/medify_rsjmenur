@@ -37,7 +37,7 @@ Laporan
         autoWidth: false
     });
 
-    $(".js-datepicker-month").datepicker( {
+    $(".datepicker-month").datepicker( {
         format: "yyyy-mm",
         startView: "months", 
         minViewMode: "months"
@@ -46,6 +46,34 @@ Laporan
         format: "yyyy",
         startView: "years", 
         minViewMode: "years"
+    });
+    $('.jenis_laporan').on('change', function(){
+        var jenis_laporan = $(this).val();
+        if(jenis_laporan == 'tahunan') {
+            $('.col-year').show();
+            $('.js-datepicker-year').attr('disabled', false);
+            $('.col-month').hide();
+            $('.js-datepicker-month').attr('disabled', true);
+            $('.col-rentang-tanggal').hide();
+            $('.input-daterange-start').attr('disabled', true);
+            $('.input-daterange-end').attr('disabled', true);
+        } else if (jenis_laporan == 'bulanan')  {
+            $('.js-datepicker-year').attr('disabled', true);
+            $('.js-datepicker-month').attr('disabled', false);
+            $('.input-daterange-start').attr('disabled', true);
+            $('.input-daterange-end').attr('disabled', true);
+            $('.col-year').hide();
+            $('.col-month').show();
+            $('.col-rentang-tanggal').hide();
+        } else if (jenis_laporan == 'rentang-tanggal')  {
+            $('.js-datepicker-year').attr('disabled', true);
+            $('.js-datepicker-month').attr('disabled', true);
+            $('.input-daterange-start').attr('disabled', false);
+            $('.input-daterange-end').attr('disabled', false);
+            $('.col-year').hide();
+            $('.col-month').hide();
+            $('.col-rentang-tanggal').show();
+        };
     });
 </script>
 @endsection

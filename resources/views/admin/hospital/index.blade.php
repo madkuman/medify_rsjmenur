@@ -38,7 +38,18 @@ Admin - Pengaturan Akun Rumah Sakit
                                     <input type="text" id="env" name="env" class="form-control" style="width: 100%;" value="{{$env}}" required="" readonly>
                                 </div>
                             </div>
-                            
+                            <div class="col-6 align-self-start">
+                                <div class="form-group">
+                                    <label>Longitude</label>
+                                    <input type="text" id="longitude" name="longitude" class="form-control" style="width: 100%;" value="{{$longitude}}" required="">
+                                </div>
+                            </div>
+                            <div class="col-6 align-self-start">
+                                <div class="form-group">
+                                    <label>Latitude</label>
+                                    <input type="text" id="latitude" name="latitude" class="form-control" style="width: 100%;" value="{{$latitude}}" required="">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-6">

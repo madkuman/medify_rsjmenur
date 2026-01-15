@@ -18715,7 +18715,8 @@ define(
 
       var exit = function () {
         meta.restore();
-        mask.show();
+        // mask.show();
+        setTimeout(function () { mask.show(); }, 500);
         Class.remove(platform.container, Styles.resolve('fullscreen-maximized'));
         Class.remove(platform.container, Styles.resolve('android-maximized'));
         Thor.restoreStyles();
@@ -22699,8 +22700,8 @@ define(
         iosEvents.clear();
         iosApi.clear();
 
-        mask.show();
-
+        // mask.show();
+        setTimeout(function () { mask.show(); }, 500);
         priorState.on(function (s) {
           s.socketHeight.each(function (h) {
             Css.set(platform.socket, 'height', h);

@@ -71,8 +71,11 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php $tagihan_total_sum = 0 @endphp
                             @php $curr_date = '00/00/0000'; @endphp
                             @foreach($tagihan->detail_descending as $key => $item)
+                            @if($ipwl == 1 && empty($item->flag_ipwl_at)) @continue @endif
+                            @php $tagihan_total_sum += $item->subtotal @endphp
                             @if (date('d F Y', strtotime($curr_date)) != date('d F Y', strtotime($item->created_at)))
                             <tr>
                                 <td colspan="6" style="text-align: center;">
@@ -120,7 +123,7 @@
                                 </td>
                                 <td><h4 class="mb-5 mt-5">Rp</h4></td>
                                 <td> 
-                                    <h4 style="text-align: right">{{number_format($tagihan->total_sum,0)}}</h4>
+                                    <h4 style="text-align: right">{{number_format($tagihan_total_sum,0)}}</h4>
                                 </td>
                             </tr>
                             @if($tagihan->total_paid > 0)

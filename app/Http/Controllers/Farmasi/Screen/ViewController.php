@@ -17,7 +17,6 @@ class ViewController extends Controller
             $data['jenis_antrians'] = app('App\Http\Controllers\Farmasi\JenisAntrian\ReadController')->getAll();
             $data['jenis_reseps'] = app('App\Http\Controllers\Farmasi\WaktuEstimasiJenisResep\ReadController')->getAll();
             $data['sidebar_active'] = "";
-
             return view('farmasi.screen.index', $data);
         } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
@@ -56,45 +55,47 @@ class ViewController extends Controller
         return view('farmasi.screen.check-in');
     }
 
-    public function loadDataTable($farm_id, $screen_id)
+    public function loadDataTable($farm_id, $screen_id, $slug)
     {
         try {
-            $data = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getDataScreen($farm_id, $screen_id);
+            $data = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getDataScreen($farm_id, $screen_id, $slug);
 
-            return DataTables::of($data)
-                ->addColumn('no_antrian', function($data){
-                    $no_antrian = $data->nomor_antrian;
+            return $data;
 
-                    return $no_antrian;
-                })
-                ->addColumn('no_rm', function($data){
-                    $no_rm = $data->pasien_detail ? $data->pasien_detail->no_rm : '-';
+            // return DataTables::of($data)
+            //     ->addColumn('no_antrian', function($data){
+            //         $no_antrian = $data->nomor_antrian;
 
-                    return $no_rm;
-                })
-                ->addColumn('estimasi', function($data){
-                    $waktu_estimasi_selesai = date('d-m-Y H:i:s', strtotime($data->waktu_estimasi_selesai));
+            //         return $no_antrian;
+            //     })
+            //     ->addColumn('no_rm', function($data){
+            //         $no_rm = $data->pasien_detail ? $data->pasien_detail->no_rm : '-';
 
-                    return $waktu_estimasi_selesai;
-                })
-                ->addColumn('status', function($data){
-                    if ($data->status == 0 && $data->status_ditelaah == 1) {
-                        $content = '<div class="ribbon ribbon-bookmark ribbon-warning"><div class="ribbon-box">Telaah Resep</div></div>';
-                    }
-                    else if (!empty($data->dikerjakan_at)) {
-                        $content = '<div class="ribbon ribbon-bookmark ribbon-primary"><div class="ribbon-box">Dikerjakan</div></div>';
-                    }
-                    // else if ($data->status == 1) {
-                    //     $content = '<div class="ribbon ribbon-bookmark ribbon-success"><div class="ribbon-box">Siap Penyerahan</div></div>';
-                    // }
-                    else {
-                        $content = '<div class="ribbon ribbon-bookmark ribbon-info"><div class="ribbon-box">Check In</div></div>';
-                    }
+            //         return $no_rm;
+            //     })
+            //     ->addColumn('estimasi', function($data){
+            //         $waktu_estimasi_selesai = date('d-m-Y H:i:s', strtotime($data->waktu_estimasi_selesai));
 
-                    return $content;
-                })
-                ->escapeColumns([])
-                ->make(true);
+            //         return $waktu_estimasi_selesai;
+            //     })
+            //     ->addColumn('status', function($data){
+            //         if ($data->status == 0 && $data->status_ditelaah == 1) {
+            //             $content = '<div class="ribbon ribbon-bookmark ribbon-warning"><div class="ribbon-box">Telaah Resep</div></div>';
+            //         }
+            //         else if (!empty($data->dikerjakan_at)) {
+            //             $content = '<div class="ribbon ribbon-bookmark ribbon-primary"><div class="ribbon-box">Dikerjakan</div></div>';
+            //         }
+            //         // else if ($data->status == 1) {
+            //         //     $content = '<div class="ribbon ribbon-bookmark ribbon-success"><div class="ribbon-box">Siap Penyerahan</div></div>';
+            //         // }
+            //         else {
+            //             $content = '<div class="ribbon ribbon-bookmark ribbon-info"><div class="ribbon-box">Check In</div></div>';
+            //         }
+
+            //         return $content;
+            //     })
+            //     ->escapeColumns([])
+            //     ->make(true);
         } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
         }

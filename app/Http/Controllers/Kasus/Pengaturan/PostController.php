@@ -234,11 +234,22 @@ class PostController extends Controller
 			}
 
 
-			$dateArr = !empty($request->krs_at) ? explode("-", $request->krs_at) : [];
-			if(count($dateArr)==3)
-					$krs_at = Carbon::now()->setDate($dateArr[2], $dateArr[1], $dateArr[0])
-								->toDateTimeString();
-			else $krs_at = Carbon::now()->toDateTimeString();
+			// $dateArr = !empty($request->krs_at) ? explode("-", $request->krs_at) : [];
+			// if(count($dateArr)==3)
+			// 		$krs_at = Carbon::now()->setDate($dateArr[2], $dateArr[1], $dateArr[0])
+			// 					->toDateTimeString();
+			// else $krs_at = Carbon::now()->toDateTimeString();
+
+			if(is_numeric(strtotime($request->krs_at)))
+				$krs_at = Carbon::parse($request->krs_at);
+			else
+				$krs_at = Carbon::now();
+
+			if($krs_at->toTimeString() == '00:00:00')
+                $krs_at = $krs_at->toDateString().' '.Carbon::now()->toTimeString();
+            else
+                $krs_at->toDateTimeString();
+
 			$kasus = Kasus::with('pembayaran.perusahaan.tipe')->where('nomor_kasus',$nomor_kasus)->first();
 			$kasus->krs_alasan = $request->alasan_krs;
 			$kasus->krs_status = $request->status_krs;
@@ -401,4 +412,38 @@ class PostController extends Controller
 
         $rm_transaksi = app('App\Http\Controllers\RekamMedis\Transaksi\CreateController')->create($data);
 	}
+
+    public function updatePlafon($nomor_kasus, $sep, Request $request)
+    {
+        $db = DB::connection('kasus');
+        $kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
+        $db->beginTransaction();
+        try {
+			if ($sep != 0) {
+                $bpjs_sep = BPJSSEP::find($sep) ?? new BPJSSEP();
+				$bpjs_sep->total_plafon = $request->total_plafon;
+				$bpjs_sep->updated_plafon_by = auth()->id();
+				$bpjs_sep->updated_plafon_at = now();
+				$bpjs_sep->save();
+				
+				$kasus->sep_id = $bpjs_sep->id;
+				$kasus->save();
+            }
+			
+            $kasus->plafon = $request->total_plafon;
+            $kasus->updated_plafon_by = auth()->id();
+            $kasus->updated_plafon_at = now();
+            $kasus->save();
+
+            $db->commit();
+            return back()
+                ->with('active_nav','pengaturan')
+                ->with('message', 'Total Plafon Diperbarui')
+                ->with('title','Berhasil')
+                ->with('status', 1);
+        } catch (\Exception $e) {
+			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+            $db->rollback();
+        }
+    }
 }

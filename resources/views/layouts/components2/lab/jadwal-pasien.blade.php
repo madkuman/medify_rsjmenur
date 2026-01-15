@@ -1,7 +1,7 @@
 <div class="col-lg-6 col-12 p-10 mb-10">
     <div class="border p-10" style="height: 100%">
        <p class="h6 my-0 mb-10">JADWAL PEMERIKSAAN</p>
-       @if (is_null($transaksi->inspect_creator['name']))
+       @if (is_null($transaksi->inspect_creator['name'] ?? null))
        <h6>Belum Dijadwalkan</h6>
        <button class="btn btn-secondary" data-toggle="modal" data-target="#modalConfirmation">Jadwalkan</button>
        @else

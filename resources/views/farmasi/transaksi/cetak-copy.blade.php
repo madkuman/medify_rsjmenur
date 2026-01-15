@@ -83,14 +83,14 @@
     <hr>
     @foreach($transaksi->final_detail->resep_detail as $detail)
     <div style="padding-top: 10px;padding-bottom: 10px; width: 100%">
-        R/ {{$detail->nama_obat}} ({{$detail->satuan}}), No {{$detail->roman}}<br>
+        R/ {{$detail->nama_obat}} ({{$detail->satuan}}), No {{$detail->detail_asal->roman ?? $detail->roman ?? ''}}<br>
         <span style="font-family: Dejavu Sans, sans-serif;">&int;</span> {{$detail->aturan}}<br>
         <table style="width: 100vw">
             <tr>
                 <td style="width: 85%"><hr></td>
                 <td style="width: 15%">
                     @if(!empty($detail->detail_asal_id))
-                    {{$detail->detail_asal->jumlah_diambil > 0 ? 'det '.$detail->detail_asal->jumlah_diambil : 'nde'}}
+                    {{$detail->detail_asal->attr_info_copy_resep->jumlah_diambil > 0 ? 'det '.$detail->detail_asal->attr_info_copy_resep->jumlah_diambil : 'nde'}}
                     @else
                         nde
                     @endif

@@ -54,6 +54,32 @@ class EditController extends Controller
 		$cppt->updated_by = Auth::user()->id;
         $cppt->discharge_planning = $discharge_planning;
 
+        $path_files = [];
+        $i=1;
+		if($cppt->cppt_files){
+			$files=json_decode($cppt->cppt_files);
+			foreach($files as $item){
+					$path_files[] = [
+						'id'=> $i,
+						'nama_file' => $item->nama_file,
+						'path' => $item->path,
+					];
+					$i++;
+			}
+		}
+        if ($request->hasFile('cppt_files')) {
+
+            foreach ($request->file('cppt_files') as $key => $value) {
+                $data_files = app('App\Http\Controllers\Functions\ImageUploader')->upload($value,'cppt');
+                $path_files[] = [
+                    'id'=> $i,
+                    'nama_file' => $value->getClientOriginalName(),
+                    'path' => $data_files['file_original'],
+                ];
+                $i++;
+            }
+        }
+        $cppt->cppt_files=json_encode($path_files);
 		$cppt->save();
 		
         
@@ -110,35 +136,26 @@ class EditController extends Controller
             {
                 $visite = $this->getVisite($ruangan->id,1);
             }
-            if(empty($visite))
-            {
-                DB::connection('kasus')->rollback();
-                $status = -1;
-                $message = 'CPPT gagal dibuat! Harga Visite Belum dimasukkan';
-                $title = 'Gagal!';
 
-                return redirect('/kasus/'.$nomorKasus.'/datamedis#cppt')
-                ->with('message', $message)
-                ->with('active_nav','cppt')
-                ->with('title',$title)
-                ->with('status', $status);
+            if(!empty($visite) && !empty($visite->tarif)){
+                $unit_price = $visite->tarif->harga;
+                  
+                $data['tarif_id'] = $visite->tarif_id;
+                $data['tarif_tipe_id'] = 1;
+                $data['tarif_kelas'] = $kasus->kelas->nama;
+                $data['kasus_id'] = $kasus->id;
+                $data['desc'] = $visite->tarif->master->deskripsi.' - '.Auth::user()->name;
+                $data['unit_price'] = $unit_price;
+                $data['qty'] = 1;
+                $data['lokasi'] = $kasus->lokasi->lokasi->id;
+                $data['daftar_harga_id'] = 0;
+                $data['sep_id'] = $kasus->sep_id;
+                $data['departemen_id'] = 3;
+                $createDetail = app('App\Http\Controllers\Kasus\TagihanDetail\CreateController')->create($data);
+                $cppt->tagihan_detail_id = $createDetail->id;
+                $cppt->save();
             }
-            else $unit_price = $visite->tarif->harga;
             
-            $data['tarif_id'] = $visite->tarif_id;
-            $data['tarif_tipe_id'] = 1;
-            $data['tarif_kelas'] = $kasus->kelas->nama;
-            $data['kasus_id'] = $kasus->id;
-            $data['desc'] = $visite->tarif->master->deskripsi.' - '.Auth::user()->name;
-            $data['unit_price'] = $unit_price;
-            $data['qty'] = 1;
-            $data['lokasi'] = $kasus->lokasi->lokasi->id;
-            $data['daftar_harga_id'] = 0;
-            $data['sep_id'] = $kasus->sep_id;
-            $data['departemen_id'] = 3;
-            $createDetail = app('App\Http\Controllers\Kasus\TagihanDetail\CreateController')->create($data);
-            $cppt->tagihan_detail_id = $createDetail->id;
-            $cppt->save();
         }
 	}
 
@@ -152,6 +169,30 @@ class EditController extends Controller
 
 		$return['verified_by'] = $cppt->verifier->name;
 		$return['verified_at'] = $cppt->verified_at->format('d F Y, H:i');
+
+		return json_encode($return);
+	}
+
+    public function APIMarkedPrint($nomor_kasus,$cppt_id)
+	{
+        try{
+            $cppt = CPPT::find($cppt_id);
+
+            if(empty($cppt->marked_print_at)){
+                $cppt->marked_print_at = Carbon::now();
+                $cppt->marked_print_by = Auth::user()->id;
+            } else {
+                $cppt->marked_print_at = null;
+                $cppt->marked_print_by = null;
+            }
+            $cppt->save();
+
+            $return['is_success'] = true;
+            $return['keterangan'] = '';
+        } catch(\Throwable $e){
+            $return['is_success'] = false;
+            $return['keterangan'] = $e;
+        };
 
 		return json_encode($return);
 	}

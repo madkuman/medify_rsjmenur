@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Kasus\AIGejalaList;
 use App\Models\Kasus\AIDiagnosisSubjective;
+use App\Models\Kasus\AsesmenAwal2;
 use App\Models\Kasus\NursingNotes;
 
 
@@ -73,6 +74,7 @@ class ReadController extends Controller
 	{
 		$kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
 		$vitals = app('App\Http\Controllers\Kasus\VitalSign\ReadController')->fetchLatestVital($kasus->id, 4);
+		$asesmen_awal = AsesmenAwal2::where('kasus_id', $kasus->id)->get()->last();
 		
 		$suggest = [];
 		foreach($vitals as $item)
@@ -85,6 +87,9 @@ class ReadController extends Controller
 			if(!empty($item->porsi_makan)) $text.= 'Porsi Makan : '.$item->porsi_makan.'.  <br>';
 			if(!empty($item->gcs)) $text.= 'GCS : '.$item->gcs.'. ';
 			if(!empty($item->pernapasan)) $text.= 'RR : '.$item->pernapasan.'. <br>';
+			if(!empty($item->ews)) $text.= 'EWS : '.$item->ews.'. <br>';
+			if(!empty($item->skala_nyeri)) $text.= 'Skala Nyeri : '.$item->skala_nyeri.'. <br>';
+			if(!empty($asesmen_awal->penilaian_resiko_jatuh)) $text.= 'Resiko Jatuh : '.$asesmen_awal->penilaian_resiko_jatuh.'. <br>';
 			$title = 'TTV - '.$item->created_at->format('d M');
 
 			$temp = new \stdClass();
@@ -378,6 +383,9 @@ class ReadController extends Controller
 		$text[3] = 'Penampilan : <br>Pembicaraan : <br>Aktifitas Motorik : <br>Alam Perasaan : <br>Persepsi : <br>Proses Berfikir : <br>Lainnya : <br>';
 		$title[3] = 'Objective Psikiatrik';
 
+		$text[4] = 'Ambulasi : <br>Status General : <br>Status Musculoskeletal : <br>ROM : <br>MMT : <br>Status Neurologis : <br>Status Localis : <br>Special Test : <br>Uji Fungsi : <br>';
+		$title[4] = 'Objective Rehabilitasi Medik';
+
 		$suggest = [];
 		foreach ($text as $key => $item_text) {
 			$temp = new \stdClass();
@@ -399,6 +407,9 @@ class ReadController extends Controller
 
 		$text[1] = 'Monitoring : <br>Therapeutik : <br>Edukasi : <br>Kolaborasi : ';
 		$title[1] = 'Template Plan 2';
+
+		$text[2] = 'Rencana Terapi : <br>Frekuensi Terapi : <br>Medikamentosa : <br>Monitoring : <br>Edukasi : <br>';
+		$title[2] = 'Plan Rehabilitasi Medik';
 
 
 		$suggest = [];

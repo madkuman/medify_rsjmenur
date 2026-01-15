@@ -31,6 +31,9 @@ class ReadController extends Controller
 
 	public function getStatistikRange($jenis_durasi,$end_date,$iteration,$jenis_statistik='all')
 	{
+			if ($iteration < 1) {
+				$iteration = 1;
+			}
 			$current = $end_date->copy()->startOfDay();
 
 			for($i=$iteration-1;$i>=0;$i--)

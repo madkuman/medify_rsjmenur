@@ -22,7 +22,7 @@ class PenunjangPermintaan extends Model
 				return TransaksiRadiologi::with('detail.tarif')->find($this->transaksi_id);
 				break;
 			case 10:
-				return TransaksiLabPK::with('detail.tarif','spesimen.spesimen')->find($this->transaksi_id);
+				return TransaksiLabPK::with('detail.tarif','detail.hasil','spesimen.spesimen')->find($this->transaksi_id);
 				break;
 			case 11:
 				return TransaksiLabPA::with('detail.tarif')->find($this->transaksi_id);

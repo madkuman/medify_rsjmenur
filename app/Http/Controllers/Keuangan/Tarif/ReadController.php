@@ -547,4 +547,52 @@ class ReadController extends Controller
         return $tarif;
     }
 
+    public function getTarifAdministrasiRawatJalan($pp_kelas_id,$is_tunai = null)
+    {
+        //** for Retrubusi Px Online **
+        $kategori_slug = ['administrasi-poli','rawat-jalan-konsultasi-dokter'];
+        $kategori = TarifKategori::whereIn('slug',$kategori_slug)->pluck('id')->toArray();
+        
+        $tarif_master = TarifMaster::whereIn('kategori_id',$kategori)->where(function ($query){
+                $query->where('deskripsi','like','Karcis Pendaftaran & Administrasi Poli')
+                     ->orWhere('deskripsi','like','Asesmen Awal & Pemeriksaan Dokter Spesialis');
+        })->pluck('id')->toArray();
+
+        // case check sesuai kelas-pembayaran jika tidak ditemukan maka check dengan semua kelas pembayaran
+        $tarif = Tarif::with('master')->whereIn('tarif_master_id',$tarif_master)
+                      ->where(function ($q) use ($pp_kelas_id){
+                            $q->where('kelas_id',$pp_kelas_id);
+                      })->get();
+
+        if(count($tarif) == 0){
+            $tarif = Tarif::with('master')->whereIn('tarif_master_id',$tarif_master)
+                        ->where(function ($q) use ($pp_kelas_id){
+                            $q->where('kelas_id',0); 
+                        })->get();
+        }
+
+        $result = [];
+        if($is_tunai){
+            if(count($tarif) > 0 ){
+                foreach($tarif as $idx => $item)
+                {
+                    $result[$idx]['tarif_id'] = $item->id;
+                    $result[$idx]['nama'] = $item->master->deskripsi;
+                    $result[$idx]['harga'] = $item->harga; 
+                }
+            }
+           
+        }else{
+            // BPJS & ASURANSI
+            if(count($tarif) > 0 ){
+                foreach($tarif as $idx => $item)
+                {                    
+                    array_push($result, $item->id);
+                }
+                $result = implode(',', $result);
+            }
+        }
+        return $result;
+    }
+
 }

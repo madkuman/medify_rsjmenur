@@ -64,4 +64,9 @@ class Poliklinik extends Model
 	{
 		return $this->hasOne('App\Models\Keuangan\Tarif', 'id', 'tarif_konsultasi_id');
 	}
+
+	public function ruangan()
+	{
+		return $this->hasMany(\App\Models\RawatJalan\Ruangan::class, 'poliklinik_id', 'id');
+	}
 }

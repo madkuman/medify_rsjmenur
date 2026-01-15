@@ -30,7 +30,7 @@
                     @php $slug_specialty_creator = $timbang->creator->specialty_detail->slug ?? '-' @endphp
                     @php $slug_specialty_user = Auth::user()->specialty_detail->slug ?? '-' @endphp
 
-                    @if(empty($timbang->ppja_verifikasi_at) && $slug_specialty_creator != 'perawat-ners' && $slug_specialty_user == 'perawat-ners')
+                    @if(empty($timbang->ppja_verifikasi_at) && $slug_specialty_creator != 'perawat-ners' && $slug_specialty_user == 'perawat-ners' || $slug_specialty_user == 'magister-keperawatan')
                     <a class="btn-block-option" href="{{url()->current()}}/verifikasi-ners/{{$timbang->id}}" data-toggle="tooltip" data-placement="top" title="Verifikasi" >
                         <i class="si si-check"></i>
                     </a>
@@ -48,13 +48,13 @@
                 </div>
                 <div class="block-content">
                     <h5 class="font-w400 mb-0">
-                        <small>SUBJECTIVE</small>
+                        <small>SITUATION</small>
                     </h5>
                     <h5 class="font-w400" style="white-space: pre-line">{{$timbang->subjective }}</h5>
 
 
                     <h5 class="font-w400 mb-0">
-                        <small>OBJECTIVE</small>
+                        <small>BACKGROUND</small>
                     </h5>
                     <h5 class="font-w400" style="white-space: pre-line">{{$timbang->objective }}</h5>
 
@@ -66,7 +66,7 @@
 
 
                     <h5 class="font-w400 mb-0">
-                        <small>PLAN</small>
+                        <small>RECOMMENDATION</small>
                     </h5>
                     <h5 class="font-w400" style="white-space: pre-line">{{$timbang->plan }}</h5>
 

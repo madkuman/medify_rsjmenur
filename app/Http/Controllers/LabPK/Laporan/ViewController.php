@@ -4,9 +4,11 @@ namespace App\Http\Controllers\LabPK\Laporan;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Hospital\Kelas;
 use DOMPDF;
 use DateTime;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ViewController extends Controller
 {
@@ -23,7 +25,10 @@ class ViewController extends Controller
 	public function index(Request $req)
 	{
 		$data['header'] = self::$header;
+		$data['date_range_start_month_default'] = Carbon::today()->subMonth();
+        $data['date_range_end_month_default'] = Carbon::today();
 		$data['current_month'] = Carbon::now()->subMonth()->format('Y-m');
+		$data['current_year'] = Carbon::now()->format('Y');
 		$data['laporan'] = $this->getLaporanData();
 		return view('labpk.laporan.index',$data);
 	}

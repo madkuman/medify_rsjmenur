@@ -39,18 +39,20 @@ class PostController extends Controller
                 $data['nama_ruang'] = $ruangan->bangsal->nama.' - '.$ruangan->nama;
                 $data['tersedia'] = $tersedia;
                 $data['kapasitas'] = $kapasitas;
-                $res_applicare = app('App\Http\Controllers\BPJS\API\Applicare\EditController')->editRuangan($data);
-                if($res_applicare->metadata->code != 1){
-
-                    DB::connection('mysql')->rollBack();
-                    DB::connection('rawatinap')->rollBack();
-                    $status = -1;
-                    $message = $res_applicare->metadata->message;
-                    $title = 'Gagal Membuat Bangsal';
-                    return back()
-                    ->with('message', $message)
-                    ->with('title',$title)
-                    ->with('status', $status);
+                if (config('app.sirs_enable')) {
+                    $res_applicare = app('App\Http\Controllers\BPJS\API\Applicare\EditController')->editRuangan($data);
+                    if(($res_applicare->metadata->code ?? '0') != 1){
+    
+                        DB::connection('mysql')->rollBack();
+                        DB::connection('rawatinap')->rollBack();
+                        $status = -1;
+                        $message = $res_applicare->metadata->message;
+                        $title = 'Gagal Membuat Tempat Tidur';
+                        return back()
+                        ->with('message', $message)
+                        ->with('title',$title)
+                        ->with('status', $status);
+                    }
                 }
             }
 
@@ -93,12 +95,12 @@ class PostController extends Controller
                 $data['tersedia'] = $tersedia;
                 $data['kapasitas'] = $kapasitas;
                 $res_applicare = app('App\Http\Controllers\BPJS\API\Applicare\EditController')->editRuangan($data);
-                if($res_applicare->metadata->code != 1){
+                if(($res_applicare->metadata->code ?? 0) != 1){
 
                     DB::connection('mysql')->rollBack();
                     DB::connection('rawatinap')->rollBack();
                     $status = -1;
-                    $message = $res_applicare->metadata->message;
+                    $message = $res_applicare->metadata->message ?? 'Gagal Edit Ruangan Aplicare';
                     $title = 'Gagal Membuat Bangsal';
                     return back()
                     ->with('message', $message)

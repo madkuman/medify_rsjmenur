@@ -31,6 +31,12 @@
                                 <h4 class="my-0">Pengaturan Kasus</h4>
                                 <hr class="my-20">
                                 @include('kasus.pengaturan.components-index.krs')
+                                @php
+                                    $perusahaan = $kasus->pembayaran->perusahaan->type ?? '';
+                                @endphp
+                                @if ($perusahaan != 1 && $perusahaan != 2)
+                                    @include('kasus.pengaturan.components-index.update-plafon')
+                                @endif
                                 @include('kasus.pengaturan.components-index.keluar-kasus')
                             </div>
                         </div>
@@ -57,6 +63,7 @@
 @section('js')
 <script src="{{url('')}}/assets/js/plugins/jquery-masked-inputs/jquery.mask.min.js"></script>
 <script type="text/javascript">
+
     $('#example-datepicker1').datepicker();
     $(document).ready(function() {
         @if(!empty($kasus->krs_alasan))
@@ -75,6 +82,35 @@
             }
         })
         @endif
+
+        $('.asal-rujukan-select').select2({
+            tags:true,
+            placeholder: 'Cari asal rujukan',
+            minimumInputLength:2,
+            ajax: {
+                type: "POST",
+                url: `${API_URL}/pasien/asal-rujukan`,
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
+                },
+                processResults: function (data) {
+                    // console.log(data.data)
+                    return {
+                        results:  $.map(data.data, function (item) {
+                            // console.log('item', item)
+                            return {
+                                text: item.nama,
+                                id: item.id
+                            }
+                        })
+                    };
+                },
+                cache: true
+            }
+        })
     });
 
     $('#status_krs').on('change', function() {

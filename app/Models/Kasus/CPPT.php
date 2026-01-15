@@ -2,6 +2,7 @@
 
 namespace App\Models\Kasus;
 
+use App\Kasus\Readback;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\DataLogger;
 use Carbon\Carbon;
@@ -31,6 +32,11 @@ class CPPT extends Model
     }
     public function reviewer() {
         return $this->hasOne('App\User', 'id', 'review_by');
+    }
+
+    public function readbacks()
+    {
+         return $this->hasMany(Readback::class, 'cppt_id');
     }
 
 

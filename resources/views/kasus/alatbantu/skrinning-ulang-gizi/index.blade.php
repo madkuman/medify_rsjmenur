@@ -17,14 +17,14 @@
 				<div class="block block-bordered">
 					<div class="block-content">
 						@if(session("my_role_".$kasus->nomor_kasus))
-						<button type="button" class="btn btn-rounded btn-alt-primary min-width-125 float-right editBtn"><i class="fa fa-pencil"></i> Skrinning Ulang Gizi Baru</button>
+						<button type="button" class="btn btn-rounded btn-alt-primary min-width-125 float-right editBtn"><i class="fa fa-pencil"></i> Skrining Gizi Baru</button>
 						@endif
 
 						<a type="btn" href="{{url()->current()}}/print" class="btn btn-rounded btn-alt-primary float-right mr-5" target="_blank">
 							<i class="fa fa-print"></i> Cetak
 						</a>
 						
-						<h4>Skrinning Ulang Gizi</h4>
+						<h4>Skrining Gizi</h4>
 						<hr>
 						@php $count = count($skrinning_ulang_gizi) @endphp
 						@forelse($skrinning_ulang_gizi as $item)
@@ -44,7 +44,7 @@
 							<i class="fa fa-search"></i>
 						</button>
 
-						<h5 class="mb-5 pl-5">#Skrinning Ulang Gizi {{$count}}</h5>
+						<h5 class="mb-5 pl-5">#Skrining Gizi {{$count}}</h5>
 						
 						@if(!empty($item->creator->avatar_thumb))
 						<div class="float-left mr-10">
@@ -68,8 +68,8 @@
 						@empty
 
 						<div class="text-center py-50">
-							<h4 class="font-w400 mb-5">Belum ada asesmen Skrinning Ulang Gizi tersedia</h4>
-							<p>Klik tombol <b>Skrinning Ulang Gizi Baru</b> untuk melakukan asesmen Skrinning Ulang Gizi</p>
+							<h4 class="font-w400 mb-5">Belum ada asesmen Skrining Gizi tersedia</h4>
+							<p>Klik tombol <b>Skrining Gizi Baru</b> untuk melakukan asesmen Skrining Gizi</p>
 						</div>
 
 						@endforelse

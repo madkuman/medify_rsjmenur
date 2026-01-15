@@ -70,4 +70,16 @@ class RequestController extends Controller
 
         return $key;
     }
+
+    public function defaultException($e)
+    {
+        app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+        return json_encode([
+            "metaData" => [
+                "code" => "500",
+                "message" => "Tidak dapat menghubungkan dengan server BPJS, coba lagi. Apabila tetap muncul pesan ini, sementara gunakan aplikasi Applicare. Apabila Applicare tidak dapat dibuka, hubungi petugas BPJS yang ada."
+            ],
+            "response" => $e->getMessage()
+        ]);
+    }
 }

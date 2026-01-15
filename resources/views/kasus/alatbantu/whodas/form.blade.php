@@ -377,7 +377,7 @@
 					            <span class="css-control-indicator"></span>
 					        </label>
 						</td>
-						<td>
+						<td align="center">
 							<label class="css-control css-control-primary css-radio w-100">
 					            <input type="radio" class="css-control-input" name="berpakaian" value="Berat">
 					            <span class="css-control-indicator"></span>

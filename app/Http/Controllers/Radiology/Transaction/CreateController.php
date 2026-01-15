@@ -85,10 +85,12 @@ class CreateController extends Controller
                 }
             }
 
+            $lokasi_radiologi = \App\Models\Hospital\Lokasi::where('slug', 'radiologi')->first();
+
             if ($new_transaction->kirim_kasir == 1) {
                 $detail = [];
                 foreach ($new_transaction->detail as $item){
-                    $detail_transaksi=$this->saveTagihanData($new_transaction, $item,$req->input('asal_ruang') ?? '');
+                    $detail_transaksi=$this->saveTagihanData($new_transaction, $item, $lokasi_radiologi->id ?? "");
                     array_push($detail,$detail_transaksi);
                 }
                 $piutang=app('App\Http\Controllers\Radiology\Transaction\PostController')->kirimKasir($new_transaction, $detail);
@@ -98,7 +100,7 @@ class CreateController extends Controller
             }
             elseif($status != 1) {
                 foreach ($new_transaction->detail as $item) {
-                    $detail_transaksi = $this->saveTagihanData($new_transaction, $item, $kasus->lokasi->lokasi_id);
+                    $detail_transaksi = $this->saveTagihanData($new_transaction, $item, $lokasi_radiologi->id ?? "");
                     $saveToTagihan = app('App\Http\Controllers\Kasus\TagihanDetail\CreateController')->create($detail_transaksi);
                     $item->tagihan_detail_id = $saveToTagihan->id;
                     $item->save();
@@ -279,6 +281,9 @@ class CreateController extends Controller
             }
             $transaction->is_checkout = 1;
             $transaction->save();
+
+            
+            app('App\Http\Controllers\Radiology\TransaksiBmhp\CreateController')->addData($req->bmhp,$transaction->id);
             app('App\Http\Controllers\Radiology\Transaction\EditController')->updatePhotosPenunjang($transaction);
             DB::connection('keuangan')->commit();
             DB::connection('kasus')->commit();

@@ -16,6 +16,7 @@ class LaporanResponseTimeHarianExcel implements FromView, WithEvents, WithColumn
 {
 
 	use Exportable;
+    protected $data, $last_column, $last_row;
 
     public function registerEvents(): array
     {
@@ -30,9 +31,21 @@ class LaporanResponseTimeHarianExcel implements FromView, WithEvents, WithColumn
                 $event->sheet->getColumnDimension('F')->setWidth(15);
                 $event->sheet->getColumnDimension('G')->setWidth(15);
                 $event->sheet->getColumnDimension('H')->setWidth(15);
+                $event->sheet->getColumnDimension('I')->setAutoSize(1);
+                $event->sheet->getColumnDimension('J')->setAutoSize(1);
+                $event->sheet->getColumnDimension('K')->setAutoSize(1);
+                $event->sheet->getColumnDimension('L')->setAutoSize(1);
+                $event->sheet->getColumnDimension('M')->setAutoSize(1);
+                $event->sheet->getColumnDimension('N')->setAutoSize(1);
+                $event->sheet->getColumnDimension('O')->setAutoSize(1);
+                $event->sheet->getColumnDimension('P')->setAutoSize(1);
+                $event->sheet->getColumnDimension('Q')->setAutoSize(1);
+
+                $last_column = $this->last_column;
+                $last_row = $event->sheet->getHighestRow();
 
                 $event->sheet->styleCells(
-                    'A1:'.$this->last_column.'6',
+                    'A1:'.$last_column.'6',
                     [
                         'font' => [
                             'bold' => true
@@ -47,7 +60,7 @@ class LaporanResponseTimeHarianExcel implements FromView, WithEvents, WithColumn
                 );  
 
                 $event->sheet->styleCells(
-                    'A1:'.$this->last_column.$this->last_row,
+                    'A1:'.$last_column.$last_row,
                     [
                         'alignment' => [
                             'wrapText'     => TRUE,
@@ -57,7 +70,7 @@ class LaporanResponseTimeHarianExcel implements FromView, WithEvents, WithColumn
                 );  
 
                 $event->sheet->styleCells(
-                    'A1:A'.$this->last_row,
+                    'A1:A'.$last_row,
                     [
                         'alignment' => [
                             'vertical'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
@@ -69,7 +82,7 @@ class LaporanResponseTimeHarianExcel implements FromView, WithEvents, WithColumn
                 );
 
                 $event->sheet->styleCells(
-                    'C4:'.$this->last_column.$this->last_row,
+                    'C4:'.$last_column.$last_row,
                     [
                         'alignment' => [
                             'vertical'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
@@ -82,7 +95,7 @@ class LaporanResponseTimeHarianExcel implements FromView, WithEvents, WithColumn
 
 
                 $event->sheet->styleCells(
-                    'A1:'.$this->last_column.$this->last_row,
+                    'A1:'.$last_column.$last_row,
                     [
                         'alignment' => [
                             'vertical'     => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
@@ -93,7 +106,7 @@ class LaporanResponseTimeHarianExcel implements FromView, WithEvents, WithColumn
                 );
 
                 $event->sheet->styleCells(
-                    'A8:'.$this->last_column.$this->last_row,
+                    'A8:'.$last_column.$last_row,
                     [
                         'borders' => [
                             'allBorders' => [
@@ -120,10 +133,9 @@ class LaporanResponseTimeHarianExcel implements FromView, WithEvents, WithColumn
     public function __construct($data)
     {
         $this->data = $data;
-        $this->last_column = excel_column(8);
-        $this->last_row = count($data['data']) + 9;
+        $this->last_column = excel_column(17);
+        $last_row = count($data['data']) + 9;
         $this->data['last_column'] = $this->last_column;
-        $this->data['last_row'] = $this->last_row;
     }
 
     public function view(): View

@@ -1,7 +1,7 @@
 <?php
 Route::get('rawatinap/boarding-pass/print/{id}', 'RawatInap\Transaksi\ViewController@printBoardingPass');
 Route::get('rawatinap/print', 'RawatInap\Transaksi\ViewController@print2');
-Route::group(['prefix' => 'rawatinap/transaksi'], function(){
+Route::group(['prefix' => 'rawatinap/transaksi'], function () {
 	Route::get('/pendaftaran', 'RawatInap\Transaksi\ViewController@pendaftaran');
 	Route::get('/pendaftaran/pasien', 'RawatInap\Transaksi\ViewController@pendaftaranPasien');
 	Route::get('/pendaftaran/pasien/{id}', 'RawatInap\Transaksi\PostController@pendaftaranPasien');
@@ -16,25 +16,25 @@ Route::group(['prefix' => 'rawatinap/transaksi'], function(){
 	Route::post('/konfirmasi/{id}', 'RawatInap\Transaksi\PostController@konfirmasiDatang');
 });
 
-Route::group(['middleware' => ['check-module']], function(){
-	Route::group(['prefix' => 'rawatinap'], function(){
+Route::group(['middleware' => ['check-module']], function () {
+	Route::group(['prefix' => 'rawatinap'], function () {
 		Route::get('/', 'RawatInap\Bangsal\ViewController@index');
 		Route::get('/info-bangsal', 'RawatInap\Bangsal\ViewController@infoBangsal');
 		Route::get('/info-bangsal/screen-tv', 'RawatInap\Bangsal\ViewController@screenTV');
 		Route::get('/statistik', 'RawatInap\Statistik\ViewController@index');
 		Route::get('/statistik/init', 'RawatInap\Statistik\ReadController@init');
 
-		Route::group(['prefix' => 'cari'], function(){
+		Route::group(['prefix' => 'cari'], function () {
 			Route::get('/', 'RawatInap\Bangsal\ViewController@cari');
 			Route::get('/download', 'RawatInap\Bangsal\ViewController@download');
 		});
 
-		Route::group(['prefix' => 'bangsal'], function(){
+		Route::group(['prefix' => 'bangsal'], function () {
 			Route::get('/', 'RawatInap\Bangsal\ViewController@index');
 			Route::get('/{slug}', 'RawatInap\Bangsal\ViewController@single');
 		});
-		
-		Route::group(['prefix' => 'pengaturan'], function(){
+
+		Route::group(['prefix' => 'pengaturan'], function () {
 			Route::get('/', 'RawatInap\Pengaturan\Bangsal\ViewController@index');
 			Route::get('/bangsal', 'RawatInap\Pengaturan\Bangsal\ViewController@index');
 			Route::get('/bangsal/new', 'RawatInap\Pengaturan\Bangsal\ViewController@new');
@@ -54,26 +54,28 @@ Route::group(['middleware' => ['check-module']], function(){
 			Route::post('/bed/edit', 'RawatInap\Pengaturan\TempatTidur\PostController@edit');
 			Route::post('/bed/delete', 'RawatInap\Pengaturan\TempatTidur\PostController@delete');
 
-			Route::post('/foto/delete', 'RawatInap\Pengaturan\Foto\DeleteController@delete');		
-
+			Route::post('/foto/delete', 'RawatInap\Pengaturan\Foto\DeleteController@delete');
 		});
 
 
 		Route::get('/histori-transaksi', 'RawatInap\Transaksi\ViewController@histori');
 
-		Route::post('/transaksi/rekam-medis/konfirmasi/{id}','RawatInap\Transaksi\PostController@konfirmasiFile');
-		Route::get('dummy/ruangan/setup','RawatInap\Main\DummyController@ruangan');
-		Route::get('dummy/tempattidur/setup','RawatInap\Main\DummyController@tempattidur');
+		Route::post('/transaksi/rekam-medis/konfirmasi/{id}', 'RawatInap\Transaksi\PostController@konfirmasiFile');
+		Route::get('dummy/ruangan/setup', 'RawatInap\Main\DummyController@ruangan');
+		Route::get('dummy/tempattidur/setup', 'RawatInap\Main\DummyController@tempattidur');
+
+		# halaman serah terima obat
+		Route::get('/transaksi/{id}/serah-terima-obat', 'RawatInap\Transaksi\ViewController@serahTerimaObat');
+		Route::post('/transaksi/{id}/serah-terima-obat', 'RawatInap\Transaksi\PostController@serahTerimaObat');
 	});
 });
 
 
-Route::group(['prefix' => 'api/rawatinap'], function(){
+Route::group(['prefix' => 'api/rawatinap'], function () {
 	Route::get('/transaksi/get', 'RawatInap\Transaksi\ReadController@APIHistori');
-	Route::post('/tempattidur/kosong','RawatInap\TempatTidur\ReadController@apiRuanganKosong');
-	Route::get('/tempattidur/kosong','RawatInap\TempatTidur\ReadController@apiRuanganKosong');
-	Route::get('/applicare/truncate','RawatInap\Pengaturan\Ruangan\PostController@truncateApplicare');
+	Route::post('/tempattidur/kosong', 'RawatInap\TempatTidur\ReadController@apiRuanganKosong');
+	Route::get('/tempattidur/kosong', 'RawatInap\TempatTidur\ReadController@apiRuanganKosong');
+	Route::get('/applicare/truncate', 'RawatInap\Pengaturan\Ruangan\PostController@truncateApplicare');
 	Route::get('/admin/bangsal-info/{id}', 'RawatInap\Bangsal\ReadController@APIAdminInfo');
+	Route::get('/bangsal', 'RawatInap\Bangsal\ReadController@allBangsal');
 });
-
-?>

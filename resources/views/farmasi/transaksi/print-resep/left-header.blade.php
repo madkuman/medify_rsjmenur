@@ -3,7 +3,7 @@
         <table>
             <tr>
                 <td width="20%" style="text-align: right;">
-                    <img src="{{url('')}}/assets/img/pemprov-jatim.png" height="50">
+                    <img src="{{ public_path('assets/img/pemprov-jatim.png') }}" height="50">
                 </td>
                 <td width="60%" style="text-align: center; font-size: 9px;">
                     <b>
@@ -14,7 +14,7 @@
                     </b>
                 </td>
                 <td width="20%" style="text-align: left;">
-                    <img src="{{url('')}}/assets/img/menur.png" height="50">
+                    <img src="{{ public_path('assets/img/menur.png') }}" height="50">
                 </td>
             </tr>
         </table>

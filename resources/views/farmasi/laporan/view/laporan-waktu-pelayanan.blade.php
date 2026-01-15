@@ -54,17 +54,50 @@
             <td>=E8+H8+K8</td>
         </tr>
         <tr>
-            <td>=C8/E8</td>
-            <td>=D8/E8</td>
+            @php $total_igd = $data['igd']['less_60'] + $data['igd']['more_60'] @endphp
+            <td>
+                @if($total_igd != 0) {{round($data['igd']['less_60'] / $total_igd * 100)}}%
+                @else 0% @endif
+            </td>
+            <td>
+                @if($total_igd != 0) {{round($data['igd']['more_60'] / $total_igd * 100)}}%
+                @else 0% @endif
+            </td>
             <td></td>
-            <td>=F8/H8</td>
-            <td>=G8/H8</td>
+            
+            @php $total_rawat_jalan = $data['rawat_jalan']['less_60'] + $data['rawat_jalan']['more_60'] @endphp
+            <td>
+                @if($total_rawat_jalan != 0) {{round($data['rawat_jalan']['less_60'] / $total_rawat_jalan * 100)}}%
+                @else 0% @endif
+            </td>
+            <td>
+                @if($total_rawat_jalan != 0) {{round($data['rawat_jalan']['more_60'] / $total_rawat_jalan * 100)}}%
+                @else 0% @endif
+            </td>
             <td></td>
-            <td>=I8/K8</td>
-            <td>=J8/K8</td>
+            
+            @php $total_rawat_inap = $data['rawat_inap']['less_60'] + $data['rawat_inap']['more_60'] @endphp
+            <td>
+                @if($total_rawat_inap != 0) {{round($data['rawat_inap']['less_60'] / $total_rawat_inap * 100)}}%
+                @else 0% @endif
+            </td>
+            <td>
+                @if($total_rawat_inap != 0) {{round($data['rawat_inap']['more_60'] / $total_rawat_inap * 100)}}%
+                @else 0% @endif
+            </td>
             <td></td>
-            <td>=L8/N8</td>
-            <td>=M8/N8</td>
+            
+            @php $total_less = $data['igd']['less_60'] + $data['rawat_inap']['less_60'] + + $data['rawat_jalan']['less_60'] @endphp
+            @php $total_more = $data['igd']['more_60'] + $data['rawat_inap']['more_60'] + + $data['rawat_jalan']['more_60'] @endphp
+            @php $total_grand = $total_less + $total_more @endphp
+            <td>
+                @if($total_grand != 0) {{round($total_less / $total_grand * 100)}}%
+                @else 0% @endif
+            </td>
+            <td>
+                @if($total_grand != 0) {{round($total_more / $total_grand * 100)}}%
+                @else 0% @endif
+            </td>
             <td></td>
         </tr>
     </tbody>

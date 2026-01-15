@@ -8,6 +8,11 @@
     var departemen = '{{$departemen}}';
     var tipe = {{$transaksi->tarif_tipe_id}};
     var kelas = {{$transaksi->class}};
+
+    $(document).ready(function(){
+        $('.time').mask('00:00');
+    });
+
     $(document).on('click', '#submit-all', function(){
         var tarif_ditagih = $('.akan-ditagih:checked');
         var $el, deskripsi, qty, total, content;

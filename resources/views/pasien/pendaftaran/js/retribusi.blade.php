@@ -11,7 +11,10 @@
             kelas = $("#selectKelasPoli").val()
             var slug = '.administrasi-poli'
             var slug_konsultasi = '.pemeriksaan-dokter'
-            $(slug+'.retribusi-checkbox-container-kelas-0 .retribusi-checkbox')[0].checked = true;
+            if (($(`${slug}.retribusi-checkbox-container-kelas-0 .retribusi-checkbox`).length) > 0) {
+                $(`${slug}.retribusi-checkbox-container-kelas-0 .retribusi-checkbox`)[0].checked = true;
+            }
+            // $(slug+'.retribusi-checkbox-container-kelas-0 .retribusi-checkbox')[0].checked = true;
         }
         else if(valLayanan == 2) {
             kelas = $("#selectKelasIGD").val();

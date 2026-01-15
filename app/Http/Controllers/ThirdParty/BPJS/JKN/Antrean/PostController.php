@@ -20,7 +20,7 @@ class PostController extends Controller
     public function updateWaktuAntrean(Request $params)
     {
         $arg = (object)[
-            'url' => $this->request->getUrl().'/antrean/updatewaktu',
+            'url' => $this->request->getUrl() . '/antrean/updatewaktu',
             'header' => $this->request->getHeader(),
             'params' => $params,
         ];
@@ -28,14 +28,14 @@ class PostController extends Controller
         return app('App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\EditController')
             ->updateWaktuAntrean($arg->url, $arg->header, $arg->params);
 
-//        UpdateWaktuAntrean::dispatch($arg)->delay(now()->addMinutes(5));
+        //        UpdateWaktuAntrean::dispatch($arg)->delay(now()->addMinutes(5));
     }
 
     public function batal(Request $params)
     {
         try {
             $client = new Client(['headers' => $this->request->getHeader()]);
-            $res = $client->request('POST', $this->request->getUrl().'/antrean/batal', [
+            $res = $client->request('POST', $this->request->getUrl() . '/antrean/batal', [
                 'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
                 \GuzzleHttp\RequestOptions::JSON => $params->all(),
             ]);
@@ -64,12 +64,31 @@ class PostController extends Controller
 
         $request->replace([
             'kodebooking' => $data['kodebooking'],
-            'taskid' => $data['taskid'],  
-            'waktu' => $data['waktu']
+            'taskid' => $data['taskid'],
+            'waktu' => $data['waktu'],
         ]);
 
         $returned = $this->updateWaktuAntrean($request);
 
         return $returned;
+    }
+
+    public function updateTaskId_new(array $data)
+    {
+        // Pastikan jenisresep hanya ditambahkan jika tersedia
+        $requestData = [
+            'kodebooking' => $data['kodebooking'] ?? null,
+            'taskid' => $data['taskid'] ?? null,
+            'waktu' => $data['waktu'] ?? null,
+        ];
+
+        if (!empty($data['jenisresep'])) {
+            $requestData['jenisresep'] = $data['jenisresep'];
+        }
+
+        // Gunakan Request::create() agar lebih sesuai dengan Laravel
+        $request = \Illuminate\Http\Request::create('/', 'POST', $requestData);
+
+        return $this->updateWaktuAntrean($request);
     }
 }

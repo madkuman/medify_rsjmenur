@@ -84,7 +84,7 @@
                                 </div>  
                             </div>
                             <hr class="col-11">
-                            <div class="col-12">
+                     {{--       <div class="col-12">
                                 <h4 class="mb-5 mt-10">Triage</h4>
                             </div>
                             <div class="col-md-12">
@@ -153,7 +153,8 @@
                                 </div>  
                             </div>
                             <hr class="col-11">
-                            <div class="col-12">
+--}}                         
+   <div class="col-12">
                                 <h4 class="mb-5 mt-10">Asesmen Keperawatan</h4>
                             </div>
                             <div class="col-md-3">
@@ -440,7 +441,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row mb-5">
-                                    <label class="col-12">Yang menemani pasien di RS</label>
+                                   {{-- <label class="col-12">Yang menemani pasien di RS</label>--}}
                                     <div class="col-12">
                                         <input type="text" class="form-control" name="yang_menemani_pasien_di_rs">
                                     </div>
@@ -451,7 +452,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row mb-5">
-                                    <label class="col-12">Saat ini apakah pasien membutuhkan pelayanan rohani?</label>
+                                    {{--<label class="col-12">Saat ini apakah pasien membutuhkan pelayanan rohani?</label>--}}
                                     <div class="col-12">
                                         <input type="text" class="form-control" name="kebutuhan_pelayanan_rohani_pasien">
                                     </div>
@@ -462,7 +463,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group row mb-5">
-                                    <label class="col-12">Penanggung jawab biaya perawatan pasien</label>
+                                    {{--<label class="col-12">Penanggung jawab biaya perawatan pasien</label>--}}
                                     <div class="col-12">
                                         <input type="text" class="form-control" name="penanggung_jawab_biaya_perawatan_pasien">
                                     </div>
@@ -1137,7 +1138,7 @@
                             </div>
                             <div class="col-12"><hr></div>
                             <div class="col-12">
-                                <h5 class="mb-5 mt-10">Asesmen Awal Resiko Jatuh</h5>
+                                <h5 class="mb-5 mt-10">Skrining Risiko Jatuh</h5>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group mb-5">
@@ -1420,7 +1421,7 @@
                             <div class="col-12"><br></div>
                             <hr class="col-11">
                             <div class="col-12">
-                                <h5 class="mb-5 mt-10">Skrining Gizi Awal</h5>
+                                <h5 class="mb-5 mt-10">Risiko Nutritional</h5>
                             </div>
                             <div class="col-12">
                                 <h6 class="mb-5 mt-10">Penurunan Berat Badan 6 Bulan Terakhir</h6>
@@ -1564,11 +1565,11 @@
                             </div>
                             <hr class="col-11">
                             <div class="col-12">
-                                <h5 class="mb-5 mt-10">Keperawatan</h5>
+                                <h5 class="mb-5 mt-10">Kebutuhan Edukasi</h5>
                             </div>
                             <div class="col-md-7">
                                 <div class="form-group row mb-5">
-                                    <label class="col-12">Masalah Keperawatan</label>
+                                    {{--<label class="col-12">Kebutuhan Edukasi</label>--}}
                                     <div class="col-12">
                                         <textarea class="form-control" name="masalah_keperawatan"></textarea>
                                     </div>

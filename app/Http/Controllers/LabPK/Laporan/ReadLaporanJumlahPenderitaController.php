@@ -42,8 +42,8 @@ class ReadLaporanJumlahPenderitaController extends Controller
 
 			$transaksi = TransaksiDetail::where('transaksi_detail.status', 'done')
 			->leftJoin('transaksi','transaksi.id','=','transaksi_detail.transaksi_id')
-			->whereDate('transaksi.result_created_at', '>=', $start)
-			->whereDate('transaksi.result_created_at', '<=', $end)
+			->whereDate('transaksi.verified_at', '>=', $start)
+			->whereDate('transaksi.verified_at', '<=', $end)
 			->whereIn('transaksi.lokasi_id', [$lokasi->id])
 			->count();	
 
@@ -59,8 +59,8 @@ class ReadLaporanJumlahPenderitaController extends Controller
 
 	private function getDataMedicalCheckup($start,$end)
 	{
-		$temp_start_of_month = $start->startOfMonth()->format('Y-m-d');
-		$temp_end_of_month = $end->endOfMonth()->format('Y-m-d');
+		$temp_start_of_month = $start->format('Y-m-d');
+		$temp_end_of_month = $end->format('Y-m-d');
 		$db_name = config('app.db_name');
 
 		$query = "SELECT p.id, COUNT(1) as total FROM 

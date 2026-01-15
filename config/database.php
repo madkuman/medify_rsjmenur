@@ -558,6 +558,20 @@ return [
             'strict' => false,
             'engine' => "InnoDB",
         ],
+        'satusehat' => [
+            'driver' => 'mysql',
+            'host' => $db_host,
+            'port' => $db_port,
+            'database' => $db_name . '_third_party_satusehat',
+            'username' => $db_user,
+            'password' => $db_password,
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => "InnoDB",
+        ],
     ],
 
     /*

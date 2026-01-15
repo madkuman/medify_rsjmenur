@@ -1,9 +1,35 @@
-<form method="GET" action="{{url()->current()}}/kunjungan-berdasarkan-gender-dan-usia" target="_blank">
-    <div class="col-4 mt-20">
+<form method="GET" action="{{url()->current()}}/kunjungan-berdasarkan-gender-dan-usia" target="_blank" id="form-kunjungan-berdasarkan-gender-dan-usia">
+    <div class="col-12 col-md-6 col-sm-10 mt-20">
         <div class="form-group">                        
+            <label class="" for="example-daterange1">Jenis Laporan</label>
+            <div class="">
+                <select name="jenis_laporan" class="form-control js-select2" style="width: 100%">
+                    <option value="tahunan">Tahunan</option>
+                    <option value="bulanan">Bulanan</option>
+                    <option value="mingguan">Mingguan</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group container-tahunan">                        
+            <label class="" for="example-daterange1">Pilih Tahun</label>
+            <div class="">
+            <input type="text" class="form-control js-datepicker-year" name="date" data-autoclose="true" data-today-highlight="true" data-date-format="yyyy-mm" required placeholder="yyyy-mm" value="{{ date('Y') }}">
+            </div>
+        </div>
+        <div class="form-group container-bulanan" style="display: none">                        
             <label class="" for="example-daterange1">Pilih Bulan</label>
             <div class="">
-            <input type="text" class="form-control js-datepicker-month" name="date" data-autoclose="true" data-today-highlight="true" data-date-format="yyyy-mm" required placeholder="yyyy-mm" value="{{$current_month}}">
+            <input type="text" class="form-control datepicker-month" disabled name="date" data-autoclose="true" data-today-highlight="true" data-date-format="yyyy-mm" required placeholder="yyyy-mm" value="{{$current_month}}">
+            </div>
+        </div>
+        <div class="form-group container-mingguan" style="display: none">                        
+            <label class="" for="example-daterange1">Pilih Tanggal</label>
+            <div class="input-daterange input-group" data-date-format="yyyy-mm-dd" data-week-start="1" data-autoclose="true" data-today-highlight="true">
+                <input type="text" class="form-control" autocomplete="off" id="example-daterange1" disabled name="date" placeholder="From" data-week-start="1" data-autoclose="true" data-today-highlight="true" value="{{ now()->startOfMonth()->format('Y-m-d')}}" required="">
+                <div class="input-group-prepend input-group-append">
+                    <span class="input-group-text font-w600">to</span>
+                </div>
+                <input type="text" class="form-control" autocomplete="off" id="example-daterange2" name="date_end" placeholder="To" data-week-start="1" data-autoclose="true" data-today-highlight="true" value="{{ now()->endOfMonth()->format('Y-m-d')}}" required="">
             </div>
         </div>
         <div class="form-group">
@@ -11,3 +37,18 @@
         </div>
     </div>
 </form>
+@section('js')
+    @parent
+    <script>
+        $('#form-kunjungan-berdasarkan-gender-dan-usia [name="jenis_laporan"]').on('change', function () {
+            let val = $(this).val();
+            let form = $('#form-kunjungan-berdasarkan-gender-dan-usia');
+            form.find('[name="date"]').prop('disabled', true);
+            form.find('.container-tahunan').hide();
+            form.find('.container-bulanan').hide();
+            form.find('.container-mingguan').hide();
+            form.find('.container-'+val).show();
+            form.find('.container-'+val).find('[name="date"]').prop('disabled', false);
+        });
+    </script>
+@endsection

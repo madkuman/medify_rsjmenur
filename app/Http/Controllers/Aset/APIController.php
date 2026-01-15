@@ -34,7 +34,8 @@ class APIController extends Controller
 
     public function getItems(Request $request)
     {
-        $search = preg_replace("/[^[:alnum:][:space:]]/u", '', $request->get('keyword'));
+        // $search = preg_replace("/[^[:alnum:][:space:]]/u", '', $request->get('keyword'));
+        $search = $request->get('keyword');
                 
         if(!empty($search)) {
             $item = ItemsTemplate::where('name', 'LIKE', "%".$search."%")->paginate(20);

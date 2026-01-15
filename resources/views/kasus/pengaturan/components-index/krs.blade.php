@@ -35,6 +35,7 @@
           {{ csrf_field() }}
 
         <div class="row">
+{{--
             <div class="col-12">
                 <div class="form-group">
                     <label>Tanggal KRS</label>
@@ -44,7 +45,7 @@
                     @endif>
                 </div>
             </div>
-
+--}}
             <div class="col-12">
                 <div class="form-group">
                     @php
@@ -75,11 +76,11 @@
             <div class="col-12" id="div_keterangan_rujuk" style="display:none;">
                 <div class="form-group">
                     <label> Rujuk ke </label>
-                    <select class="form-control js-select2" name="krs_keterangan" style="width: 100%" {{ $disabled }}>
-                        <option value="-" @if(empty($kasus->krs_keterangan)) selected @endif>-</option>
+                    <select class="form-control js-select2 asal-rujukan-select" name="krs_keterangan" style="width: 100%" {{ $disabled }}>
+                        {{-- <option value="-" @if(empty($kasus->krs_keterangan)) selected @endif>-</option>
                         @foreach($rujuk_ke as $item)
                             <option value="{{$item->id}}" >{{$item->nama}}</option>
-                        @endforeach
+                        @endforeach --}}
                     </select>
                 </div>
             </div>

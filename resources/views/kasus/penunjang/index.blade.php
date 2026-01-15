@@ -76,7 +76,7 @@
     {{csrf_field()}}
 </form>
 @include('kasus.penunjang.content.galeri.create')
-
+@include('kasus.penunjang.content.galeri.modals')
 
 @endsection
 

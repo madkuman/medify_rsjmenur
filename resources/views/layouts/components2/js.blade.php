@@ -6,7 +6,7 @@
 </div>
 
 <script type="text/javascript">
-  // Notice how this gets configured before we load Font Awesome
+    // Notice how this gets configured before we load Font Awesome
   window.FontAwesomeConfig = { autoReplaceSvg: false }
 </script>
 <script src="{{asset('assets/js/core/jquery.min.js')}}"></script>
@@ -112,7 +112,9 @@
 <script src="{{asset('assets/js/moment-with-locales.min.js')}}"></script>
 <script src="{{asset('assets/js/plugins/combodate/combodate.js')}}"></script>
 <script src="{{asset('assets/js/plugins/bootstrap-datepaginator.js')}}"></script>
-<script type="text/javascript">$.fn.poshytip={defaults:null};</script>
+<script type="text/javascript">
+    $.fn.poshytip={defaults:null};
+</script>
 <script src="{{asset('assets/js/jquery-editable-poshytip.min.js')}}"></script>
 <script src="{{asset('assets/js/typeahead.bundle.min.js')}}"></script>
 <script src="{{asset('assets/js/numeral.min.js')}}"></script>
@@ -219,7 +221,6 @@
 </script>
 
 <script type="text/javascript">
-
     const getCircularReplacer = () => {
       const seen = new WeakSet();
       return (key, value) => {
@@ -578,6 +579,7 @@
             });
             return true;
     });
+    $('.form-unbind').unbind();
    });
 
 
@@ -597,10 +599,40 @@
         var daftar_tarif_url = BASE_URL + "tarif";
         popupwindow(daftar_tarif_url, "Daftar Tarif", 500, 900);
     }
+
+    $(".js-datepicker-month").datepicker( {
+        format: "mm-yyyy",
+        startView: "months", 
+        minViewMode: "months",
+        autoclose: true
+    });
+
+    function formatNumberWithDots(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function downloadFile(url, filename) {
+        // Create a hidden link element
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+
+        // Append the link to the document
+        document.body.appendChild(link);
+
+        // Simulate a click on the link to trigger the download
+        link.click();
+
+        // Remove the link from the document
+        document.body.removeChild(link);
+    }
 </script>
 
+{{-- @include('layouts.components2.js.idle-logout') --}}
 @include('layouts.components2.init')
 
 @yield('js')
 
 @yield('angular')
+
+@stack('js')

@@ -1,0 +1,1 @@
+$(`:text[name="nama"]`).val(item.nama);

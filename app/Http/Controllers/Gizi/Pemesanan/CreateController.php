@@ -13,6 +13,7 @@ use App\Models\Gizi\Pemesanan;
 use App\Models\Gizi\PemesananDetail;
 use App\Models\Gizi\Menu;
 use App\Models\Gizi\DietKode;
+use Illuminate\Support\Str;
 use Auth;
 use DB;
 use Bugsnag;
@@ -35,23 +36,35 @@ class CreateController extends Controller
     private function detailPemesanan($data)
     {
             $waktu_makan=[];
-            if($data['waktu_pagi'] == 1){
-                array_push($waktu_makan,[1]);
-            }
-            if($data['waktu_siang'] == 1){
-                array_push($waktu_makan,[2]);
-            }
-            if($data['waktu_sore'] == 1){
-                array_push($waktu_makan,[3]);
+            // if($data['waktu_pagi'] == 1){
+            //     array_push($waktu_makan,[1]);
+            // }
+            // if($data['waktu_siang'] == 1){
+            //     array_push($waktu_makan,[2]);
+            // }
+            // if($data['waktu_sore'] == 1){
+            //     array_push($waktu_makan,[3]);
+            // }
+
+            // if(empty($waktu_makan)){
+            //     $waktu_makan = [1,2,3];
+            // }
+
+            // $waktu_makan = array_collapse($waktu_makan);
+            // foreach ($waktu_makan as $item){
+            //     $jam_waktu_makan = WaktuMakan::find($item)->time;
+            $gizi_permintaan_id=[];
+            $waktu = WaktuMakan::all();
+            foreach($waktu as $index => $item){
+                $key = Str::slug($item->nama,'_');
+                if( $data[$key] == 1 ) {
+                    $waktu_makan[$index] = $item->id;
+                    $gizi_permintaan_id[$index] = $data[$key.'_permintaan_id'] ?? null;
+                } 
             }
 
-            if(empty($waktu_makan)){
-                $waktu_makan = [1,2,3];
-            }
-
-            $waktu_makan = array_collapse($waktu_makan);
-            foreach ($waktu_makan as $item){
-                $jam_waktu_makan = WaktuMakan::find($item)->time;
+            foreach ($waktu_makan as $index => $item){
+                $jam_waktu_makan = WaktuMakan::find($item)->time ?? '';
                 $detail = new PemesananDetail;
                 $detail->waktu_makan_id = $item;
                 $detail->pemesanan_id = $data['pesan']->id;
@@ -62,7 +75,9 @@ class CreateController extends Controller
                 $detail->kelas_id = $data['kelas_id'];
                 $detail->jenis_makanan_id = $data['jenis_makanan_id'];
                 $detail->makanan_tambahan_ids = json_encode($data['makanan_tambahan_ids']);
+                $detail->bentuk_makanan_id = $data['bentuk_makanan_id'];
                 $detail->diet_id = $data['diet_id'];
+                $detail->gizi_permintaan_id = $gizi_permintaan_id[$index] ?? null;
                 $detail->catatan = $data['catatan'];
                 $detail->untuk_tanggal = Carbon::parse($data['jadwal_pengantaran'].$jam_waktu_makan);
                 $detail->created_by = Auth::user()->id;

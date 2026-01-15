@@ -29,13 +29,13 @@
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-12" for="">Subjective</label>
+                            <label class="col-12" for="">Situation</label>
                             <div class="col-12">
                                 <textarea class="form-control form-control-lg" id="timbang-create-s" name="subjective" rows="3" placeholder=""></textarea>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-12" for="">Objective</label>
+                            <label class="col-12" for="">Background</label>
                             <div class="col-12">
                                 <textarea class="form-control form-control-lg" id="timbang-create-o" name="objective" rows="3" placeholder=""></textarea>
                             </div>
@@ -47,7 +47,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-12" for="">Plan</label>
+                            <label class="col-12" for="">Recommendation</label>
                             <div class="col-12">
                                 <textarea class="form-control form-control-lg" id="timbang-create-p" name="plan" rows="3" placeholder=""></textarea>
                             </div>

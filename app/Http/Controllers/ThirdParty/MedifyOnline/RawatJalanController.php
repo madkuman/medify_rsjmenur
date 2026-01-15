@@ -34,10 +34,10 @@ class RawatJalanController extends Controller
             return json_encode($data_return);
         }
     	$pasien = Pasien::where('id',$request->pasien_id)->first();
-        $tagihan = $request->tagihan ?? [];
         $no_rm = $request->pasien_id;
     	$pasien_pembayaran = PasienPembayaran::where('id',$request->bayar_id)->first();
         $kelas_id = Kelas::where('rawat_jalan', 1)->first()->id;
+
     	$dokter= Dokter::find($request->dokter_id);
         $is_video = $request->is_video ?? 0;
         $durasi = $request->durasi ?? null;
@@ -47,6 +47,9 @@ class RawatJalanController extends Controller
 
         if($pasien_pembayaran->perusahaan->tipe->slug == 'tunai') $is_tunai = 1;
         else $is_tunai = 0;
+
+        $tarifRetribusi = app('App\Http\Controllers\Keuangan\Tarif\ReadController')->getTarifAdministrasiRawatJalan($pasien_pembayaran->kelas_id ?? $kelas_id, $is_tunai);
+        $tagihan = $tarifRetribusi;
 
         $rujuk = PermintaanRujuk::where('pasien_id', $request->pasien_id)
                     ->where('poli_tujuan_id', $request->poliklinik_id)
@@ -70,11 +73,18 @@ class RawatJalanController extends Controller
             'durasi' => $durasi,
         ]);
 
+        if(!$is_tunai){
+            $request_data->merge([
+                'retribusi' => $tagihan,
+            ]);
+        }
+
         $data = app('App\Http\Controllers\Pasien\Pasien\PostController')->APIPendaftaranPasien($request_data);
 
         $data = json_decode($data);
         $transaksi_rj = Transaksi::find($data->transaksi_id);
-        if($is_tunai && $is_video == 0)
+
+        if($is_tunai)
         {
             if(count($tagihan) > 0) 
             {

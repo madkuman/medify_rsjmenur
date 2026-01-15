@@ -98,4 +98,30 @@
             $('#btnFilter').removeClass('d-none'); 
         });
     });
+
+    $(".nama-interaksi-kelas-terapi").select2({});
+    $(".jenis-interaksi-kelas-terapi").select2({});
+    $(document).on("click", "#btn-tambah-interaksi-kelas-terapi", function() {
+        $(".main-div-interaksi-kelas-terapi:first").clone().appendTo("#row-interaksi-kelas-terapi");
+
+        $(".nama-interaksi-kelas-terapi").select2({});
+        $(".nama-interaksi-kelas-terapi").last().next().next().remove();
+        $(".jenis-interaksi-kelas-terapi").select2({});
+        $(".jenis-interaksi-kelas-terapi").last().next().next().remove();
+    });
+
+    $(".nama-interaksi-obat").select2({});
+    $(".jenis-interaksi-obat").select2({});
+    $(document).on("click", "#btn-tambah-interaksi-obat", function() {
+        $(".main-div-interaksi-obat:first").clone().appendTo("#row-interaksi-obat");
+
+        $(".nama-interaksi-obat").select2({});
+        $(".nama-interaksi-obat").last().next().next().remove();
+        $(".jenis-interaksi-obat").select2({});
+        $(".jenis-interaksi-obat").last().next().next().remove();
+    });
+
+    $(document).on("click", "#btn-tambah-indikasi", function() {
+        $(".div-item-indikasi:first").clone().appendTo("#div-main-indikasi");
+    });
 </script>

@@ -57,6 +57,12 @@ class DeleteController extends Controller
             }
         }
 
+      # copy resep
+      if ($transaction->transaksi_asal != null) {
+        $transaksi_asal = $transaction->transaksi_asal;
+        $transaksi_asal->status = 0;
+        $transaksi_asal->save();
+      }
       app('App\Http\Controllers\Farmasi\Resep\DeleteController')->deleteResep($transaction->resep_final);
       $transaction->deleted_by = Auth::user()->id;
       $transaction->save();

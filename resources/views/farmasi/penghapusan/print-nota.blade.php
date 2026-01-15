@@ -109,12 +109,43 @@
 
     <table style="margin-top: 10px;">
         <tr>
-            <td width="20%">Unit Penghapus</td>
+            <td width="30%">Unit Penghapus</td>
             <td width="3%">:</td>
-            <td width="77%">{{$penghapusan->farmasi->nama ?? "-"}}</td>
+            <td width="67%">{{$penghapusan->farmasi->nama ?? "-"}}</td>
         </tr>
         <tr>
             <td>Alasan Penghapusan</td>
+            <td>:</td>
+            <td>{{$penghapusan->penghapusan_jenis->nama ?? "-"}}</td>
+        </tr>
+        <tr>
+            <td>Tanggal Penghapusan</td>
+            <td>:</td>
+            <td>
+                @if(!empty($penghapusan->tgl_pengeluaran))
+                {{ indonesian_date($penghapusan->tgl_pengeluaran) }}
+                @else
+                {{ indonesian_date($penghapusan->created_at) }}
+                @endif
+            </td>
+        </tr>
+        <tr>
+            <td>Surat Perintah</td>
+            <td>:</td>
+            <td>{{$penghapusan->surat_perintah ?? "-"}}</td>
+        </tr>
+        <tr>
+            <td>No Pengeluaran</td>
+            <td>:</td>
+            <td>{{$penghapusan->no_pengeluaran ?? "-"}}</td>
+        </tr>
+        <tr>
+            <td>Nama Penyedia</td>
+            <td>:</td>
+            <td>{{$penghapusan->penyedia->nama ?? "-"}}</td>
+        </tr>
+        <tr>
+            <td>Keterangan</td>
             <td>:</td>
             <td>{{$penghapusan->keterangan ?? "-"}}</td>
         </tr>

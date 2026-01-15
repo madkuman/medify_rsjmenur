@@ -30,6 +30,31 @@
                 }
             ]
         });
+
+        $('#table-laporan-sensus-rawat-inap-ruangan').DataTable({
+            "searching": false,
+            "info": false,
+            ajax : {
+                url : API_URL+'/laporan/list/',
+                data : {
+                    slug: 'pasien-laporan-sensus-rawat-inap-ruangan'
+                }
+            },
+            columns : [
+                {
+                    title : "File",
+                    data : 'file_name'
+                },
+                {
+                    title : "Download",
+                    data : (data) => {
+                        return `<a href="${data.file_path}" class="btn btn-sm btn-primary">Download</a>`;
+                    }
+                }
+            ]
+        });
+
+        getBangsal();
     });
     $(".bulan-datepicker").datepicker( {
         format: "yyyy-mm",
@@ -225,5 +250,27 @@
             return markup;
         }
         else return item.text;
+    }
+
+    function getBangsal() {
+        $.ajax({
+            type:'GET',
+            url:API_URL + '/rawatinap/bangsal',            
+            success:function(data){                
+                console.log(data);
+                var selectElement = $('#sensus-ruangan');                
+                selectElement.empty();
+                
+                $.each(data, function(index, option) {
+                    var optionElement = $('<option>').attr('value', option.id).text(option.nama);
+                    selectElement.append(optionElement);
+                });
+                
+                selectElement.trigger('change');
+                
+            },
+            error:function(data){               
+            }
+        });
     }
 </script>

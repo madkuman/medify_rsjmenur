@@ -41,6 +41,8 @@ Farmasi Jenis Antrian
                         <th class="text-center" style="width: 25%">Nama</th>
                         <th class="text-center" style="width: 20%">Kode</th>
                         <th class="text-center" style="width: 20%">Perusahaan Tipe</th>
+                        <th class="text-center" style="width: 20%">Jenis Resep Antrian</th>
+                        <th class="text-center" style="width: 20%">Asal Pelayanan</th>
                         <th class="text-center" style="width: 20%">Sound</th>
                         <th class="text-center" style="width: 10%">Aksi</th>
                     </tr>
@@ -51,7 +53,9 @@ Farmasi Jenis Antrian
                             <td class="text-center">{{$loop->iteration}}</td>
                             <td>{{$item->nama}}</td>
                             <td class="text-center">{{$item->kode}}</td>
-                            <td class="text-center">{{$item->perusahaan_tipe == '0' ? 'Semua Perusahaan Tipe' : $item->tipe_perusahaan->nama ?? ''}}</td>
+                            <td class="text-center">{{$item->perusahaan_tipe == '0' ? 'Semua' : $item->tipe_perusahaan->nama}}</td>
+                            <td class="text-center">{{$item->jenis_resep_antrian == '0' ? 'Semua' : ($item->jenis_resep_antrian == 1 ? 'Racikan' : 'Non Racikan')}}</td>
+                            <td class="text-center">{{$item->lokasi_departemen_id == 0 ? 'Semua' : ($item->lokasi_departemen->nama ?? '') }}</td>
                             <td>
                                 @php
                                     $sound_url = '#javascript:void(0);';

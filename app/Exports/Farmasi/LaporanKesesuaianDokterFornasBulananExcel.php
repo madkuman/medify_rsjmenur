@@ -108,21 +108,21 @@ class LaporanKesesuaianDokterFornasBulananExcel implements FromView, WithEvents,
     {
         $data = $this->data;
         $array = [];
-        $row = 7;
-        foreach($data['data'] as $dokter => $dokter_data)
-        {
-            $array_temp = [
-                'A'.$row.':N'.$row => '#,##0',
-                'A'.($row+1).':N'.($row+1) => '0%',
-            ];
-            $array = array_merge($array,$array_temp);
-            $row+=2;
-        }
-        $array_temp = [
-            'A'.$row.':N'.$row => '#,##0',
-            'A'.($row+1).':N'.($row+1) => '0%',
-        ];
-        $array = array_merge($array,$array_temp);
+        // $row = 7;
+        // foreach($data['data'] as $dokter => $dokter_data)
+        // {
+        //     $array_temp = [
+        //         'A'.$row.':N'.$row => '#,##0',
+        //         'A'.($row+1).':N'.($row+1) => '0%',
+        //     ];
+        //     $array = array_merge($array,$array_temp);
+        //     $row+=2;
+        // }
+        // $array_temp = [
+        //     'A'.$row.':N'.$row => '#,##0',
+        //     'A'.($row+1).':N'.($row+1) => '0%',
+        // ];
+        // $array = array_merge($array,$array_temp);
         return $array;
     }
 

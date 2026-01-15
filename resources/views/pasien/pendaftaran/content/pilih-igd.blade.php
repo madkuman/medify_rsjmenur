@@ -1,6 +1,13 @@
 <div class="row pilih-igd">
     <div class="col-12">
         <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="py-10 text-center font-w600 bg-warning text-white mb-20 align-middle"
+                     id="warning-wrapper-readmisi" style="display: @if($readmisi) block @else none @endif;">
+                    <i class="fa fa-exclamation-circle mr-5"></i>
+                    <span>Pasien Readmisi</span>
+                </div>
+            </div>
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Ruang IGD</label>

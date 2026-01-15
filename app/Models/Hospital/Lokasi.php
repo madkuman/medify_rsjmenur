@@ -47,4 +47,9 @@ class Lokasi extends Model
 		return $this->hasOne('App\Models\Keuangan\KategoriBPJS', 'id', 'kategori_bpjs_id');
 	}
 
+	public function satusehat_location()
+	{
+		return $this->hasOne(\App\Models\ThirdPartySatuSehat\Location::class, 'hospital_lokasi_id', 'id');
+	}
+
 }

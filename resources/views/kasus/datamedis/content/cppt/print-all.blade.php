@@ -158,7 +158,18 @@
 				E : {{$item->ppa}}
 			</td>
 			<td class="bordered"></td>
-			<td class="bordered"></td>
+			<td class="bordered">
+				@if (isset($kasus->dpjp))
+					@if ($kasus->dpjp->user->ttd)
+						<img src="./{{$kasus->dpjp->user->ttd}}" style="max-width: 90px;" alt="ttd dpjp">
+					@endif
+				@endif
+				<br>
+				@if($item->verified_at)
+				{{$item->verifier->name}}<br>
+				{{indonesian_date($item->verified_at, 'd/m/Y H:i')}}
+				@endif
+			</td>
 		</tr>
 		@else
 		@if($item->jenis == 'rapt')

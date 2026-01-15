@@ -418,7 +418,8 @@
 			<td width="40%" class="centered">DOKTER</td>
 		</tr>
 		<tr>
-			<td colspan="2"><br><br><br><br></td>
+			<td></td>
+			<td class="centered"><img src="{{$asesmen['creator']['ttd']}}" style="max-width: 90px"></td>
 		</tr>
 		<tr>
 			<td></td>

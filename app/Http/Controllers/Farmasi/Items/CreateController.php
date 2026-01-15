@@ -7,10 +7,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Farmasi\ItemsFarmasi;
 use App\Models\Farmasi\Farmasi;
 use App\Models\Farmasi\Distribusi;
+use App\Models\Farmasi\ItemJenisInteraksi;
 use App\Models\Farmasi\Pengadaan;
 use App\Models\Farmasi\Items;
 use App\Models\Farmasi\ItemsTemplate;
 use App\Models\Farmasi\ItemsKategori;
+use App\Models\Farmasi\RetriksiBpjsDataLab;
 use App\Models\Farmasi\TipeObat;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
@@ -83,6 +85,24 @@ class CreateController extends Controller
 		$item->min_kadaluarsa = $kadaluarsa*$waktu;
 		$item->created_by = Auth::user()->id;
 
+		$item->rute_id = $request->rute ?? null;
+		$item->bahan_aktif_id = $request->bahan_aktif ?? null;
+		$item->kekuatan_sediaan = $request->kekuatan_sediaan ?? null;
+		$item->satuan_kekuatan_id = $request->satuan_kekuatan ?? null;
+		$item->kelas_terapi_id = $request->kelas_terapi ?? null;
+		$item->kelas_terapi_fornas_id = $request->kelas_terapi_fornas ?? null;
+		$item->rak_obat_id = $request->rak_obat ?? null;
+		$item->is_formularium_rs = $request->is_formularium_rs ?? null;
+		$item->is_fornas = $request->is_fornas ?? null;
+		$item->retriksi_bpjs_jumlah = $request->retriksi_bpjs_jumlah ?? null;
+
+		$item->kode_barang = $request->kode_barang ?? null;
+		$item->kode_atc = $request->kode_atc ?? null;
+		$item->dosis_maksimal = $request->dosis_maksimal ?? null;
+		$item->dosis_maksimal_satuan = $request->dosis_maksimal_satuan ?? null;
+		$item->indikasi = json_encode($request->indikasi ?? '');
+		$item->waktu_dosage_max_1 = $request->waktu_dosage_max_1 ?? null;
+		$item->waktu_dosage_max_2 = $request->waktu_dosage_max_2 ?? null;
 
 		$slug = preg_replace('~[^\pL\d]+~u', '-', $name);
 		$slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);// transliterate
@@ -102,6 +122,55 @@ class CreateController extends Controller
 		$item->slug = $slug;
 		$item->save();
 
+		$form_ids = $request->retriksi_bpjs_data_lab ?? [];
+		if (!empty($form_ids)) {
+			foreach ($form_ids as $form_id) {
+				$retriksi_bpjs_data_lab = new RetriksiBpjsDataLab;
+				$retriksi_bpjs_data_lab->item_template_id = $item->id;
+				$retriksi_bpjs_data_lab->form_id = $form_id;
+				$retriksi_bpjs_data_lab->save();
+			}
+		}
+
+		# kelas terapi
+		$nama_interaksi_kelas_terapi_ids = $request->nama_interaksi_kelas_terapi ?? [];
+		$jenis_interaksi_kelas_terapi_ids = $request->jenis_interaksi_kelas_terapi ?? [];
+		$arr_keterangan_interaksi_kelas_terapi = $request->keterangan_interaksi_kelas_terapi ?? '';
+
+		if (!empty($nama_interaksi_kelas_terapi_ids) && !empty($jenis_interaksi_kelas_terapi_ids) && (count($nama_interaksi_kelas_terapi_ids) == count($jenis_interaksi_kelas_terapi_ids))) {
+			foreach ($nama_interaksi_kelas_terapi_ids as $key => $value) {
+				$item_jenis_interaksi = new ItemJenisInteraksi;
+				$item_jenis_interaksi->item_template_id = $item->id ?? null;
+				$item_jenis_interaksi->master_jenis_interaksi_id = $jenis_interaksi_kelas_terapi_ids[$key] ?? null;
+
+				$item_jenis_interaksi->kategori_id = $nama_interaksi_kelas_terapi_ids[$key] ?? null;
+				
+				$item_jenis_interaksi->keterangan = $arr_keterangan_interaksi_kelas_terapi[$key] ?? '';
+				$item_jenis_interaksi->tipe = 'kelas-terapi';
+				$item_jenis_interaksi->save();
+			}
+		}
+
+		# kelas obat
+		$nama_interaksi_obat_ids = $request->nama_interaksi_obat ?? [];
+		$jenis_interaksi_obat_ids = $request->jenis_interaksi_obat ?? [];
+		$arr_keterangan_interaksi_obat = $request->keterangan_interaksi_obat ?? '';
+
+		if (!empty($nama_interaksi_obat_ids) && !empty($jenis_interaksi_obat_ids) && (count($nama_interaksi_obat_ids) == count($jenis_interaksi_obat_ids))) {
+			foreach ($nama_interaksi_obat_ids as $key => $value) {
+				$item_jenis_interaksi = new ItemJenisInteraksi;
+				$item_jenis_interaksi->item_template_id = $item->id;
+				$item_jenis_interaksi->master_jenis_interaksi_id = $jenis_interaksi_obat_ids[$key];
+				
+				$item_jenis_interaksi->item_template_interaksi_id = $nama_interaksi_obat_ids[$key];
+
+				$item_jenis_interaksi->keterangan = $arr_keterangan_interaksi_obat[$key];
+
+				$item_jenis_interaksi->tipe = 'kelas-obat';
+				$item_jenis_interaksi->save();
+			}
+		}
+		
 		$temp = TipeObat::where('nama',$satuan)->first();
 		if(!$temp)
 		{

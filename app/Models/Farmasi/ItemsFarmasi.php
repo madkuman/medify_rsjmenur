@@ -36,7 +36,7 @@ class ItemsFarmasi extends Model
 
 	public function owner_detail()
 	{
-		return $this->hasOne('App\Models\Farmasi\Apotek','id', 'farmasi_id')->withTrashed();
+		return $this->hasOne('App\Models\Farmasi\Farmasi','id', 'farmasi_id')->withTrashed();
 	}
 
 	public function stok()
@@ -149,4 +149,40 @@ class ItemsFarmasi extends Model
     public function all_items() {
         return $this->hasMany('App\Models\Farmasi\Items', 'item_farmasi_id', 'id');
     }
+
+	public function hitungHargaJual($aturan_harga, $jumlah = 1, $laba = false, $farmasi = null, $param = [])
+	{
+		$param = (object) $param;
+        if(is_null($farmasi))
+            $farmasi = $this->owner_detail;
+
+		$final_harga = $this->item_template->harga;
+		$final_harga = round($final_harga);
+
+		if($laba !== false){
+			if($laba === true){
+				$persen_laba = 0;
+				$selected_aturan_harga = app(\App\Http\Controllers\Farmasi\AturanHarga\ReadController::class)->findAturan($aturan_harga, $final_harga, false);
+				if(isset($selected_aturan_harga)){
+					$persen_laba = $selected_aturan_harga->laba;
+				}
+			}else{
+				$persen_laba = $laba;
+			}
+			$final_harga = $final_harga * (100 + $persen_laba) / 100;
+			if ($param->laba_round ?? true) {	
+				$final_harga = round($final_harga);
+			}
+		}
+		
+		if ($param->return_object ?? false) {
+			return (object) [
+				'harga' => $final_harga,
+				'laba' => $persen_laba ?? 0,
+				'selected_aturan_harga' => $selected_aturan_harga ?? null,
+			];
+		}
+
+		return $final_harga;
+	}
 }

@@ -83,7 +83,7 @@
                 <div class="form-group">
                     <label class="control-label">Kategori Pasien</label>
                     <div class="custom-control custom-radio mb-5">
-                        <input class="custom-control-input" type="radio" name="kategori_pasien" value="0" id="jiwa">
+                        <input class="custom-control-input" type="radio" name="kategori_pasien" value="0" id="jiwa" checked>
                         <label class="custom-control-label" for="jiwa">Jiwa</label>
                     </div>
                     <div class="custom-control custom-radio mb-5">

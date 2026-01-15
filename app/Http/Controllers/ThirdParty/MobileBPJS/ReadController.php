@@ -22,8 +22,8 @@ class ReadController extends Controller
 			/** cek user ada di db atau tidak */
 			$user = User::where('username', $username)
 				->first();
-				
-			if(empty($user)) return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')->error('User tidak ditemukan');
+
+			if (empty($user)) return app('App\Http\Controllers\ThirdParty\MobileBPJS\HelperController')->error('User tidak ditemukan');
 
 			$cek = Hash::check($password, $user->password);
 			if ($cek == false) {
@@ -69,8 +69,8 @@ class ReadController extends Controller
 	{
 		$user = User::where('username', $headers['username'])->first();
 		$result = UserBpjsMobile::where('token', $headers['token'])
-								->where('created_by', $user->id)
-								->first();
+			->where('created_by', $user->id)
+			->first();
 		return $result;
 	}
 }

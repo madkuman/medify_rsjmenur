@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Http\Controllers\Kasus\Asesmen\EvaluasiAwalManajerPelayananPasien;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\Kasus\Asesmen\EvaluasiAwalManajerPelayananPasien\ReadController as Read;
+use App\Models\Kasus\AlatBantu;
+use DB;
+use Auth;
+
+class CreateController extends Controller
+{
+	function create(Request $request, $kasus_id)
+	{
+		$conn = DB::connection('kasus');
+		$conn->beginTransaction();
+
+		try {
+			$asesmen = new AlatBantu();
+			$asesmen->type = (new Read)->type_asesmen;
+			$asesmen->val = $this->createJson($request);
+			$asesmen->created_by = Auth::user()->id;
+			$asesmen->kasus_id = $kasus_id;
+			$asesmen->save();
+			$conn->commit();
+
+		} catch (\Exception $e) {
+			$conn->rollBack();
+			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+		}
+	}
+
+	function createJson($request)
+	{
+		$json = new \StdClass;
+		$json->diagnosa_medis = $request->diagnosa_medis;
+		$json->tgl_asesmen = $request->tgl_asesmen;
+		$json->mpp = $request->mpp;
+		$json->evaluasi = $request->evaluasi;
+		return json_encode($json);
+	}
+}

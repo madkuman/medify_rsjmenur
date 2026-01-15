@@ -19,11 +19,12 @@ class ReadController extends Controller
     {
         $header_array = $this->requestController->getHeader();
 
-        if ($multi)
+        if ($multi) {
             $url = $this->requestController->getUrl() . '/Rujukan/RS/List/Peserta/' . $nomor_kartu;
-        else
+        } else {
             $url = $this->requestController->getUrl() . '/Rujukan/RS/Peserta/' . $nomor_kartu;
-
+        }
+        // dd($url);
         try {
             $timestamp = $header_array['X-timestamp'];
             $client = new Client(['headers' => $header_array]);
@@ -61,11 +62,14 @@ class ReadController extends Controller
     public function searchByNomorKartuPKM($multi, $nomor_kartu)
     {
         $header_array = $this->requestController->getHeader();
-
-        if ($multi)
+        $url = $this->requestController->getUrl() . '/Rujukan/List/Peserta/' . $nomor_kartu;
+        // dd($url);
+        if ($multi) {
             $url = $this->requestController->getUrl() . '/Rujukan/List/Peserta/' . $nomor_kartu;
-        else
+        } else {
             $url = $this->requestController->getUrl() . '/Rujukan/Peserta/' . $nomor_kartu;
+        }
+        // dd($url);
         try {
             $timestamp = $header_array['X-timestamp'];
             $client = new Client(['headers' => $header_array]);
@@ -106,11 +110,12 @@ class ReadController extends Controller
         $rujukPKM = json_decode($this->searchByNomorKartuPKM($multi, $nomor_kartu));
         $rujuk_res = [];
         $status = 200;
-        // dd($rujukRS, $rujukPKM);
+        // dd($rujukRS);
 
         if ($rujukRS->metaData->code == 200) {
             if ($multi) {
-                foreach ($rujukRS->response->rujukan as $rujuk) {
+                // foreach ($rujukRS->response->rujukan as $rujuk) {
+                foreach (($rujukRS->response->rujukan ?? []) as $rujuk) {
                     $rujuk->tipe_perujuk = 2;
                     array_push($rujuk_res, $rujuk);
                 }
@@ -123,7 +128,7 @@ class ReadController extends Controller
         }
         if ($rujukPKM->metaData->code == 200) {
             if ($multi) {
-                foreach ($rujukPKM->response->rujukan as $rujuk) {
+                foreach (($rujukPKM->response->rujukan ?? []) as $rujuk) {
                     $rujuk->tipe_perujuk = 1;
                     array_push($rujuk_res, $rujuk);
                 }
@@ -249,7 +254,8 @@ class ReadController extends Controller
     {
         $rujukRS = json_decode($this->searchRS($param));
         $rujukPKM = json_decode($this->searchPKM($param));
-        if ($rujukRS->response != null) {
+        // dd($rujukRS, $rujukPKM);
+        if ($rujukRS->response != null && !empty($rujukRS->response->rujukan ?? null)) {
             $rujukRS->response->rujukan->tipe_perujuk = 2;
             return json_encode($rujukRS->response->rujukan);
         }

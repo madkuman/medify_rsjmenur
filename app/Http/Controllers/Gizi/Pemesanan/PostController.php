@@ -6,7 +6,9 @@ use App\Models\Hospital\Lokasi;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Gizi\Pemesanan;
+use App\Models\Gizi\WaktuMakan;
 use App\Models\Kasus\Kasus;
+use Illuminate\Support\Str;
 use Auth;
 use DB;
 use Bugsnag;
@@ -31,10 +33,23 @@ class PostController extends Controller
                 $data['waktu_pagi'] = 0;
             }
 
-            if ($request->input('waktu_siang')) {
-                $data['waktu_siang'] = 1;
-            } else {
-                $data['waktu_siang'] = 0;
+            // if ($request->input('waktu_siang')) {
+            //     $data['waktu_siang'] = 1;
+            // } else {
+            //     $data['waktu_siang'] = 0;
+            $waktu_makan = WaktuMakan::all();
+            foreach($waktu_makan as $item){
+                $key = Str::slug($item->nama,'_');
+
+                if( $request->input($key) ) {
+                    $data[$key] = 1;
+
+                    if (!empty($request->input($key.'_permintaan_id'))) {
+                        $data[$key.'_permintaan_id'] = $request->input($key.'_permintaan_id');
+                    }
+                } else {
+                    $data[$key] = 0;
+                }
             }
 
             if ($request->input('waktu_sore')) {
@@ -66,6 +81,7 @@ class PostController extends Controller
             $data['diet_id'] = $request->input('diet');
             $data['jenis_makanan_id'] = $request->input('jenis_makanan_id');
             $data['makanan_tambahan_ids'] = $request->input('makanan_tambahan_ids');
+            $data['bentuk_makanan_id'] = $request->input('bentuk_makanan_id');
 
             $date1 = explode("/", $date1);
             $temp = $date1[0];
@@ -113,6 +129,7 @@ class PostController extends Controller
             $data['diet_id'] = $request->input('diet_id');
             $data['jenis_makanan_id'] = $request->input('jenis_makanan_id');
             $data['makanan_tambahan_ids'] = $request->input('makanan_tambahan_ids');
+            $data['bentuk_makanan_id'] = $request->input('bentuk_makanan');
             $data['catatan'] = $request->input('catatan');
 
             app('App\Http\Controllers\Gizi\Pemesanan\EditController')->edit($data);
@@ -229,6 +246,50 @@ class PostController extends Controller
         {
           app('App\Http\Controllers\Error\Handler')->bugsnag($e);
           DB::connection('gizi')->rollback();
+        }
+    }
+
+    public function buatRekapPermintaan(Request $request)
+    {
+        DB::connection('kasus')->beginTransaction();
+        DB::connection('gizi')->beginTransaction();
+        try {
+            $order_diet_otomatis = true;
+            if (!$order_diet_otomatis) {
+                return back()
+                    ->with('message', 'Pengaturan Buat Rekap Permintaan Off')
+                    ->with('title', 'Gagal')
+                    ->with('status', -1);
+            }
+            
+            $get_permintaan = app(\App\Http\Controllers\Kasus\Gizi\ReadController::class)->getRekapPermintaan($request);
+            foreach ($get_permintaan as $item) {
+                $request_pemesanan = new Request($item);
+                $create = $this->addPemesanan($request_pemesanan);
+            }
+
+            DB::connection('kasus')->commit();
+            DB::connection('gizi')->commit();
+            $status = 1;
+            $message = 'Rekap Permintaan Berhasil di Buat';
+            $title = 'Berhasil!';
+
+            return back()
+            ->with('message', $message)
+            ->with('title', $title)
+            ->with('status', $status);
+        } catch (\Exception $e) {
+            DB::connection('kasus')->rollback();
+            DB::connection('gizi')->rollback();
+            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+
+            $status = -1;
+            $message = 'Rekap Permintaan Gagal di Buat';
+            $title = 'Gagal!';
+            return redirect()->back()
+                ->with('status', $status)
+                ->with('message', $message)
+                ->with('title', $title);
         }
     }
 }

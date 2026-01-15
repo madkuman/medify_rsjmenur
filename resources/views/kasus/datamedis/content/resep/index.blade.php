@@ -2,8 +2,12 @@
     <div class="row">
         <div class="col-lg-12 mb-20">
             @if($allow_crud)
-            <button type="button" class="btn-alt btn-rounded btn-primary min-width-125 float-right btn-toggle-histori-resep" data-toggle="modal" data-target="#modal-create-resep"><i class="fa fa-pencil"></i> Buat Resep</button>
-            <button type="button" onclick="historiResep()" class="btn-alt btn-warning  min-width-125 float-right" ><i class="fa fa-loop"></i> Histori Resep</button>
+                <button type="button" class="btn-alt btn-rounded btn-primary min-width-125 float-right btn-toggle-histori-resep" data-toggle="modal" data-target="#modal-create-resep" data-kategori_resep="default"><i class="fa fa-pencil"></i> Buat Resep</button>
+                <button type="button" onclick="historiResep()" class="btn-alt btn-warning  min-width-125 float-right" ><i class="fa fa-loop"></i> Histori Resep</button>
+                @if (config('app.fitur_kasus_resep_kategori'))
+                    <button type="button" class="btn-alt btn-rounded btn-primary min-width-125 float-right btn-toggle-histori-resep" data-toggle="modal" data-target="#modal-create-resep" data-kategori_resep="tpn"><i class="fa fa-pencil"></i> Buat Resep TPN</button>
+                    <button type="button" class="btn-alt btn-rounded btn-primary min-width-125 float-right btn-toggle-histori-resep" data-toggle="modal" data-target="#modal-create-resep" data-kategori_resep="dispensing_aseptik"><i class="fa fa-pencil"></i> Buat Resep Dispensing Aseptik</button>
+                @endif
             @endif
         </div>
     </div>
@@ -12,7 +16,17 @@
         <div class="col-md-6">
             <div class="block block-rounded block-bordered">
                 <div class="block-header block-header-default">
-                    <h4 class="block-title font-w600">Resep @if(!empty($r->transaksi_farmasi)) @if($r->transaksi_farmasi->cito == 1) <small>(Cito)</small>@endif @endif</h4>
+                    <h4 class="block-title font-w600">
+                        Resep 
+                        @if(!empty($r->transaksi_farmasi)) 
+                            @if($r->transaksi_farmasi->cito == 1) 
+                                <small>(Cito)</small>
+                            @endif
+                            @if($r->transaksi_farmasi->eksekutif == 1)
+                                <small>(Eksekutif)</small>
+                            @endif
+                        @endif
+                    </h4>
 
                     @if($allow_crud)
                     @if($my_role_admin == 1 || $r->created_by == Auth::user()->id)
@@ -25,9 +39,15 @@
                         <i class="si si-trash"></i>
                     </button>
                     
-                    <button type="button" class="btn-block-option" data-toggle="tooltip" data-placement="top" title="Edit" onclick="resepEdit({{$r->id}})">
-                        <i class="si si-pencil"></i>
-                    </button>
+                    @if (config('app.fitur_kasus_resep_kategori'))
+                        <button type="button" class="btn-block-option" data-tooltip="tooltip" data-placement="top" title="Edit" data-toggle="modal" data-target="#resepModalEdit" data-kategori_resep="{{ $r->kategori_resep ?? 'default' }}" data-id="{{ $r->id }}">
+                            <i class="si si-pencil"></i>
+                        </button>
+                    @else
+                        <button type="button" class="btn-block-option" data-toggle="tooltip" data-placement="top" title="Edit" onclick="resepEdit({{$r->id}})">
+                            <i class="si si-pencil"></i>
+                        </button>
+                    @endif
                     @else
                     <span class="badge badge-success">Sudah dilayani</span>
                     @endif
@@ -52,6 +72,11 @@
                     @if($r->jenis_resep == 'pulang')
                     <span class="badge badge-info">Resep Pulang</span>
                     @endif
+                    @if($r->kategori_resep == 'dispensing_aseptik')
+                        <span class="badge badge-primary">Dispensing Aseptik</span>
+                    @elseif($r->kategori_resep == 'tpn')
+                        <span class="badge badge-primary">TPN</span>
+                    @endif
                         
                     @if(!empty($r->transaksi_id))
                     <h6 class="pt-10">
@@ -64,8 +89,11 @@
                             -
                         @endif</span>
                     </h6>
-                    <hr>
+                    @if (!empty($r->resep_iter))
+                        Iter Resep: {{ $r->resep_iter }}
                     @endif
+                    @endif
+                    <hr>
                     
                     @foreach ( $r->resepDetail as $resepDetail )
                     <span class="text-muted font-w400"> {{ $resepDetail->type }} </span>

@@ -19,6 +19,9 @@ Admin - Daftar Dokter
 			<span><h4 class="mb-0">Daftar Dokter</h4><hr>
 			<h5></h5></span>
 			<div class="block-options">
+				<button type="button" class="btn btn-sm btn-success btn-hero" id="btn-import-hfis" >
+					<i class="fa fa-download"></i> Import HFIS
+				</button>
 				<a href="{{url()->current()}}/baru" class="btn btn-sm btn-primary btn-hero">
 					<i class="fa fa-plus"></i> Buat Dokter Baru
 				</a>
@@ -103,6 +106,52 @@ Admin - Daftar Dokter
 				});
 			}
 		})
+	});
+
+	$('#btn-import-hfis').click(function() {
+		swal({
+			type : 'question',
+			title: 'Apakah anda yakin?',
+			html : 'Melakukan Import HFIS',
+			showCancelButton: true,
+			cancelButtonText: 'Batal',
+			confirmButtonText: 'Import',
+			showLoaderOnConfirm: true,
+			preConfirm: (login) => {
+				return $.ajax({
+					url: "{{ url('admin/dokter/import-hfis') }}",
+					type: "POST",
+					dataType: "JSON",
+					headers: {
+						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+					},
+					success: (response) => {
+						return response;
+					},
+					error : () => {
+						return {
+							status : -1,
+							title : 'Gagal!',
+							message : 'Terjadi Kesalahan Server',
+						}
+					}
+				})
+			},
+			allowOutsideClick: () => !swal.isLoading()
+		}).then((result) => {
+			if (result.dismiss == "cancel") return;
+			if (result.value != undefined) {
+				swal({
+					type : result.value.status == 1 ? 'success' : 'error',
+					title: result.value.title,
+					html : result.value.message,
+				});
+				console.log("Pesan Error Import HFIS", result?.value?.data?.message || []);
+			}else {
+				swalTerjadiKesalahanServer();
+			}
+		})
+		
 	});
 </script>
 @endsection

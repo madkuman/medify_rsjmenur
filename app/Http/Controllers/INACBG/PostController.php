@@ -9,6 +9,8 @@ use Auth;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use DB;
+use App\Models\Kasus\VitalSign;
+
 
 class PostController extends Controller
 {
@@ -139,8 +141,8 @@ class PostController extends Controller
                 "kode_tarif" => self::$kode_tarif,
                 "payor_id" => "3",
                 "payor_cd" => "JKN",
-                "cob_cd" => "0001",
-                "coder_nik" => config('app.inacbg_coder_nik')
+                "cob_cd" => "#",
+                "coder_nik" => self::$coder_nik,
             ];
 
             // add discharge status if exist
@@ -179,12 +181,33 @@ class PostController extends Controller
                     $data['data']["tarif_rs"][$i] = strval($value);
                 }
             }
+
+            //set value sistol diastol
+            $data['data']["sistole"] = VitalSign::where('kasus_id', $kasus->id)->whereNotNull('sistol')->latest('created_at')->first()->sistol ?? 0;
+            $data['data']["diastole"] = VitalSign::where('kasus_id', $kasus->id)->whereNotNull('diastol')->latest('created_at')->first()->diastol ?? 0;
+
+            //set value cara_masuk
+            $cara_masuk = $kasus->sep->asal_rujukan ?? 0;
+            switch ($cara_masuk) {
+                case 1:
+                    $data['data']["cara_masuk"] = 'gp';
+                    break;
+                case 2:
+                    $data['data']["cara_masuk"] = 'hosp-trans';
+                    break;
+                default:
+                    $data['data']["cara_masuk"] = 'other';
+                    break;
+            }
+
+            //set data upgrade_class_payor, sementara hardcode dulu
+            $data['data']["upgrade_class_payor"] = 'peserta';
             
-            $data = json_encode($data);
-            $param = $this->inacbg_encrypt(
-                $data,
-                self::$key
-            );
+
+
+            // dd($data);
+            $param = $this->inacbg_encrypt(json_encode($data),
+                    self::$key);
             $client = new Client();
             $res = $client->request('POST', self::$url, 
                 [

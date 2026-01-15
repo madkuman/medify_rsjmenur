@@ -98,20 +98,22 @@
 		$('#registrasi').addClass('d-none');
 		$('#konfirmasi').removeClass('d-none');
 		$('#btn-cetak-pasien-baru').attr('disabled', false);
-		window.location.replace("{{ url('pasien/antrian-pasien') }}");
+		//window.location.replace("{{ url('pasien/antrian-pasien') }}");
+		window.location.replace("{{url('pasien/antrian-pasien')}}");
 	}
 
 	window.onafterprint = function(){
 		callSwal('success','Selesai','Berhasil mencetak nomor antrian, silahkan menuju ke Loket Antrian','')
 		setTimeout(function(){ 
-			window.location.replace("{{ url('pasien/antrian-pasien') }}");
+			//window.location.replace("{{ url('pasien/antrian-pasien') }}");
+			window.location.replace("{{url('pasien/antrian-pasien')}}");
 		}, 3000);
 	}
 
 	function printBoardingPass(data){
 
 		console.log(data.antrian);
-		$('#boarding_poliklinik').html('PASIEN BARU');
+		$('#boarding_poliklinik').html('NOMOR ANTRIAN ANDA:');
 		$('#boarding_pasien').html('-');
 		$('#boarding_dokter').html('-');
 		$('#boarding_loket').html(data.antrian.loket.nama_loket);

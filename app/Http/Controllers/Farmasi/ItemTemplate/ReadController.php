@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Farmasi\ItemTemplate;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Farmasi\ItemsKategori;
 use App\Models\Farmasi\ItemsTemplate;
+use App\Models\Farmasi\Kategori;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
@@ -15,17 +17,17 @@ class ReadController extends Controller
 
     public function search(Request $request)
     {
-         $search = preg_replace("/[^[:alnum:][:space:]]/u", '', $request->get('keyword'));
-        if($search == "NOT")    $search = strtolower($search);
+        $search = preg_replace("/[^[:alnum:][:space:]]/u", '', $request->get('keyword'));
+        if ($search == "NOT")    $search = strtolower($search);
         $jenis = $request->get('jenis') ? strtolower($request->get('jenis')) : 0;
-                
-        if(!empty($search)) 
+
+        if (!empty($search))
             $item = ItemsTemplate::search($search)->rule(\App\SearchRule\FarmasiItems::class);
         else
             $item = ItemsTemplate::latest();
 
-        if($jenis) 
-            $item = $item->where('jenis',$jenis);
+        if ($jenis)
+            $item = $item->where('jenis', $jenis);
         return $item->paginate(20);
     }
 
@@ -33,11 +35,11 @@ class ReadController extends Controller
     {
         return ItemsTemplate::find($id);
     }
-    
+
     public function getByIds($ids, $eager = [])
     {
-        if(is_numeric($ids)) $ids = [$ids];
-        return ItemsTemplate::with($eager)->whereIn('id',$ids)->get();
+        if (is_numeric($ids)) $ids = [$ids];
+        return ItemsTemplate::with($eager)->whereIn('id', $ids)->get();
     }
 
     public function select2Search(Request $request)
@@ -52,7 +54,7 @@ class ReadController extends Controller
             ->limit($limit);
 
         $results = $query->get();
-        $results_formatted = $results->map(function($item){
+        $results_formatted = $results->map(function ($item) {
             return [
                 'id' => $item->id,
                 'text' => $item->nama,
@@ -70,7 +72,7 @@ class ReadController extends Controller
     public function select2GetSelected($array_ids)
     {
         $data = ItemsTemplate::whereIn('id', $array_ids)->get();
-        $data_formatted = $data->map(function($item){
+        $data_formatted = $data->map(function ($item) {
             return [
                 'id' => $item->id,
                 'text' => $item->nama,
@@ -124,5 +126,19 @@ class ReadController extends Controller
 
         $data = DB::connection('farmasi')->select($query);
         return $data;
+    }
+
+    public function getItemKategori($slug)
+    {
+        $kategori = Kategori::where('slug', $slug)->pluck('id')->toArray();
+        $items_kategori = ItemsKategori::whereIn('kategori_id', $kategori)->pluck('item_template_id')->toArray();
+        $item_template = ItemsTemplate::whereIn('id', $items_kategori)->get();
+        return $item_template;
+    }
+
+    public function getKodeKfa($id)
+    {
+        $item = ItemsTemplate::find($id);
+        return $item->kode_kfa;
     }
 }

@@ -24,9 +24,10 @@ class PostController extends Controller
 			$riwayat_kehamilan = [];
 			$input = $req->all();
 			foreach($input as $key => $val){
-				if($key == '_token')	continue;
+				if($key == '_token') continue;
+				if($key == 'kasus')	continue;
 				if($temp != $key)
-				{		
+				{	
 					$temp_num = count($val);
 					if($max < $temp_num) $max = $temp_num;
 					$temp = $key;

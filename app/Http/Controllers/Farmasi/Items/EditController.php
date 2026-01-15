@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Farmasi\ItemsFarmasi;
 use App\Models\Farmasi\Farmasi;
 use App\Models\Farmasi\Distribusi;
+use App\Models\Farmasi\ItemJenisInteraksi;
 use App\Models\Farmasi\Pengadaan;
 use App\Models\Farmasi\LogDistribusi;
 use App\Models\Farmasi\Items;
@@ -16,6 +17,7 @@ use App\Models\Farmasi\ItemsTemplate;
 use App\Models\Farmasi\Kategori;
 use App\Models\Farmasi\ItemsKategori;
 use App\Models\Farmasi\ItemTemplateHarga;
+use App\Models\Farmasi\RetriksiBpjsDataLab;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
@@ -104,6 +106,86 @@ class EditController extends Controller
 				$items_template->nama = $name;
 				$items_template->satuan = $satuan;
 				$items_template->save();
+
+				$item_template = ItemsTemplate::find($item->item_template_id);
+				$item_template->rute_id = $request->rute ?? null;
+				$item_template->bahan_aktif_id = $request->bahan_aktif ?? null;
+				$item_template->kekuatan_sediaan = $request->kekuatan_sediaan ?? null;
+				$item_template->satuan_kekuatan_id = $request->satuan_kekuatan ?? null;
+				$item_template->kelas_terapi_id = $request->kelas_terapi ?? null;
+				$item_template->kelas_terapi_fornas_id = $request->kelas_terapi_fornas ?? null;
+				$item_template->rak_obat_id = $request->rak_obat ?? null;
+				$item_template->is_formularium_rs = $request->is_formularium_rs ?? null;
+				$item_template->is_fornas = $request->is_fornas ?? null;
+				$item_template->retriksi_bpjs_jumlah = $request->retriksi_bpjs_jumlah ?? null;
+				$item_template->kode_rekening_id = $request->kode_rekening_id ?? null;
+				$item_template->kode_bidang_id = $request->kode_bidang_id ?? null;
+
+				$item_template->kode_barang = $request->kode_barang ?? null;
+				$item_template->kode_atc = $request->kode_atc ?? null;
+				$item_template->dosis_maksimal = $request->dosis_maksimal ?? null;
+				$item_template->dosis_maksimal_satuan = $request->dosis_maksimal_satuan ?? null;
+				$item_template->indikasi = json_encode($request->indikasi ?? '');
+				$item_template->waktu_dosage_max_1 = $request->waktu_dosage_max_1 ?? null;
+				$item_template->waktu_dosage_max_2 = $request->waktu_dosage_max_2 ?? null;
+
+				$item_template->save();
+
+				$form_ids = $request->retriksi_bpjs_data_lab ?? [];
+				if (!empty($form_ids)) {
+					# hapus data sebelumnya terlebih dahulu
+					$res = RetriksiBpjsDataLab::where('item_template_id', $item->item_template_id)->delete();
+					foreach ($form_ids as $form_id) {
+						$retriksi_bpjs_data_lab = new RetriksiBpjsDataLab;
+						$retriksi_bpjs_data_lab->item_template_id = $item->item_template_id;
+						$retriksi_bpjs_data_lab->form_id = $form_id;
+						$retriksi_bpjs_data_lab->save();
+					}
+				}
+
+				# kelas terapi
+				$nama_interaksi_kelas_terapi_ids = $request->nama_interaksi_kelas_terapi ?? [];
+				$jenis_interaksi_kelas_terapi_ids = $request->jenis_interaksi_kelas_terapi ?? [];
+				$arr_keterangan_interaksi_kelas_terapi = $request->keterangan_interaksi_kelas_terapi ?? '';
+
+				if (!empty($nama_interaksi_kelas_terapi_ids) && !empty($jenis_interaksi_kelas_terapi_ids) && (count($nama_interaksi_kelas_terapi_ids) == count($jenis_interaksi_kelas_terapi_ids))) {
+					# hapus data sebelumnya terlebih dahulu
+					$res = ItemJenisInteraksi::where('item_template_id', $item->item_template_id)->where('tipe', 'kelas-terapi')->delete();
+					foreach ($nama_interaksi_kelas_terapi_ids as $key => $value) {
+						$item_jenis_interaksi = new ItemJenisInteraksi;
+						$item_jenis_interaksi->item_template_id = $item->item_template_id ?? null;
+						$item_jenis_interaksi->master_jenis_interaksi_id = $jenis_interaksi_kelas_terapi_ids[$key] ?? null;
+		
+						$item_jenis_interaksi->kategori_id = $nama_interaksi_kelas_terapi_ids[$key] ?? null;
+						
+						$item_jenis_interaksi->keterangan = $arr_keterangan_interaksi_kelas_terapi[$key] ?? '';
+						$item_jenis_interaksi->tipe = 'kelas-terapi';
+						$item_jenis_interaksi->save();
+					}
+				}
+
+				# kelas obat
+				$nama_interaksi_obat_ids = $request->nama_interaksi_obat ?? [];
+				$jenis_interaksi_obat_ids = $request->jenis_interaksi_obat ?? [];
+				$arr_keterangan_interaksi_obat = $request->keterangan_interaksi_obat ?? '';
+
+				if (!empty($nama_interaksi_obat_ids) && !empty($jenis_interaksi_obat_ids) && (count($nama_interaksi_obat_ids) == count($jenis_interaksi_obat_ids))) {
+					# hapus data sebelumnya terlebih dahulu
+					$res = ItemJenisInteraksi::where('item_template_id', $item->item_template_id)->where('tipe', 'kelas-obat')->delete();
+					foreach ($nama_interaksi_obat_ids as $key => $value) {
+						$item_jenis_interaksi = new ItemJenisInteraksi;
+						$item_jenis_interaksi->item_template_id = $item->item_template_id;
+						$item_jenis_interaksi->master_jenis_interaksi_id = $jenis_interaksi_obat_ids[$key];
+						
+						$item_jenis_interaksi->item_template_interaksi_id = $nama_interaksi_obat_ids[$key];
+
+						$item_jenis_interaksi->keterangan = $arr_keterangan_interaksi_obat[$key];
+
+						$item_jenis_interaksi->tipe = 'kelas-obat';
+						$item_jenis_interaksi->save();
+					}
+				}
+
 			}
 
 			DB::connection('farmasi')->commit();

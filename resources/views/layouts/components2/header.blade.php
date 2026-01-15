@@ -59,5 +59,4 @@
 <link rel="stylesheet" href="{{asset('assets/css/fa5.10.0.11/all.min.css')}}">
 <link rel="stylesheet" href="{{asset('assets/css/medifyhospitalv2.4.1.css')}}">
 
-
 @yield('css')

@@ -8,7 +8,7 @@ use App\Models\Kasus\Resep;
 use App\Models\Kasus\ResepDetail;
 use App\Models\Kasus\ResepRacikanDetail;
 use App\Models\Kasus\Kasus;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Bugsnag;
 use Auth;
 
@@ -17,9 +17,48 @@ class EditController extends Controller
 	public function editResep(Request $request,$nomorKasus)
 	{
 		DB::connection('kasus')->beginTransaction();
+		DB::connection('farmasi')->beginTransaction();
         DB::connection('mysql')->beginTransaction();
         try
         {
+			if (!empty($request->kategori_resep)) {
+				$resep = Resep::find($request->id);
+				if($resep->transaksi_farmasi != null) {
+					if(!empty($resep->transaksi_farmasi->paid_at) || count($resep->transaksi_farmasi->copy_resep) > 0 || $resep->transaksi_farmasi->dikerjakan_at != null) {
+						DB::connection('kasus')->rollback();
+						DB::connection('farmasi')->rollback();
+						DB::connection('mysql')->rollback();
+						return redirect('/kasus/'.$nomorKasus.'/datamedis/resep')
+							->with('active_nav','resep')
+							->with('message', 'Resep Sudah Di Layani!')
+							->with('title', 'Gagal!')
+							->with('status', -1);
+					}
+				}
+
+				if ($resep->kategori_resep == 'tpn') {
+					$resep = app(\App\Http\Controllers\Kasus\Resep\CreateController::class)->createKategoriResepTpn($resep, $request);
+				} else if ($resep->kategori_resep == 'dispensing_aseptik') {
+					$resep = app(\App\Http\Controllers\Kasus\Resep\CreateController::class)->createKategoriResepDispensingAseptik($resep, $request);
+				} else {
+					$resep = app(\App\Http\Controllers\Kasus\Resep\CreateController::class)->createKategoriResepDefault($resep, $request);
+				}
+				if (!empty($resep->transaksi_id)) {
+					$resep_farmasi = app(\App\Http\Controllers\Farmasi\Transaksi\CreateController::class)->createFromResepKasus($resep->transaksi_farmasi, $request, $resep);
+				}
+
+				$log = app('App\Http\Controllers\Kasus\Log\CreateController')->create($resep->kasus_id,'edit','resep',$resep->id);
+
+				DB::connection('kasus')->commit();
+				DB::connection('farmasi')->commit();
+				DB::connection('mysql')->commit();
+
+				return redirect('/kasus/'.$nomorKasus.'/datamedis/resep')
+					->with('active_nav','resep')
+					->with('message', 'Resep berhasil diubah!')
+					->with('title','Berhasil!')
+					->with('status', 1);
+			}
 			//dd($request);
 			$resepId = $request->id;
 
@@ -37,19 +76,20 @@ class EditController extends Controller
 			//dd($kategoriObat);
 			$resep = Resep::find($resepId);
 			//handler prevent backend status farmasi
-            if(!empty($resep->transaksi_farmasi->paid_at) || count($resep->transaksi_farmasi->copy_resep) > 0)
-            {
-                $status = -1;
-                $message = 'Resep Sudah Di Layani!';
-                $title = 'Gagal!';
-                DB::connection('kasus')->rollback();
-                DB::connection('mysql')->rollback();
-                return redirect('/kasus/'.$nomorKasus.'/datamedis/resep')
-                    ->with('active_nav','resep')
-                    ->with('message', $message)
-                    ->with('title',$title)
-                    ->with('status', $status);
-            }
+			if($resep->transaksi_farmasi != null) {
+				if(!empty($resep->transaksi_farmasi->paid_at) || count($resep->transaksi_farmasi->copy_resep) > 0 || $resep->transaksi_farmasi->dikerjakan_at != null) {
+					$status = -1;
+					$message = 'Resep Sudah Di Layani!';
+					$title = 'Gagal!';
+					DB::connection('kasus')->rollback();
+					DB::connection('mysql')->rollback();
+					return redirect('/kasus/'.$nomorKasus.'/datamedis/resep')
+						->with('active_nav','resep')
+						->with('message', $message)
+						->with('title',$title)
+						->with('status', $status);
+				}
+			}
 
             $resep->jenis_resep = $request->input('jenis_resep');
             $resep->save();
@@ -121,6 +161,7 @@ class EditController extends Controller
 
 
 			DB::connection('kasus')->commit();
+            DB::connection('farmasi')->commit();
             DB::connection('mysql')->commit();
             return redirect('/kasus/'.$nomorKasus.'/datamedis/resep')
             ->with('active_nav','resep')
@@ -133,6 +174,7 @@ class EditController extends Controller
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 
             DB::connection('kasus')->rollback();
+            DB::connection('farmasi')->rollback();
             DB::connection('mysql')->rollback();
             
         }

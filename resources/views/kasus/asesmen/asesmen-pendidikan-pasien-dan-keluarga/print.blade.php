@@ -460,6 +460,161 @@
 			</tr>
 		</tbody>
 	</table>
+	<div style="page-break-after: always;"></div>
+	<table class="bordered">
+		<thead>
+			<tr>
+				<th width="50%">Hambatan Dalam Belajar</th>
+				<th width="50%">Kebutuhan Pembelajaran Pasien</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<table class="noBorder">
+						@php
+						$data_hambatan = explode(", ", $item->hambatan);
+						$aa =[];
+						@endphp
+						<tr>
+							<td><div class="cb  @if(in_array('Pendengaran', $data_hambatan)) cbx @endif"></div>Pendengaran</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="cb @if(in_array('Penglihatan', $data_hambatan)) cbx @endif"></div>Penglihatan
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="cb  @if(in_array('Kognitif', $data_hambatan)) cbx @endif"></div>Kognitif
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="cb  @if(in_array('Fisik', $data_hambatan)) cbx @endif"></div>Fisik
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="cb @if(in_array('Budaya', $data_hambatan)) cbx @endif"></div>Budaya
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="cb  @if(in_array('Agama', $data_hambatan)) cbx @endif"></div>Agama
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="cb  @if(in_array('Emosi', $data_hambatan)) cbx @endif"></div>Emosi
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="cb @if(in_array('Bahasa', $data_hambatan)) cbx @endif"></div>Bahasa
+							</td>
+						</tr>
+						<?php 
+							if(in_array('Penglihatan', $data_hambatan)) {
+								$aa[] = 'Penglihatan';
+							};
+							if(in_array('Pendengaran', $data_hambatan)) {
+								$aa[] = 'Pendengaran';
+							};
+							if(in_array('Kognitif', $data_hambatan)) {
+								$aa[] = 'Kognitif';
+							};
+							if(in_array('Fisik', $data_hambatan)) {
+								$aa[] = 'Fisik';
+							};
+							if(in_array('Budaya', $data_hambatan)) {
+								$aa[] = 'Budaya';
+							};
+							if(in_array('Agama', $data_hambatan)) {
+								$aa[] = 'Agama';
+							};
+							if(in_array('Emosi', $data_hambatan)) {
+								$aa[] = 'Emosi';
+							};
+							if(in_array('Bahasa', $data_hambatan)) {
+								$aa[] = 'Bahasa';
+							};
+						?>
+						<tr>
+							<td>Hambatan Lain : {{implode(",", array_diff($data_hambatan,$aa))}}</td>
+						</tr>
+						<tr>
+							<td>Penerjemah : {{$item->penerjemah ?? '-'}}</td>
+						</tr>
+					</table>
+				</td>
+				<td>
+					<table class="noBorder">
+						@php
+						$data_pembelajaran = explode(", ", $item->pembelajaran);
+						$aa=[];
+						@endphp
+						<tr>
+							<td>
+								<div class="cb  @if(in_array('Diagnosa & Manajemen', $data_pembelajaran)) cbx @endif"></div>Diagnosa & Manajemen
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="cb @if(in_array('Obat-obatan', $data_pembelajaran)) cbx @endif"></div>Obat-obatan
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="cb  @if(in_array('Perawatan Luka', $data_pembelajaran)) cbx @endif"></div>Perawatan Luka
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="cb  @if(in_array('Rehabilitas', $data_pembelajaran)) cbx @endif"></div>Rehabilitas
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="cb @if(in_array('Manajemen Nyeri', $data_pembelajaran)) cbx @endif"></div>Manajemen Nyeri
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="cb  @if(in_array('Diet dan nutrisi', $data_pembelajaran)) cbx @endif"></div>Diet dan nutrisi
+							</td>
+						</tr>
+						<?php 
+							if(in_array('Diagnosa & Manajemen', $data_pembelajaran)) {
+								$aa[] = 'Diagnosa & Manajemen';
+							};
+							if(in_array('Obat-obatan', $data_pembelajaran)) {
+								$aa[] = 'Obat-obatan';
+							};
+							if(in_array('Perawatan Luka', $data_pembelajaran)) {
+								$aa[] = 'Perawatan Luka';
+							};
+							if(in_array('Rehabilitas', $data_pembelajaran)) {
+								$aa[] = 'Rehabilitas';
+							};
+							if(in_array('Manajemen Nyeri', $data_pembelajaran)) {
+								$aa[] = 'Manajemen Nyeri';
+							};
+							if(in_array('Agama', $data_pembelajaran)) {
+								$aa[] = 'Agama';
+							};
+							if(in_array('Diet dan nutrisi', $data_pembelajaran)) {
+								$aa[] = 'Diet dan nutrisi';
+							};
+						?>
+						<tr>
+							<td>Kebutuhan Belajar Lain : {{implode(",", array_diff($data_pembelajaran,$aa))}}</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 	<table class="bordered">
 		<tr>
 			<td>

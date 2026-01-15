@@ -50,7 +50,7 @@
                     {{indonesian_date($tgl_faktur,'d-m-Y')}}
                     @endif
                 </td>
-                <td>{{$item->log_pengadaan->pengadaan->nomor_referensi}}</td>
+                <td>`{{$item->log_pengadaan->pengadaan->nomor_referensi}}</td>
                 <td>{{$item->log_pengadaan->pengadaan->supplier_detail->nama}}</td>
                 <td>{{$item->item_farmasi->item_template->satuan}}</td>
                 <td>{{$item->jumlah}}</td>

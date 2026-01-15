@@ -14,7 +14,9 @@ use DateTime, stdClass;
 
 define('relasi_penghapusan', [
                     'log.detail_item.detail_item.item_detail', 
-                    'created_by_detail'
+                    'created_by_detail',
+                    'penghapusan_jenis',
+                    'penyedia'
                 ]);
 
 class ReadController extends Controller
@@ -29,6 +31,11 @@ class ReadController extends Controller
     {
         $tgl_awal = $request->tanggal_awal;
         $tgl_akhir = $request->tanggal_akhir;
+        $penyedia_id = $request->penyedia_id;
+        $penghapusan_jenis_id = $request->penghapusan_jenis_id;
+        $surat_perintah = $request->surat_perintah;
+        $no_pengeluaran = $request->no_pengeluaran;
+        $keterangan = $request->keterangan;
 
         $penghapusan = Penghapusan::with(relasi_penghapusan)->where('farmasi_id', $farmid);
 
@@ -50,7 +57,23 @@ class ReadController extends Controller
             $max_date = $max_date->copy()->endOfDay();
         } else $max_date = Carbon::maxValue();
 
-        $penghapusan = $penghapusan->whereBetween('created_at', [$min_date, $max_date])->latest();
+        $penghapusan = $penghapusan->whereBetween('created_at', [$min_date, $max_date])
+        ->when($penyedia_id, function ($query, $penyedia_id) {
+            return $query->where('penyedia_id', $penyedia_id);
+        })
+        ->when($penghapusan_jenis_id, function ($query, $penghapusan_jenis_id) {
+            return $query->where('penghapusan_jenis_id', $penghapusan_jenis_id);
+        })
+        ->when($surat_perintah, function ($query, $surat_perintah) {
+            return $query->where('surat_perintah', 'like','%'.$surat_perintah.'%');
+        })
+        ->when($no_pengeluaran, function ($query, $no_pengeluaran) {
+            return $query->where('no_pengeluaran', 'like','%'.$no_pengeluaran.'%');
+        })
+        ->when($keterangan, function ($query, $keterangan) {
+            return $query->where('keterangan', 'like','%'.$keterangan.'%');
+        })
+        ->latest();
         return $penghapusan;
     }
 

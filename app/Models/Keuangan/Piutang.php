@@ -113,4 +113,8 @@ class Piutang extends Model
     {
         return $this->hasOne('App\User', 'id', 'dokter_user_id');
     }
+	public function transaksi_rawat_jalan()
+	{
+		return $this->hasOne('App\Models\RawatJalan\Transaksi','piutang_id','id');
+	}
 }

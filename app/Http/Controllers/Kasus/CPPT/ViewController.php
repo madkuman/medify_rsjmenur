@@ -87,7 +87,9 @@ class ViewController extends Controller
 		$kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
 		if($request->ids){
             $cppt = CPPT::whereIn('id',explode('%amp',$request->ids))->get();
-        }else{
+        } else if (!empty($request->print_sebagian) && $request->print_sebagian == true) {
+            $cppt = CPPT::where('kasus_id',$kasus->id)->whereNotNull('marked_print_at')->get();
+		} else{
 		    $cppt = CPPT::where('kasus_id',$kasus->id)->get();
         }
 		$kasusId = $kasus->id;
@@ -111,5 +113,11 @@ class ViewController extends Controller
 		return $pdf->stream($filename);
 	}
 
-
+	public function printCPPTSebagian($nomor_kasus,Request $request)
+	{
+		$request->merge([
+			'print_sebagian' => true
+		]);
+        return $this->printCPPTAll($nomor_kasus, $request);
+	}
 }

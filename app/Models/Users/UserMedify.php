@@ -37,21 +37,23 @@ class UserMedify extends Model
   public function toSearchableArray()
   {
     return [
-     'name' => $this->name,
-     'email' => $this->email
-   ];
- }
+      'name' => $this->name,
+      'email' => $this->email
+    ];
+  }
 
- public function searchableAs()
- {
-  return 'users';
-}
+  public function searchableAs()
+  {
+    return 'users';
+  }
 
-public function pegawai(){
-  return $this->hasMany('App\Models\Kepegawaian\Pegawai','id', 'user_id');
-}
+  public function pegawai()
+  {
+    return $this->hasMany('App\Models\Kepegawaian\Pegawai', 'id', 'user_id');
+  }
 
-public function profesi_detail() {
-  return $this->hasOne('App\Models\Hospital\Profesi', 'id', 'profesi');
-}
+  public function profesi_detail()
+  {
+    return $this->hasOne('App\Models\Hospital\Profesi', 'id', 'profesi');
+  }
 }

@@ -55,4 +55,9 @@ class Transaksi extends Model
       return $this->hasOne('App\Models\RekamMedis\Transaksi','id','rm_transaksi_id');
     }
 
+    public function farmasi_transaksi_obat_kirim_ruangan()
+    {
+        return $this->hasMany(\App\Models\Farmasi\TransaksiObat::class, 'kasus_id', 'kasus_id')->where('telaah_kirim_ruangan', '1');
+    }
+
 }

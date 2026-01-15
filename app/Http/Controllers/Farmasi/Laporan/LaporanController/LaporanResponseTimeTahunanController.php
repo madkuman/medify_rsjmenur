@@ -8,16 +8,17 @@ use DB;
 
 class LaporanResponseTimeTahunanController extends Controller
 {
-	public function get($date_start,$date_end,$farmasi_ids)
+	public function get($date_start,$date_end,$farmasi_ids,$lokasi_ids)
     {
 		$farmasi_ids = implode(",", $farmasi_ids);
-		$data['non_racikan'] = $this->getData($date_start,$date_end,'non-racikan',$farmasi_ids);
-		$data['racikan'] = $this->getData($date_start,$date_end,'racikan',$farmasi_ids);
+		$lokasi_ids = implode(",", $lokasi_ids);
+		$data['non_racikan'] = $this->getData($date_start,$date_end,'non-racikan',$farmasi_ids,$lokasi_ids);
+		$data['racikan'] = $this->getData($date_start,$date_end,'racikan',$farmasi_ids,$lokasi_ids);
 		return $data;
 		
     }
 
-    private function getData($date_start,$date_end,$jenis_resep,$farmasi_ids)
+    private function getData($date_start,$date_end,$jenis_resep,$farmasi_ids,$lokasi_ids)
     {
 		$sql_date_start = $date_start->copy()->format('Y-m-d');
 		$sql_date_end = $date_end->copy()->format('Y-m-d');
@@ -40,13 +41,14 @@ class LaporanResponseTimeTahunanController extends Controller
     	"
 	    	SELECT 
 	    	CONCAT(YEAR(dikerjakan_at), '-' ,MONTH(dikerjakan_at)) AS tanggal, 
-	    	TIMESTAMPDIFF(MINUTE,dikerjakan_at,lima_benar_at) AS rata_rata 
+			AVG(TIMESTAMPDIFF(MINUTE,dikerjakan_at,lima_benar_at)) AS rata_rata
 	    	FROM transaksi_obat
 	    	WHERE dikerjakan_at IS NOT NULL
 			AND dikerjakan_at >= DATE('$sql_date_start')
 			AND dikerjakan_at <= DATE('$sql_date_end')
 			AND farmasi_id IN ($farmasi_ids)
 			$query_jenis_resep
+			AND lokasi_id IN ($lokasi_ids)
 			AND deleted_at IS NULL
 			AND lima_benar_at IS NOT NULL
 	    	GROUP BY YEAR(dikerjakan_at), MONTH(dikerjakan_at);

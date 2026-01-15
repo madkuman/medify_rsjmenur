@@ -11,7 +11,7 @@
                     </div>
                 </div>
                 <div class="block-content">
-                    <form class="js-validation-be-contact" action="{{url('kasus')}}/{{ $nomor_kasus }}/datamedis/cppt/edit" method="post">
+                    <form class="js-validation-be-contact" action="{{url('kasus')}}/{{ $nomor_kasus }}/datamedis/cppt/edit" method="post" enctype="multipart/form-data">
                         {{ csrf_field() }}
 
                         <input type="hidden" class="form-control form-control-lg" id="cppt-edit-id" name="id" placeholder=""></textarea>
@@ -56,6 +56,15 @@
                             </label>
                             <div class="col-12">
                                 <textarea class="form-control form-control-lg" id="cppt-edit-ppa" name="ppa" rows="3" placeholder=""></textarea>
+                            </div>
+                        </div>
+                        <div id="file-upload-preview-edit">
+
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12" for="">File Foto / Video</label>
+                            <div class="col-12">
+                                <input type="file" class="form-control" id="cppt-edit-files" name="cppt_files[]" multiple >
                             </div>
                         </div>
                         <div class="form-group row">

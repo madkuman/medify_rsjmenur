@@ -13,25 +13,25 @@ use GuzzleHttp\Psr7;
 
 class PostController extends Controller
 {
-    public function submitSEP(Request $request)
-    {
-    	$cons_id = config('app.bpjs_cons_id');
-    	$secret = config('app.bpjs_secret');
-    	$ppk = config('app.bpjs_ppk');
-    	$sep_same_rujuk = BPJSSEP::where("no_rujukan",$request->bpjs_no_rujukan)->orderBy('id', 'desc')->first();
-    	if(isset($sep_same_rujuk))
-    		$dpjp = $sep_same_rujuk->dpjp;
-    	else
-    		$dpjp = $request->dpjp;
-    	if($request->bpjs_jenis_pelayanan == 2)
-    		$poli = $request->bpjs_poli_tujuan;
-    	else
-    		$poli = "0";
-		
-    	$data = [
+	public function submitSEP(Request $request)
+	{
+		$cons_id = config('app.bpjs_cons_id');
+		$secret = config('app.bpjs_secret');
+		$ppk = config('app.bpjs_ppk');
+		$sep_same_rujuk = BPJSSEP::where("no_rujukan", $request->bpjs_no_rujukan)->orderBy('id', 'desc')->first();
+		if (isset($sep_same_rujuk))
+			$dpjp = $sep_same_rujuk->dpjp;
+		else
+			$dpjp = $request->dpjp;
+		if ($request->bpjs_jenis_pelayanan == 2)
+			$poli = $request->bpjs_poli_tujuan;
+		else
+			$poli = "0";
+
+		$data = [
 			'medify_cons_id'		=> $cons_id,
 			'bpjs_stage'			=> config('app.bpjs_stage'),
-			'medify_secret' 		=> $secret, 
+			'medify_secret' 		=> $secret,
 			'no_kartu' 				=> $request->bpjs_nomor_kartu,
 			'tgl_sep' 				=> Carbon::today()->toDateString(),
 			'ppk_pelayanan' 		=> $ppk,
@@ -62,38 +62,38 @@ class PostController extends Controller
 			'no_telp' 				=> Auth::user()->phone,
 			'user' 					=> Auth::user()->id
 		];
-		dd($data);
-		if(config('app.bpjs_enable', false)){
-	    	$res['result'] =  app('App\Http\Controllers\BPJS\API\Sep\CreateController')->create($data);
+		// dd($data);
+		if (config('app.bpjs_enable', false)) {
+			$res['result'] =  app('App\Http\Controllers\BPJS\API\Sep\CreateController')->create($data);
 			// dd($res, $data);
-	    }else{
-	    	$res['result'] = 'Nomor SEP tidak dibuat - '. ($sep+1) .' (Tidak terkoneksi BPJS)';
-	    }
-    	$res['data'] = $data;
-    	return $res;
-    }
+		} else {
+			$res['result'] = 'Nomor SEP tidak dibuat - ' . ($sep + 1) . ' (Tidak terkoneksi BPJS)';
+		}
+		$res['data'] = $data;
+		return $res;
+	}
 
-    //0 jika ga ganti
-    public function updateSEP($sep_id, $kode_dpjp, $diagnosa_awal)
-    {
-    	$cons_id = config('app.bpjs_cons_id');
-    	$secret = config('app.bpjs_secret');
-    	$ppk = config('app.bpjs_ppk');
-    	$sep = BPJSSEP::find($sep_id);
-		if($kode_dpjp = 0 or empty($kode_dpjp))
+	//0 jika ga ganti
+	public function updateSEP($sep_id, $kode_dpjp, $diagnosa_awal)
+	{
+		$cons_id = config('app.bpjs_cons_id');
+		$secret = config('app.bpjs_secret');
+		$ppk = config('app.bpjs_ppk');
+		$sep = BPJSSEP::find($sep_id);
+		if ($kode_dpjp = 0 or empty($kode_dpjp))
 			$dpjp = $kode_dpjp;
 		else
 			$dpjp = $sep->dpjp;
 
-		if($diagnosa_awal = 0 or empty($diagnosa_awal))
+		if ($diagnosa_awal = 0 or empty($diagnosa_awal))
 			$diag = $diagnosa_awal;
 		else
 			$diag = $sep->diagnosa_awal;
 
-    	$data = [
+		$data = [
 			'medify_cons_id'		=> $cons_id,
 			'bpjs_stage'		=> config('app.bpjs_stage'),
-			'medify_secret' 		=> $secret, 
+			'medify_secret' 		=> $secret,
 			'no_kartu' 				=> $sep->no_bpjs,
 			'tgl_sep' 				=> $sep->created_at,
 			'ppk_pelayanan' 		=> $ppk,
@@ -128,48 +128,49 @@ class PostController extends Controller
 		];
 		$res = app('App\Http\Controllers\BPJS\API\Sep\EditController')->update($data);
 		return $res;
-    }
+	}
 
-    public function sepPulang($no_sep, $tgl)
-    {
-    	$cons_id = config('app.bpjs_cons_id');
-    	$secret = config('app.bpjs_secret');
-    	$ppk = config('app.bpjs_ppk');
-		
-    	$data = [
+	public function sepPulang($no_sep, $tgl)
+	{
+		$cons_id = config('app.bpjs_cons_id');
+		$secret = config('app.bpjs_secret');
+		$ppk = config('app.bpjs_ppk');
+
+		$data = [
 			'medify_cons_id'		=> $cons_id,
 			'bpjs_stage'		=> config('app.bpjs_stage'),
-			'medify_secret' 		=> $secret, 
+			'medify_secret' 		=> $secret,
 			'no_sep' 				=> $no_sep,
 			'tgl_pulang' 			=> $tgl,
 			'user'					=> Auth::user()->id
 		];
 		return app('App\Http\Controllers\BPJS\API\Sep\EditController')->pulang($data);
-    }
+	}
 
-    public function approve(Request $request)
-    {
-    	$cons_id = config('app.bpjs_cons_id');
-    	$secret = config('app.bpjs_secret');
-    	$tanggal = array_reverse(explode("-", $request->tanggal));
-    	$tanggal = implode("-", $tanggal);	
-    	$data = [
-    		'medify_cons_id'	=> $cons_id,
+	public function approve(Request $request)
+	{
+		$cons_id = config('app.bpjs_cons_id');
+		$secret = config('app.bpjs_secret');
+		$tanggal = array_reverse(explode("-", $request->tanggal));
+		$tanggal = implode("-", $tanggal);
+		$data = [
+			'medify_cons_id'	=> $cons_id,
 			'bpjs_stage'		=> config('app.bpjs_stage'),
-    		'medify_secret'		=> $secret,
-    		'no_kartu'			=> $request->no_kartu,
-    		'tgl_sep'			=> $tanggal,
-    		'jenis_pelayanan'	=> $request->jenis_pelayanan,
-    		'keterangan'		=> $request->keterangan,
-    		'user'				=> Auth::user()->id,
+			'medify_secret'		=> $secret,
+			'no_kartu'			=> $request->no_kartu,
+			'tgl_sep'			=> $tanggal,
+			'jenis_pelayanan'	=> $request->jenis_pelayanan,
+			'keterangan'		=> $request->keterangan,
+			'user'				=> Auth::user()->id,
 
-    	];
-    	try
-		{
+		];
+		try {
 			$client = new Client();
-			$res = $client->request('POST', config('app.bpjs_app_url').'/sep/approval', 
+			$res = $client->request(
+				'POST',
+				config('app.bpjs_app_url') . '/sep/approval',
 				[
-                    'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
+					'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
 					\GuzzleHttp\RequestOptions::FORM_PARAMS => $data,
 				]
 			);
@@ -181,35 +182,36 @@ class PostController extends Controller
 				echo Psr7\str($e->getResponse());
 			}
 			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-		}catch (\Exception $e){
+		} catch (\Exception $e) {
 			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 			// echo Psr7\str($e);
 		}
-    }
+	}
 
-    public function pengajuan(Request $request)
-    {
-    	$cons_id = config('app.bpjs_cons_id');
-    	$secret = config('app.bpjs_secret');
-    	$tanggal = array_reverse(explode("-", $request->tanggal));
-    	$tanggal = implode("-", $tanggal);	
-    	$data = [
-    		'medify_cons_id'	=> $cons_id,
+	public function pengajuan(Request $request)
+	{
+		$cons_id = config('app.bpjs_cons_id');
+		$secret = config('app.bpjs_secret');
+		$tanggal = array_reverse(explode("-", $request->tanggal));
+		$tanggal = implode("-", $tanggal);
+		$data = [
+			'medify_cons_id'	=> $cons_id,
 			'bpjs_stage'		=> config('app.bpjs_stage'),
-    		'medify_secret'		=> $secret,
-    		'no_kartu'			=> $request->no_kartu,
-    		'tgl_sep'			=> $tanggal,
-    		'jenis_pelayanan'	=> $request->jenis_pelayanan,
-    		'keterangan'		=> $request->keterangan,
-    		'user'				=> Auth::user()->id,
+			'medify_secret'		=> $secret,
+			'no_kartu'			=> $request->no_kartu,
+			'tgl_sep'			=> $tanggal,
+			'jenis_pelayanan'	=> $request->jenis_pelayanan,
+			'keterangan'		=> $request->keterangan,
+			'user'				=> Auth::user()->id,
 
-    	];
-    	try
-		{
+		];
+		try {
 			$client = new Client();
-			$res = $client->request('POST', config('app.bpjs_app_url').'/sep/pengajuan', 
+			$res = $client->request(
+				'POST',
+				config('app.bpjs_app_url') . '/sep/pengajuan',
 				[
-                    'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
+					'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
 					\GuzzleHttp\RequestOptions::FORM_PARAMS => $data,
 				]
 			);
@@ -221,34 +223,33 @@ class PostController extends Controller
 				echo Psr7\str($e->getResponse());
 			}
 			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-		}catch (\Exception $e){
+		} catch (\Exception $e) {
 			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 			// echo Psr7\str($e);
 		}
-    }
+	}
 
-    public function manual(Request $request, $no_sep)
-    {
-    	$sep = BPJSSEP::where('no_sep', $no_sep)->first();
-    	if (!isset($sep)) {
-    		$sep = new BPJSSEP;
-    		$sep->no_sep = $no_sep;
-    		$sep->pasien_id = $request->pasien_id;
-    		$sep->save();
-    	}
-    	return $sep;
-    }
+	public function manual(Request $request, $no_sep)
+	{
+		$sep = BPJSSEP::where('no_sep', $no_sep)->first();
+		if (!isset($sep)) {
+			$sep = new BPJSSEP;
+			$sep->no_sep = $no_sep;
+			$sep->pasien_id = $request->pasien_id;
+			$sep->save();
+		}
+		return $sep;
+	}
 
 
 
-    public function manualInap(Request $request, $no_sep)
-    {
+	public function manualInap(Request $request, $no_sep)
+	{
 		$sep = new BPJSSEP;
 		$sep->no_sep = $no_sep;
 		$sep->pasien_id = $request->pasien_id;
 		$sep->jenis_pelayanan = 1;
 		$sep->save();
-    	return $sep;
-    }
-
+		return $sep;
+	}
 }

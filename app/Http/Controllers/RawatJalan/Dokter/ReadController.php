@@ -10,22 +10,22 @@ class ReadController extends Controller
 {
     public function getAll()
     {
-    	return Dokter::get();
+        return Dokter::get();
     }
     public function getId($id)
     {
-    	return Dokter::find($id);
+        return Dokter::find($id);
     }
 
     public function getByPoli($id)
     {
-    	$dokter = Dokter::with('jadwal')->whereHas('jadwal', function($q) use ($id){
+        $dokter = Dokter::with('jadwal')->whereHas('jadwal', function ($q) use ($id) {
             $q->where('poliklinik_id', $id);
         })->get();
 
         $data = [];
-        foreach($dokter as $row){
-         
+        foreach ($dokter as $row) {
+
             $data[] = [
                 "id" => $row->id,
                 "text" => $row->name,
@@ -38,7 +38,7 @@ class ReadController extends Controller
     public function getDokterByKodeDokter($kode, $kode_poli_bpjs = null)
     {
         $dokter = Dokter::where('bpjs_kode_dpjp', $kode);
-        if(!empty($kode_poli_bpjs)){
+        if (!empty($kode_poli_bpjs)) {
             $dokter = $dokter->where('bpjs_poli', $kode_poli_bpjs);
         }
         return $dokter->first();

@@ -48,29 +48,70 @@ class LaporanRekapDietPelayananMakananPasien extends Controller
         $new_kelas['COVID'] = $kelass->pluck('id')->toArray();
         $jenis_makanan_utama_diet_ids = JenisMakanan::where('utama',JenisMakanan::UTAMA)->where('diet',JenisMakanan::DIET)->get()->pluck('id')->toArray();
         $jenis_makanan_utama_non_diet_ids = JenisMakanan::where('utama',JenisMakanan::UTAMA)->where('diet',JenisMakanan::NONDIET)->get()->pluck('id')->toArray();
-        //dd($date_start,$date_end);
+
+        $new_kelas_non_covid = [];
+        $new_kelas_covid = [];
+        foreach ($new_kelas as $index => $value) {
+            foreach ($value as $val) {
+                if ($index == 'COVID') {
+                    $new_kelas_covid[] = $val;
+                }else{
+                    $new_kelas_non_covid[] = $val;
+                }
+            }
+        }
+
+        $details = PemesananDetail::with(['kelas', 'bangsal', 'ruangan'])->whereBetween('untuk_tanggal', [$date_start, $date_end])->get();
+
+        $new_data = [];
+        foreach ($details as $key => $detail) {
+            if (empty($detail->untuk_tanggal)) {
+                continue;
+            }
+
+            $gender = $detail->gender;
+            $date = (int) date('d', strtotime($detail->untuk_tanggal));
+
+            $kelas_nama = $detail->kelas->nama;
+            if (in_array($detail->bangsal_id, $bangsal_covid) && in_array($detail->kelas_id, $new_kelas_covid)) {
+                $kelas_nama = 'COVID';
+            }else if($kelas->nama == 'VIP B'||$kelas->nama == 'VIP C'||$kelas->nama == 'VIP D'){
+                $kelas_nama = 'VIP B C D';
+            } 
+
+            if (in_array($detail->jenis_makanan_id, $jenis_makanan_utama_diet_ids)) {
+                $jenis = 'DIET';
+            }else if (in_array($detail->jenis_makanan_id, $jenis_makanan_utama_non_diet_ids)) {
+                $jenis = 'NON-DIET';
+            }else {
+                continue;
+            }
+
+            $new_data[$date][$kelas_nama][$jenis][$gender][] = $detail;
+        }
+
         while ($date_start <= $date_end)
         {
             foreach ($new_kelas as $index => $kelas_ids) {
                 $date = (int)$date_start->copy()->format('d');
-                $curent_date_start = $date_start->copy()->startOfDay();
-                $curent_date_end = $date_start->copy()->endOfDay();
+                
                 if ($index == 'COVID') {
-                    $data[$date][] = PemesananDetail::whereBetween('untuk_tanggal', [$curent_date_start, $curent_date_end])->whereIn('kelas_id',$kelas_ids)->whereIn('bangsal_id',$bangsal_covid)->whereIn('jenis_makanan_id', $jenis_makanan_utama_diet_ids)->where('gender', 1)->count();
-                    $data[$date][] = PemesananDetail::whereBetween('untuk_tanggal', [$curent_date_start, $curent_date_end])->whereIn('kelas_id',$kelas_ids)->whereIn('bangsal_id',$bangsal_covid)->whereIn('jenis_makanan_id', $jenis_makanan_utama_diet_ids)->where('gender', 2)->count();
-                    $data[$date][] = PemesananDetail::whereBetween('untuk_tanggal', [$curent_date_start, $curent_date_end])->whereIn('kelas_id',$kelas_ids)->whereIn('bangsal_id',$bangsal_covid)->whereIn('jenis_makanan_id', $jenis_makanan_utama_non_diet_ids)->where('gender', 1)->count();
-                    $data[$date][] = PemesananDetail::whereBetween('untuk_tanggal', [$curent_date_start, $curent_date_end])->whereIn('kelas_id',$kelas_ids)->whereIn('bangsal_id',$bangsal_covid)->whereIn('jenis_makanan_id', $jenis_makanan_utama_non_diet_ids)->where('gender', 2)->count();
+                    $data[$date][] = count($new_data[$date]['COVID']['DIET'][1] ?? []);
+                    $data[$date][] = count($new_data[$date]['COVID']['DIET'][2] ?? []);
+                    $data[$date][] = count($new_data[$date]['COVID']['NON-DIET'][1] ?? []);
+                    $data[$date][] = count($new_data[$date]['COVID']['NON-DIET'][2] ?? []);
                 }else{
-                    $data[$date][] = PemesananDetail::whereBetween('untuk_tanggal', [$curent_date_start, $curent_date_end])->whereIn('kelas_id',$kelas_ids)->whereIn('bangsal_id',$bangsal_non_covid)->whereIn('jenis_makanan_id', $jenis_makanan_utama_diet_ids)->where('gender', 1)->count();
-                    $data[$date][] = PemesananDetail::whereBetween('untuk_tanggal', [$curent_date_start, $curent_date_end])->whereIn('kelas_id',$kelas_ids)->whereIn('bangsal_id',$bangsal_non_covid)->whereIn('jenis_makanan_id', $jenis_makanan_utama_diet_ids)->where('gender', 2)->count();
-                    $data[$date][] = PemesananDetail::whereBetween('untuk_tanggal', [$curent_date_start, $curent_date_end])->whereIn('kelas_id',$kelas_ids)->whereIn('bangsal_id',$bangsal_non_covid)->whereIn('jenis_makanan_id', $jenis_makanan_utama_non_diet_ids)->where('gender', 1)->count();
-                    $data[$date][] = PemesananDetail::whereBetween('untuk_tanggal', [$curent_date_start, $curent_date_end])->whereIn('kelas_id',$kelas_ids)->whereIn('bangsal_id',$bangsal_non_covid)->whereIn('jenis_makanan_id', $jenis_makanan_utama_non_diet_ids)->where('gender', 2)->count();
+                    $data[$date][] = count($new_data[$date][$index]['DIET'][1] ?? []);
+                    $data[$date][] = count($new_data[$date][$index]['DIET'][2] ?? []);
+                    $data[$date][] = count($new_data[$date][$index]['NON-DIET'][1] ?? []);
+                    $data[$date][] = count($new_data[$date][$index]['NON-DIET'][2] ?? []);
                 }
             }
             $date_start->addDay();
         }
         $return['data'] = $data;
         $return['kelas'] = $new_kelas;
+
         return $return;
     }
     public function getTambahan($date_start,$date_end)

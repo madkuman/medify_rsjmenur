@@ -287,9 +287,9 @@ class PostController extends Controller
 				$tarif_id = Tarif::where('tarif_master_id',$item)->where('tipe_id',1)->where('kelas_id',$ruangan->kelas_ruang->id)->first();
 				if(!isset($tarif_id))
 					$tarif_id = Tarif::where('tarif_master_id',$item)->where('tipe_id',1)->whereIn('kelas_id',[$ruangan->kelas_ruang->id, 0])->first();
-				
+
 				$visite->ruangan_id = $ruangan_id;
-				$visite->tarif_id = $tarif_id->id;
+				$visite->tarif_id = $tarif_id->id ?? 0;
 				$visite->jenis_dokter = $key+1;
 				$visite->save();
 			}

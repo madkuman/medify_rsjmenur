@@ -69,8 +69,7 @@ class ViewController extends Controller
         }
 
         $data["all_data"] = $all_data;
-        $data["sidebar_active"] = "alat";
-
+        $data["sidebar_active"] = "alat";        
         $pdf = DOMPDF::loadView("kasus.asesmen.skoring-derajat-gejala-psikotik.print", $data)->setPaper('a4', 'landscape');
         return $pdf->stream("print.pdf");
     }

@@ -197,4 +197,59 @@ class PostController extends Controller
 			->with('title', $title);
 		}
 	}
+
+	public function importHfis(Request $request)
+	{
+		if(!(config('medify.third-party.jkn_online.on') && config('medify.third-party.jkn_online.cons_id') != null)) return response()->json([
+			'status' => -1,
+			'title' => 'Gagal',
+			'message' => 'JKN Belum Disetting',
+		]);
+
+		$process_queue = app(\App\Http\Controllers\ProcessQueue\MainController::class);
+        
+		if(!$process_queue->check('import-hfis')) return response()->json([
+			'status' => -1,
+			'title' => 'Gagal',
+			'message' => 'Terdapat proses Import yang masih berjalan, atau tunggu 2 menit lagi',
+		]);
+		
+		$process_queue->make('import-hfis', []);
+		try {
+			DB::connection('rawatinap')->beginTransaction();
+
+			$import_hfis = app(\App\Http\Controllers\Admin\Dokter\EditController::class)->importHfis();
+
+			if (is_string($import_hfis)) {
+				DB::connection('rawatinap')->rollback();
+				$process_queue->remove('import-hfis');
+				return response()->json([
+					'status' => -1,
+					'title' => 'Gagal',
+					'message' => $import_hfis,
+				]);
+			}
+
+			DB::connection('rawatinap')->commit();
+			$process_queue->remove('import-hfis');
+			return response()->json([
+				'status' => 1,
+				'title' => 'Berhasil',
+				'message' => 'Berhasil melakukan Import HFIS',
+				'data' => [
+					'message' => $import_hfis,
+				]
+			]);
+		} catch (\Throwable $e) {
+			DB::connection('rawatinap')->rollback();
+			$process_queue->remove('import-hfis');
+			// app(\App\Http\Controllers\Error\Handler::class)->bugsnag($e);
+			// dd($e);
+			return response()->json([
+				'status' => -1,
+				'title' => 'Gagal, Terjadi kesalahan server.',
+				'message' => $e,
+			]);
+		}
+	}
 }

@@ -3,7 +3,7 @@
 </h5>
 
 <div class="row justify-content-center ">
-    <div class="col-md-4 ">
+    <div class="col-md-4 rm_biasa">
         <div class="avatar-upload">
             <div class="avatar-edit">
                 <input type="file" id="avatar" name="avatar" accept=".png, .jpg, .jpeg" value="" />
@@ -40,7 +40,7 @@
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">No Identitas <i id="identitasLoading" class="fa fa-asterisk fa-spin text-info"></i></label>
-                    <input class="form-control" type="text" name="" id="noIdentitas" placeholder="Nomor Identitas" required="required" onblur="nomorCheck()"/>
+                    <input class="form-control rm_laborat" type="text" name="" id="noIdentitas" placeholder="Nomor Identitas" required="required" onblur="nomorCheck()"/>
                      <div id="textAutoInputNIK"></div>
                      <div id="textCekNomorIdentitas"></div>
                     <a href="javascript:void(0)" id="notifExistAutoInputNIK" data-toggle="modal" data-target="#modal-autoinput-pasien" style="display: none">Klik Disini! Kami menemukan data pasien yang sesuai dengan nomor NIK</a>
@@ -52,7 +52,7 @@
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Nama Lengkap <i id="namaLoading" class="fa fa-asterisk fa-spin text-info"></i></label>
-                    <input class="form-control" type="text" name="name" id="namaPasien" placeholder="Ketik nama lengkap sesuai kartu identitas" required="required"/>
+                    <input class="form-control rm_laborat" type="text" name="name" id="namaPasien" placeholder="Ketik nama lengkap sesuai kartu identitas" required="required"/>
                     <div class="invalid-feedback">Nama ini sudah digunakan atau data nama pasien kosong</div>
                 </div>
             </div>
@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Status Pernikahan</label>
@@ -95,7 +95,7 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Tempat Lahir</label>
@@ -110,7 +110,7 @@
                     <label class="control-label">Tanggal Lahir</label>
                     <div class="form-inline">
                         <div class="input-group">
-                            <input class="form-control" type="text" id="tanggal-lahir" data-format="YYYY-MM-DD" data-template="D MMMM YYYY" name="birthdate" required="required" value="0000-00-00">  
+                            <input class="form-control rm_laborat" type="text" id="tanggal-lahir" data-format="YYYY-MM-DD" data-template="D MMMM YYYY" name="birthdate" required="required" value="0000-00-00">  
                             <br>
                             <div class="invalid-feedback">Silahkan isi tanggal lahir pasien</div>
                         </div>
@@ -119,7 +119,7 @@
             </div>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Nama Ayah</label>
@@ -127,7 +127,7 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Nama Ibu</label>
@@ -135,7 +135,7 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Nama Istri</label>
@@ -143,7 +143,7 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Nama Suami</label>
@@ -159,7 +159,7 @@
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Alamat KTP</label>
-                    <input class="form-control" type="text" name="address" placeholder="Ketik alamat sesuai kartu identitas" required="required"/>
+                    <input class="form-control rm_laborat" type="text" name="address" placeholder="Ketik alamat sesuai kartu identitas" required="required"/>
                     <div class="invalid-feedback">Silahkan isi data alamat pasien</div>
                 </div>
             </div>
@@ -168,12 +168,12 @@
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Alamat Domisili</label>
-                    <input class="form-control" type="text" name="address_domisili" placeholder="Ketik alamat domisili saat ini" required="required"/>
+                    <input class="form-control rm_laborat" type="text" name="address_domisili" placeholder="Ketik alamat domisili saat ini" required="required"/>
                     <div class="invalid-feedback">Silahkan isi data alamat domisili</div>
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center"> 
+        <div class="row justify-content-center rm_biasa"> 
             <div class="col-md-12 ">
                 <div class="form-group row">
                     <label class="col-12" for="example-select2">Kota/Kabupaten</label>
@@ -186,7 +186,7 @@
             </div>
 
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 kecamatanInvalid">
                 <div class="form-group">
                     <label class="control-label">Kecamatan <i id="kecamatanLoading" class="fa fa-asterisk fa-spin text-info"></i></label>
@@ -197,7 +197,7 @@
 
             </div>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 kelurahanInvalid">
                 <div class="form-group">
                     <label class="control-label">Kelurahan <i id="kelurahanLoading" class="fa fa-asterisk fa-spin text-info"></i></label>
@@ -208,7 +208,7 @@
 
             </div>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">No Telp</label>
@@ -217,7 +217,7 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Pekerjaan</label>
@@ -232,7 +232,7 @@
             </div>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Agama</label>
@@ -246,7 +246,7 @@
             </div>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Pendidikan</label>
@@ -268,7 +268,7 @@
                 </div>
             </div>
         </div> --}}
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Suku</label>
@@ -278,7 +278,7 @@
             </div>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center rm_biasa">
             <div class="col-md-12 ">
                 <div class="form-group">
                     <label class="control-label">Alergi</label>
@@ -290,7 +290,7 @@
 
     </div>
     @if(config('app.is_military'))
-    <div class="col-12 pt-20">
+    <div class="col-12 pt-20 rm_biasa">
         <label class="css-control css-control-primary css-checkbox">
             <input type="checkbox" class="css-control-input" id="anggota-trigger">
             <span class="css-control-indicator"></span> Pasien adalah Anggota
@@ -301,7 +301,7 @@
 </div>
 @if(config('app.is_military'))
 <hr>
-<div class="row" id="formAnggota">
+<div class="row rm_biasa" id="formAnggota">
     <div class="col-lg-6 col-sm-12">
         <div class="row justify-content-center">
             <div class="col-md-12 ">

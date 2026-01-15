@@ -97,7 +97,16 @@ table.nopadding tr td {
 		<td class="text-center big">BUKTI PELAYANAN</td>
 	</tr>
 	<tr>
-		<td class="text-center big">RAWAT INAP</td>
+		@php
+			$lokasi_departemen = $kasus->lokasi->lokasi->lokasi_departemen_id;
+			$lokasi = 'RETRIBUSI';
+			if($lokasi_departemen == '3'){
+				$lokasi = 'RAWAT INAP';
+			}elseif(in_array($lokasi_departemen, [1,2])){
+				$lokasi = 'RAWAT JALAN';
+			}
+		@endphp
+		<td class="text-center big">{{$lokasi}}</td>
 	</tr>
 </table>
 <table class="borderless">
@@ -131,7 +140,13 @@ table.nopadding tr td {
 	</tr>
 	<tr>
 		<td>MASUK</td>
-		<td>{{indonesian_date($kasus->mrs_at) ?? indonesian_date($kasus->created_at)}}</td>
+		<td>
+			@if (isset($kasus->rawat_inap_transaksi_first))
+                {{ indonesian_date($kasus->rawat_inap_transaksi_first->waktu_masuk,'d F Y') }}
+            @else
+              	{{indonesian_date($kasus->mrs_at) ?? indonesian_date($kasus->created_at)}}
+            @endif
+		</td>
 		<td class="borderless"></td>
 	</tr>
 	<tr>
@@ -206,7 +221,7 @@ table.nopadding tr td {
 	<tr>
 		<td class="text-center">Nama : .....................................</td>
 		<td></td>
-		<td class="text-center">Nama : .....................................</td>
+		<td class="text-center">{{$resume->nama_ttd ?? $kasus->pasien->name ?? '.....................................'}}</td>
 	</tr>
 </table>
 @endsection

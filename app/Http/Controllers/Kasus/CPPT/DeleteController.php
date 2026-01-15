@@ -47,4 +47,27 @@ class DeleteController extends Controller
 			$cppt->delete();
 		}
 	}
+
+	public function deletefileCppt(Request $request)
+	{
+		$cppt = CPPT::find($request->id);
+		$path_files = [];
+        $i=1;
+		if($cppt){
+			$files=json_decode($cppt->cppt_files);
+			foreach($files as $item){
+				if ($item->id == $request->path){
+				}else{
+					$path_files[] = [
+						'id'=> $i,
+						'nama_file' => $item->nama_file,
+						'path' => $item->path,
+					];
+					$i++;
+				}
+			}
+			$cppt->cppt_files=json_encode($path_files);
+			$cppt->save();
+		}
+	}
 }

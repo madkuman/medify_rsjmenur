@@ -25,7 +25,7 @@ class KunjunganBerdasarkanGenderDanUsiaExcel implements FromView, WithEvents, Wi
                 $event->sheet->getColumnDimension('A')->setWidth(5);
                 $event->sheet->getColumnDimension('B')->setWidth(25);
                 $event->sheet->getColumnDimension('C')->setWidth(25);
-                $event->sheet->getColumnDimension('P')->setVisible(false);
+                $event->sheet->getColumnDimension(excel_column(count($this->data['data'])+4))->setVisible(false);
 
                 $event->sheet->styleCells(
                     'A1:'.$this->last_column.'3',
@@ -109,7 +109,7 @@ class KunjunganBerdasarkanGenderDanUsiaExcel implements FromView, WithEvents, Wi
     public function columnFormats(): array
     {
         return [
-            'Q' => NumberFormat::FORMAT_PERCENTAGE,
+            excel_column(count($this->data['data'])+5) => NumberFormat::FORMAT_PERCENTAGE,
         ];
     }
 

@@ -77,3 +77,41 @@
 	$(`:checkbox[name="kebutuhan_edukasi_keluarga_general_consent"]`).prop("checked", item.kebutuhan_edukasi_keluarga_general_consent != null);
 	$(`:text[name="rencana_edukasi_keluarga_tanggal"]`).val(formatDate(item.rencana_edukasi_keluarga_tanggal));
 	$(`:radio[name="agama_keluarga_pasien"][value="${item.agama_keluarga_pasien}"]`).prop("checked", true);
+
+	
+	element_hambatan = $(`:checkbox[name="hambatan[]"]`).toArray();				
+	var data_hambatan = item.hambatan.split(", ");
+	var aa =[];
+	$.each(data_hambatan,function(i, value){
+		$.each(element_hambatan, function(i, element){
+			if($(element).val() ==  value){
+				aa.push(value);
+				$(element).prop("checked", true);
+			};
+		});
+	});
+	let hambatanlain = data_hambatan.filter(x => !aa.includes(x));
+	$(`:text[name="hambatan[]"]`).val(hambatanlain.join( ));
+
+	element_pembelajaran = $(`:checkbox[name="pembelajaran[]"]`).toArray();				
+	var data_pembelajaran = item.pembelajaran.split(", ");
+	var aa =[];
+	$.each(data_pembelajaran,function(i, value){
+		$.each(element_pembelajaran, function(i, element){
+			if($(element).val() ==  value){
+				aa.push(value);
+				$(element).prop("checked", true);
+			};
+		});
+	});
+	let pembelajaranlain = data_pembelajaran.filter(x => !aa.includes(x));
+	$(`:text[name="pembelajaran[]"]`).val(pembelajaranlain.join( ));
+
+	var pembelajaran = item.pembelajaran.split(",");
+	$.each(pembelajaran,function(i, value){
+		var value = value.trim();
+		$(`:checkbox[value="`+value+`"]`).prop("checked", value != null);
+		<!-- console.log(value); -->
+		});
+	$(`:text[name="penerjemah[]"]`).val(item.penerjemah);
+	//kurang hambatan lain

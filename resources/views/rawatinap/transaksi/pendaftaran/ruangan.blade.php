@@ -268,7 +268,7 @@ Pendaftaran Pasien ke Rawat Inap
                     <input type="hidden" value="@{{id}}" name="bed_id">
                     <input type="hidden" value="1" name="is_booking">
                     <input type="hidden" value="{{$nomor_kasus}}" name="nomor_kasus">
-                    <button class="btn btn-warning btn-click-animate" type="submit">Booking</button>
+                   {{-- <button class="btn btn-warning btn-click-animate" type="submit">Booking</button>--}}
                 </form>
             </td>
             </tr>    

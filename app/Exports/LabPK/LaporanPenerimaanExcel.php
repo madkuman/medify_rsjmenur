@@ -127,12 +127,35 @@ class LaporanPenerimaanExcel implements FromView, WithEvents, WithColumnFormatti
             'M' => '#,##0',
             'N' => '#,##0',
             'O' => '#,##0',
+            'P' => '#,##0',
+            'Q' => '#,##0',
+            'R' => '#,##0',
+            'S' => '#,##0',
+            'T' => '#,##0',
+            'U' => '#,##0',
+            'V' => '#,##0',
+            'W' => '#,##0',
+            'X' => '#,##0',
+            'Y' => '#,##0',
+            'Z' => '#,##0',
+            'AA' => '#,##0',
+            'AB' => '#,##0',
+            'AC' => '#,##0',
+            'AD' => '#,##0',
+            'AE' => '#,##0',
+            'AF' => '#,##0',
+            'AG' => '#,##0',
+            'AH' => '#,##0',
+            'AI' => '#,##0',
+            'AJ' => '#,##0',
+            'AK' => '#,##0',
+            'AL' => '#,##0',
         ];
     }
 
     public function __construct($data)
     {
-        $count_column = 15;
+        $count_column = count($data['header'])+3;
         $count_row = 0;
 
         foreach($data['data'] as $key=> $data_item){

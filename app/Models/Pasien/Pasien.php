@@ -446,4 +446,9 @@ class Pasien extends Model
     {
         return $this->hasOne('App\Models\Pasien\JenisKewarganegaraan', 'id', 'kewarganegaraan_id');
     }
+
+	public function satusehat_patient()
+	{
+		return $this->hasOne(\App\Models\ThirdPartySatuSehat\Patient::class, 'pasien_id', 'id');
+	}
 }

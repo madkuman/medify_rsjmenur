@@ -14,6 +14,7 @@ use App\Models\Farmasi\Farmasi;
 use App\Models\Farmasi\Items;
 use App\Models\Farmasi\Resep;
 use App\Models\Farmasi\ResepDetail;
+use App\Models\Farmasi\TransaksiObatTelaahObat;
 use App\Models\Pasien\Pasien;
 use App\Models\Hospital\Lokasi;
 use App\Models\Kasus\Kasus;
@@ -25,27 +26,27 @@ use DB;
 use Auth;
 use Bugsnag;
 use stdClass;
+use App\Models\RawatJalan\Transaksi;
 
 class EditController extends Controller
 {
 
     static protected $slug_kasir = "kasir-farmasi";
 
-    public function payment(Request $request)
+    public function payment(Request $request, $farmasi_slug)
     {
         $id = $request->input('id');
         $farmasi = $request->input('farmasi');
         $transaction = TransaksiObat::find($id);
-        if(count($transaction->copy_resep) > 0)
-        {
+        if (count($transaction->copy_resep) > 0) {
             return redirect()->back()
                 ->with('message', 'Transaksi sudah di copy resep')
                 ->with('status', -1)
                 ->with('title', 'Gagal');
         }
-        if($transaction){
+        if ($transaction) {
             $transaction = $this->updatePaid($transaction);
-        }else{
+        } else {
             return redirect()->back()
                 ->with('message', 'Transaksi sudah tidak tersedia')
                 ->with('status', -1)
@@ -56,7 +57,7 @@ class EditController extends Controller
         $laba = $request->input('laba');
         // $tagihan = $request->input('status_pembayaran');
         $kirim_tagihan = $request->kirim_tagihan;
-        if(isset($kirim_tagihan)){
+        if (isset($kirim_tagihan)) {
             $tagihan = $kirim_tagihan == '1'  ? 'on' : ($kirim_tagihan == '2' ? null : $kirim_tagihan);
         } else {
             $tagihan = $request->kirim_tagihan;
@@ -65,22 +66,21 @@ class EditController extends Controller
         $farm = app('App\Http\Controllers\Farmasi\Farmasi\ReadController')->getSingle($farmasi);
 
         try {
-        DB::connection('farmasi')->beginTransaction();
-            if(empty($transaction->paid_at) || empty($transaction->paid_by)) {
+            DB::connection('farmasi')->beginTransaction();
+            if (empty($transaction->paid_at) || empty($transaction->paid_by)) {
                 $transaction->total_biaya_obat = $request->input('total_harga');
                 $transaction->total_bayar = $request->input('pembayaran');
                 if (!$tagihan) $transaction->kembalian = $request->input('pembayaran') - $request->input('total-harga');
                 $transaction->paid_by = Auth::user()->id;
                 $transaction->paid_at = Carbon::now();
                 $transaction->shift_id = $request->shift_id;
-                $transaction->embalase = $request->embalase;
+                $transaction->embalase = array_sum($request->embalase);
                 $transaction->dikerjakan_at = Carbon::now();
                 $transaction->dikerjakan_by = Auth::user()->id;
                 $transaction->save();
 
-                $pay =app('App\Http\Controllers\Farmasi\ResepDetail\EditController')->payment($transaction->final_detail->id, $laba, $tagihan, $farm);
-                if(is_string($pay))
-                {
+                $pay = app('App\Http\Controllers\Farmasi\ResepDetail\EditController')->payment($transaction->final_detail->id, $laba, $tagihan, $farm, $request);
+                if (is_string($pay)) {
                     DB::connection('farmasi')->rollBack();
                     DB::connection('farmasi')->beginTransaction();
                     $transaction->paid_at =  null;
@@ -91,15 +91,22 @@ class EditController extends Controller
                         ->with('status', -1)
                         ->with('title', 'Gagal');
                 }
+
+                # melakukan check catatan pengobatan pasien 
+                if ($transaction->kasus_id != null) {
+                    app(\App\Http\Controllers\Kasus\Farmasi\CatatanPengobatanPasien\CreateController::class)->createFromFarmasi($transaction);
+                }
+                # end
             }
 
             $msg = 'Konfirmasi Pesanan Berhasil';
-            if(is_null($transaction->waktu_check_in)){
+            if (is_null($transaction->waktu_check_in)) {
                 $req = new Request();
                 $req->transaksi_id = $transaction->id;
-                app('App\Http\Controllers\Farmasi\Screen\PostController')->confirm($req);
+                $result = app('App\Http\Controllers\Farmasi\Screen\PostController')->confirm($req);
+                $result = json_decode($result);
             }
-            if(config('medify.third-party.jkn_online.on') &&!empty($transaction->kasus_id)) {
+            if (config('medify.third-party.jkn_online.on') && !empty($transaction->kasus_id)) {
                 $kasus = app(\App\Http\Controllers\Kasus\Kasus\ReadController::class)->get($transaction->kasus->nomor_kasus);
                 $transaksi = $kasus->rawat_jalan_transaksi_last_attr;
                 if (($kasus->lokasi->lokasi->departemen->id ?? null) == 2 && $transaksi && $transaksi->task_id_jkn < 6) {
@@ -108,17 +115,15 @@ class EditController extends Controller
                     $data['kodebooking'] = $transaksi->id;
                     $data['taskid'] = 6;
                     $data['waktu'] = $carbon_today;
-                    dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 6, 'waktu' => $carbon_today]));
+                    dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 6, 'waktu' => $carbon_today, 'jenisresep' => $result->jenis_resep]));
                 }
             }
             DB::connection('farmasi')->commit();
-            return redirect('farmasi/'.$farmasi.'/transaksi/'.$transaction->slug)
-                        ->with('message', $msg)
-                        ->with('status', 1)
-                        ->with('title', 'Pembayaran Sukses');
-        }
-        catch (\Exception $e) 
-        {
+            return redirect('farmasi/' . $farmasi . '/transaksi/' . $transaction->slug)
+                ->with('message', $msg)
+                ->with('status', 1)
+                ->with('title', 'Pembayaran Sukses');
+        } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
             DB::connection('farmasi')->rollBack();
             DB::connection('farmasi')->beginTransaction();
@@ -126,10 +131,10 @@ class EditController extends Controller
             $transaction->save();
             DB::connection('farmasi')->commit();
 
-          return redirect()->back()
-                        ->with('message', 'Terjadi kesalahan server, Silahkan coba beberapa saat lagi')
-                        ->with('status', -1)
-                        ->with('title', 'Gagal');
+            return redirect()->back()
+                ->with('message', 'Terjadi kesalahan server, Silahkan coba beberapa saat lagi')
+                ->with('status', -1)
+                ->with('title', 'Gagal');
         }
     }
 
@@ -148,24 +153,29 @@ class EditController extends Controller
             $resep = Resep::with(['resep_detail'])->find($resep_id);
             $resep->retur =  1;
             $resep->save();
-            $i=0; $total=0;
+            $i = 0;
+            $total = 0;
             foreach ($resep_detail_index as $index) {
-              if($jumlah[$i]) $total += app('App\Http\Controllers\Farmasi\ResepDetail\EditController')->createRetur($log[$i],$potongan[$i],$jumlah[$i],$resep->resep_detail[$index]->id);
-              $i++;
+                if ($jumlah[$i]) {
+                    $resep_detail_id = $request->detail[$i];
+                    $resep_detail_selected = $resep->resep_detail->where('resep_detail_retur_id', $resep_detail_id)->first();
+                    $total += app('App\Http\Controllers\Farmasi\ResepDetail\EditController')->createRetur($log[$i], $potongan[$i], $jumlah[$i], $resep_detail_selected->id);
+                }
+                $i++;
             }
             $returLama = is_null($transaction->total_retur) ? 0 : $transaction->total_retur;
-        
+
             $transaction->total_retur = $total + $returLama;
             $transaction->total_biaya_obat = $transaction->total_biaya_obat - $total;
             $tur = 0;
 
-            foreach ($resep->resep_detail as $detail){
-                foreach ($detail->log as $log){
+            foreach ($resep->resep_detail as $detail) {
+                foreach ($detail->log as $log) {
                     if (!empty($detail->kasusTagihanDetail)) {
                         if ($detail->kasusTagihanDetail->tagihan->checkout != 1) {
                             app('App\Http\Controllers\Kasus\TagihanDetail\EditController')->farmasiRetur($detail->kasus_tagihan_detail_id, $log->jumlah_retur, $transaction->kasus_id);
                             $tur = 1;
-                        }else{
+                        } else {
                             DB::connection('farmasi')->rollBack();
                             return redirect()->back()
                                 ->with('message', 'Tagihan Telah Di Checkout')
@@ -177,27 +187,25 @@ class EditController extends Controller
             }
 
             //dd($tur);
-            if($tur) $transaction->status_retur = $tur;
+            if ($tur) $transaction->status_retur = $tur;
             $transaction->save();
 
-            if($transaction->status == 1) $msg = 'Total Kembali : Rp. '.number_format($transaction->total_retur);
+            if ($transaction->status == 1) $msg = 'Total Kembali : Rp. ' . number_format($transaction->total_retur);
             else $msg = 'Pembayaran dimasukkan ke Tagihan';
 
             DB::connection('farmasi')->commit();
-            return redirect('farmasi/'.$farmasi.'/transaksi/'.$transaction->slug)
-                        ->with('message', $msg)
-                        ->with('status', 1)
-                        ->with('title', 'Retur Sukses');
-        }
-        catch (\Exception $e) 
-        {
-          app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-          DB::connection('farmasi')->rollBack();
+            return redirect('farmasi/' . $farmasi . '/transaksi/' . $transaction->slug)
+                ->with('message', $msg)
+                ->with('status', 1)
+                ->with('title', 'Retur Sukses');
+        } catch (\Exception $e) {
+            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+            DB::connection('farmasi')->rollBack();
 
-          return redirect()->back()
-                        ->with('message', 'Terjadi kesalahan server, Silahkan coba beberapa saat lagi')
-                        ->with('status', -1)
-                        ->with('title', 'Gagal');
+            return redirect()->back()
+                ->with('message', 'Terjadi kesalahan server, Silahkan coba beberapa saat lagi')
+                ->with('status', -1)
+                ->with('title', 'Gagal');
         }
     }
 
@@ -226,22 +234,22 @@ class EditController extends Controller
 
             $transaction->total_retur = $transaction->total_retur - $old_total + $total;
             $transaction->total_biaya_obat = $transaction->total_biaya_obat + $old_total - $total;
-            $j=0;
-            foreach ($resep->resep_detail as $detail){
+            $j = 0;
+            foreach ($resep->resep_detail as $detail) {
                 foreach ($detail->log as $log) {
                     if (!empty($transaction->kasus)) {
-                        if (!empty($detail->kasusTagihanDetail)){
-                           if($detail->kasusTagihanDetail->tagihan->checkout != 1) {
-                               $jumlah_retur = $log->jumlah_retur - $old_jumlah[$j];
-                               $j++;
-                               app('App\Http\Controllers\Kasus\TagihanDetail\EditController')->farmasiRetur($detail->kasus_tagihan_detail_id, $jumlah_retur, $transaction->kasus_id);
-                           }else{
-                               DB::connection('farmasi')->rollBack();
-                               return redirect()->back()
-                                   ->with('message', 'Tagihan Telah Di Checkout')
-                                   ->with('status', -1)
-                                   ->with('title', 'Gagal');
-                           }
+                        if (!empty($detail->kasusTagihanDetail)) {
+                            if ($detail->kasusTagihanDetail->tagihan->checkout != 1) {
+                                $jumlah_retur = $log->jumlah_retur - $old_jumlah[$j];
+                                $j++;
+                                app('App\Http\Controllers\Kasus\TagihanDetail\EditController')->farmasiRetur($detail->kasus_tagihan_detail_id, $jumlah_retur, $transaction->kasus_id);
+                            } else {
+                                DB::connection('farmasi')->rollBack();
+                                return redirect()->back()
+                                    ->with('message', 'Tagihan Telah Di Checkout')
+                                    ->with('status', -1)
+                                    ->with('title', 'Gagal');
+                            }
                         }
                     }
                 }
@@ -256,9 +264,7 @@ class EditController extends Controller
                 ->with('message', $msg)
                 ->with('status', 1)
                 ->with('title', 'Ubah Retur Sukses');
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
             DB::connection('farmasi')->rollBack();
 
@@ -269,7 +275,7 @@ class EditController extends Controller
         }
     }
 
-    public function deleteRetur(Request $request,$farmasi)
+    public function deleteRetur(Request $request, $farmasi)
     {
         $resep_id = $request->resep_id;
         DB::connection('farmasi')->beginTransaction();
@@ -277,15 +283,15 @@ class EditController extends Controller
 
             $resep = Resep::find($resep_id);
             $transaction = TransaksiObat::find($resep->transaksi_id);
-            $total=0;
-            foreach ($resep->resep_detail as $resep_detail){
-                foreach ($resep_detail->log as $log){
-                    $total+=$log->subtotal_retur;
+            $total = 0;
+            foreach ($resep->resep_detail as $resep_detail) {
+                foreach ($resep_detail->log as $log) {
+                    $total += $log->subtotal_retur;
                     if (!empty($transaction->kasus)) {
                         if (!empty($resep_detail->kasusTagihanDetail)) {
                             if ($resep_detail->kasusTagihanDetail->tagihan->checkout != 1) {
                                 app('App\Http\Controllers\Kasus\TagihanDetail\EditController')->farmasiRetur($resep_detail->kasus_tagihan_detail_id, -$log->jumlah_retur, $resep->transaksi->kasus_id);
-                            }else{
+                            } else {
                                 DB::connection('farmasi')->rollBack();
                                 return redirect()->back()
                                     ->with('message', 'Tagihan Telah Di Checkout')
@@ -302,19 +308,17 @@ class EditController extends Controller
                 $resep_detail->delete();
             }
             $resep->delete();
-            $transaction->total_retur -=$total;
-            $transaction->total_biaya_obat +=$total;
+            $transaction->total_retur -= $total;
+            $transaction->total_biaya_obat += $total;
             $transaction->save();
 
 
             DB::connection('farmasi')->commit();
-            return redirect('farmasi/'.$farmasi.'/transaksi/'.$transaction->slug)
+            return redirect('farmasi/' . $farmasi . '/transaksi/' . $transaction->slug)
                 ->with('message', 'Hapus Retur Berhasil!')
                 ->with('status', 1)
                 ->with('title', 'Sukses');
-
-        }catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             app('App\Http\Controllers\Error\Handler')->bugsnag($e);
             DB::connection('farmasi')->rollBack();
 
@@ -343,27 +347,25 @@ class EditController extends Controller
 
         DB::connection('farmasi')->beginTransaction();
 
-        try
-        {
+        try {
             $transaction = TransaksiObat::find($id);
             $transaction->deskripsi = $description;
             $transaction->no_antrian = $antrian;
 
-            if($dokter_jenis == 'rsal'){
+            if ($dokter_jenis == 'rsal') {
                 $transaction->dokter_id = $dokter_rsal;
                 $dokter = app('App\Http\Controllers\Users\ReadController')->getSingle($request->input('dokter-rsal'));
-                if($dokter)
+                if ($dokter)
                     $transaction->dokter_nama = $dokter->name;
                 else
                     $transaction->dokter_nama = '-';
-            }
-            else{
+            } else {
                 $transaction->dokter_id = 0;
                 $transaction->dokter_nama = $dokter_luar;
             }
 
-            
-            if(!empty($transaction->dikerjakan_at)) {
+
+            if (!empty($transaction->dikerjakan_at)) {
                 $transaction->status = 0;
                 $transaction->dikerjakan_at = NULL;
                 $transaction->dikerjakan_by = NULL;
@@ -380,26 +382,25 @@ class EditController extends Controller
                 $transaction->lima_benar_dosis = NULL;
                 $transaction->lima_benar_aturan = NULL;
                 $transaction->lima_benar_waktu = NULL;
-                foreach($transaction->final_detail->resep_detail as $detail)
-                {
+                foreach ($transaction->final_detail->resep_detail as $detail) {
                     foreach ($detail->log as $log) {
                         $item = Items::find($log->item_id);
-                        if($item) {
+                        if ($item) {
                             $item->jumlah += $log->jumlah - $log->jumlah_retur;
                             $item->save();
                         }
                         $log->delete();
                     }
-                    if(!empty($detail->kasusTagihanDetail)){
+                    if (!empty($detail->kasusTagihanDetail)) {
                         $minus = app('App\Http\Controllers\Kasus\Tagihan\EditController')->delete_bill($detail->kasusTagihanDetail->kasus_tagihan_id, $detail->kasusTagihanDetail->subtotal);
                         $detail->kasusTagihanDetail->delete();
                     }
                 }
             }
 
-            if($transaction->status_kasir ==  1 || !empty($transaction->piutang_id)){
-                $piutang =  Piutang::where('id',$transaction->piutang_id)->first();
-                if($piutang) {
+            if ($transaction->status_kasir ==  1 || !empty($transaction->piutang_id)) {
+                $piutang =  Piutang::where('id', $transaction->piutang_id)->first();
+                if ($piutang) {
                     if (count($piutang->pemasukan) == 0) {
                         $piutang->delete();
                         $transaction->status_kasir = 0;
@@ -416,7 +417,10 @@ class EditController extends Controller
 
             $request->transaksi_id = $transaction->id;
             $request->tipe = 1;
-            app('App\Http\Controllers\Farmasi\Resep\DeleteController')->deleteResep($transaction->resep_final);
+            # resep ori biar tidak pernah deleted
+            if ($transaction->resep_original != $transaction->resep_final) {
+                app('App\Http\Controllers\Farmasi\Resep\DeleteController')->deleteResep($transaction->resep_final);
+            }
             $resep = app('App\Http\Controllers\Farmasi\Resep\CreateController')->createWithRacikan($request);
             //dd($resep);
 
@@ -428,7 +432,7 @@ class EditController extends Controller
 
             $resep = $this->editStatus($transaction->id);
 
-            if(config('medify.third-party.jkn_online.on') &&!empty($transaction->kasus_id)) {
+            if (config('medify.third-party.jkn_online.on') && !empty($transaction->kasus_id)) {
                 $kasus = app(\App\Http\Controllers\Kasus\Kasus\ReadController::class)->get($transaction->kasus->nomor_kasus);
                 $transaksi = $kasus->rawat_jalan_transaksi_last_attr;
                 if (($kasus->lokasi->lokasi->departemen->id ?? null) == 2 && $transaksi && $transaksi->task_id_jkn < 6) {
@@ -438,24 +442,47 @@ class EditController extends Controller
                     $data['taskid'] = 6;
                     $data['waktu'] = $carbon_today;
                     dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 6, 'waktu' => $carbon_today]));
+                    // $data = [
+                    // 	'kodebooking' => $transaksi->id,
+                    // 	'taskid' => 6,
+                    // 	'waktu' => $carbon_today
+                    // ];
+                    // $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
+                    // $returned = json_decode($returned);
+                    // $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+                    // if ($metadata->code != "200") {
+                    //     $data_log['kodebooking'] = $transaksi->id;
+                    //     $data_log['response'] = json_encode($returned);
+
+                    //     app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+                    // } else {
+                    //     $data_log['kodebooking'] = $transaksi->id;
+                    //     $data_log['task_id'] = 6;
+                    //     $data_log['waktu'] = $carbon_today;
+                    //     $data_log['response'] = json_encode($returned);
+                    //     $data_log['request'] = $data;
+
+                    //     app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+                    // }
+                    // $transaksi = Transaksi::find($transaksi->id);
+                    // $transaksi->task_id_jkn = 6;
+                    // $transaksi->save();
                 }
             }
 
             DB::connection('farmasi')->commit();
-            return redirect('farmasi/'.$farm->slug.'/transaksi/'.$transaction->slug)
-                        ->with('message', "Resep Berhasil Diubah")
-                        ->with('status', 1)
-                        ->with('title', 'Sukses');
-        }
-        catch (\Exception $e) 
-        {
-          app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-          DB::connection('farmasi')->rollBack();
+            return redirect('farmasi/' . $farm->slug . '/transaksi/' . $transaction->slug)
+                ->with('message', "Resep Berhasil Diubah")
+                ->with('status', 1)
+                ->with('title', 'Sukses');
+        } catch (\Exception $e) {
+            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+            DB::connection('farmasi')->rollBack();
 
-          return redirect()->back()
-                    ->with('message', 'Terjadi kesalahan server, Silahkan coba beberapa saat lagi')
-                    ->with('status', -1)
-                    ->with('title', 'Gagal');
+            return redirect()->back()
+                ->with('message', 'Terjadi kesalahan server, Silahkan coba beberapa saat lagi')
+                ->with('status', -1)
+                ->with('title', 'Gagal');
         }
     }
 
@@ -474,12 +501,11 @@ class EditController extends Controller
 
         DB::connection('farmasi')->beginTransaction();
 
-        try
-        {
+        try {
             $transaction = TransaksiObat::find($id);
             $transaction->deskripsi = $description;
             $transaction->no_antrian = $antrian;
-            if($transaction->status) {
+            if ($transaction->status) {
                 $transaction->status = 0;
                 $transaction->shift_id = NULL;
                 $transaction->total_biaya_obat = NULL;
@@ -487,18 +513,17 @@ class EditController extends Controller
                 $transaction->kembalian = NULL;
                 $transaction->paid_by = NULL;
                 $transaction->paid_at = NULL;
-                
-                foreach($transaction->final_detail->resep_detail as $detail)
-                {
-                  foreach ($detail->log as $log) {
-                    $item = Items::find($log->item_id);
-                    if($item) {
-                      $item->jumlah += $log->jumlah - $log->jumlah_retur;
-                      $item->save();
+
+                foreach ($transaction->final_detail->resep_detail as $detail) {
+                    foreach ($detail->log as $log) {
+                        $item = Items::find($log->item_id);
+                        if ($item) {
+                            $item->jumlah += $log->jumlah - $log->jumlah_retur;
+                            $item->save();
+                        }
+                        $log->delete();
                     }
-                    $log->delete();
-                  }
-                }                
+                }
             }
 
             $request->transaksi_id = $transaction->id;
@@ -506,26 +531,26 @@ class EditController extends Controller
             $resep = app('App\Http\Controllers\Farmasi\Resep\CreateController')->create($request);
             //dd($resep);
 
+            # saat edit resep di kasus, melakukan perubahan resep ori juga
+            $transaction->resep_original = $resep->id;
             $transaction->resep_final = $resep->id;
             $transaction->total_biaya_obat = $resep->jumlah_tagihan;
             $transaction->jenis_resep = $request->input('jenis_resep') ?? $transaction->jenis_resep;
             $transaction->save();
 
             DB::connection('farmasi')->commit();
-            return redirect('farmasi/'.$farm->slug.'/transaksi/'.$transaction->slug)
-                        ->with('message', "Resep Berhasil Diubah")
-                        ->with('status', 1)
-                        ->with('title', 'Sukses');
-        }
-        catch (\Exception $e) 
-        {
-          app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-          DB::connection('farmasi')->rollBack();
+            return redirect('farmasi/' . $farm->slug . '/transaksi/' . $transaction->slug)
+                ->with('message', "Resep Berhasil Diubah")
+                ->with('status', 1)
+                ->with('title', 'Sukses');
+        } catch (\Exception $e) {
+            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+            DB::connection('farmasi')->rollBack();
 
-          return redirect()->back()
-                    ->with('message', 'Terjadi kesalahan server, Silahkan coba beberapa saat lagi')
-                    ->with('status', -1)
-                    ->with('title', 'Gagal');
+            return redirect()->back()
+                ->with('message', 'Terjadi kesalahan server, Silahkan coba beberapa saat lagi')
+                ->with('status', -1)
+                ->with('title', 'Gagal');
         }
     }
 
@@ -535,8 +560,7 @@ class EditController extends Controller
 
         DB::connection('farmasi')->beginTransaction();
 
-        try
-        {
+        try {
             $transaction = TransaksiObat::find($id);
             $transaction->analisa_resep_at = Carbon::now();
             $transaction->analisa_resep_by = Auth::user()->id;
@@ -559,20 +583,18 @@ class EditController extends Controller
             $transaction->save();
 
             DB::connection('farmasi')->commit();
-            return redirect('farmasi/'.$farmasi.'/transaksi/'.$transaction->slug)
-                        ->with('message', "Analisa Resep Berhasil Diubah")
-                        ->with('status', 1)
-                        ->with('title', 'Sukses');
-        }
-        catch (\Exception $e) 
-        {
-          app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-          DB::connection('farmasi')->rollBack();
+            return redirect('farmasi/' . $farmasi . '/transaksi/' . $transaction->slug)
+                ->with('message', "Analisa Resep Berhasil Diubah")
+                ->with('status', 1)
+                ->with('title', 'Sukses');
+        } catch (\Exception $e) {
+            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+            DB::connection('farmasi')->rollBack();
 
-          return redirect()->back()
-                    ->with('message', 'Terjadi kesalahan server, Silahkan coba beberapa saat lagi')
-                    ->with('status', -1)
-                    ->with('title', 'Gagal');
+            return redirect()->back()
+                ->with('message', 'Terjadi kesalahan server, Silahkan coba beberapa saat lagi')
+                ->with('status', -1)
+                ->with('title', 'Gagal');
         }
     }
 
@@ -593,26 +615,28 @@ class EditController extends Controller
         }
     }
 
-    public function kerjakan($farmasi,$slug)
+    public function kerjakan($farmasi, $slug)
     {
         $farm = app('App\Http\Controllers\Farmasi\Farmasi\ReadController')->getSingle($farmasi);
         $transaksi = app('App\Http\Controllers\Farmasi\Transaksi\ReadController')->getSingleOnly($slug);
         $transaksi->dikerjakan_at = Carbon::now()->format('Y-m-d H:m:s');
         $transaksi->save();
         $data['farmasi'] = $farm;
-        $data['transaki']= $transaksi;
+        $data['transaki'] = $transaksi;
         $data['status'] = 1;
         $data['type'] = 'success';
         $data['title'] = 'Berhasil';
         $data['message'] = 'Sedang Dikerjakan';
-        $data['url'] =0;
+        $data['url'] = 0;
         return json_encode($data);
     }
 
     public function editStatus($transaksi_id)
     {
-        $transaksi = TransaksiObat::where('id',$transaksi_id)->with('final_detail.resep_detail.obat_detail.item_detail.kategori_item.detail_kategori',
-            'final_detail.resep_detail.racikan.obat_detail.item_detail.kategori_item.detail_kategori')->first();
+        $transaksi = TransaksiObat::where('id', $transaksi_id)->with(
+            'final_detail.resep_detail.obat_detail.item_detail.kategori_item.detail_kategori',
+            'final_detail.resep_detail.racikan.obat_detail.item_detail.kategori_item.detail_kategori'
+        )->first();
         $resep = $transaksi->final_detail;
 
         $transaksi_is_racikan = 0;
@@ -622,36 +646,32 @@ class EditController extends Controller
         $resep_details = [];
 
         foreach ($resep->resep_detail as $key => $resep_detail) {
-            if(empty($resep_detail->obat_id))
-            {
+            if (empty($resep_detail->obat_id)) {
                 $transaksi_is_racikan = 1;
                 $temp_is_fornas = 1;
                 $temp_is_formularium_rs = 1;
-                foreach($resep_detail->racikan as $item_racikan)
-                {
+                foreach ($resep_detail->racikan as $item_racikan) {
                     $kategori_items = $item_racikan->obat_detail->item_detail->kategori_item;
-                    $item_racikan->is_fornas = $this->checkKategori($kategori_items,'fornas');
-                    $item_racikan->is_formularium_rs = $this->checkKategori($kategori_items,'formularium-rs');
+                    $item_racikan->is_fornas = $this->checkKategori($kategori_items, 'fornas');
+                    $item_racikan->is_formularium_rs = $this->checkKategori($kategori_items, 'formularium-rs');
                     $item_racikan->save();
 
-                    if($item_racikan->is_fornas == 0) $temp_is_fornas = 0;
-                    if($item_racikan->is_formularium_rs == 0) $temp_is_formularium_rs = 0;
+                    if ($item_racikan->is_fornas == 0) $temp_is_fornas = 0;
+                    if ($item_racikan->is_formularium_rs == 0) $temp_is_formularium_rs = 0;
                 }
                 $resep_detail->is_fornas = $temp_is_fornas;
                 $resep_detail->is_formularium_rs = $temp_is_formularium_rs;
                 $resep_detail->save();
-            } 
-            else
-            {
+            } else {
                 $kategori_items = $resep_detail->obat_detail->item_detail->kategori_item;
-                $resep_detail->is_fornas = $this->checkKategori($kategori_items,'fornas');
-                $resep_detail->is_formularium_rs = $this->checkKategori($kategori_items,'formularium-rs');
+                $resep_detail->is_fornas = $this->checkKategori($kategori_items, 'fornas');
+                $resep_detail->is_formularium_rs = $this->checkKategori($kategori_items, 'formularium-rs');
                 $resep_detail->save();
             }
 
 
-            if($resep_detail->is_fornas == 0) $transaksi_is_fornas = 0;
-            if($resep_detail->is_formularium_rs == 0) $transaksi_is_formularium_rs = 0;
+            if ($resep_detail->is_fornas == 0) $transaksi_is_fornas = 0;
+            if ($resep_detail->is_formularium_rs == 0) $transaksi_is_formularium_rs = 0;
         }
 
         $transaksi->is_fornas = $transaksi_is_fornas;
@@ -660,23 +680,21 @@ class EditController extends Controller
         $transaksi->save();
     }
 
-    private function checkKategori($kategori_items,$slug)
+    private function checkKategori($kategori_items, $slug)
     {
-        foreach($kategori_items as $kategori_item)
-        {
+        foreach ($kategori_items as $kategori_item) {
             $kategori_slug = $kategori_item->detail_kategori->slug;
 
-            if($kategori_slug == $slug) 
-            {
+            if ($kategori_slug == $slug) {
                 return 1;
             }
         }
         return 0;
     }
 
-    public function limaBenar(Request $request,$farmasi,$transaksi_slug)
+    public function limaBenar(Request $request, $farmasi, $transaksi_slug)
     {
-        $transaksi = TransaksiObat::where('slug',$transaksi_slug)->first();
+        $transaksi = TransaksiObat::where('slug', $transaksi_slug)->first();
         $transaksi->status = 1;
         $transaksi->lima_benar_pasien = $request->lima_benar_pasien;
         $transaksi->lima_benar_obat = $request->lima_benar_obat;
@@ -687,7 +705,7 @@ class EditController extends Controller
         $transaksi->lima_benar_created_by = Auth::user()->id;
         $transaksi->save();
 
-        if(config('medify.third-party.jkn_online.on') && !empty($transaksi->kasus_id)) {
+        if (config('medify.third-party.jkn_online.on') && !empty($transaksi->kasus_id)) {
             $kasus = app(\App\Http\Controllers\Kasus\Kasus\ReadController::class)->get($transaksi->kasus->nomor_kasus);
             $transaksi_rajal = $kasus->rawat_jalan_transaksi_last_attr;
             if (($kasus->lokasi->lokasi->departemen->id ?? null) == 2 && $transaksi_rajal && $transaksi_rajal->task_id_jkn < 7) {
@@ -696,7 +714,27 @@ class EditController extends Controller
                 $data['kodebooking'] = $transaksi_rajal->id;
                 $data['taskid'] = 7;
                 $data['waktu'] = $carbon_today;
-                dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi_rajal->id, 'taskid' => 7, 'waktu' => $carbon_today]));
+                // dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi_rajal->id, 'taskid' => 7, 'waktu' => $carbon_today]));
+                $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
+                $returned = json_decode($returned);
+                $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+                if ($metadata->code != "200") {
+                    $data_log['kodebooking'] = $transaksi_rajal->id;
+                    $data_log['response'] = json_encode($returned);
+
+                    app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+                } else {
+                    $data_log['kodebooking'] = $transaksi_rajal->id;
+                    $data_log['task_id'] = 7;
+                    $data_log['waktu'] = $carbon_today;
+                    $data_log['response'] = json_encode($returned);
+                    $data_log['request'] = $data;
+
+                    app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+                }
+                $transaksi_rajal = Transaksi::find($transaksi->id);
+                $transaksi_rajal->task_id_jkn = 7;
+                $transaksi_rajal->save();
             }
         }
 
@@ -717,62 +755,86 @@ class EditController extends Controller
         $diskon = 0;
         $pasien = Pasien::find($transaction->pasien_id);
         $nama_pasien = empty($pasien->name) ? $transaction->nama_pasien : $pasien->name;
-        $judul = $farmasi->nama.' - '.$nama_pasien;
+        $judul = $farmasi->nama . ' - ' . $nama_pasien;
         $lokasi_id = $transaction->lokasi_id ?? $farmasi->lokasi_id;
         $created_at = Carbon::now();
         $updated_at = Carbon::now();
         $pasien_pembayaran_id = $transaction->metode_pembayaran_id;
-        $laba=explode(',',$request->laba);
-
+        $laba = explode(',', $request->laba);
+        $embalase = explode(',', $request->embalase);
         $transaksi_details = [];
-        $i=0;
-        $total = $request->embalase ?? 0;
-        foreach($transaction->final_detail->resep_detail as $value){
+        $i = 0;
+        $total = 0;
+        foreach ($transaction->final_detail->resep_detail as $value) {
             $value->laba = $laba[$i] ?? 0;
-            if($value->tipe)
-            {
-                $subtotal = $this->countSubtotalRacikan($value->id,$laba[$i]);
-                if($value->jumlah == 0){
+            $value->embalase = $embalase[$i] ?? 0;
+            if ($value->tipe) {
+                $subtotal = $this->countSubtotalRacikan($value->id, $laba[$i]);
+                if ($value->jumlah == 0) {
                     $value->harga = 0;
-                }else{
-                    $value->harga = round($subtotal/$value->jumlah);
+                } else {
+                    $value->harga = round($subtotal / $value->jumlah);
                 }
-                $value->subtotal = $value->harga*$value->jumlah;
+                $value->subtotal = $value->harga * $value->jumlah;
+            } else {
+                $value->harga = round($value->obat_detail->item_detail->harga * (100 + $value->laba) / 100);
+                $value->subtotal = ceil($value->harga * $value->jumlah);
             }
-            else
-            {
-                $value->harga = round($value->obat_detail->item_detail->harga*(100 + $value->laba)/100);
-                $value->subtotal = ceil($value->harga*$value->jumlah);
+            $value->subtotal += $value->embalase;
+            if ($value->jumlah != 0) {
+                $value->harga = $value->subtotal / $value->jumlah;
+            } else {
+                $value->harga = 0;
             }
+
             $i++;
             $detail_res = $this->detailItem((object)$value, $lokasi_id);
             array_push($transaksi_details, $detail_res);
-            $total += $value->subtotal;
+            try {
+                $total += $value->subtotal;
+            } catch (\Exception $e) {
+                dd($value);
+            }
         }
         $jumlah = $total;
-        $embalase = new \stdClass();
-        $embalase->nama_obat = 'Embalase';
-        $embalase->harga = $request->embalase;
-        $embalase->jumlah = 1;
-        $embalase->subtotal = $request->embalase;
-        $embalase->aturan = '';
-        $embalase_resep = $this->detailItem($embalase,$lokasi_id);
-        array_push($transaksi_details, $embalase_resep);
+        // $embalase = new \stdClass();
+        // $embalase->nama_obat = 'Embalase';
+        // $embalase->harga = $request->embalase;
+        // $embalase->jumlah = 1;
+        // $embalase->subtotal = $request->embalase;
+        // $embalase->aturan = '';
+        // $embalase_resep = $this->detailItem($embalase,$lokasi_id);
+        // array_push($transaksi_details, $embalase_resep);
         $transaksi_details = (object)$transaksi_details;
-        $kategori_id = Kategori::where('slug','farmasi')->first()->id;
+        $kategori_id = Kategori::where('slug', 'farmasi')->first()->id;
         $pihak_ketiga = empty($pasien->name) ? $transaction->nama_pasien : $pasien->name;
         $perusahaan_id = $transaction->perusahaan_tipe_id;
-
         $transaksi_kasir = app('App\Http\Controllers\Keuangan\Piutang\CreateController')
-            ->create($kasir_id,$judul,$jumlah,$diskon,$total,($pasien->id ?? null),$pihak_ketiga,$kategori_id,
-                $created_at,$created_at,$updated_at,
-                $transaksi_details,$pasien_pembayaran_id,$lokasi_id,
-                null,$perusahaan_id,'Administrasi Pendaftaran Pasien',null);
+            ->create(
+                $kasir_id,
+                $judul,
+                $jumlah,
+                $diskon,
+                $total,
+                ($pasien->id ?? null),
+                $pihak_ketiga,
+                $kategori_id,
+                $created_at,
+                $created_at,
+                $updated_at,
+                $transaksi_details,
+                $pasien_pembayaran_id,
+                $lokasi_id,
+                null,
+                $perusahaan_id,
+                'Administrasi Pendaftaran Pasien',
+                null
+            );
         $transaction->status_kasir = '1';
         $transaction->piutang_id = $transaksi_kasir->id;
         $transaction->save();
 
-        if(config('medify.third-party.jkn_online.on') &&!empty($transaction->kasus_id)) {
+        if (config('medify.third-party.jkn_online.on') && !empty($transaction->kasus_id)) {
             $kasus = app(\App\Http\Controllers\Kasus\Kasus\ReadController::class)->get($transaction->kasus->nomor_kasus);
             $transaksi = $kasus->rawat_jalan_transaksi_last_attr;
             if (($kasus->lokasi->lokasi->departemen->id ?? null) == 2 && $transaksi && $transaksi->task_id_jkn < 6) {
@@ -782,10 +844,35 @@ class EditController extends Controller
                 $data['taskid'] = 6;
                 $data['waktu'] = $carbon_today;
                 dispatch(new QueueArtisan('command:update-task-jkn-id', ['kodebooking' => $transaksi->id, 'taskid' => 6, 'waktu' => $carbon_today]));
+                // $data = [
+                //     'kodebooking' => $transaksi->id,
+                //     'taskid' => 6,
+                //     'waktu' => $carbon_today
+                // ];
+                // $returned = app(\App\Http\Controllers\ThirdParty\BPJS\JKN\Antrean\PostController::class)->updateTaskId($data);
+                // $returned = json_decode($returned);
+                // $metadata = isset($returned->metadata) ? $returned->metadata : $returned->metaData;
+                // if ($metadata->code != "200") {
+                //     $data_log['kodebooking'] = $transaksi->id;
+                //     $data_log['response'] = json_encode($returned);
+
+                //     app(\App\Http\Controllers\ThirdParty\LogErrorJkn\CreateController::class)->create($data_log);
+                // } else {
+                //     $data_log['kodebooking'] = $transaksi->id;
+                //     $data_log['task_id'] = 6;
+                //     $data_log['waktu'] = $carbon_today;
+                //     $data_log['response'] = json_encode($returned);
+                //     $data_log['request'] = $data;
+
+                //     app(\App\Http\Controllers\ThirdParty\LogJkn\CreateController::class)->create($data_log);
+                // }
+                // $transaksi = Transaksi::find($transaksi->id);
+                // $transaksi->task_id_jkn = 6;
+                // $transaksi->save();
             }
         }
 
-        if($transaksi_kasir){
+        if ($transaksi_kasir) {
             $data['status'] = 1;
             $data['type'] = 'success';
             $data['title'] = 'Berhasil';
@@ -793,11 +880,13 @@ class EditController extends Controller
             $data['url'] = 0;
             return json_encode($data);
         }
+        return false;
     }
 
-    public function countSubtotalRacikan($resep_detail_id,$laba){
-        $i=0;
-        $subtotal=0;
+    public function countSubtotalRacikan($resep_detail_id, $laba)
+    {
+        $i = 0;
+        $subtotal = 0;
         $racikan = RacikanDetail::where('resep_detail_id', $resep_detail_id)->get();
         foreach ($racikan as $detail) {
             $detail->laba = $laba;
@@ -816,7 +905,7 @@ class EditController extends Controller
         $newtrans->tarif_id = 0;
         $newtrans->deskripsi = $data->nama_obat;
         $newtrans->tarif_tipe_id = 0;
-        $newtrans->tarif_kelas_id =0;
+        $newtrans->tarif_kelas_id = 0;
         $newtrans->kelas_id = 0;
         $newtrans->harga = $data->harga;
         $newtrans->diskon = 0;
@@ -831,32 +920,46 @@ class EditController extends Controller
         return $newtrans;
     }
 
-    public function batalKirimKasir(Request $request){
-      
-        $piutang =  Piutang::where('id',$request->id)->first();
+    public function batalKirimKasir(Request $request)
+    {
+
+        $piutang =  Piutang::where('id', $request->id)->first();
         // dd( $id, $id_transaksi);
-        if(empty($piutang)){
+        if (empty($piutang)) {
             $transaksi = TransaksiObat::find($request->transaksi_id);
             $transaksi->status_kasir = '0';
             $transaksi->save();
+
+            # membatalkan konfirmasi permintaan
+            $resep = $transaksi->final_detail;
+            $resep->konfirmasi_permintaan_at = null;
+            $resep->konfirmasi_permintaan_by = null;
+            $resep->save();
+
             $data['status'] = 1;
             $data['url'] = 0;
             $data['type'] = 'success';
             $data['title'] = 'Berhasil';
             $data['text'] = 'Transaksi Kasir Berhasil dibatalkan';
             return json_encode($data);
-        }else if (count($piutang->pemasukan) == 0){
+        } else if (count($piutang->pemasukan) == 0) {
             $transaksi = TransaksiObat::find($request->transaksi_id);
             $transaksi->status_kasir = '0';
             $transaksi->save();
 
-            $details = PiutangDetail::where('piutang_id',$piutang->id)->get();
-            foreach($details as $item)
-            {
+            $details = PiutangDetail::where('piutang_id', $piutang->id)->get();
+            foreach ($details as $item) {
                 $temp = PiutangDetail::find($item->id);
                 $temp->delete();
             }
             $piutang->delete();
+
+            # membatalkan konfirmasi permintaan
+            $resep = $transaksi->final_detail;
+            $resep->konfirmasi_permintaan_at = null;
+            $resep->konfirmasi_permintaan_by = null;
+            $resep->save();
+
             $data['status'] = 1;
             $data['url'] = 0;
             $data['type'] = 'success';
@@ -909,17 +1012,17 @@ class EditController extends Controller
     {
         $path_generate = 'assets/img/farmasi-tv/sound/generate/';
         $path = 'assets/img/farmasi-tv/sound/';
-        $nama_file = 'antrian_'.(string)$transaksi_id.'_'.$loket_id.'.mp3';
-        $nama_file_wav = 'antrian_'.(string)$transaksi_id.'_'.$loket_id.'.wav';
+        $nama_file = 'antrian_' . (string)$transaksi_id . '_' . $loket_id . '.mp3';
+        $nama_file_wav = 'antrian_' . (string)$transaksi_id . '_' . $loket_id . '.wav';
 
-        if(!file_exists($path_generate)) {
+        if (!file_exists($path_generate)) {
             mkdir($path_generate, 0777, true);
         }
 
-        if(!file_exists(public_path($path_generate.$nama_file))) {
+        if (!file_exists(public_path($path_generate . $nama_file))) {
             $loket = LoketAntrian::find($loket_id);
 
-            if($transaksi->pembayaran_detail) $tipe_perusahaan = $transaksi->pembayaran_detail->perusahaan->tipe;
+            if ($transaksi->pembayaran_detail) $tipe_perusahaan = $transaksi->pembayaran_detail->perusahaan->tipe;
             else $tipe_perusahaan = PembayaranPerusahaanType::where('slug', 'tunai')->first();
 
             $jenis_antrian = (new \App\Http\Controllers\Farmasi\JenisAntrian\ReadController())->getByTipePerusahaan($tipe_perusahaan->id);
@@ -928,10 +1031,10 @@ class EditController extends Controller
 
             $antrian_name_arr = str_split($t_nomor_antrian);
             $audio_arr = [
-                file_get_contents($path.'nomor.mp3'),
-                file_get_contents($path.'-.mp3'),
-                file_get_contents($path.'antrian.mp3'),
-                file_get_contents($path.'-.mp3')
+                file_get_contents($path . 'nomor.mp3'),
+                file_get_contents($path . '-.mp3'),
+                file_get_contents($path . 'antrian.mp3'),
+                file_get_contents($path . '-.mp3')
             ];
 
             if ($jenis_antrian->sound ?? null) {
@@ -942,23 +1045,23 @@ class EditController extends Controller
 
             foreach ($antrian_name_arr as $value) {
                 if ($value && $value != '') {
-                    $audio_arr[] = file_get_contents($path.strtoupper($value).'.mp3');
+                    $audio_arr[] = file_get_contents($path . strtoupper($value) . '.mp3');
                 }
             }
 
-            $audio_arr[] = file_get_contents($path.'menuju.mp3');
-            $audio_arr[] = file_get_contents($path.'-.mp3');
+            $audio_arr[] = file_get_contents($path . 'menuju.mp3');
+            $audio_arr[] = file_get_contents($path . '-.mp3');
             if ($loket->sound) {
-                $audio_arr[] = file_get_contents(file_exists(public_path($loket->sound)) ? $loket->sound : $path.'default-loket.mp3');
+                $audio_arr[] = file_get_contents(file_exists(public_path($loket->sound)) ? $loket->sound : $path . 'default-loket.mp3');
             } else {
-                $audio_arr[] = file_get_contents($path.'default-loket.mp3');
+                $audio_arr[] = file_get_contents($path . 'default-loket.mp3');
             }
 
             $merge_audio = app('App\Http\Controllers\Functions\AudioCombine')->makeAudio($path_generate, $nama_file, $audio_arr);
             $merge_audio_wav = app('App\Http\Controllers\Functions\AudioCombine')->makeAudio($path_generate, $nama_file_wav, $audio_arr);
 
             // Untuk membersihkan file lama > 2 hari
-            foreach (glob($path_generate."*") as $file) {
+            foreach (glob($path_generate . "*") as $file) {
                 if (filemtime($file) < time() - 172800) { // 2 hari
                     unlink($file);
                 }
@@ -979,5 +1082,382 @@ class EditController extends Controller
             $data->save();
         }
         return $data;
+    }
+
+    function konfirmasiPermintaan(Request $request, $farmasi_slug)
+    {
+        try {
+            DB::connection('farmasi')->beginTransaction();
+            DB::connection('kasus')->beginTransaction();
+            DB::connection('kasir')->beginTransaction();
+            DB::connection('keuangan')->beginTransaction();
+            $transaksi = TransaksiObat::find($request->id);
+            if (empty($transaksi->final_detail->konfirmasi_permintaan_at)) {
+                $transaksi = app(\App\Http\Controllers\Farmasi\Resep\CreateController::class)->konfirmasiPermintaan($request);
+                if (is_string($transaksi)) {
+                    DB::connection('farmasi')->rollback();
+                    DB::connection('kasus')->rollback();
+                    DB::connection('kasir')->rollback();
+                    DB::connection('keuangan')->rollback();
+                    if ($transaksi == 'Transaksi sudah dikonfirmasi harap melakukan edit terlebih dahulu jika ingin melakukan perubahan') {
+                        # handle data lama auto konfirmasi
+                        DB::connection('farmasi')->beginTransaction();
+                        $transaksi_obat = TransaksiObat::find($request->id);
+                        $resep_final = $transaksi_obat->final_detail;
+                        $resep_final->konfirmasi_permintaan_at = now();
+                        $resep_final->konfirmasi_permintaan_by = auth()->id();
+                        $resep_final->save();
+                        DB::connection('farmasi')->commit();
+                    }
+                    return redirect()->back()
+                        ->with('message', $transaksi)
+                        ->with('status', -1)
+                        ->with('title', 'Gagal');
+                }
+            }
+            # memperbarui data (takut tidak terupdate setelah proses konfirmasi permintaan)
+            $transaksi->load('final_detail.resep_detail');
+
+            if ($request->tujuan_pembayaran == 'kasir') {
+                $request_kirim_kasir = new Request();
+                $request_kirim_kasir->merge([
+                    "id" => $transaksi->id,
+                    "jumlah" => $transaksi->total_biaya_obat,
+                    "slug" => $farmasi_slug,
+                    "asal_pelayanan" => $transaksi->lokasi->nama ?? '',
+                    "embalase" => $transaksi->final_detail->resep_detail->pluck('embalase')->implode(','),
+                    "laba" => $transaksi->final_detail->resep_detail->pluck('laba')->implode(','),
+                ]);
+                $response_kirim_kasir = app(\App\Http\Controllers\Farmasi\Transaksi\EditController::class)->kirimKasir($request_kirim_kasir);
+                if ($response_kirim_kasir === false) {
+                    DB::connection('farmasi')->rollback();
+                    DB::connection('kasus')->rollback();
+                    DB::connection('kasir')->rollback();
+                    DB::connection('keuangan')->rollback();
+                    return redirect()->back()
+                        ->with('message', $transaksi)
+                        ->with('status', -1)
+                        ->with('title', 'Gagal');
+                }
+            }
+
+            if (in_array($request->tujuan_pembayaran, ['farmasi', 'kasus'])) {
+                $request_payment = new Request();
+                $request_payment->merge([
+                    "id" => $transaksi->id,
+                    "farmasi" => $farmasi_slug,
+                    "total_harga" => $transaksi->total_biaya_obat,
+                    "laba" => $transaksi->final_detail->resep_detail->pluck('laba')->toArray(),
+                    "embalase" => $transaksi->final_detail->resep_detail->pluck('embalase')->toArray(),
+                    "asal_pelayanan" => $transaksi->lokasi->nama ?? '',
+                    "kirim_tagihan" => $request->tujuan_pembayaran == 'kasus' ? 1 : 0,
+                ]);
+                $response_payment = app(\App\Http\Controllers\Farmasi\Transaksi\EditController::class)->payment($request_payment, $farmasi_slug);
+                if ($response_payment->getSession()->get('status') != 1) {
+                    DB::connection('farmasi')->rollback();
+                    DB::connection('kasus')->rollback();
+                    DB::connection('kasir')->rollback();
+                    DB::connection('keuangan')->rollback();
+                    return $response_payment;
+                }
+
+                if ($transaksi->transaksi_obat_telaah_obat_penyerahan != null) {
+                    $request_lima_benar = new Request();
+                    $request_lima_benar->merge([
+                        'lima_benar_pasien' => 1,
+                        'lima_benar_obat' => 1,
+                        'lima_benar_dosis' => 1,
+                        'lima_benar_aturan' => 1,
+                        'lima_benar_waktu' => 1,
+                    ]);
+                    $this->limaBenar($request_lima_benar, $farmasi_slug, $transaksi->slug);
+                }
+            }
+
+            DB::connection('farmasi')->commit();
+            DB::connection('kasus')->commit();
+            DB::connection('kasir')->commit();
+            DB::connection('keuangan')->commit();
+            return redirect('farmasi/' . $farmasi_slug . '/transaksi/' . $transaksi->slug)
+                ->with('message', 'Berhasil melakukan konfirmasi permintaan')
+                ->with('status', 1)
+                ->with('title', 'Berhasil');
+        } catch (\Exception $e) {
+            DB::connection('farmasi')->rollback();
+            DB::connection('kasus')->rollback();
+            DB::connection('kasir')->rollback();
+            DB::connection('keuangan')->rollback();
+            app(\App\Http\Controllers\Error\Handler::class)->bugsnag($e);
+            return back()->with([
+                'status' => -1,
+                'title' => 'Gagal!',
+                'message' => 'Terjadi Kesalahan Server',
+            ]);
+        }
+    }
+
+    function batalKonfirmasiPermintaan(Request $request, $farmasi_slug)
+    {
+        try {
+            DB::connection('farmasi')->beginTransaction();
+
+            $transaksi = TransaksiObat::find($request->id);
+            $resep = $transaksi->final_detail;
+            $resep->konfirmasi_permintaan_at = null;
+            $resep->konfirmasi_permintaan_by = null;
+            $resep->save();
+
+            DB::connection('farmasi')->commit();
+            return redirect('farmasi/' . $farmasi_slug . '/transaksi/' . $transaksi->slug)
+                ->with('message', 'Berhasil melakukan batal konfirmasi permintaan')
+                ->with('status', 1)
+                ->with('title', 'Berhasil');
+        } catch (\Exception $e) {
+            DB::connection('farmasi')->rollback();
+            app(\App\Http\Controllers\Error\Handler::class)->bugsnag($e);
+            return back()->with([
+                'status' => -1,
+                'title' => 'Gagal!',
+                'message' => 'Terjadi Kesalahan Server',
+            ]);
+        }
+    }
+
+    function batalKonfirmasiPemesanan(Request $request, $farmasi_slug)
+    {
+        try {
+            DB::connection('farmasi')->beginTransaction();
+            DB::connection('kasus')->beginTransaction();
+            DB::connection('keuangan')->beginTransaction();
+
+            $transaction = TransaksiObat::find($request->id);
+
+            if ($transaction->retur->count() != 0) {
+                DB::connection('farmasi')->rollBack();
+                DB::connection('kasus')->rollBack();
+                DB::connection('keuangan')->rollBack();
+                return back()
+                    ->with('message', "Gagal melakukan batal pemesanan, terdapat transaksi retur")
+                    ->with('status', -1)
+                    ->with('title', 'Gagal');
+            }
+
+            if (!empty($transaction->dikerjakan_at)) {
+                $transaction->status = 0;
+                $transaction->dikerjakan_at = NULL;
+                $transaction->dikerjakan_by = NULL;
+                $transaction->shift_id = NULL;
+                $transaction->paid_by = NULL;
+                $transaction->paid_at = NULL;
+                $transaction->lima_benar_at = NULL;
+                $transaction->lima_benar_created_by = NULL;
+                $transaction->lima_benar_pasien = NULL;
+                $transaction->lima_benar_obat = NULL;
+                $transaction->lima_benar_dosis = NULL;
+                $transaction->lima_benar_aturan = NULL;
+                $transaction->lima_benar_waktu = NULL;
+                foreach ($transaction->final_detail->resep_detail as $detail) {
+                    foreach ($detail->log as $log) {
+                        $item = Items::find($log->item_id);
+                        if ($item) {
+                            $item->jumlah += $log->jumlah - $log->jumlah_retur;
+                            $item->save();
+                        }
+                        $log->delete();
+                    }
+                    if (!empty($detail->kasusTagihanDetail)) {
+                        $minus = app('App\Http\Controllers\Kasus\Tagihan\EditController')->delete_bill($detail->kasusTagihanDetail->kasus_tagihan_id, $detail->kasusTagihanDetail->subtotal);
+                        $detail->kasusTagihanDetail->delete();
+                    }
+                }
+            }
+
+            if ($transaction->status_kasir ==  1 || !empty($transaction->piutang_id)) {
+                $piutang =  Piutang::where('id', $transaction->piutang_id)->first();
+                if ($piutang) {
+                    if (count($piutang->pemasukan) == 0) {
+                        $piutang->delete();
+                        $transaction->status_kasir = 0;
+                        $transaction->piutang_id = null;
+                    } else {
+                        DB::connection('farmasi')->rollBack();
+                        DB::connection('kasus')->rollBack();
+                        DB::connection('keuangan')->rollBack();
+                        return redirect('farmasi/' . $farmasi_slug . '/transaksi/' . $transaction->slug)
+                            ->with('message', "Gagal melakukan batal pemesanan, Transaksi Sudah Terbayar Di kasir")
+                            ->with('status', -1)
+                            ->with('title', 'Gagal');
+                    }
+                }
+            }
+
+            $resep = $transaction->final_detail;
+            $resep->konfirmasi_permintaan_at = null;
+            $resep->konfirmasi_permintaan_by = null;
+            $resep->save();
+            $transaction->save();
+
+            DB::connection('farmasi')->commit();
+            DB::connection('kasus')->commit();
+            DB::connection('keuangan')->commit();
+            return redirect('farmasi/' . $farmasi_slug . '/transaksi/' . $transaction->slug)
+                ->with('message', 'Berhasil melakukan batal konfirmasi permintaan')
+                ->with('status', 1)
+                ->with('title', 'Berhasil');
+        } catch (\Exception $e) {
+            DB::connection('farmasi')->rollback();
+            DB::connection('kasus')->rollback();
+            DB::connection('keuangan')->rollback();
+            app(\App\Http\Controllers\Error\Handler::class)->bugsnag($e);
+            return back()->with([
+                'status' => -1,
+                'title' => 'Gagal!',
+                'message' => 'Terjadi Kesalahan Server',
+            ]);
+        }
+    }
+
+    function telaahObat(Request $request, $farmasi_slug)
+    {
+        try {
+            DB::connection('farmasi')->beginTransaction();
+
+            $transaksi = TransaksiObat::find($request->id);
+
+            $slug = $request->submit;
+            $message = '';
+            if (in_array($slug, ['kirim_ruangan_ya', 'kirim_ruangan_tidak'])) {
+                $transaksi->telaah_kirim_ruangan = ($slug == 'kirim_ruangan_ya' ? 1 : 0);
+                $transaksi->save();
+                $message = 'Berhasil melakukan set telaah kirim ke ruangan';
+            } else {
+                if ($slug == 'penyerahan') {
+                    if ($transaksi->dikerjakan_at == null) {
+                        return back()->with([
+                            'status' => -1,
+                            'title' => 'Gagal',
+                            'message' => 'Konfirmasi Pemesanan Terlebih Dahulu',
+                        ]);
+                    }
+                }
+                $transaksi_obat_telaah_obat = new TransaksiObatTelaahObat;
+                $transaksi_obat_telaah_obat->transaksi_id = $transaksi->id;
+                $transaksi_obat_telaah_obat->slug = $slug;
+                foreach ($request->telaah[$slug] ?? [] as $key => $value) {
+                    $transaksi_obat_telaah_obat->$key = $value;
+                }
+                $transaksi_obat_telaah_obat->telaah_at = now()->toDateTimeString();
+                $transaksi_obat_telaah_obat->telaah_by = auth()->id();
+                $transaksi_obat_telaah_obat->save();
+                $message = 'Berhasil melakukan telaah obat';
+            }
+
+            if ($slug == 'penyerahan') {
+                $new_request = new Request();
+                $new_request->merge([
+                    'lima_benar_pasien' => 1,
+                    'lima_benar_obat' => 1,
+                    'lima_benar_dosis' => 1,
+                    'lima_benar_aturan' => 1,
+                    'lima_benar_waktu' => 1,
+                ]);
+                $this->limaBenar($new_request, $farmasi_slug, $transaksi->slug);
+            }
+
+            DB::connection('farmasi')->commit();
+            return redirect('farmasi/' . $farmasi_slug . '/transaksi/' . $transaksi->slug)
+                ->with('message', $message)
+                ->with('status', 1)
+                ->with('title', 'Berhasil');
+        } catch (\Exception $e) {
+            DB::connection('farmasi')->rollback();
+            app(\App\Http\Controllers\Error\Handler::class)->bugsnag($e);
+            return back()->with([
+                'status' => -1,
+                'title' => 'Gagal!',
+                'message' => 'Terjadi Kesalahan Server',
+            ]);
+        }
+    }
+
+    public function tindakLanjut(Request $request, $farmasi_slug)
+    {
+        try {
+            DB::connection('farmasi')->beginTransaction();
+
+            $transaksi = TransaksiObat::find($request->id);
+            if (!empty($transaksi)) {
+                $transaksi->tindak_lanjut = $request->tindak_lanjut ?? '';
+                $transaksi->tindak_lanjut_created_at = Carbon::now();
+                $transaksi->tindak_lanjut_created_by = Auth::user()->id ?? null;
+                $transaksi->save();
+            }
+
+            DB::connection('farmasi')->commit();
+
+            $data['type'] = 'success';
+            $data['title'] = 'Berhasil';
+            $data['message'] = 'Berhasil menambahkan isian tindak lanjut';
+            $data['url'] = 0;
+            $data['status'] = 1;
+            $data['tindak_lanjut'] = $request->tindak_lanjut ?? '';
+            return json_encode($data);
+        } catch (\Exception $e) {
+            DB::connection('farmasi')->rollback();
+            app(\App\Http\Controllers\Error\Handler::class)->bugsnag($e);
+
+            $data['type'] = 'error';
+            $data['title'] = 'Gagal';
+            $data['message'] = 'Gagal menambahkan isian tindak lanjut';
+            $data['url'] = 0;
+            $data['status'] = 0;
+            return json_encode($data);
+        }
+    }
+
+    public function APIAddTTDPasien($farmasi, $transaksi_slug, Request $request)
+    {
+        DB::connection('farmasi')->beginTransaction();
+        try {
+            $transaksi = TransaksiObat::find($request->id);
+
+            // upload image from canvas
+            $img_base64 = $request->imgBase64;
+            $img_base64 = str_replace('data:image/png;base64,', '', $img_base64);
+            $img_base64 = str_replace(' ', '+', $img_base64);
+            $img_data = base64_decode($img_base64);
+            $img_dir = app('App\Http\Controllers\Functions\ImageUploader')->upload($img_data, 'ttd');
+            $success = file_put_contents($img_dir['file_original'], $img_data);
+
+            if ($success) {
+                $transaksi->nama_ttd = $request->nama;
+                $transaksi->img_ttd = $img_dir['file_original'];
+                $transaksi->save();
+
+                $data['type'] = 'success';
+                $data['title'] = 'Berhasil';
+                $data['text'] = 'Berhasil menandatangani transaksi ini';
+                $data['url'] = 'farmasi/' . $farmasi . '/transaksi/' . $transaksi_slug;
+                DB::connection('farmasi')->commit();
+            } else {
+                DB::connection('farmasi')->rollback();
+                $data['type'] = 'error';
+                $data['title'] = 'Gagal';
+                $data['text'] = 'Gagal mengunggah tanda tangan. Silahkan hapus tanda tangan dan coba lagi.';
+                $data['url'] = 0;
+            }
+
+            return json_encode($data);
+        } catch (\Exception $e) {
+            DB::connection('farmasi')->rollback();
+            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+
+            $data['type'] = 'error';
+            $data['title'] = 'Gagal';
+            $data['text'] = 'Gagal menandatangani transaksi ini. Silahkan coba lagi';
+            $data['url'] = 0;
+
+            return json_encode($data);
+        }
     }
 }

@@ -16,7 +16,7 @@ class ReadController extends Controller
 
 	public function getAll($slug)
 	{
-		$laporan = Laporan::where('slug',$slug)->orderBy('file_name','desc')->get();
+		$laporan = Laporan::where('slug',$slug)->orderBy('id','desc')->get();
 		return $laporan;
 	}
 

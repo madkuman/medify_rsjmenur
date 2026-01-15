@@ -20,17 +20,19 @@ class CreateController extends Controller
         try
         {
             $kasus = Kasus::where('nomor_kasus', $nomor_kasus)->first();
+            /*
             $asuhan = RencanaAsuhan::all();
             $jenisasuhan = JenisRencanaAsuhan::all();
             $kasus_asuhan = Keperawatan::all();
             $asuhan_detail = RencanaAsuhanDetail::all();
             $data['kasus_asuhan'] = $kasus_asuhan;
-            $data['kasus'] = $kasus;
-            $data['active_nav'] = 'rencana-asuhan';
-            $data['sidebar_active'] = 'keperawatan';
             $data['asuhan'] = $asuhan;
             $data['jenisasuhan'] = $jenisasuhan;
             $data['asuhan_detail'] = $asuhan_detail;
+            */
+            $data['kasus'] = $kasus;
+            $data['active_nav'] = 'rencana-asuhan';
+            $data['sidebar_active'] = 'keperawatan';
             $asuhan_diagnosa = $request->asuhan_diagnosa;
             $asuhan_jenis = $request->asuhan_jenis;
             $kasus_id = $request->kasus_id;

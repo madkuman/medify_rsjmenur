@@ -538,4 +538,19 @@ class ReadController extends Controller
 
 		return $transaksi_rajal;
 	}
+
+	public function getPendaftaranJKNAt($transaksi)
+	{	
+		if((!empty($transaksi->is_online) && $transaksi->is_online) || (!empty($transaksi->is_mesin_antrian) && $transaksi->is_mesin_antrian)) {
+			if (!empty($transaksi->is_online)) {
+				$waktu_daftar = $transaksi->ordered_at ?? $transaksi->created_at ?? null;
+			} else {
+				$waktu_daftar = $transaksi->konfirmasi_at ?? $transaksi->ordered_at ?? $transaksi->created_at ?? null;
+			}
+		} else {
+			$waktu_daftar = $transaksi->created_at;
+		}
+
+		return $waktu_daftar;
+	}
 }

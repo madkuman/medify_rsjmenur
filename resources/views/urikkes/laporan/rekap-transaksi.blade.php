@@ -33,10 +33,10 @@
     @endphp
     @foreach($transaksi as $item)
         @php
-            if(isset($summary[$item->transaksi_detail[0]->paket->nama])){
-                $summary[$item->transaksi_detail[0]->paket->nama] += 1;
+            if(isset($summary[$item->transaksi_detail[0]->paket->nama ?? '-'])) {
+                $summary[$item->transaksi_detail[0]->paket->nama ?? '-'] += 1;
             }else{
-                $summary[$item->transaksi_detail[0]->paket->nama] = 1;
+                $summary[$item->transaksi_detail[0]->paket->nama ?? '-'] = 1;
             }
         @endphp
         <tr>
@@ -46,7 +46,7 @@
             <td>{{$item->pasien_detail->name}}</td>
             <td>{{$item->pasien_detail->jk->nama}}</td>
             <td>{{$item->pasien_detail->age}}</td>
-            <td>{{$item->transaksi_detail[0]->paket->nama}}</td>
+            <td>{{$item->transaksi_detail[0]->paket->nama ?? '-'}}</td>
             <td>{{$item->dokter->name}}</td>
         </tr>
     @endforeach

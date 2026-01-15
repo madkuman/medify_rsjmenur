@@ -553,7 +553,7 @@ class ReadController extends Controller
 
     public function getPemesananEdit($id)
     {
-        $pemesanan = PemesananDetail::where('id',$id)->with(['jenis_makanan','diet','lokasi'])->first();
+        $pemesanan = PemesananDetail::where('id',$id)->with(['jenis_makanan','diet','lokasi', 'bentuk_makanan'])->first();
         return $pemesanan;
     }
 }

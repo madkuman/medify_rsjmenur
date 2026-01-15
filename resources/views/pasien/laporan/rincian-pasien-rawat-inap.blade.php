@@ -52,6 +52,7 @@
 			<td rowspan="2">JENIS PASIEN / STATUS</td>
 			<td rowspan="2">KELAS</td>
 			<td rowspan="2">DIAGNOSIS</td>
+			<td rowspan="2">TGL MRS</td>
 		</tr>
 		<tr>
 			<td>L</td>
@@ -72,6 +73,7 @@
 			<td>{{$m->pembayaran->perusahaan->nama ?? '-'}}</td>
 			<td>{{$m->kelas->nama}}</td>
 			<td>{{$m->diagnosisUtama->icd10->code_icd ?? '-'}}</td>
+			<td>{{$m->mrs_at ?? '-'}}</td>
 		</tr>
 		@endforeach
 		<tr><td></td></tr>

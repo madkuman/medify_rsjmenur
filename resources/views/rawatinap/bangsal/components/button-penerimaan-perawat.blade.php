@@ -1,0 +1,1 @@
+<a href="javascript:void(0)" onclick='window.open("{{ url("rawatinap/transaksi/".$transaksi->id."/serah-terima-obat") }}","popUpWindow","height=800,width=800,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes");' class="btn btn-secondary text-center pull-right mr-5"><i class="fa fa-check"></i> Serah Terima Obat</a>

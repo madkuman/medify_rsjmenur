@@ -16,21 +16,13 @@ define('relasi', ['lokasi.lokasi', 'admin', 'identitas', 'pembayaran.perusahaan.
 
 class ViewController extends Controller
 {
-	protected $tagihanRead;
-
-	public function __construct(TagihanRead $tagihanRead, TagihanCreate $tagihanCreate)
-	{
-		$this->tagihanRead = $tagihanRead;
-        $this->tagihanCreate = $tagihanCreate;
-	}
-
     public function index($nomor_kasus)
     {
         $kasus = Kasus::with(relasi)->where('nomor_kasus',$nomor_kasus)->first();
-        $tagihan = $this->tagihanRead->get($kasus->id);
+        $tagihan = (new \App\Http\Controllers\Kasus\Tagihan\ReadController())->get($kasus->id);
         if(!$tagihan)
         {
-            $tagihan = $this->tagihanCreate->create($kasus->id);
+            $tagihan = (new \App\Http\Controllers\Kasus\Tagihan\CreateController())->create($kasus->id);
         }
 
         $split_piutang = 0;
@@ -55,24 +47,33 @@ class ViewController extends Controller
         return view('kasus.tagihan.index',$data);
     }
 
-    public function print($nomor_kasus,$tagihan_id)
+    public function print(Request $request,$nomor_kasus,$tagihan_id, $param_download = [])
     { 
+        $ipwl = $request->ipwl ?? 0;
         ini_set('max_execution_time', 300);
         ini_set("pcre.backtrack_limit", "5000000");
         $kasus = Kasus::with(relasi)->where('nomor_kasus',$nomor_kasus)->first();
-        $tagihan = Tagihan::where('kasus_id',$kasus->id)->orderBy('created_at', 'desc')->get();;
+        $tagihan = Tagihan::where('kasus_id',$kasus->id)->orderBy('created_at', 'desc')->get();
         if(count($tagihan) == 0)
         {
-            $tagihan = $this->tagihanCreate->create($kasus->id);
+            $tagihan = (new \App\Http\Controllers\Kasus\Tagihan\CreateController())->create($kasus->id);
         }
-        $tagihan = $this->tagihanRead->getId($tagihan_id);
+        $tagihan = (new \App\Http\Controllers\Kasus\Tagihan\ReadController())->getId($tagihan_id);
         $data['tagihan'] = $tagihan;
         if($tagihan->kasus_id != $kasus->id) abort(404);
         $data['kasus'] = $kasus;
+        $data['ipwl'] = $ipwl;
         // $pdf = DOMPDF::loadView('kasus.tagihan.print',$data)->setPaper('a4');
         $pdf = MPDF::loadView('kasus.tagihan.print',$data, [], [
             'format' => 'a4'
         ]);
+        if (($param_download['is_download'] ?? null) != null) {
+            $filename = $param_download['filename'] ?? 'Print_Tagihan_Kasus_'.$tagihan_id.'.pdf';
+            if (file_exists($param_download['path'] . $filename)) 
+                unlink($param_download['path'] . $filename);
+            $pdf->save($param_download['path'] . $filename);
+            return $filename;
+        }
         return $pdf->stream('Print_Tagihan.pdf');
         // return view('kasus.tagihan.print',$data);
     }

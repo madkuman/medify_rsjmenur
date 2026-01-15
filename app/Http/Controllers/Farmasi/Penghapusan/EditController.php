@@ -21,6 +21,8 @@ class EditController extends Controller
         $template = $request->input('template');
         $items = $request->input('barang');
         $qty = $request->input('jumlah');
+		$tgl_pengeluaran = $request->tgl_pengeluaran ?? Carbon::now()->format('d-m-Y');
+		$tgl_pengeluaran = Carbon::createFromFormat("d-m-Y",$tgl_pengeluaran);
 
         DB::connection('farmasi')->beginTransaction();
 
@@ -28,6 +30,11 @@ class EditController extends Controller
         {
             $transaction = Penghapusan::find($id);
             $transaction->keterangan = $description;
+			$transaction->penghapusan_jenis_id = $request->jenis_penghapusan_id ?? null;
+			$transaction->surat_perintah = $request->surat_perintah ?? null;
+			$transaction->tgl_pengeluaran = $tgl_pengeluaran;
+			$transaction->no_pengeluaran = $request->no_pengeluaran ?? null;
+			$transaction->penyedia_id = $request->penyedia_id ?? null;
             $transaction->save();
 
             foreach($transaction->log as $log)

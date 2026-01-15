@@ -55,6 +55,9 @@ Farmasi Barang
                         <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Barang Baru
                     </button>
                 @endif
+                @if (session('farmasi')->jenis == 4)
+                <a href="{{url('farmasi/'.session('farmasi')->slug)}}/master-data" class="btn btn-secondary"><i class="fa fa-cog"></i> Master</a>
+                @endif
                 <a href="{{url('farmasi/'.session('farmasi')->slug.'/item')}}/filter/expired" class="btn btn-secondary">Barang Expired</a>
                 <a href="{{url('farmasi/'.session('farmasi')->slug.'/item')}}/filter/low-stock" class="btn btn-secondary">Barang Low Stock</a>
             </div>

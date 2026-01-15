@@ -4,6 +4,7 @@ namespace App\Http\Controllers\RawatInap\Transaksi;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Farmasi\TransaksiObat;
 use App\Models\RawatInap\Transaksi;
 use App\Models\Pasien\Pasien;
 use App\Models\Kasus\Kasus;
@@ -120,6 +121,18 @@ class ViewController extends Controller
     {
         $pdf = DOMPDF::loadView('amik-titip.laporan-jumlah-hari-perawatan')->setPaper('a4', 'landscape');
         return $pdf->stream('AAA');   
+    }
+
+    public function serahTerimaObat(Request $request, $id)
+    {
+        $transaksi = Transaksi::find($id);
+        $list_transaksi_farmasi = TransaksiObat::with('owner_detail', 'final_detail')
+            ->where('kasus_id', $transaksi->kasus_id)
+            ->where('telaah_kirim_ruangan', 1)
+            ->get();
+
+        $data['list_transaksi_farmasi'] = $list_transaksi_farmasi;
+        return view('rawatinap.transaksi.form-serah-terima-obat', $data);
     }
 
 }

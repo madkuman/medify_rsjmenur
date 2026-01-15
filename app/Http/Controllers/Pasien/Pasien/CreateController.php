@@ -12,15 +12,19 @@ use DB;
 class CreateController extends Controller
 {
 	public function create($human)
-	{	
+	{
 		$kategori_pasien = $human['kategori_pasien'] ?? 0;
-		$getMaxPasien = Pasien::where('kategori_pasien', intval($kategori_pasien))->max('id');
-		$countPasien = $getMaxPasien + 1;
+		//		$getMaxPasien = Pasien::where('kategori_pasien', intval($kategori_pasien))->max('id');
+		$getMaxPasien = Pasien::selectRaw('MAX(CAST(no_rm AS UNSIGNED)) AS max_no_rm')
+			->where('kategori_pasien', intval($kategori_pasien))
+			->first();
+		//		$countPasien = $getMaxPasien + 1;
+		$countPasien = ($getMaxPasien->max_no_rm ?? 0) + 1;
 		$nomor_rm = str_pad($countPasien, 5, "0", STR_PAD_LEFT);
-		$rm_jiwa = $kategori_pasien.''.$nomor_rm;
+		$rm_jiwa = $kategori_pasien . '' . $nomor_rm;
 
 		//DB::connection('patients')->beginTransaction();
-		try{
+		try {
 			$pasien = new Pasien;
 			$pasien->id = $countPasien;
 			$pasien->no_rm = $kategori_pasien == 5 ? $countPasien : $rm_jiwa;
@@ -50,12 +54,11 @@ class CreateController extends Controller
 			$pasien->tni_pangkat_singkat = $human['tni_pangkat_singkat'];
 			$pasien->is_anggota = $human['is_anggota'];
 
-			if(isset($human['parent_id'])){
+			if (isset($human['parent_id'])) {
 				$pasien->parent_id = $human['parent_id'];
 			}
 
-			if($human['is_anggota'] == 1)
-			{
+			if ($human['is_anggota'] == 1) {
 				$pasien->tni_nrp = $human['tni_nrp'];
 				$pasien->tni_keanggotaan_id = $human['tni_keanggotaan_id'];
 				$pasien->tni_pangkat_id = $human['tni_pangkat_id'];
@@ -67,14 +70,14 @@ class CreateController extends Controller
 
 			$pasien->photo_ori = $human['avatar'];
 			$pasien->photo_thumb = $human['avatar_thumb'];
-            $pasien->photo_identity = $human['file_ktp'] ?? null;
-            $pasien->photo_identity_thumb = $human['file_ktp_thumb'] ?? null;
-            $pasien->file_kk = $human['file_kk'] ?? null;
-            $pasien->file_kk_thumb = $human['file_kk_thumb'] ?? null;
-            $pasien->file_kartu_asuransi = $human['file_kartu_asuransi'] ?? null;
-            $pasien->file_kartu_asuransi_thumb = $human['file_kartu_asuransi_thumb'] ?? null;
+			$pasien->photo_identity = $human['file_ktp'] ?? null;
+			$pasien->photo_identity_thumb = $human['file_ktp_thumb'] ?? null;
+			$pasien->file_kk = $human['file_kk'] ?? null;
+			$pasien->file_kk_thumb = $human['file_kk_thumb'] ?? null;
+			$pasien->file_kartu_asuransi = $human['file_kartu_asuransi'] ?? null;
+			$pasien->file_kartu_asuransi_thumb = $human['file_kartu_asuransi_thumb'] ?? null;
 
-			if(!empty(Auth::user()))
+			if (!empty(Auth::user()))
 				$pasien->created_by = Auth::user()->id;
 			else
 				$pasien->created_by = 1;
@@ -86,25 +89,23 @@ class CreateController extends Controller
 			$indexElastic = app('App\Http\Controllers\Pasien\Pasien\EditController')->updateTextIndex($pasien->id);
 
 			//DB::connection('patients')->commit();
-			
+
 			return array(
 				'pasien' => $pasien,
 				'status' => 1
 			);
-		}
-		catch (\Exception $e) {
-		    app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+		} catch (\Exception $e) {
+			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 		}
 	}
 
 	public function APIAsalRujukan(Request $request)
 	{
 		//dd($request->nama_rujukan);
-	 	DB::connection('patients')->beginTransaction();
-	 	try
-	 	{	
-	 		//dd($request->nama_rujukan);
-	 		$rujukan = new AsalRujukan;
+		DB::connection('patients')->beginTransaction();
+		try {
+			//dd($request->nama_rujukan);
+			$rujukan = new AsalRujukan;
 			$rujukan->nama = $request->nama_rujukan;
 			$rujukan->alamat = null;
 			$rujukan->no_telp = null;
@@ -112,18 +113,16 @@ class CreateController extends Controller
 			$rujukan->self = 0;
 			$rujukan->save();
 			//dd($rujukan);
-			$rujukan->kode = "MED".$rujukan->id."";
+			$rujukan->kode = "MED" . $rujukan->id . "";
 			$rujukan->save();
 			//dd($rujukan);
 			DB::connection('patients')->commit();
 			//$rujukan_return = json_decode((json_encode($rujukan)));
 			//dd($rujukan_return);
-			return $rujukan;	
-	 	}
-	 	catch(\Exception $e)
-	 	{	
-	 		DB::connection('patients')->rollBack();
-	 		dd($e);
-	 	}	
+			return $rujukan;
+		} catch (\Exception $e) {
+			DB::connection('patients')->rollBack();
+			dd($e);
+		}
 	}
 }

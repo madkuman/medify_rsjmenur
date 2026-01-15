@@ -95,12 +95,13 @@ Farmasi Edit Transaksi
                     </div>
                 </div>
                 <hr class="my-5">
-                <div class="row" id="resepForm">
+                <div class="row" id="resepForm" style="display: none">
                     <div class="col-md-6">
                         <div class="block-header block-header-default">
                             <h3 class="block-title">Isi resep obat</h3>
                         </div>
                         <div class="block-content">
+                            <input type="hidden" id="temporary-resep_detail_ori_id">
                             <div class="form-group row">
                                 <div class="col-12">
                                     <div class="custom-control custom-radio custom-control-inline mb-5">
@@ -250,9 +251,19 @@ Farmasi Edit Transaksi
                     <div class="col-md-6">
                         <div class="row" id="resep-wrapper">
                             @foreach($transaksi->final_detail->resep_detail as $detail)
-@php
-    $jumlah_sisa = ($detail->detail_asal->jumlah ?? 0) + $detail->jumlah;
-@endphp
+                                @php
+                                    $jumlah_sisa = ($detail->detail_asal->jumlah ?? 0) + $detail->jumlah;
+
+                                    $is_kronis = false;
+                                    if (!empty($detail->obat_detail->item_detail->kategori_item)) {
+                                        foreach ($detail->obat_detail->item_detail->kategori_item as $kategori_item) {
+                                            if (!empty($kategori_item->detail_kategori->slug) && ($kategori_item->detail_kategori->slug == 'obat-kronis')) {
+                                                $is_kronis = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                @endphp
                                 <div class="col-md-12 resep-jadi">
                                     <a class="block block-link-shadow" href="javascript:void(0)">
                                         <div class="block-content block-content-full clearfix">
@@ -281,6 +292,7 @@ Farmasi Edit Transaksi
                                                     $input = array(
                                                         'detail_asal_id' => $detail->detail_asal->id ?? null,
                                                         'detail_id' => $detail->id,
+                                                        'resep_detail_ori_id' => $detail->resep_detail_ori_id ?? ($transaksi->resep_original == $transaksi->resep_final ? $detail->id : null),
                                                         'jenis' => 'racikan',
                                                         'satuan' => $detail->satuan,
                                                         'racikan' => $detail->nama_obat,
@@ -294,7 +306,8 @@ Farmasi Edit Transaksi
                                                         'hari23' => $detail->hari23,
                                                         'dukRS' => $detail->dukunganrs,
                                                         'namaObat' => $nama_obat_racikan,
-                                                        'satuan_penggunaan' => $detail->satuan_penggunaan
+                                                        'satuan_penggunaan' => $detail->satuan_penggunaan,
+                                                        'is_kronis' => $is_kronis
                                                     )
                                                 @endphp
                                                 @else
@@ -305,6 +318,7 @@ Farmasi Edit Transaksi
                                                     $input = array(
                                                         'detail_asal_id' => $detail->detail_asal->id ?? null,
                                                         'detail_id' => $detail->id,
+                                                        'resep_detail_ori_id' => $detail->resep_detail_ori_id ?? ($transaksi->resep_original == $transaksi->resep_final ? $detail->id : null),
                                                         'jenis' => 'generik',
                                                         'satuan' => $detail->satuan,
                                                         'obat' => $detail->obat_id,
@@ -316,7 +330,8 @@ Farmasi Edit Transaksi
                                                         'hari23' => $detail->hari23,
                                                         'dukRS' => $detail->dukunganrs,
                                                         'namaObat' => $detail->nama_obat,
-                                                        'satuan_penggunaan' => $detail->satuan_penggunaan
+                                                        'satuan_penggunaan' => $detail->satuan_penggunaan,
+                                                        'is_kronis' => $is_kronis
                                                     )
                                                 @endphp
                                                 @endif

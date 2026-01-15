@@ -11,20 +11,20 @@ use GuzzleHttp\Client;
 
 class PostController extends Controller
 {
-    public function create(Request $request)
-    {
-    	// dd($request);
-    	try {
-    		$cons_id = config('app.bpjs_cons_id');
-    		$secret = config('app.bpjs_secret');
+	public function create(Request $request)
+	{
+		// dd($request);
+		try {
+			$cons_id = config('app.bpjs_cons_id');
+			$secret = config('app.bpjs_secret');
 
-    		$tgl_rujukan = explode("-", $request->tanggal_rujuk);
-    		$tgl_rujukan = implode("-", array_reverse($tgl_rujukan));
+			$tgl_rujukan = explode("-", $request->tanggal_rujuk);
+			$tgl_rujukan = implode("-", array_reverse($tgl_rujukan));
 
-    		$data = [
+			$data = [
 				'bpjs_stage'		=> config('app.bpjs_stage'),
 				'medify_cons_id'		=> $cons_id,
-				'medify_secret' 		=> $secret, 
+				'medify_secret' 		=> $secret,
 				'no_sep' 				=> $request->sep,
 				'tgl_rujukan' 			=> $tgl_rujukan,
 				'ppk_rujuk' 			=> json_decode($request->faskes)->kode,
@@ -36,50 +36,49 @@ class PostController extends Controller
 				'user' 					=> Auth::user()->id
 			];
 
-			if(config('app.bpjs_enable', false)){
-		    	$result =  app('App\Http\Controllers\BPJS\API\Rujukan\CreateController')->create($data);
-		    	if($result->metaData->code != 200)
-		    		return back()
-				    	->with('message', $result->metaData->message)
-						->with('title',"Gagal")
+			if (config('app.bpjs_enable', false)) {
+				$result =  app('App\Http\Controllers\BPJS\API\Rujukan\CreateController')->create($data);
+				if ($result->metaData->code != 200)
+					return back()
+						->with('message', $result->metaData->message)
+						->with('title', "Gagal")
 						->with('status', -1);
-		    }
+			}
 
-    		DB::connection('kasus')->beginTransaction();
-    		$rujuk_luar = app('App\Http\Controllers\BPJS\Rujukan\CreateController')->create($request, $result->response->rujukan->noRujukan);
+			DB::connection('kasus')->beginTransaction();
+			$rujuk_luar = app('App\Http\Controllers\BPJS\Rujukan\CreateController')->create($request, $result->response->rujukan->noRujukan);
 
-    		$status = 1;
+			$status = 1;
 			$message = 'Berhasil menambah rujukan';
 			$title = 'Berhasil!';
 
-            DB::connection('kasus')->commit();
+			DB::connection('kasus')->commit();
+		} catch (\Exception $e) {
+			DB::connection('kasus')->rollback();
+			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+		}
 
-    	} catch (\Exception $e) {
-    		DB::connection('kasus')->rollback();
-            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-    	}
-
-    	return redirect('/bpjs/rujukan/'.$rujuk_luar->no_rujukan)
+		return redirect('/bpjs/rujukan/' . $rujuk_luar->no_rujukan)
 			->with('message', $message)
-			->with('title',$title)
+			->with('title', $title)
 			->with('status', $status);
-    }
+	}
 
-    public function edit(Request $request, $no_rujukan)
-    {
-    	// dd($request);
-    	try {
-    		$cons_id = config('app.bpjs_cons_id');
-    		$secret = config('app.bpjs_secret');
+	public function edit(Request $request, $no_rujukan)
+	{
+		// dd($request);
+		try {
+			$cons_id = config('app.bpjs_cons_id');
+			$secret = config('app.bpjs_secret');
 
-    		DB::connection('kasus')->beginTransaction();
-    		$rujuk_luar = app('App\Http\Controllers\BPJS\Rujukan\EditController')->edit($request, $no_rujukan);
-    		// dd(preg_split('/[\s]+/', $rujuk_luar->tanggal_rujuk)[0]);
+			DB::connection('kasus')->beginTransaction();
+			$rujuk_luar = app('App\Http\Controllers\BPJS\Rujukan\EditController')->edit($request, $no_rujukan);
+			// dd(preg_split('/[\s]+/', $rujuk_luar->tanggal_rujuk)[0]);
 
 			$data = [
 				'bpjs_stage'		=> config('app.bpjs_stage'),
 				'medify_cons_id'		=> $cons_id,
-				'medify_secret' 		=> $secret, 
+				'medify_secret' 		=> $secret,
 				'no_rujukan' 			=> $no_rujukan,
 				'ppk_rujuk' 			=> $rujuk_luar->ppk_faskes,
 				'tipe'					=> $rujuk_luar->tipe_rujuk,
@@ -91,69 +90,68 @@ class PostController extends Controller
 				'user' 					=> Auth::user()->id
 			];
 
-			if(config('app.bpjs_enable', false)){
-		    	$result =  app('App\Http\Controllers\BPJS\API\Rujukan\EditController')->edit($data);
+			if (config('app.bpjs_enable', false)) {
+				$result =  app('App\Http\Controllers\BPJS\API\Rujukan\EditController')->edit($data);
 				// dd($result, $result->response->rujukan->noRujukan);
-		    }
+			}
 
-    		$status = 1;
+			$status = 1;
 			$message = 'Berhasil melakukan perubahan';
 			$title = 'Berhasil!';
 
-            DB::connection('kasus')->commit();
+			DB::connection('kasus')->commit();
+		} catch (\Exception $e) {
+			DB::connection('kasus')->rollback();
+			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+		}
 
-    	} catch (\Exception $e) {
-    		DB::connection('kasus')->rollback();
-            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-    	}
-
-    	return redirect('/bpjs/rujukan/'.$no_rujukan)
+		return redirect('/bpjs/rujukan/' . $no_rujukan)
 			->with('message', $message)
-			->with('title',$title)
+			->with('title', $title)
 			->with('status', $status);
-    }
+	}
 
-    public function delete(Request $request)
-    {
-    	// dd($request);
-    	try {
-    		$cons_id = config('app.bpjs_cons_id');
-    		$secret = config('app.bpjs_secret');
+	public function delete(Request $request)
+	{
+		// dd($request);
+		try {
+			$cons_id = config('app.bpjs_cons_id');
+			$secret = config('app.bpjs_secret');
 
-    		DB::connection('kasus')->beginTransaction();
-    		$rujuk_luar = app('App\Http\Controllers\BPJS\Rujukan\DeleteController')->delete($request);
+			DB::connection('kasus')->beginTransaction();
+			$rujuk_luar = app('App\Http\Controllers\BPJS\Rujukan\DeleteController')->delete($request);
 
 			$data = [
 				'bpjs_stage'		=> config('app.bpjs_stage'),
 				'medify_cons_id'		=> $cons_id,
-				'medify_secret' 		=> $secret, 
+				'medify_secret' 		=> $secret,
 				'no_rujukan' 			=> $request->no_rujukan,
 				'user' 					=> Auth::user()->id
 			];
 
-			if(config('app.bpjs_enable', false)){
-		    	$result =  app('App\Http\Controllers\BPJS\API\Rujukan\DeleteController')->delete($data);
+			if (config('app.bpjs_enable', false)) {
+				$result =  app('App\Http\Controllers\BPJS\API\Rujukan\DeleteController')->delete($data);
 				// dd($result, $result->response->rujukan->noRujukan);
-		    }
+			}
 
-    		$status = 1;
+			$status = 1;
 			$message = 'Berhasil menghapus data';
 			$title = 'Berhasil!';
 
-            DB::connection('kasus')->commit();
+			DB::connection('kasus')->commit();
+		} catch (\Exception $e) {
+			DB::connection('kasus')->rollback();
+			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
+		}
 
-    	} catch (\Exception $e) {
-    		DB::connection('kasus')->rollback();
-            app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-    	}
-
-    	return redirect('/bpjs/rujukan')
+		return redirect('/bpjs/rujukan')
 			->with('message', $message)
-			->with('title',$title)
+			->with('title', $title)
 			->with('status', $status);
-    }
+	}
 
-	public function createRujukanV2(Request $request){
+	public function createRujukanV2(Request $request)
+	{
 		try {
 			$header_array = $this->getInitThirdPartyBPJS()->getHeader();
 			$set_data_create = app(\App\Http\Controllers\BPJS\Rujukan\CreateController::class)->setCreateRujukanV2($request);
@@ -181,7 +179,8 @@ class PostController extends Controller
 		}
 	}
 
-	public function updateRujukanV2(Request $request){
+	public function updateRujukanV2(Request $request)
+	{
 		try {
 			$header_array = $this->getInitThirdPartyBPJS()->getHeader();
 			$set_data_create = app(\App\Http\Controllers\BPJS\Rujukan\EditController::class)->setUpdateRujukanV2($request);
@@ -216,31 +215,31 @@ class PostController extends Controller
 
 			$data = new Request($data);
 
-			if(config('app.bpjs_enable', false)){
-		    	$result =  $this->createRujukanV2($data);
+			if (config('app.bpjs_enable', false)) {
+				$result =  $this->createRujukanV2($data);
 				$resp = json_decode($result);
-		    	if($resp->metaData->code != 200)
-		    		return back()
-				    	->with('message', $resp->metaData->message)
-						->with('title',"Gagal")
+				if ($resp->metaData->code != 200)
+					return back()
+						->with('message', $resp->metaData->message)
+						->with('title', "Gagal")
 						->with('status', -1);
-		    }
+			}
 
 			DB::connection('kasus')->beginTransaction();
-    		$rujuk_luar = app('App\Http\Controllers\BPJS\Rujukan\CreateController')->create($request, $resp->response->rujukan->noRujukan);
+			$rujuk_luar = app('App\Http\Controllers\BPJS\Rujukan\CreateController')->create($request, $resp->response->rujukan->noRujukan);
 			DB::connection('kasus')->commit();
 		} catch (\Exception $e) {
 			DB::connection('kasus')->rollback();
 
-			app('App\Http\Controllers\Error\Handler')->bugsnag($e);	
+			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 		}
 
-		if(!empty($request->from_kasus)){
+		if (!empty($request->from_kasus)) {
 			$kasus = Kasus::find($request->kasus_id);
-			return redirect('/kasus/'.$kasus->nomor_kasus.'/pengaturan')
-			->with('message', 'Berhasil menyimpan data')
-			->with('title', 'Berhasil')
-			->with('status', 1);
+			return redirect('/kasus/' . $kasus->nomor_kasus . '/pengaturan')
+				->with('message', 'Berhasil menyimpan data')
+				->with('title', 'Berhasil')
+				->with('status', 1);
 		}
 
 		return redirect('/bpjs/rujukan')
@@ -256,23 +255,23 @@ class PostController extends Controller
 
 			$data = new Request($data);
 
-			if(config('app.bpjs_enable', false)){
-		    	$result =  $this->updateRujukanV2($data);
+			if (config('app.bpjs_enable', false)) {
+				$result =  $this->updateRujukanV2($data);
 				$resp = json_decode($result);
-		    	if($resp->metaData->code != 200)
-		    		return back()
-				    	->with('message', $resp->metaData->message)
-						->with('title',"Gagal")
+				if ($resp->metaData->code != 200)
+					return back()
+						->with('message', $resp->metaData->message)
+						->with('title', "Gagal")
 						->with('status', -1);
-		    }
+			}
 
 			DB::connection('kasus')->beginTransaction();
-    		$rujuk_luar = app('App\Http\Controllers\BPJS\Rujukan\EditController')->edit($request, $request->no_rujukan);
+			$rujuk_luar = app('App\Http\Controllers\BPJS\Rujukan\EditController')->edit($request, $request->no_rujukan);
 			DB::connection('kasus')->commit();
 		} catch (\Exception $e) {
 			DB::connection('kasus')->rollback();
 
-			app('App\Http\Controllers\Error\Handler')->bugsnag($e);	
+			app('App\Http\Controllers\Error\Handler')->bugsnag($e);
 		}
 
 		return redirect('/bpjs/rujukan')
@@ -310,6 +309,40 @@ class PostController extends Controller
 		} catch (\Throwable $th) {
 			DB::connection('kasus')->rollback();
 			return $this->bugsnag($th);
+		}
+	}
+
+	public function dataJumlahSepRujukan($jenisRujukan, $noRujukan)
+	{
+		$header_array = app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->getHeader();
+		try {
+			$timestamp = $header_array['X-timestamp'];
+			$client = new Client(['headers' => $header_array]);
+			$res = $client->request('GET', app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->getUrl() . '/Rujukan/JumlahSEP/' . $jenisRujukan . '/' . $noRujukan);
+			$resp = $res->getBody()->getContents();
+			if (config('app.bpjs_decrypt', false)) {
+				$resp_decoded = json_decode($resp);
+				$resp_decoded->response = json_decode(app('App\Http\Controllers\ThirdParty\BPJS\RequestController')->stringDecrypt($timestamp, $resp_decoded->response));
+				return (json_encode($resp_decoded));
+			} else {
+				return $resp;
+			}
+		} catch (\Exception $e) {
+			return json_encode([
+				"metaData" => [
+					"code" => "500",
+					"message" => "GetJumlahSEP: Tidak dapat menghubungkan dengan server BPJS, coba lagi."
+				],
+				"response" => []
+			]);
+		} catch (GuzzleException $e) {
+			return json_encode([
+				"metaData" => [
+					"code" => "500",
+					"message" => "GetJumlahSEP: Tidak dapat menghubungkan dengan server BPJS, coba lagi."
+				],
+				"response" => []
+			]);
 		}
 	}
 }

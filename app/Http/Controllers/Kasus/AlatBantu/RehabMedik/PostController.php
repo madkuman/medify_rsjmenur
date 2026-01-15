@@ -16,29 +16,25 @@ class PostController extends Controller
 	static protected $type = "Klinik Rehab Medik";
 
 	public function submit($nomor_kasus, Request $req)
-	{	
+	{
 		DB::connection('kasus')->beginTransaction();
 		try {
-			$kasus = Kasus::with(relasi)->where('nomor_kasus',$nomor_kasus)->first();
+			$kasus = Kasus::with(relasi)->where('nomor_kasus', $nomor_kasus)->first();
 
 			$content = [];
 			$input = $req->all();
-			foreach($input as $key => $val){
-				if($key == '_token' || $key == 'id_rehab' || $key == 'id_lanjutan') continue;
-					$content[$key] = $val;
+			foreach ($input as $key => $val) {
+				if ($key == '_token' || $key == 'id_rehab' || $key == 'id_lanjutan') continue;
+				$content[$key] = $val;
 			}
-			if($req->id_rehab){
-				if($req->id_lanjutan)
-				{
+			if ($req->id_rehab) {
+				if ($req->id_lanjutan) {
 					$res = $this->updateLanjutan($req, $kasus->id, $content);
-				}
-				else
-				{
+				} else {
 					$res = $this->createLanjutan($req, $kasus->id, $content);
 				}
 			} else {
-				if($req->id)
-				{
+				if ($req->id) {
 					$res = $this->update($req->id, $kasus->id, $content);
 				} else {
 					$res = $this->create($kasus->id, $content);
@@ -47,29 +43,26 @@ class PostController extends Controller
 
 			DB::connection('kasus')->commit();
 			return back()
-			->with('message', $res['message'])
-			->with('title',$res['title'])
-			->with('status', $res['status']);
+				->with('message', $res['message'])
+				->with('title', $res['title'])
+				->with('status', $res['status']);
 		} catch (Exception $e) {
 			DB::connection('kasus')->rollback();
-			if(config('app.env') != 'production')
-			{
-				
+			if (config('app.env') != 'production') {
+
 				app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-			}
-			else
-			{
+			} else {
 
 				$status = -1;
 				$message = 'Asesmen Klinik Rehab Medik gagal dibuat!';
 				$title = 'Error!';
 
 				return back()
-				->with('message', $message)
-				->with('title',$title)
-				->with('status', $status);
+					->with('message', $message)
+					->with('title', $title)
+					->with('status', $status);
 			}
-		}		
+		}
 	}
 
 	public function create($kasus_id, $content)
@@ -86,7 +79,7 @@ class PostController extends Controller
 		$title = 'Berhasil!';
 
 		$log = app('App\Http\Controllers\Kasus\Log\CreateController')
-		->create($kasus_id,'create','alat-Klinik Rehab Medik',$alat_bantu->id);
+			->create($kasus_id, 'create', 'alat-Klinik Rehab Medik', $alat_bantu->id);
 		return [
 			'status' => $status,
 			'message' => $message,
@@ -107,7 +100,7 @@ class PostController extends Controller
 		$title = 'Berhasil!';
 
 		$log = app('App\Http\Controllers\Kasus\Log\CreateController')
-		->create($kasus_id,'update','alat-Klinik Rehab Medik',$alat_bantu->id);
+			->create($kasus_id, 'update', 'alat-Klinik Rehab Medik', $alat_bantu->id);
 		return [
 			'status' => $status,
 			'message' => $message,
@@ -119,7 +112,7 @@ class PostController extends Controller
 	{
 		$alat_bantu = AlatBantu::find($req->id_rehab);
 		$old_content = json_decode($alat_bantu->val);
-		if(isset($old_content->lanjutan)){
+		if (isset($old_content->lanjutan)) {
 			// $new_id = count($old_content->lanjutan);
 			// $content['id'] = $new_id;
 			array_push($old_content->lanjutan, $content);
@@ -136,7 +129,7 @@ class PostController extends Controller
 		$title = 'Berhasil!';
 
 		$log = app('App\Http\Controllers\Kasus\Log\CreateController')
-		->create($kasus_id,'create','alat-Klinik Lanjutan Rehab Medik',$alat_bantu->id);
+			->create($kasus_id, 'create', 'alat-Klinik Lanjutan Rehab Medik', $alat_bantu->id);
 		return [
 			'status' => $status,
 			'message' => $message,
@@ -157,16 +150,16 @@ class PostController extends Controller
 		$title = 'Berhasil!';
 
 		$log = app('App\Http\Controllers\Kasus\Log\CreateController')
-		->create($kasus_id,'update','alat-Klinik Lanjutan Rehab Medik',$alat_bantu->id);
+			->create($kasus_id, 'update', 'alat-Klinik Lanjutan Rehab Medik', $alat_bantu->id);
 		return [
 			'status' => $status,
 			'message' => $message,
 			'title' => $title
 		];
-	}	
+	}
 
 	public function delete($nomor_kasus, Request $req)
-	{	
+	{
 		try {
 			$hemo = AlatBantu::find($req->id);
 			$hemo->delete();
@@ -176,28 +169,24 @@ class PostController extends Controller
 			$title = 'Berhasil!';
 
 			return back()
-			->with('message', $message)
-			->with('title',$title)
-			->with('status', $status);
+				->with('message', $message)
+				->with('title', $title)
+				->with('status', $status);
 		} catch (Exception $e) {
-			if(config('app.env') != 'production')
-			{
-				
+			if (config('app.env') != 'production') {
+
 				app('App\Http\Controllers\Error\Handler')->bugsnag($e);
-			}
-			else
-			{
+			} else {
 
 				$status = -1;
 				$message = 'Asesmen Klinik Rehab Medik gagal dibuat!';
 				$title = 'Error!';
 
 				return back()
-				->with('message', $message)
-				->with('title',$title)
-				->with('status', $status);
+					->with('message', $message)
+					->with('title', $title)
+					->with('status', $status);
 			}
-		}		
+		}
 	}
-
 }

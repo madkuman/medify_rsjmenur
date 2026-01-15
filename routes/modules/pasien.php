@@ -11,11 +11,11 @@ Route::group(['middleware' => ['check-module']], function () {
 		Route::get('daftar-online', 'Pasien\Pasien\ViewController@daftarOnline');
 		Route::get('daftar-online/update/{id}', 'Pasien\Pasien\ViewController@updateDaftarOnline');
 		Route::post('daftar-online/update/{id}', 'Pasien\Pasien\PostController@updateDaftarOnline');
-        Route::get('daftar-online-batal', 'Pasien\Pasien\ViewController@daftarOnlineBatal');
-        Route::post('daftar-online-batal/konfirmasi/{id}', 'Pasien\Pasien\PostController@konfirmasiBatal');
+		Route::get('daftar-online-batal', 'Pasien\Pasien\ViewController@daftarOnlineBatal');
+		Route::post('daftar-online-batal/konfirmasi/{id}', 'Pasien\Pasien\PostController@konfirmasiBatal');
 		Route::get('pasien-baru-online', 'Pasien\Pasien\ViewController@pasienBaruOnline');
 		Route::get('pasien-baru-online/{id}/edit', 'Pasien\Pasien\ViewController@pasienBaruOnlineEdit');
-		
+
 		//antrian pasien
 		Route::get('antrian-pasien', 'Pasien\Antrian\ViewController@antrian');
 		Route::get('antrian/get-dokter/{id_poli}', 'Pasien\Antrian\ViewController@getDokter');
@@ -127,6 +127,7 @@ Route::group(['middleware' => ['check-module']], function () {
 			Route::post('/printlaporan/data-pasien-mcu', 'Pasien\Laporan\PostController@dataPasienMcu');
 
 			Route::post('printlaporan/laporan-sensus-rawat-inap', 'Pasien\Laporan\PostController@sensusRawatInap');
+			Route::post('printlaporan/laporan-sensus-rawat-inap-ruangan', 'Pasien\Laporan\PostController@sensusRawatInapRuangan');
 		});
 
 
@@ -190,6 +191,10 @@ Route::group(['middleware' => ['check-module']], function () {
 				Route::post('dkk-15-laporan-bulanan-lahir-mati/download', 'Pasien\LaporanV2\Page\DKK15LaporanBulananLahirMati\PostController@download');
 				Route::get('dkk-10-laporan-bulanan-kematian-ibu', 'Pasien\LaporanV2\Page\DKK10LaporanBulananKematianIbu\ViewController@index');
 				Route::post('dkk-10-laporan-bulanan-kematian-ibu/download', 'Pasien\LaporanV2\Page\DKK10LaporanBulananKematianIbu\PostController@download');
+				Route::get('laporan-asal-rujukan-rajal-ranap-igd', 'Pasien\LaporanV2\Page\LaporanAsalRujukanRajal\ViewController@index');
+				Route::get('laporan-rekap-perdokter', 'Pasien\LaporanV2\Page\LaporanRekapPerdokter\ViewController@index');
+				Route::get('laporan-perdokter', 'Pasien\LaporanV2\Page\LaporanPerdokter\ViewController@index');
+				Route::get('laporan-kunjungan-unit-tindakan', 'Pasien\LaporanV2\Page\LaporanKunjunganUnitTindakan\ViewController@index');
 			});
 		});
 
@@ -218,6 +223,7 @@ Route::group(['middleware' => ['check-module']], function () {
 		Route::get('{id}/print/ringkasan-rajal', 'Pasien\Pasien\ViewController@ringkasanRajal');
 		Route::get('{id}/print/prmrj', 'Pasien\Pasien\ViewController@prmrj');
 		Route::get('{id}/print/general-consent', 'Pasien\Pasien\ViewController@generalConsent');
+		Route::get('{id}/print/general-consent-for-treatment', 'Pasien\Pasien\ViewController@generalConsentForTreatment');
 		Route::get('{id}/print/tindakan-kedokteran', 'Pasien\Pasien\ViewController@tindakanKedokteran');
 		Route::get('{id}/edit', 'Pasien\Pasien\ViewController@edit');
 		Route::post('{id}/edit', 'Pasien\Pasien\PostController@editPasien');
@@ -244,13 +250,31 @@ Route::group(['middleware' => ['check-module']], function () {
 		Route::post('{id}/permohonan-pindah-kelas/delete', 'Pasien\PermohonanPindahKelas\PostController@delete');
 		Route::get('{id}/permohonan-pindah-kelas/print/{id_surat}', 'Pasien\PermohonanPindahKelas\ViewController@print');
 		Route::post('download/berkas', 'Pasien\Pasien\ReadController@downloadBerkas');
+
+		Route::get('/asesmen/general-consent', 'Kasus\Asesmen\GeneralConsent\ViewController@create');
+		Route::get("/asesmen/general-consent/single", "Kasus\Asesmen\GeneralConsent\ViewController@single");
+		Route::get("/asesmen/general-consent/form/edit", "Kasus\Asesmen\GeneralConsent\ViewController@edit");
+		Route::post("/asesmen/general-consent/form/create", "Kasus\Asesmen\GeneralConsent\CreateController@create");
+		Route::put("/asesmen/general-consent/form/edit", "Kasus\Asesmen\GeneralConsent\EditController@edit");
+		Route::get("/asesmen/general-consent/print", "Kasus\Asesmen\GeneralConsent\ViewController@print");
+		Route::post("/asesmen/general-consent/delete", "Kasus\Asesmen\GeneralConsent\DeleteController@delete");
+		Route::post("/asesmen/general-consent/add-ttd", "Kasus\Asesmen\GeneralConsent\PostController@addTTD");
+
+		Route::get('/asesmen/general-consent-for-treatment', 'Kasus\Asesmen\GeneralConsentForTreatment\ViewController@create');
+		Route::get("/asesmen/general-consent-for-treatment/single", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@single");
+		Route::get("/asesmen/general-consent-for-treatment/form/edit", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@edit");
+		Route::post("/asesmen/general-consent-for-treatment/form/create", "Kasus\Asesmen\GeneralConsentForTreatment\CreateController@create");
+		Route::put("/asesmen/general-consent-for-treatment/form/edit", "Kasus\Asesmen\GeneralConsentForTreatment\EditController@edit");
+		Route::get("/asesmen/general-consent-for-treatment/print", "Kasus\Asesmen\GeneralConsentForTreatment\ViewController@print");
+		Route::post("/asesmen/general-consent-for-treatment/delete", "Kasus\Asesmen\GeneralConsentForTreatment\DeleteController@delete");
+		Route::post("/asesmen/general-consent-for-treatment/add-ttd", "Kasus\Asesmen\GeneralConsentForTreatment\PostController@addTTD");
 	});
 });
 
 Route::group(['prefix' => 'api/pasien'], function () {
 	Route::get('/get', 'Pasien\Pasien\ReadController@get');
 	Route::get('/get-daftar-online', 'Pasien\Pasien\ViewController@getDaftarOnline');
-    Route::get('/get-daftar-online-batal', 'Pasien\Pasien\ViewController@getDaftarOnlineBatal');
+	Route::get('/get-daftar-online-batal', 'Pasien\Pasien\ViewController@getDaftarOnlineBatal');
 	Route::get('/get-pasien-baru-online', 'Pasien\Pasien\ViewController@getPasienBaruOnline');
 	Route::get('/get-pembayaran-utama', 'Pasien\Pasien\ReadController@APIGetSingle');
 	Route::get('/get-bpjs/{keyword}', 'Pasien\Pasien\ReadController@getBPJS');
@@ -282,7 +306,7 @@ Route::group(['prefix' => 'api/pasien'], function () {
 	Route::get('/pendaftaran/poli/get/{id}', 'RawatJalan\Transaksi\ReadController@APIsinglePoli');
 	Route::get('/pendaftaran/poli/get-histori/{poli_id}/{pasien_id}', 'RawatJalan\Transaksi\ReadController@APIcekHistoriKunjunganPasienPoli');
 	Route::get('/pendaftaran/metode/get/{id}', 'Pasien\Pasien\ReadController@APIsinglePembayaran');
-    Route::post('/pendaftaran/antrian', 'RawatJalan\Transaksi\PostController@generateAntrianPasien');
+	Route::post('/pendaftaran/antrian', 'RawatJalan\Transaksi\PostController@generateAntrianPasien');
 	Route::post('/check/nama', 'Pasien\Pasien\ReadController@APIcheckNama');
 	Route::post('/check/nomor', 'Pasien\Pasien\ReadController@APIcheckNomor');
 	Route::post('/check/pembayaran', 'Pasien\Pasien\ReadController@APIcheckPembayaran');
@@ -393,6 +417,14 @@ Route::group(['prefix' => 'api/pasien'], function () {
 			Route::get('dkk-15-laporan-bulanan-lahir-mati/get-data', 'Pasien\LaporanV2\Page\DKK15LaporanBulananLahirMati\APIController@getData');
 			Route::get('dkk-10-laporan-bulanan-kematian-ibu/get-total-data', 'Pasien\LaporanV2\Page\DKK10LaporanBulananKematianIbu\APIController@getTotalData');
 			Route::get('dkk-10-laporan-bulanan-kematian-ibu/get-data', 'Pasien\LaporanV2\Page\DKK10LaporanBulananKematianIbu\APIController@getData');
+			Route::get('laporan-asal-rujukan-rajal-ranap-igd/get-total-data', 'Pasien\LaporanV2\Page\LaporanAsalRujukanRajal\APIController@getTotalData');
+			Route::get('laporan-asal-rujukan-rajal-ranap-igd/get-data', 'Pasien\LaporanV2\Page\LaporanAsalRujukanRajal\APIController@getData');
+			Route::get('laporan-rekap-perdokter/get-total-data', 'Pasien\LaporanV2\Page\LaporanRekapPerdokter\APIController@getTotalData');
+			Route::get('laporan-rekap-perdokter/get-data', 'Pasien\LaporanV2\Page\LaporanRekapPerdokter\APIController@getData');
+			Route::get('laporan-perdokter/get-total-data', 'Pasien\LaporanV2\Page\LaporanPerdokter\APIController@getTotalData');
+			Route::get('laporan-perdokter/get-data', 'Pasien\LaporanV2\Page\LaporanPerdokter\APIController@getData');
+			Route::get('laporan-kunjungan-unit-tindakan/get-total-data', 'Pasien\LaporanV2\Page\LaporanKunjunganUnitTindakan\APIController@getTotalData');
+			Route::get('laporan-kunjungan-unit-tindakan/get-data', 'Pasien\LaporanV2\Page\LaporanKunjunganUnitTindakan\APIController@getData');
 		});
 	});
 });

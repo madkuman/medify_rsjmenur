@@ -155,6 +155,11 @@ class Kasus extends Model
     {
         return $this->hasMany('App\Models\Kasus\Tagihan', 'kasus_id', 'id')->whereNull('checkout');
     }
+    
+    public function transaksiRawatJalanLast()
+    {
+        return $this->hasOne('App\Models\RawatJalan\Transaksi', 'kasus_id', 'id')->orderBy('id', 'desc');
+    }
 
     public function daftarTagihanLatest()
     {
@@ -221,6 +226,11 @@ class Kasus extends Model
     public function end_by_creator()
     {
         return $this->hasOne('App\User', 'id', 'end_by');
+    }
+    
+    public function creator()
+    {
+        return $this->hasOne('App\User', 'id', 'created_by');
     }
 
     public function bpjs()
@@ -685,6 +695,16 @@ class Kasus extends Model
         return $data[0];
     }
 
+    public function getTagihanHeaderAttribute()
+    {
+        $tagihan = Tagihan::where('kasus_id', $this->attributes['id'])->get();
+        $total = 0;
+        foreach ($tagihan as $item) {
+        $total += $item->total_sum ?? 0;
+        }
+        return $total;
+    }
+
     public function penunjangRadiologi()
     {
         return $this->hasMany('App\Models\Radiology\Transaction', 'kasus_id', 'id');
@@ -834,6 +854,11 @@ class Kasus extends Model
     {
         return $this->hasMany('App\Models\Kasus\VerifikasiKoder', 'kasus_id', 'id');
     }
+    
+    public function kolaborator_admin()
+    {
+        return $this->hasOne('App\Models\Kasus\Kolaborator', 'kasus_id', 'id')->where('admin', 1);
+    }
 
     public function sirs_v3_laporan_covid()
     {
@@ -843,5 +868,20 @@ class Kasus extends Model
     public function getRawatJalanTransaksiLastAttrAttribute()
     {
         return $this->hasMany(\App\Models\RawatJalan\Transaksi::class, 'kasus_id', 'id')->where('status', '<>', -1)->orderBy('id','DESC')->first();
+    }
+
+    public function satusehat_encounter()
+    {
+        return $this->hasOne(\App\Models\ThirdPartySatuSehat\Encounter::class, 'kasus_id', 'id')->orderBy('id', 'desc');
+    }
+
+    public function satusehat_encounter_log()
+    {
+        return $this->hasMany(\App\Models\ThirdPartySatuSehat\LogEncounterCondition::class, 'kasus_id', 'id')->orderBy('id', 'desc');
+    }
+
+    public function rawat_jalan_transaksi_last()
+    {
+        return $this->hasOne('App\Models\RawatJalan\Transaksi', 'kasus_id', 'id')->latest();
     }
 }

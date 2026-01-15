@@ -1,11 +1,12 @@
 
 <div class="block-content">
-	<button type="button" class="btn-alt btn-primary min-width-125 float-right editBtn"><i class="fa fa-pencil"></i> Asesmen Awal Lanjutan Baru</button>
+	<button type="button" class="btn-alt btn-primary min-width-125 float-right editBtn"><i class="fa fa-pencil"></i> Asuhan Gizi Baru</button>
 
-	<h4 class="pt-10">Asesmen Awal Lanjutan</h4>
+	<h4 class="pt-10">Asuhan Gizi</h4>
 	<hr>
 	@php $count = count($asesmen) @endphp
 	@forelse($asesmen as $item)
+	@php $res = json_decode($item->val) @endphp
 	<div class="p-10"> 
 	@if(session('my_role_'.$kasus->nomor_kasus))
 	@if(session('my_role_'.$kasus->nomor_kasus)->admin == 1 || $item->created_by == Auth::user()->id)
@@ -15,10 +16,16 @@
 	<button  class="btn btn-sm btn-circle btn-outline-warning mr-5 mb-5 pull-right editBtn" data-id="{{$item->id}}" data-index="{{$loop->iteration - 1}}">
 		<i class="fa fa-pencil"></i>
 	</button>
+	@isset($kasus->admin)
+	@if (!isset($res->dpjp_verified_by) && ($kasus->admin->user_id ?? '') == Auth::user()->id)
+	<button  class="btn btn-sm btn-circle btn-outline-success mr-5 mb-5 pull-right verifBtn" data-id="{{$item->id}}" title="Verifikasi DPJP">
+		<i class="fa fa-check"></i>
+	</button>
+	@endisset
 	@endif
 	@endif
-	<h5 class="mb-5 pl-5">#Asesmen Awal Lanjutan {{$count--}}</h5>
-	@php $res = json_decode($item->val) @endphp
+	@endif
+	<h5 class="mb-5 pl-5">#Asuhan Gizi {{$count--}}</h5>
 	<div class="row" id="asesmen-{{$item->id}}">
 		@include('kasus.gizi.content.asesmen.tabel-hasil')
 	</div>
@@ -44,8 +51,8 @@
 	@empty
 
 	<div class="text-center py-50">
-		<h4 class="font-w400 mb-5">Belum ada asesmen Asesmen Awal Lanjutan tersedia</h4>
-		<p>Klik tombol <b>Asesmen Awal Lanjutan Baru</b> untuk melakukan asesmen Asesmen Awal Lanjutan</p>
+		<h4 class="font-w400 mb-5">Belum ada Asuhan Gizi tersedia</h4>
+		<p>Klik tombol <b>Asuhan Gizi Baru</b> untuk melakukan Asuhan Gizi baru</p>
 	</div>
 
 	@endforelse
@@ -56,4 +63,9 @@
 	{{csrf_field()}}
 	<input name="id" type="hidden" id="asesmenDeleteInputId">
 	
+</form>
+
+<form method="POST" action="{{url('')}}/kasus/{{$kasus->nomor_kasus}}/alat-bantu/asuhan-gizi/verifikasi" id="asesmenFormVerif">
+	{{csrf_field()}}
+	<input name="id" type="hidden" id="asesmenId">
 </form>

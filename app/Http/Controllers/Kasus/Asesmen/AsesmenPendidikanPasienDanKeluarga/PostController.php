@@ -9,11 +9,11 @@ use App\Models\Kasus\Kasus;
 
 class PostController extends Controller
 {
-    public function delete(Request $req){
-    	DB::connection("kasus")->beginTransaction();
-        try
-        {  
-	   		app("App\Http\Controllers\Kasus\Asesmen\AsesmenPendidikanPasienDanKeluarga\DeleteController")->delete($req);
+    public function delete(Request $req)
+    {
+        DB::connection("kasus")->beginTransaction();
+        try {
+            app("App\Http\Controllers\Kasus\Asesmen\AsesmenPendidikanPasienDanKeluarga\DeleteController")->delete($req);
 
             $status = 1;
             $message = "Asesmen Pendidikan Pasien dan Keluarga berhasil dihapus!";
@@ -21,9 +21,9 @@ class PostController extends Controller
 
             DB::connection("kasus")->commit();
             return back()
-            ->with("message", $message)
-            ->with("title",$title)
-            ->with("status", $status);
+                ->with("message", $message)
+                ->with("title", $title)
+                ->with("status", $status);
         } catch (\Exception $e) {
             app("App\Http\Controllers\Error\Handler")->bugsnag($e);
             DB::connection("kasus")->rollback();
@@ -33,35 +33,34 @@ class PostController extends Controller
             $title = "Gagal!";
 
             return back()
-            ->with("message", $message)
-            ->with("title",$title)
-            ->with("status", $status);
+                ->with("message", $message)
+                ->with("title", $title)
+                ->with("status", $status);
         }
     }
 
-    public function save(Request $req, $nomor_kasus){
- 		DB::connection("kasus")->beginTransaction();
-        try
-        {
+    public function save(Request $req, $nomor_kasus)
+    {
+        DB::connection("kasus")->beginTransaction();
+        try {
 
-			$kasus = Kasus::where("nomor_kasus",$nomor_kasus)->first();
-            if(isset($req->id) && $req->id != 0){
-            	app("App\Http\Controllers\Kasus\Asesmen\AsesmenPendidikanPasienDanKeluarga\EditController")->edit($req);
-            }else{
-           		app("App\Http\Controllers\Kasus\Asesmen\AsesmenPendidikanPasienDanKeluarga\CreateController")->create($req, $kasus->id);
+            $kasus = Kasus::where("nomor_kasus", $nomor_kasus)->first();
+            if (isset($req->id) && $req->id != 0) {
+                app("App\Http\Controllers\Kasus\Asesmen\AsesmenPendidikanPasienDanKeluarga\EditController")->edit($req);
+            } else {
+                app("App\Http\Controllers\Kasus\Asesmen\AsesmenPendidikanPasienDanKeluarga\CreateController")->create($req, $kasus->id);
             }
 
 
             $status = 1;
             $message = "Asesmen Pendidikan Pasien dan Keluarga berhasil ditambahkan!";
             $title = "Berhasil!";
-           
+
             DB::connection("kasus")->commit();
             return back()
-            ->with("message", $message)
-            ->with("title",$title)
-            ->with("status", $status);
-
+                ->with("message", $message)
+                ->with("title", $title)
+                ->with("status", $status);
         } catch (\Exception $e) {
             app("App\Http\Controllers\Error\Handler")->bugsnag($e);
             DB::connection("kasus")->rollback();
@@ -71,34 +70,33 @@ class PostController extends Controller
             $title = "Gagal!";
 
             return back()
-            ->with("message", $message)
-            ->with("title",$title)
-            ->with("status", $status);
+                ->with("message", $message)
+                ->with("title", $title)
+                ->with("status", $status);
         }
     }
 
-    public function lembarSave(Request $req, $nomor_kasus){
+    public function lembarSave(Request $req, $nomor_kasus)
+    {
         DB::connection("kasus")->beginTransaction();
-        try
-        {
-            $kasus = Kasus::where("nomor_kasus",$nomor_kasus)->first();
-            if(isset($req->id) && $req->id != 0){
+        try {
+            $kasus = Kasus::where("nomor_kasus", $nomor_kasus)->first();
+            if (isset($req->id) && $req->id != 0) {
                 app("App\Http\Controllers\Kasus\Asesmen\LembarKomunikasiInformasiDanEdukasiPasienDanKeluarga\EditController")->edit($req);
                 $message = "Data berhasil diubah!";
-            }else{
+            } else {
                 app("App\Http\Controllers\Kasus\Asesmen\LembarKomunikasiInformasiDanEdukasiPasienDanKeluarga\CreateController")->create($req, $kasus->id);
                 $message = "Data berhasil ditambahkan!";
             }
 
             $status = 1;
             $title = "Berhasil!";
-           
+
             DB::connection("kasus")->commit();
             return back()
-            ->with("message", $message)
-            ->with("title",$title)
-            ->with("status", $status);
-
+                ->with("message", $message)
+                ->with("title", $title)
+                ->with("status", $status);
         } catch (\Exception $e) {
             app("App\Http\Controllers\Error\Handler")->bugsnag($e);
             DB::connection("kasus")->rollback();
@@ -108,16 +106,16 @@ class PostController extends Controller
             $title = "Gagal!";
 
             return back()
-            ->with("message", $message)
-            ->with("title",$title)
-            ->with("status", $status);
+                ->with("message", $message)
+                ->with("title", $title)
+                ->with("status", $status);
         }
     }
 
-    public function lembarDelete(Request $req){
+    public function lembarDelete(Request $req)
+    {
         DB::connection("kasus")->beginTransaction();
-        try
-        {  
+        try {
             app("App\Http\Controllers\Kasus\Asesmen\LembarKomunikasiInformasiDanEdukasiPasienDanKeluarga\DeleteController")->delete($req);
 
             $status = 1;
@@ -126,9 +124,9 @@ class PostController extends Controller
 
             DB::connection("kasus")->commit();
             return back()
-            ->with("message", $message)
-            ->with("title",$title)
-            ->with("status", $status);
+                ->with("message", $message)
+                ->with("title", $title)
+                ->with("status", $status);
         } catch (\Exception $e) {
             app("App\Http\Controllers\Error\Handler")->bugsnag($e);
             DB::connection("kasus")->rollback();
@@ -138,9 +136,9 @@ class PostController extends Controller
             $title = "Gagal!";
 
             return back()
-            ->with("message", $message)
-            ->with("title",$title)
-            ->with("status", $status);
+                ->with("message", $message)
+                ->with("title", $title)
+                ->with("status", $status);
         }
     }
 }

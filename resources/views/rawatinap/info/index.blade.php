@@ -44,11 +44,11 @@ Informasi Ruangan
                                         <td>:</td>
                                         <td class="text-right">{{$bangsal->bed_total ?? 0}}</td>
                                     </tr>
-                                    <tr>
+                                   {{-- <tr>
                                         <td>Booking</td>
                                         <td>:</td>
                                         <td class="text-right">{{$bangsal->pasien_booking ?? 0}}</td>
-                                    </tr>
+                                    </tr>--}}
                                     <tr>
                                         <td>Terisi</td>
                                         <td>:</td>

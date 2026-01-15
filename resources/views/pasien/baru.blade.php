@@ -39,7 +39,11 @@ Pendaftaran Pasien Baru
                 <p class="full-only">Pastikan tidak ada pasien yang memiliki identitas yang mirip dengan pasien baru yang akan anda masukkan</p>
                 <hr>
                 <form id="pasienSubmit" enctype="multipart/form-data" method="POST">
-                    
+                    <div class="block rounded {{ config('medify.pasien.pasien_baru.enable_pasien_laborat') ? '' : 'd-none' }}" id="dataJenis">
+                        <div class="block-content">
+                            @include('pasien.pasien-baru.pilih-tipe')
+                        </div>
+                    </div>
                     <div class="block rounded" id="dataJenis">
                         <div class="block-content">
                             @include('pasien.pasien-baru.data-jenis')
@@ -50,17 +54,16 @@ Pendaftaran Pasien Baru
                             @include('pasien.pasien-baru.data-dasar')
                         </div>
                     </div>
-                    <div class="block rounded" id="dataKerabat">
+                    <div class="block rounded rm_biasa" id="dataKerabat">
                         <div class="block-content">
                             @include('pasien.pasien-baru.data-kerabat')
                         </div>
                     </div>
-                    <div class="block rounded" id="dataBerkas">
+                    <div class="block rounded rm_biasa_2" id="dataBerkas">
                         <div class="block-content">
                             @include('pasien.pasien-baru.data-berkas')
                         </div>
                     </div>
-
                     <div class="col-12" style="height: 75px">
                         <button class="btn btn-success btn-hero pull-right" type="submit" id="buttonSubmit"><i class="fa fa-check"></i> Simpan</button>
                         <button class="btn btn-alt-success btn-hero pull-right" style="display: none" type="button"  id="buttonLoading">
@@ -114,7 +117,8 @@ Pendaftaran Pasien Baru
             jenisKartuIdentitas = $("#selectKartuIdentitas").val();
             noIdentitas = $("#noIdentitas").val();
             identity = $('#avatar').prop('files')[0];
-            kategori_pasien = $("input[name='kategori_pasien']:checked").val();
+            // kategori_pasien = $("input[name='kategori_pasien']:checked").val();
+            kategori_pasien = $("input[name='kategori_pasien']").is(':checked') ? $("input[name='kategori_pasien']:checked").val() : 0;
             name = $("input[name='name']").val();
             gender = valGender
             marriage = valMarriage
@@ -262,7 +266,25 @@ Pendaftaran Pasien Baru
 
 </script>
 <script type="text/javascript">
+    $('input[type=radio][name="pasien_tipe_rm"]').change(function () {   
+        var check_tipe_rm = $('#pasienSubmit input[name="pasien_tipe_rm"]:checked').val();
+        console.log(check_tipe_rm)
+        if(check_tipe_rm == 1){
+            $('#pasienSubmit .rm_biasa').hide();
+            $('.rm_biasa_2').hide();
+            $('.hapus_required').removeAttr('required');
+            $('#pasienSubmit input:radio[name="jenispasien"]').filter('[value="2"]').prop('checked', true);
+            console.log($('#pasienSubmit input:radio[name="jenispasien"]:checked').val())
+            changeJenis('2&&tunai')
+        }
+        else{
+            $('#pasienSubmit .rm_biasa').show();
+            $('.rm_biasa_2').show();
+            $('.hapus_required').attr('required');
+        }
 
+        $('#pasienSubmit .is-invalid').removeClass("is-invalid")
+    });
     $(function(){
         $('#tanggal-lahir').combodate({
               value: new Date(),
